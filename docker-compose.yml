@@ -26,7 +26,8 @@ services:
     dns:
       - 8.8.8.8
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     env_file:
       - ./.env
   db:
@@ -40,6 +41,10 @@ services:
       - ./.env
     environment:
       - POSTGRES_MULTIPLE_DATABASES=${POSTGRES_DB_DEV},${POSTGRES_DB_TEST}
-
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 volumes:
   postgres_data:

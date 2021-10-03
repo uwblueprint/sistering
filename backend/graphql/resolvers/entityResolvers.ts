@@ -6,7 +6,7 @@ import {
   validateFileType,
   getFileTypeValidationError,
 } from "../../middlewares/validators/util";
-import EntityService from "../../services/implementations/EntityService";
+import EntityService from "../../services/implementations/entityService";
 import FileStorageService from "../../services/implementations/fileStorageService";
 import {
   EntityRequestDTO,
