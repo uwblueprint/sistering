@@ -26,8 +26,10 @@ services:
     dns:
       - 8.8.8.8
     depends_on:
-      - db
-      - db-test
+      db:
+        condition: service_healthy
+      db-test:
+        condition: service_healthy
     env_file:
       - ./.env
   db:
@@ -36,6 +38,11 @@ services:
       - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     env_file:
       - ./.env
   db-test:
@@ -44,6 +51,11 @@ services:
       - 5430:5432
     volumes:
       - postgres_data_test:/var/lib/postgresql/data/
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
     env_file:
       - ./.env
 
