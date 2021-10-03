@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   frontend:
@@ -27,7 +27,6 @@ services:
       - 8.8.8.8
     depends_on:
       - db
-      - db-test
     env_file:
       - ./.env
   db:
@@ -36,17 +35,11 @@ services:
       - 5432:5432
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./db-init:/docker-entrypoint-initdb.d
     env_file:
       - ./.env
-  db-test:
-    image: postgres:12-alpine
-    ports:
-      - 5430:5432
-    volumes:
-      - postgres_data_test:/var/lib/postgresql/data/
-    env_file:
-      - ./.env
+    environment:
+      - POSTGRES_MULTIPLE_DATABASES=${POSTGRES_DB_DEV},${POSTGRES_DB_TEST}
 
 volumes:
   postgres_data:
-  postgres_data_test:
