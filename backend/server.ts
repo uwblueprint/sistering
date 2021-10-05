@@ -4,7 +4,6 @@ import express from "express";
 import * as firebaseAdmin from "firebase-admin";
 
 import { ApolloServer } from "apollo-server-express";
-import { sequelize } from "./models";
 import schema from "./graphql";
 
 const CORS_ALLOW_LIST = ["http://localhost:3000"];
@@ -13,7 +12,6 @@ const CORS_OPTIONS: cors.CorsOptions = {
   origin: CORS_ALLOW_LIST,
   credentials: true,
 };
-
 
 const app = express();
 app.use(cookieParser());
@@ -36,9 +34,6 @@ server.applyMiddleware({
   path: "/graphql",
   cors: { origin: CORS_ALLOW_LIST, credentials: true },
 });
-
-const eraseDatabaseOnSync = false;
-sequelize.sync({ force: eraseDatabaseOnSync });
 
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.applicationDefault(),
