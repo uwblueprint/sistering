@@ -9,3 +9,38 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model Entity {
+  id                  Int       @id @default(autoincrement())
+  stringField        String     @map("string_field")
+  intField           Int        @map("int_field")
+  enumField          Letters    @map("enum_field")
+  stringArrayField  String[]    @map("string_array_field")
+  boolField          Boolean    @map("bool_field")
+  fileName           String     @map("file_name")
+  fileContent        String     @map("file_content")
+
+  @@map("entities")
+}
+
+model User {
+  id                  Int       @id @default(autoincrement())
+  firstName          String     @map("first_name")
+  lastName           String     @map("last_name")
+  authId             String     @map("auth_id") @unique
+  role                Role      @map("role")
+
+  @@map("users")
+}
+
+enum Letters {
+  A
+  B
+  C
+  D
+}
+
+enum Role {
+  ADMIN
+  USER
+}
