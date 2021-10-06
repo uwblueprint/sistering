@@ -2,7 +2,10 @@ import * as firebaseAdmin from "firebase-admin";
 import IUserService from "../interfaces/userService";
 import { CreateUserDTO, Role, UpdateUserDTO, UserDTO } from "../../types";
 import logger from "../../utilities/logger";
-import User from "../../models/user.model";
+// import User from "../../models/user.model";
+import { PrismaClient, User } from "@prisma/client";
+
+const prisma = new PrismaClient();
 
 const Logger = logger(__filename);
 
@@ -14,21 +17,26 @@ class UserService implements IUserService {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      user = await User.findByPk(Number(userId));
+      // user = await User.findByPk(Number(userId));
+      user = await prisma.user.findUnique({
+        where: {
+          id: Number(userId),
+        },
+      });
 
       if (!user) {
         throw new Error(`userId ${userId} not found.`);
       }
-      firebaseUser = await firebaseAdmin.auth().getUser(user.auth_id);
+      firebaseUser = await firebaseAdmin.auth().getUser(user.authId);
     } catch (error) {
       Logger.error(`Failed to get user. Reason = ${error.message}`);
       throw error;
     }
 
     return {
-      id: user.id,
-      firstName: user.first_name,
-      lastName: user.last_name,
+      id: String(user.id),
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: firebaseUser.email ?? "",
       role: user.role,
     };
@@ -40,8 +48,13 @@ class UserService implements IUserService {
 
     try {
       firebaseUser = await firebaseAdmin.auth().getUserByEmail(email);
-      user = await User.findOne({
-        where: { auth_id: firebaseUser.uid },
+      // user = await User.findOne({
+      //   where: { auth_id: firebaseUser.uid },
+      // });
+      user = await prisma.user.findUnique({
+        where: {
+          authId: firebaseUser.uid,
+        },
       });
 
       if (!user) {
@@ -53,9 +66,9 @@ class UserService implements IUserService {
     }
 
     return {
-      id: user.id,
-      firstName: user.first_name,
-      lastName: user.last_name,
+      id: String(user.id),
+      firstName: user.firstName,
+      lastName: user.lastName,
       email: firebaseUser.email ?? "",
       role: user.role,
     };
@@ -63,8 +76,13 @@ class UserService implements IUserService {
 
   async getUserRoleByAuthId(authId: string): Promise<Role> {
     try {
-      const user: User | null = await User.findOne({
-        where: { auth_id: authId },
+      // const user: User | null = await User.findOne({
+      //   where: { auth_id: authId },
+      // });
+      const user: User | null = await prisma.user.findUnique({
+        where: {
+          authId: authId,
+        },
       });
       if (!user) {
         throw new Error(`userId with authId ${authId} not found.`);
@@ -78,13 +96,18 @@ class UserService implements IUserService {
 
   async getUserIdByAuthId(authId: string): Promise<string> {
     try {
-      const user: User | null = await User.findOne({
-        where: { auth_id: authId },
+      // const user: User | null = await User.findOne({
+      //   where: { auth_id: authId },
+      // });
+      const user: User | null = await prisma.user.findUnique({
+        where: {
+          authId: authId,
+        },
       });
       if (!user) {
         throw new Error(`user with authId ${authId} not found.`);
       }
-      return user.id;
+      return String(user.id);
     } catch (error) {
       Logger.error(`Failed to get user id. Reason = ${error.message}`);
       throw error;
@@ -93,11 +116,16 @@ class UserService implements IUserService {
 
   async getAuthIdById(userId: string): Promise<string> {
     try {
-      const user: User | null = await User.findByPk(Number(userId));
+      // const user: User | null = await User.findByPk(Number(userId));
+      const user: User | null = await prisma.user.findUnique({
+        where: {
+          id: Number(userId),
+        },
+      });
       if (!user) {
         throw new Error(`userId ${userId} not found.`);
       }
-      return user.auth_id;
+      return user.authId;
     } catch (error) {
       Logger.error(`Failed to get authId. Reason = ${error.message}`);
       throw error;
@@ -107,25 +135,26 @@ class UserService implements IUserService {
   async getUsers(): Promise<Array<UserDTO>> {
     let userDtos: Array<UserDTO> = [];
     try {
-      const users: Array<User> = await User.findAll();
+      // const users: Array<User> = await User.findAll();
+      const users: Array<User> = await prisma.user.findMany();
 
       userDtos = await Promise.all(
         users.map(async (user) => {
           let firebaseUser: firebaseAdmin.auth.UserRecord;
 
           try {
-            firebaseUser = await firebaseAdmin.auth().getUser(user.auth_id);
+            firebaseUser = await firebaseAdmin.auth().getUser(user.authId);
           } catch (error) {
             Logger.error(
-              `user with authId ${user.auth_id} could not be fetched from Firebase`,
+              `user with authId ${user.authId} could not be fetched from Firebase`,
             );
             throw error;
           }
 
           return {
-            id: user.id,
-            firstName: user.first_name,
-            lastName: user.last_name,
+            id: String(user.id),
+            firstName: user.firstName,
+            lastName: user.lastName,
             email: firebaseUser.email ?? "",
             role: user.role,
           };
@@ -159,11 +188,19 @@ class UserService implements IUserService {
       }
 
       try {
-        newUser = await User.create({
-          first_name: user.firstName,
-          last_name: user.lastName,
-          auth_id: firebaseUser.uid,
-          role: user.role,
+        // newUser = await User.create({
+        //   first_name: user.firstName,
+        //   last_name: user.lastName,
+        //   auth_id: firebaseUser.uid,
+        //   role: user.role,
+        // });
+        newUser = await prisma.user.create({
+          data: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            authId: firebaseUser.uid,
+            role: user.role,
+          },
         });
       } catch (postgresError) {
         try {
@@ -186,9 +223,9 @@ class UserService implements IUserService {
     }
 
     return {
-      id: newUser.id,
-      firstName: newUser.first_name,
-      lastName: newUser.last_name,
+      id: String(newUser.id),
+      firstName: newUser.firstName,
+      lastName: newUser.lastName,
       email: firebaseUser.email ?? "",
       role: newUser.role,
     };
@@ -198,17 +235,27 @@ class UserService implements IUserService {
     let updatedFirebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      const updateResult = await User.update(
-        {
-          first_name: user.firstName,
-          last_name: user.lastName,
+      // const updateResult = await User.update(
+      //   {
+      //     first_name: user.firstName,
+      //     last_name: user.lastName,
+      //     role: user.role,
+      //   },
+      //   {
+      //     where: { id: userId },
+      //     returning: true,
+      //   },
+      // );
+      const updateResult = await prisma.user.update({
+        where: {
+          id: Number(userId)
+        },
+        data: {
+          firstName: user.firstName,
+          lastName: user.lastName,
           role: user.role,
         },
-        {
-          where: { id: userId },
-          returning: true,
-        },
-      );
+      });
 
       // check number of rows affected
       if (updateResult[0] < 1) {
@@ -223,20 +270,30 @@ class UserService implements IUserService {
       try {
         updatedFirebaseUser = await firebaseAdmin
           .auth()
-          .updateUser(oldUser.auth_id, { email: user.email });
+          .updateUser(oldUser.authId, { email: user.email });
       } catch (error) {
         // rollback Postgres user updates
         try {
-          await User.update(
-            {
-              first_name: oldUser.first_name,
-              last_name: oldUser.last_name,
-              role: oldUser.role,
+          // await User.update(
+          //   {
+          //     first_name: oldUser.first_name,
+          //     last_name: oldUser.last_name,
+          //     role: oldUser.role,
+          //   },
+          //   {
+          //     where: { id: userId },
+          //   },
+          // );
+          await prisma.user.update({
+            where: {
+              id: Number(userId)
             },
-            {
-              where: { id: userId },
+            data: {
+              firstName: user.firstName,
+              lastName: user.lastName,
+              role: user.role,
             },
-          );
+          });
         } catch (postgresError) {
           const errorMessage = [
             "Failed to rollback Postgres user update after Firebase user update failure. Reason =",
@@ -266,37 +323,52 @@ class UserService implements IUserService {
   async deleteUserById(userId: string): Promise<void> {
     try {
       // Sequelize doesn't provide a way to atomically find, delete, and return deleted row
-      const deletedUser: User | null = await User.findByPk(Number(userId));
+      // const deletedUser: User | null = await User.findByPk(Number(userId));
 
-      if (!deletedUser) {
-        throw new Error(`userid ${userId} not found.`);
-      }
-
-      const numDestroyed: number = await User.destroy({
-        where: { id: userId },
+      // Prisma delete function returns the deleted the User record
+      const deletedUser: User | null = await prisma.user.delete({
+        where: {
+          id: Number(userId),
+        },
       });
 
-      if (numDestroyed <= 0) {
-        throw new Error(`userid ${userId} was not deleted in Postgres.`);
-      }
+      // if (!deletedUser) {
+      //   throw new Error(`userid ${userId} not found.`);
+      // }
+
+      // const numDestroyed: number = await User.destroy({
+      //   where: { id: userId },
+      // });
+
+      // if (numDestroyed <= 0) {
+      //   throw new Error(`userid ${userId} was not deleted in Postgres.`);
+      // }
 
       try {
-        await firebaseAdmin.auth().deleteUser(deletedUser.auth_id);
+        await firebaseAdmin.auth().deleteUser(deletedUser.authId);
       } catch (error) {
         // rollback user deletion in Postgres
         try {
-          await User.create({
-            first_name: deletedUser.first_name,
-            last_name: deletedUser.last_name,
-            auth_id: deletedUser.auth_id,
-            role: deletedUser.role,
+          // await User.create({
+          //   first_name: deletedUser.first_name,
+          //   last_name: deletedUser.last_name,
+          //   auth_id: deletedUser.auth_id,
+          //   role: deletedUser.role,
+          // });
+          await prisma.user.create({
+            data: {
+              firstName: deletedUser.firstName,
+              lastName: deletedUser.lastName,
+              authId: deletedUser.authId,
+              role: deletedUser.role,
+            },
           });
         } catch (postgresError) {
           const errorMessage = [
             "Failed to rollback Postgres user deletion after Firebase user deletion failure. Reason =",
             postgresError.message,
             "Firebase uid with non-existent Postgres record =",
-            deletedUser.auth_id,
+            deletedUser.authId,
           ];
           Logger.error(errorMessage.join(" "));
         }
@@ -314,41 +386,54 @@ class UserService implements IUserService {
       const firebaseUser: firebaseAdmin.auth.UserRecord = await firebaseAdmin
         .auth()
         .getUserByEmail(email);
-      const deletedUser: User | null = await User.findOne({
-        where: { auth_id: firebaseUser.uid },
+      // const deletedUser: User | null = await User.findOne({
+      //   where: { auth_id: firebaseUser.uid },
+      // });
+      const deletedUser: User | null = await prisma.user.delete({
+        where: {
+          authId: firebaseUser.uid,
+        },
       });
 
-      if (!deletedUser) {
-        throw new Error(`userid ${firebaseUser.uid} not found.`);
-      }
+      // if (!deletedUser) {
+      //   throw new Error(`userid ${firebaseUser.uid} not found.`);
+      // }
 
-      const numDestroyed: number = await User.destroy({
-        where: { auth_id: firebaseUser.uid },
-      });
+      // const numDestroyed: number = await User.destroy({
+      //   where: { auth_id: firebaseUser.uid },
+      // });
 
-      if (numDestroyed <= 0) {
-        throw new Error(
-          `userid ${firebaseUser.uid} was not deleted in Postgres.`,
-        );
-      }
+      // if (numDestroyed <= 0) {
+      //   throw new Error(
+      //     `userid ${firebaseUser.uid} was not deleted in Postgres.`,
+      //   );
+      // }
 
       try {
-        await firebaseAdmin.auth().deleteUser(deletedUser.auth_id);
+        await firebaseAdmin.auth().deleteUser(deletedUser.authId);
       } catch (error) {
         // rollback user deletion in Postgres
         try {
-          await User.create({
-            first_name: deletedUser.first_name,
-            last_name: deletedUser.last_name,
-            auth_id: deletedUser.auth_id,
-            role: deletedUser.role,
+          // await User.create({
+          //   first_name: deletedUser.first_name,
+          //   last_name: deletedUser.last_name,
+          //   auth_id: deletedUser.auth_id,
+          //   role: deletedUser.role,
+          // });
+          await prisma.user.create({
+            data: {
+              firstName: deletedUser.firstName,
+              lastName: deletedUser.lastName,
+              authId: deletedUser.authId,
+              role: deletedUser.role,
+            },
           });
         } catch (postgresError) {
           const errorMessage = [
             "Failed to rollback Postgres user deletion after Firebase user deletion failure. Reason =",
             postgresError.message,
             "Firebase uid with non-existent Postgres record =",
-            deletedUser.auth_id,
+            deletedUser.authId,
           ];
           Logger.error(errorMessage.join(" "));
         }

@@ -6,6 +6,9 @@ import * as firebaseAdmin from "firebase-admin";
 import { ApolloServer } from "apollo-server-express";
 import schema from "./graphql";
 
+import { PrismaClient } from "@prisma/client";
+const prisma = new PrismaClient();
+
 const CORS_ALLOW_LIST = ["http://localhost:3000"];
 
 const CORS_OPTIONS: cors.CorsOptions = {
@@ -38,6 +41,21 @@ server.applyMiddleware({
 firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.applicationDefault(),
 });
+
+async function main() {
+  await prisma.$connect();
+  console.log("Successfully connected to DB using Prisma!");
+}
+
+main()
+  .catch((e) => {
+    // e should be a PrismaClientInitializationError if connection fails
+    console.error("Error connecting to DB using Prisma!");
+    throw e;
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  })
 
 app.listen({ port: 5000 }, () => {
   /* eslint-disable-next-line no-console */
