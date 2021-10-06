@@ -17,7 +17,6 @@ class UserService implements IUserService {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      // user = await User.findByPk(Number(userId));
       user = await prisma.user.findUnique({
         where: {
           id: Number(userId),
@@ -48,9 +47,6 @@ class UserService implements IUserService {
 
     try {
       firebaseUser = await firebaseAdmin.auth().getUserByEmail(email);
-      // user = await User.findOne({
-      //   where: { auth_id: firebaseUser.uid },
-      // });
       user = await prisma.user.findUnique({
         where: {
           authId: firebaseUser.uid,
@@ -76,9 +72,6 @@ class UserService implements IUserService {
 
   async getUserRoleByAuthId(authId: string): Promise<Role> {
     try {
-      // const user: User | null = await User.findOne({
-      //   where: { auth_id: authId },
-      // });
       const user: User | null = await prisma.user.findUnique({
         where: {
           authId: authId,
@@ -96,9 +89,6 @@ class UserService implements IUserService {
 
   async getUserIdByAuthId(authId: string): Promise<string> {
     try {
-      // const user: User | null = await User.findOne({
-      //   where: { auth_id: authId },
-      // });
       const user: User | null = await prisma.user.findUnique({
         where: {
           authId: authId,
@@ -116,7 +106,6 @@ class UserService implements IUserService {
 
   async getAuthIdById(userId: string): Promise<string> {
     try {
-      // const user: User | null = await User.findByPk(Number(userId));
       const user: User | null = await prisma.user.findUnique({
         where: {
           id: Number(userId),
@@ -135,7 +124,6 @@ class UserService implements IUserService {
   async getUsers(): Promise<Array<UserDTO>> {
     let userDtos: Array<UserDTO> = [];
     try {
-      // const users: Array<User> = await User.findAll();
       const users: Array<User> = await prisma.user.findMany();
 
       userDtos = await Promise.all(
@@ -188,12 +176,6 @@ class UserService implements IUserService {
       }
 
       try {
-        // newUser = await User.create({
-        //   first_name: user.firstName,
-        //   last_name: user.lastName,
-        //   auth_id: firebaseUser.uid,
-        //   role: user.role,
-        // });
         newUser = await prisma.user.create({
           data: {
             firstName: user.firstName,
@@ -235,37 +217,27 @@ class UserService implements IUserService {
     let updatedFirebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      // const updateResult = await User.update(
-      //   {
-      //     first_name: user.firstName,
-      //     last_name: user.lastName,
-      //     role: user.role,
-      //   },
-      //   {
-      //     where: { id: userId },
-      //     returning: true,
-      //   },
-      // );
-      const updateResult = await prisma.user.update({
-        where: {
-          id: Number(userId)
-        },
-        data: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          role: user.role,
-        },
-      });
+      const [oldUser, updateResult] = await prisma.$transaction([
+        prisma.user.findUnique({
+          where: {
+            id: Number(userId),
+          },
+        }),
+        prisma.user.update({
+          where: {
+            id: Number(userId)
+          },
+          data: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            role: user.role,
+          },
+        }),
+      ]);
 
-      // check number of rows affected
-      if (updateResult[0] < 1) {
+      if (!oldUser) {
         throw new Error(`userId ${userId} not found.`);
       }
-
-      // the cast to "any" is needed due to a missing property in the Sequelize type definitions
-      // https://github.com/sequelize/sequelize/issues/9978#issuecomment-426342219
-      /* eslint-disable-next-line no-underscore-dangle */
-      const oldUser: User = (updateResult[1][0] as any)._previousDataValues;
 
       try {
         updatedFirebaseUser = await firebaseAdmin
@@ -274,24 +246,14 @@ class UserService implements IUserService {
       } catch (error) {
         // rollback Postgres user updates
         try {
-          // await User.update(
-          //   {
-          //     first_name: oldUser.first_name,
-          //     last_name: oldUser.last_name,
-          //     role: oldUser.role,
-          //   },
-          //   {
-          //     where: { id: userId },
-          //   },
-          // );
           await prisma.user.update({
             where: {
               id: Number(userId)
             },
             data: {
-              firstName: user.firstName,
-              lastName: user.lastName,
-              role: user.role,
+              firstName: oldUser.firstName,
+              lastName: oldUser.lastName,
+              role: oldUser.role,
             },
           });
         } catch (postgresError) {
@@ -322,39 +284,16 @@ class UserService implements IUserService {
 
   async deleteUserById(userId: string): Promise<void> {
     try {
-      // Sequelize doesn't provide a way to atomically find, delete, and return deleted row
-      // const deletedUser: User | null = await User.findByPk(Number(userId));
-
-      // Prisma delete function returns the deleted the User record
       const deletedUser: User | null = await prisma.user.delete({
         where: {
           id: Number(userId),
         },
       });
-
-      // if (!deletedUser) {
-      //   throw new Error(`userid ${userId} not found.`);
-      // }
-
-      // const numDestroyed: number = await User.destroy({
-      //   where: { id: userId },
-      // });
-
-      // if (numDestroyed <= 0) {
-      //   throw new Error(`userid ${userId} was not deleted in Postgres.`);
-      // }
-
       try {
         await firebaseAdmin.auth().deleteUser(deletedUser.authId);
       } catch (error) {
         // rollback user deletion in Postgres
         try {
-          // await User.create({
-          //   first_name: deletedUser.first_name,
-          //   last_name: deletedUser.last_name,
-          //   auth_id: deletedUser.auth_id,
-          //   role: deletedUser.role,
-          // });
           await prisma.user.create({
             data: {
               firstName: deletedUser.firstName,
@@ -386,40 +325,17 @@ class UserService implements IUserService {
       const firebaseUser: firebaseAdmin.auth.UserRecord = await firebaseAdmin
         .auth()
         .getUserByEmail(email);
-      // const deletedUser: User | null = await User.findOne({
-      //   where: { auth_id: firebaseUser.uid },
-      // });
       const deletedUser: User | null = await prisma.user.delete({
         where: {
           authId: firebaseUser.uid,
         },
       });
 
-      // if (!deletedUser) {
-      //   throw new Error(`userid ${firebaseUser.uid} not found.`);
-      // }
-
-      // const numDestroyed: number = await User.destroy({
-      //   where: { auth_id: firebaseUser.uid },
-      // });
-
-      // if (numDestroyed <= 0) {
-      //   throw new Error(
-      //     `userid ${firebaseUser.uid} was not deleted in Postgres.`,
-      //   );
-      // }
-
       try {
         await firebaseAdmin.auth().deleteUser(deletedUser.authId);
       } catch (error) {
         // rollback user deletion in Postgres
         try {
-          // await User.create({
-          //   first_name: deletedUser.first_name,
-          //   last_name: deletedUser.last_name,
-          //   auth_id: deletedUser.auth_id,
-          //   role: deletedUser.role,
-          // });
           await prisma.user.create({
             data: {
               firstName: deletedUser.firstName,
