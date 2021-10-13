@@ -7,12 +7,13 @@ import {
   validatePrimitive,
 } from "./util";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable-next-line import/prefer-default-export */
 export const entityRequestDtoValidator = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<any> => {
   let body;
   try {
     body = JSON.parse(req.body.body);

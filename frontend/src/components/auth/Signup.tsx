@@ -9,17 +9,19 @@ import { AuthenticatedUser } from "../../types/AuthTypes";
 
 const REGISTER = gql`
   mutation Signup_Register(
-    $firstName: String!,
-    $lastName: String!,
-    $email: String!,
+    $firstName: String!
+    $lastName: String!
+    $email: String!
     $password: String!
   ) {
-    register(user: {
-      firstName: $firstName,
-      lastName: $lastName,
-      email: $email,
-      password: $password
-    }) {
+    register(
+      user: {
+        firstName: $firstName
+        lastName: $lastName
+        email: $email
+        password: $password
+      }
+    ) {
       id
       firstName
       lastName
