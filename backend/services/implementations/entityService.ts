@@ -76,7 +76,6 @@ class EntityService implements IEntityService {
         );
       }
       newEntity = await prisma.entity.create({
-        // HERE
         data: {
           stringField: entity.stringField,
           intField: entity.intField,
@@ -134,11 +133,9 @@ class EntityService implements IEntityService {
       }
       updateResult = await prisma.entity.update({
         where: { id: Number(id) },
-        // HERE
         data: {
           stringField: entity.stringField,
           intField: entity.intField,
-          // HERE
           enumField: entity.enumField,
           stringArrayField: entity.stringArrayField,
           boolField: entity.boolField,
