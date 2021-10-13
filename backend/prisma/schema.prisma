@@ -15,7 +15,6 @@ model Entity {
   stringArrayField String[] @map("string_array_field")
   boolField        Boolean  @map("bool_field")
   fileName         String   @map("file_name")
-  fileContent      String   @map("file_content")
 
   @@map("entities")
 }

@@ -4,9 +4,9 @@ import express from "express";
 import * as firebaseAdmin from "firebase-admin";
 
 import { ApolloServer } from "apollo-server-express";
+import { PrismaClient } from "@prisma/client";
 import schema from "./graphql";
 
-import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const CORS_ALLOW_LIST = ["http://localhost:3000"];
@@ -55,7 +55,7 @@ main()
   })
   .finally(async () => {
     await prisma.$disconnect();
-  })
+  });
 
 app.listen({ port: 5000 }, () => {
   /* eslint-disable-next-line no-console */

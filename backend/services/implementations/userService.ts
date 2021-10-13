@@ -3,7 +3,7 @@ import IUserService from "../interfaces/userService";
 import { CreateUserDTO, Role, UpdateUserDTO, UserDTO } from "../../types";
 import logger from "../../utilities/logger";
 // import User from "../../models/user.model";
-import { PrismaClient, Prisma } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -72,7 +72,7 @@ class UserService implements IUserService {
     try {
       const user = await prisma.user.findUnique({
         where: {
-          authId: authId,
+          authId,
         },
       });
       if (!user) {
@@ -89,7 +89,7 @@ class UserService implements IUserService {
     try {
       const user = await prisma.user.findUnique({
         where: {
-          authId: authId,
+          authId,
         },
       });
       if (!user) {
@@ -214,7 +214,7 @@ class UserService implements IUserService {
     let updatedFirebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      const [oldUser, updateResult] = await prisma.$transaction([
+      const [oldUser] = await prisma.$transaction([
         prisma.user.findUnique({
           where: {
             id: Number(userId),
@@ -222,7 +222,7 @@ class UserService implements IUserService {
         }),
         prisma.user.update({
           where: {
-            id: Number(userId)
+            id: Number(userId),
           },
           data: {
             firstName: user.firstName,
@@ -245,7 +245,7 @@ class UserService implements IUserService {
         try {
           await prisma.user.update({
             where: {
-              id: Number(userId)
+              id: Number(userId),
             },
             data: {
               firstName: oldUser.firstName,
@@ -361,4 +361,3 @@ class UserService implements IUserService {
 }
 
 export default UserService;
-
