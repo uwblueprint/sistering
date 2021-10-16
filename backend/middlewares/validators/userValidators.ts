@@ -1,11 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import { getApiValidationError, validatePrimitive } from "./util";
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
 export const createUserDtoValidator = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<any> => {
   if (!validatePrimitive(req.body.firstName, "string")) {
     return res.status(400).send(getApiValidationError("firstName", "string"));
   }
@@ -29,7 +30,7 @@ export const updateUserDtoValidator = async (
   req: Request,
   res: Response,
   next: NextFunction,
-) => {
+): Promise<any> => {
   if (!validatePrimitive(req.body.firstName, "string")) {
     return res.status(400).send(getApiValidationError("firstName", "string"));
   }
