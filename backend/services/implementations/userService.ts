@@ -1,9 +1,9 @@
 import * as firebaseAdmin from "firebase-admin";
+import { PrismaClient } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import { CreateUserDTO, Role, UpdateUserDTO, UserDTO } from "../../types";
 import logger from "../../utilities/logger";
 // import User from "../../models/user.model";
-import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
