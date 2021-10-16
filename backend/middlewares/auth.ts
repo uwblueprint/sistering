@@ -110,3 +110,4 @@ export const isAuthorizedByEmail = (emailField: string) => {
     return resolve(parent, args, context, info);
   };
 };
+
