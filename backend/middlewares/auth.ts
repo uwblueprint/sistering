@@ -9,7 +9,7 @@ import { Role } from "../types";
 
 const authService: IAuthService = new AuthService(new UserService());
 
-export const getAccessToken = (req: Request) => {
+export const getAccessToken = (req: Request): string | null => {
   const authHeaderParts = req.headers.authorization?.split(" ");
   if (
     authHeaderParts &&
@@ -22,6 +22,7 @@ export const getAccessToken = (req: Request) => {
 };
 
 /* Determine if request is authorized based on accessToken validity and role of client */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/explicit-module-boundary-types */
 export const isAuthorizedByRole = (roles: Set<Role>) => {
   return async (
     resolve: (
@@ -34,7 +35,7 @@ export const isAuthorizedByRole = (roles: Set<Role>) => {
     args: { [key: string]: any },
     context: ExpressContext,
     info: GraphQLResolveInfo,
-  ) => {
+  ): Promise<any> => {
     const accessToken = getAccessToken(context.req);
     const authorized =
       accessToken && (await authService.isAuthorizedByRole(accessToken, roles));
@@ -64,7 +65,7 @@ export const isAuthorizedByUserId = (userIdField: string) => {
     args: { [key: string]: any },
     context: ExpressContext,
     info: GraphQLResolveInfo,
-  ) => {
+  ): Promise<any> => {
     const accessToken = getAccessToken(context.req);
     const authorized =
       accessToken &&
@@ -95,7 +96,7 @@ export const isAuthorizedByEmail = (emailField: string) => {
     args: { [key: string]: any },
     context: ExpressContext,
     info: GraphQLResolveInfo,
-  ) => {
+  ): Promise<any> => {
     const accessToken = getAccessToken(context.req);
     const authorized =
       accessToken &&
@@ -110,4 +111,3 @@ export const isAuthorizedByEmail = (emailField: string) => {
     return resolve(parent, args, context, info);
   };
 };
-
