@@ -163,18 +163,16 @@ class EntityService implements IEntityService {
 
   async deleteEntity(id: string): Promise<void> {
     try {
-      const entityToDelete = await prisma.entity.findUnique({
-        where: { id: Number(id) },
-      });
       const deleteResult: Entity | null = await prisma.entity.delete({
         where: { id: Number(id) },
       });
 
-      if (!entityToDelete || !deleteResult) {
+      if (!deleteResult) {
         throw new Error(`Entity id ${id} not found`);
       }
-      if (entityToDelete.fileName) {
-        await this.storageService.deleteFile(entityToDelete.fileName);
+
+      if (deleteResult.fileName) {
+        await this.storageService.deleteFile(deleteResult.fileName);
       }
     } catch (error) {
       Logger.error(`Failed to delete entity. Reason = ${error.message}`);
