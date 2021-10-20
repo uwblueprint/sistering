@@ -1,7 +1,9 @@
+import { Letters } from "../../types";
+
 export interface EntityRequestDTO {
   stringField: string;
   intField: number;
-  enumField: string;
+  enumField: Letters;
   stringArrayField: string[];
   boolField: boolean;
   filePath?: string;
@@ -12,7 +14,7 @@ export interface EntityResponseDTO {
   id: string;
   stringField: string;
   intField: number;
-  enumField: string;
+  enumField: Letters;
   stringArrayField: string[];
   boolField: boolean;
   fileName: string;
