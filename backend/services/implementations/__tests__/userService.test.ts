@@ -1,24 +1,19 @@
-import { snakeCase } from "lodash";
-
-import User from "../../../models/user.model";
+import { PrismaClient, Role } from "@prisma/client";
 import UserService from "../userService";
-
 import { UserDTO } from "../../../types";
-
-import { testSql } from "../../../testUtils/testDb";
 
 const testUsers = [
   {
     firstName: "Peter",
     lastName: "Pan",
     authId: "123",
-    role: "Admin",
+    role: Role.Admin,
   },
   {
     firstName: "Wendy",
     lastName: "Darling",
     authId: "321",
-    role: "User",
+    role: Role.User,
   },
 ];
 
@@ -31,27 +26,26 @@ jest.mock("firebase-admin", () => {
 
 describe("pg userService", () => {
   let userService: UserService;
+  const dbString = process.env.DATABASE_URL;
+  let prisma: PrismaClient;
+
+  beforeAll(async () => {
+    process.env.DATABASE_URL = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.POSTGRES_DB_TEST}`;
+    prisma = new PrismaClient();
+    migrate("up");
+  });
 
   beforeEach(async () => {
-    await testSql.sync({ force: true });
     userService = new UserService();
+    prisma.user.deleteMany({});
   });
 
   afterAll(async () => {
-    await testSql.sync({ force: true });
-    await testSql.close();
+    process.env.DATABASE_URL = dbString;
   });
 
   it("getUsers", async () => {
-    const users = testUsers.map((user) => {
-      const userSnakeCase: Record<string, string> = {};
-      Object.entries(user).forEach(([key, value]) => {
-        userSnakeCase[snakeCase(key)] = value;
-      });
-      return userSnakeCase;
-    });
-
-    await User.bulkCreate(users);
+    await prisma.user.createMany({ data: testUsers });
 
     const res = await userService.getUsers();
 
