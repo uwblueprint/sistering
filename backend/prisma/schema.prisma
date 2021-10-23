@@ -20,11 +20,11 @@ model Entity {
 }
 
 model User {
-  id        Int    @id @default(autoincrement())
-  firstName String @map("first_name")
-  lastName  String @map("last_name")
-  authId    String @unique @map("auth_id")
-  role      Role
+  id             Int            @id @default(autoincrement())
+  firstName      String         @map("first_name")
+  lastName       String         @map("last_name")
+  authId         String         @unique @map("auth_id")
+  role           Role
 
   @@map("users")
 }
@@ -36,7 +36,178 @@ enum Letters {
   D
 }
 
+enum SignupStatus {
+  PENDING
+  CONFIRMED
+  CANCELED
+}
+
+enum PostingType {
+  INDIVIDUAL
+  GROUP
+}
+
 enum Role {
-  User
+  User 
   Admin
+}
+
+model Posting {
+  id                  Int                     @id @default(autoincrement())
+  branchId            Int                     @map("branch_id")
+  branch              Branch                  @relation(fields: [branchId], references: [id])
+  shifts              Shift[]
+  skills              PostingOnSkill[]
+  prerequisite        PostingOnPrerequisite[]
+  employee            PostingOnEmployeePoc[]
+  title               String
+  type                PostingType
+  purpose             String
+  responsibilitie     String
+  tasks               String
+  desiredQualitie     String                  @map("desired_qualities")
+  mandatoryActivities String                  @map("mandatory_activities")
+  benefits            String
+  workingConditions   String                  @map("working_conditions")
+  numVolunteers       Int                     @default(1) @map("num_volunteers")
+
+  @@map("postings")
+}
+
+model Skill {
+  id         Int                @id @default(autoincrement())
+  name       String
+  postings   PostingOnSkill[]
+  volunteers VolunteerOnSkill[]
+
+  @@map("skills")
+}
+
+model Prerequisite {
+  id         Int                       @id @default(autoincrement())
+  name       String
+  completed  Boolean
+  postings   PostingOnPrerequisite[]
+  volunteers VolunteerOnPrerequisite[]
+
+  @@map("prerequisites")
+}
+
+model Branch {
+  id         Int         @id @default(autoincrement())
+  posting    Posting[]
+  name       String
+  employees  Employee[]
+  volunteers Volunteer[]
+
+  @@map("branches")
+}
+
+model Shift {
+  id             Int       @id @default(autoincrement())
+  postingId      Int       @map("posting_id")
+  posting        Posting   @relation(fields: [postingId], references: [id])
+  startTime      DateTime  @map("start_time")
+  endTime        DateTime  @map("end_time")
+  repeatInterval Int?      @map("repeat_interval")
+  repeatEnd      DateTime? @map("repeat_end")
+  signups        Signup[]
+
+  @@map("shifts")
+}
+
+model Signup {
+  id            Int          @id @default(autoincrement())
+  shift         Shift        @relation(fields: [shiftId], references: [id])
+  shiftId       Int          @map("shifts_id")
+  userId        Int
+  status        SignupStatus
+  numVolunteers Int          @default(1) @map("num_volunteers")
+
+  @@map("signups")
+}
+
+model Availability {
+  id             Int       @id @default(autoincrement())
+  userId         Int
+  startTime      DateTime  @map("start_time")
+  endTime        DateTime  @map("end_time")
+  repeatInterval Int?      @map("repeat_interval")
+  repeatEnd      DateTime? @map("repeat_end")
+
+  @@map("availabilities")
+}
+
+model Volunteer {
+  id              Int                       @id @default(autoincrement())
+  userId          Int                       @unique
+  defaultBranchId Int                       @map("default_branch_id")
+  branch          Branch                    @relation(fields: [defaultBranchId], references: [id])
+  hireDate        DateTime                  @map("hire_date")
+  skills          VolunteerOnSkill[]
+  prerequisites   VolunteerOnPrerequisite[]
+  dateOfBirth     DateTime                  @map("date_of_birth")
+  pronouns        String
+
+  @@map("volunteers")
+}
+
+model Employee {
+  id       Int                    @id @default(autoincrement())
+  userId   Int                    @unique
+  branchId Int                    @map("branch_id")
+  branch   Branch                 @relation(fields: [branchId], references: [id])
+  postings PostingOnEmployeePoc[]
+
+  @@map("employees")
+}
+
+model PostingOnSkill {
+  posting   Posting @relation(fields: [postingId], references: [id])
+  postingId Int     @map("postings_id")
+  skill     Skill   @relation(fields: [skillId], references: [id])
+  skillId   Int     @map("skills_id")
+
+  @@id([postingId, skillId])
+  @@map("postings_on_skills")
+}
+
+model PostingOnPrerequisite {
+  posting        Posting      @relation(fields: [postingId], references: [id])
+  postingId      Int          @map("postings_id")
+  prerequisite   Prerequisite @relation(fields: [prerequisiteId], references: [id])
+  prerequisiteId Int          @map("prerequisites_id")
+
+  @@id([postingId, prerequisiteId])
+  @@map("postings_on_prerequisites")
+}
+
+model PostingOnEmployeePoc {
+  postingId  Int      @map("posting_id")
+  posting    Posting  @relation(fields: [postingId], references: [id])
+  employeeId Int      @map("employee_id")
+  employee   Employee @relation(fields: [employeeId], references: [id])
+
+  @@id([postingId, employeeId])
+  @@map("postings_on_employees_pocs")
+}
+
+model VolunteerOnSkill {
+  volunteer   Volunteer @relation(fields: [volunteerId], references: [id])
+  volunteerId Int       @map("volunteer_id")
+  skill       Skill     @relation(fields: [skillId], references: [id])
+  skillId     Int       @map("skills_id")
+
+  @@id([volunteerId, skillId])
+  @@map("volunteers_on_skills")
+}
+
+model VolunteerOnPrerequisite {
+  volunteer      Volunteer    @relation(fields: [volunteerId], references: [id])
+  volunteerId    Int          @map("volunteers_id")
+  prerequisite   Prerequisite @relation(fields: [prerequisiteId], references: [id])
+  prerequisiteId Int          @map("prerequisites_id")
+
+  @@id([volunteerId, prerequisiteId])
+  @@map("volunteers_on_prerequisites")
 }
