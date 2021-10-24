@@ -1,6 +1,7 @@
 import { PrismaClient, Role } from "@prisma/client";
 import UserService from "../userService";
 import { UserDTO } from "../../../types";
+import shell from "shelljs";
 
 const testUsers = [
   {
@@ -32,11 +33,15 @@ describe("pg userService", () => {
   beforeAll(async () => {
     process.env.DATABASE_URL = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.POSTGRES_DB_TEST}`;
     prisma = new PrismaClient();
-    migrate("up");
+    shell.exec("npx prisma migrate deploy");
+    shell.exec("npx prisma generate");
   });
 
   beforeEach(async () => {
     userService = new UserService();
+  });
+
+  afterEach(async () => {
     prisma.user.deleteMany({});
   });
 
