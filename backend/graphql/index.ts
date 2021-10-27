@@ -13,6 +13,8 @@ import entityResolvers from "./resolvers/entityResolvers";
 import entityType from "./types/entityType";
 import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
+import prerequisiteResolvers from "./resolvers/prerequisiteResolvers";
+import prerequisiteType from "./types/prerequisiteType";
 
 const query = gql`
   type Query {
@@ -27,8 +29,8 @@ const mutation = gql`
 `;
 
 const executableSchema = makeExecutableSchema({
-  typeDefs: [query, mutation, authType, entityType, userType],
-  resolvers: merge(authResolvers, entityResolvers, userResolvers),
+  typeDefs: [query, mutation, authType, entityType, userType, prerequisiteType],
+  resolvers: merge(authResolvers, entityResolvers, userResolvers, prerequisiteResolvers),
 });
 
 const authorizedByAllRoles = () =>
@@ -42,6 +44,8 @@ const graphQLMiddlewares = {
     userById: authorizedByAdmin(),
     userByEmail: authorizedByAdmin(),
     users: authorizedByAdmin(),
+    prerequisite: authorizedByAdmin(),
+    prerequisites: authorizedByAdmin(),
   },
   Mutation: {
     createEntity: authorizedByAllRoles(),
@@ -53,6 +57,9 @@ const graphQLMiddlewares = {
     deleteUserByEmail: authorizedByAdmin(),
     logout: isAuthorizedByUserId("userId"),
     resetPassword: isAuthorizedByEmail("email"),
+    createPrerequisite: authorizedByAdmin(),
+    updatePrerequisite: authorizedByAdmin(),
+    deletePrerequisite: authorizedByAdmin(),
   },
 };
 
