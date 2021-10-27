@@ -20,11 +20,11 @@ model Entity {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  firstName      String         @map("first_name")
-  lastName       String         @map("last_name")
-  authId         String         @unique @map("auth_id")
-  role           Role
+  id        Int    @id @default(autoincrement())
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+  authId    String @unique @map("auth_id")
+  role      Role
 
   @@map("users")
 }
@@ -48,7 +48,7 @@ enum PostingType {
 }
 
 enum Role {
-  User 
+  User
   Admin
 }
 
@@ -84,11 +84,12 @@ model Skill {
 }
 
 model Prerequisite {
-  id         Int                       @id @default(autoincrement())
-  name       String
-  completed  Boolean
-  postings   PostingOnPrerequisite[]
-  volunteers VolunteerOnPrerequisite[]
+  id                        Int                       @id @default(autoincrement())
+  name                      String                    @unique
+  completed                 Boolean
+  postings                  PostingOnPrerequisite[]
+  volunteers                VolunteerOnPrerequisite[]
+  requiresAdminVerification Boolean                   @map("requires_admin_verification")
 
   @@map("prerequisites")
 }
