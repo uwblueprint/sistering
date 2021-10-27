@@ -62,8 +62,9 @@ class AuthService implements IAuthService {
           firstName: googleUser.firstName,
           lastName: googleUser.lastName,
           email: googleUser.email,
-          role: "User",
+          role: "VOLUNTEER", // TODO: revisit in the future with sistering flow in mind
           password: "",
+          phoneNumber: null,
         },
         googleUser.localId,
         "GOOGLE",
@@ -81,7 +82,7 @@ class AuthService implements IAuthService {
       const authId = await this.userService.getAuthIdById(userId);
 
       await firebaseAdmin.auth().revokeRefreshTokens(authId);
-    } catch (error) {
+    } catch (error: any) {
       const errorMessage = [
         "Failed to revoke refresh tokens of user with id",
         `${userId}.`,

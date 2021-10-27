@@ -4,6 +4,9 @@ import {
   SignUpMethod,
   UpdateUserDTO,
   UserDTO,
+  VolunteerUserResponseDTO,
+  UpdateVolunteerUserDTO,
+  CreateVolunteerUserDTO,
 } from "../../types";
 
 interface IUserService {
@@ -91,6 +94,68 @@ interface IUserService {
    * @throws Error if user deletion fails
    */
   deleteUserByEmail(email: string): Promise<void>;
+
+  /**
+   * Get VolunteerUser associated with id
+   * @param id VolunteerUser's id
+   * @returns a VolunteerUserResponseDTO with VolunteerUser's information
+   * @throws Error if VolunteerUser retrieval fails
+   */
+  getVolunteerUserById(userId: string): Promise<VolunteerUserResponseDTO>;
+
+  /**
+   * Get VolunteerUser associated with email
+   * @param email VolunteerUser's email
+   * @returns a VolunteerUserResponseDTO with VolunteerUser's information
+   * @throws Error if VolunteerUser retrieval fails
+   */
+  getVolunteerUserByEmail(email: string): Promise<VolunteerUserResponseDTO>;
+
+  /**
+   * Get all VolunteerUser information (possibly paginated in the future)
+   * @returns array of VolunteerUserResponseDTOs
+   * @throws Error if VolunteerUser retrieval fails
+   */
+  getVolunteerUsers(): Promise<VolunteerUserResponseDTO[]>;
+
+  /**
+   * Create a VolunteerUser, email verification configurable
+   * @param volunteerUser the VolunteerUser to be created
+   * @param authId the VolunteerUser's firebase auth id, optional
+   * @param signUpMethod the method VolunteerUser used to signup
+   * @returns a VolunteerUserResponseDTO with the created VolunteerUser's information
+   * @throws Error if VolunteerUser creation fails
+   */
+  createVolunteerUser(
+    volunteerUser: CreateVolunteerUserDTO,
+  ): Promise<VolunteerUserResponseDTO>;
+
+  /**
+   * Update a VolunteerUser.
+   * Note: the password cannot be updated using this method, use IAuthService.resetPassword instead
+   * @param userId user's id
+   * @param volunteerUser the VolunteerUser to be updated
+   * @returns a VolunteerUserResponseDTO with the updated user's information
+   * @throws Error if VolunteerUser update fails
+   */
+  updateVolunteerUserById(
+    userId: string,
+    volunteerUser: UpdateVolunteerUserDTO,
+  ): Promise<VolunteerUserResponseDTO>;
+
+  /**
+   * Delete a VolunteerUser by id
+   * @param userId user's userId
+   * @throws Error if VolunteerUser deletion fails
+   */
+  deleteVolunteerUserById(userId: string): Promise<string>;
+
+  /**
+   * Delete a VolunteerUser by email
+   * @param email user's email
+   * @throws Error if VolunteerUser deletion fails
+   */
+  deleteVolunteerUserByEmail(email: string): Promise<string>;
 }
 
 export default IUserService;
