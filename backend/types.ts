@@ -21,6 +21,17 @@ export type RegisterUserDTO = Omit<CreateUserDTO, "role">;
 
 export type AuthDTO = Token & UserDTO;
 
+export type PrerequisiteDTO = {
+  id: string;
+  name: string;
+  completed: boolean;
+  requiresAdminVerification: boolean;
+}
+
+export type PrerequisiteRequestDTO = Omit<PrerequisiteDTO, "id">;
+
+export type PrerequisiteResponseDTO =  PrerequisiteDTO;
+
 export type Letters = "A" | "B" | "C" | "D";
 
 export type NodemailerConfig = {
