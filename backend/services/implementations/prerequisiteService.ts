@@ -58,7 +58,7 @@ class PrerequisiteService implements IPrerequisiteService {
         data: {
           name: prerequisite.name,
           completed: prerequisite.completed,
-          requires_admin_verification: prerequisite.requiresAdminVerification,
+          requiresAdminVerification: prerequisite.requiresAdminVerification,
         },
       });
     } catch (error) {
@@ -89,7 +89,7 @@ class PrerequisiteService implements IPrerequisiteService {
         data: {
           name: prerequisite.name,
           completed: prerequisite.completed,
-          requires_admin_verification: prerequisite.requiresAdminVerification,
+          requiresAdminVerification: prerequisite.requiresAdminVerification,
         },
       });
 
