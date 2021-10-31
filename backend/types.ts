@@ -26,11 +26,11 @@ export type PrerequisiteDTO = {
   name: string;
   completed: boolean;
   requiresAdminVerification: boolean;
-}
+};
 
 export type PrerequisiteRequestDTO = Omit<PrerequisiteDTO, "id">;
 
-export type PrerequisiteResponseDTO =  PrerequisiteDTO;
+export type PrerequisiteResponseDTO = PrerequisiteDTO;
 
 export type Letters = "A" | "B" | "C" | "D";
 

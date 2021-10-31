@@ -21,12 +21,17 @@ const prerequisiteResolvers = {
       _parent: undefined,
       { prerequisite }: { prerequisite: PrerequisiteRequestDTO },
     ): Promise<PrerequisiteResponseDTO> => {
-      const newPrerequisite = await prerequisiteService.createPrerequisite(prerequisite);
+      const newPrerequisite = await prerequisiteService.createPrerequisite(
+        prerequisite,
+      );
       return newPrerequisite;
     },
     updatePrerequisite: async (
       _parent: undefined,
-      { id, prerequisite }: { id: string; prerequisite: PrerequisiteRequestDTO },
+      {
+        id,
+        prerequisite,
+      }: { id: string; prerequisite: PrerequisiteRequestDTO },
     ): Promise<PrerequisiteResponseDTO | null> => {
       return prerequisiteService.updatePrerequisite(id, prerequisite);
     },

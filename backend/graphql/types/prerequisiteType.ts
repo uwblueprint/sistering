@@ -1,7 +1,6 @@
 import { gql } from "apollo-server-express";
 
 const prerequisiteType = gql`
-
   type PrerequisiteResponseDTO {
     id: ID!
     name: String!
@@ -20,9 +19,14 @@ const prerequisiteType = gql`
     prerequisites: [PrerequisiteResponseDTO!]!
   }
 
-  extend type Mutation {    
-    createPrerequisite(prerequisite: PrerequisiteRequestDTO!): PrerequisiteResponseDTO!
-    updatePrerequisite(id: ID!, prerequisite: PrerequisiteRequestDTO!): PrerequisiteResponseDTO!
+  extend type Mutation {
+    createPrerequisite(
+      prerequisite: PrerequisiteRequestDTO!
+    ): PrerequisiteResponseDTO!
+    updatePrerequisite(
+      id: ID!
+      prerequisite: PrerequisiteRequestDTO!
+    ): PrerequisiteResponseDTO!
     deletePrerequisite(id: ID!): ID
   }
 `;

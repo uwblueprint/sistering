@@ -10,7 +10,9 @@ const Logger = logger(__filename);
 class PrerequisiteService implements IPrerequisiteService {
   /* eslint-disable class-methods-use-this */
 
-  async getPrerequisite(prerequisiteId: string): Promise<PrerequisiteResponseDTO> {
+  async getPrerequisite(
+    prerequisiteId: string,
+  ): Promise<PrerequisiteResponseDTO> {
     let prerequisite: Prerequisite | null;
 
     try {
@@ -51,7 +53,9 @@ class PrerequisiteService implements IPrerequisiteService {
     }
   }
 
-  async createPrerequisite(prerequisite: PrerequisiteRequestDTO): Promise<PrerequisiteResponseDTO> {
+  async createPrerequisite(
+    prerequisite: PrerequisiteRequestDTO,
+  ): Promise<PrerequisiteResponseDTO> {
     let newPrerequisite: Prerequisite | null;
     try {
       newPrerequisite = await prisma.prerequisite.create({
@@ -79,11 +83,6 @@ class PrerequisiteService implements IPrerequisiteService {
   ): Promise<PrerequisiteResponseDTO | null> {
     let updateResult: Prerequisite | null;
     try {
-      const currentPrerequisite = await prisma.prerequisite.findUnique({
-        where: {
-          id: Number(prerequisiteId),
-        },
-      });
       updateResult = await prisma.prerequisite.update({
         where: { id: Number(prerequisiteId) },
         data: {
@@ -113,9 +112,11 @@ class PrerequisiteService implements IPrerequisiteService {
       const prerequisiteToDelete = await prisma.prerequisite.findUnique({
         where: { id: Number(prerequisiteId) },
       });
-      const deleteResult: Prerequisite | null = await prisma.prerequisite.delete({
-        where: { id: Number(prerequisiteId) },
-      });
+      const deleteResult: Prerequisite | null = await prisma.prerequisite.delete(
+        {
+          where: { id: Number(prerequisiteId) },
+        },
+      );
 
       if (!prerequisiteToDelete || !deleteResult) {
         throw new Error(`Prerequisite id ${prerequisiteId} not found`);

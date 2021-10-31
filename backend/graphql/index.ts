@@ -30,7 +30,12 @@ const mutation = gql`
 
 const executableSchema = makeExecutableSchema({
   typeDefs: [query, mutation, authType, entityType, userType, prerequisiteType],
-  resolvers: merge(authResolvers, entityResolvers, userResolvers, prerequisiteResolvers),
+  resolvers: merge(
+    authResolvers,
+    entityResolvers,
+    userResolvers,
+    prerequisiteResolvers,
+  ),
 });
 
 const authorizedByAllRoles = () =>
