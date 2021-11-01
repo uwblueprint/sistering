@@ -1,5 +1,5 @@
 import { PrismaClient, Role } from "@prisma/client";
-import shell from "shelljs";
+
 import UserService from "../userService";
 import { UserDTO } from "../../../types";
 
@@ -26,25 +26,8 @@ jest.mock("firebase-admin", () => {
 });
 
 describe("pg userService", () => {
-  let userService: UserService;
-  let prisma: PrismaClient;
-
-  beforeAll(async () => {
-    const url = `postgresql://${process.env.POSTGRES_USER}:${process.env.POSTGRES_PASSWORD}@${process.env.DB_HOST}:5432/${process.env.POSTGRES_DB_TEST}`;
-    prisma = new PrismaClient({
-      datasources: {
-        db: {
-          url,
-        },
-      },
-    });
-    shell.exec("npx prisma migrate deploy");
-    shell.exec("npx prisma generate");
-  });
-
-  beforeEach(async () => {
-    userService = new UserService();
-  });
+  const userService = new UserService();
+  const prisma = new PrismaClient();
 
   afterEach(async () => {
     await prisma.user.deleteMany({});
