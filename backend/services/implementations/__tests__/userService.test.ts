@@ -1,24 +1,20 @@
-import { snakeCase } from "lodash";
+import { PrismaClient, Role } from "@prisma/client";
 
-import User from "../../../models/user.model";
 import UserService from "../userService";
-
 import { UserDTO } from "../../../types";
-
-import { testSql } from "../../../testUtils/testDb";
 
 const testUsers = [
   {
     firstName: "Peter",
     lastName: "Pan",
     authId: "123",
-    role: "Admin",
+    role: Role.Admin,
   },
   {
     firstName: "Wendy",
     lastName: "Darling",
     authId: "321",
-    role: "User",
+    role: Role.User,
   },
 ];
 
@@ -30,28 +26,15 @@ jest.mock("firebase-admin", () => {
 });
 
 describe("pg userService", () => {
-  let userService: UserService;
+  const userService = new UserService();
+  const prisma = new PrismaClient();
 
-  beforeEach(async () => {
-    await testSql.sync({ force: true });
-    userService = new UserService();
-  });
-
-  afterAll(async () => {
-    await testSql.sync({ force: true });
-    await testSql.close();
+  afterEach(async () => {
+    await prisma.user.deleteMany({});
   });
 
   it("getUsers", async () => {
-    const users = testUsers.map((user) => {
-      const userSnakeCase: Record<string, string> = {};
-      Object.entries(user).forEach(([key, value]) => {
-        userSnakeCase[snakeCase(key)] = value;
-      });
-      return userSnakeCase;
-    });
-
-    await User.bulkCreate(users);
+    await prisma.user.createMany({ data: testUsers });
 
     const res = await userService.getUsers();
 
