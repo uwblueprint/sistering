@@ -91,7 +91,6 @@ class PrerequisiteService implements IPrerequisiteService {
           requiresAdminVerification: prerequisite.requiresAdminVerification,
         },
       });
-
       if (!updateResult) {
         throw new Error(`Prerequisite id ${prerequisiteId} not found`);
       }
@@ -114,7 +113,6 @@ class PrerequisiteService implements IPrerequisiteService {
           where: { id: Number(prerequisiteId) },
         },
       );
-
     } catch (error) {
       Logger.error(`Failed to delete prerequisite. Reason = ${error.message}`);
       throw error;
