@@ -109,18 +109,12 @@ class PrerequisiteService implements IPrerequisiteService {
 
   async deletePrerequisite(prerequisiteId: string): Promise<void> {
     try {
-      const prerequisiteToDelete = await prisma.prerequisite.findUnique({
-        where: { id: Number(prerequisiteId) },
-      });
       const deleteResult: Prerequisite | null = await prisma.prerequisite.delete(
         {
           where: { id: Number(prerequisiteId) },
         },
       );
 
-      if (!prerequisiteToDelete || !deleteResult) {
-        throw new Error(`Prerequisite id ${prerequisiteId} not found`);
-      }
     } catch (error) {
       Logger.error(`Failed to delete prerequisite. Reason = ${error.message}`);
       throw error;
