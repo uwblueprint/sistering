@@ -40,8 +40,6 @@ class SkillService implements ISkillService {
       return skills.map((skill) => ({
         id: String(skill.id),
         name: skill.name,
-        completed: skill.completed,
-        requiresAdminVerification: skill.requiresAdminVerification,
       }));
     } catch (error) {
       Logger.error(`Failed to get skills. Reason = ${error.message}`);
