@@ -76,7 +76,7 @@ model Posting {
 
 model Skill {
   id         Int                @id @default(autoincrement())
-  name       String
+  name       String             @unique
   postings   PostingOnSkill[]
   volunteers VolunteerOnSkill[]
 
