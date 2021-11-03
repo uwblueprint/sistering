@@ -109,8 +109,6 @@ model Shift {
   posting        Posting   @relation(fields: [postingId], references: [id])
   startTime      DateTime  @map("start_time")
   endTime        DateTime  @map("end_time")
-  repeatInterval Int?      @map("repeat_interval")
-  repeatEnd      DateTime? @map("repeat_end")
   signups        Signup[]
 
   @@map("shifts")
