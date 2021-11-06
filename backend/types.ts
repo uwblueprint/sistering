@@ -34,8 +34,6 @@ export type PostingRequestDTO = Omit<PostingDTO, "id">;
 
 export type PostingResponseDTO = PostingDTO;
 
-//here
-
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
 
 export type UpdateUserDTO = Omit<UserDTO, "id">;

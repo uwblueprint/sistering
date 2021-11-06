@@ -1,50 +1,50 @@
-import { PrerequisiteRequestDTO, PrerequisiteResponseDTO } from "../../types";
+import { PostingRequestDTO, PostingResponseDTO } from "../../types";
 
-interface IPrerequisiteService {
+interface IPostingService {
   /**
-   * Get prerequisiteDTO associated with id
-   * @param id prerequisite's id
-   * @returns a prerequisiteDTO with prerequisite's information
-   * @throws Error if prerequisite retrieval fails
+   * Get postingDTO associated with id
+   * @param id posting's id
+   * @returns a postingDTO with posting's information
+   * @throws Error if posting retrieval fails
    */
-  getPrerequisite(prerequisiteId: string): Promise<PrerequisiteResponseDTO>;
+  getPosting(postingId: string): Promise<PostingResponseDTO>;
 
   /**
-   * Get all prerequisite information (possibly paginated in the future)
-   * @returns array of PrerequisiteDTOs
-   * @throws Error if prerequisite retrieval fails
+   * Get all posting information (possibly paginated in the future)
+   * @returns array of PostingDTOs
+   * @throws Error if posting retrieval fails
    */
-  getPrerequisites(): Promise<PrerequisiteResponseDTO[]>;
+  getPostings(): Promise<PostingResponseDTO[]>;
 
   /**
-   * Create a prerequisite
-   * @param prerequisite the prerequisite to be created
-   * @returns a PrerequisiteDTO with the created prerequisite's information
-   * @throws Error if prerequisite creation fails
+   * Create a posting
+   * @param posting the posting to be created
+   * @returns a PostingDTO with the created posting's information
+   * @throws Error if posting creation fails
    */
-  createPrerequisite(
-    prerequisite: PrerequisiteRequestDTO,
-  ): Promise<PrerequisiteResponseDTO>;
+  createPosting(
+    posting: PostingRequestDTO,
+  ): Promise<PostingResponseDTO>;
 
   /**
-   * Update a prerequisite.
+   * Update a posting.
    * Note: the password cannot be updated using this method, use IAuthService.resetPassword instead
-   * @param prerequisiteId prerequisite's id
-   * @param prerequisite the prerequisite to be updated
-   * @returns a PrerequisiteDTO with the updated prerequisite's information
-   * @throws Error if prerequisite update fails
+   * @param postingId posting's id
+   * @param posting the posting to be updated
+   * @returns a PostingDTO with the updated posting's information
+   * @throws Error if posting update fails
    */
-  updatePrerequisite(
-    prerequisiteId: string,
-    prerequisite: PrerequisiteRequestDTO,
-  ): Promise<PrerequisiteResponseDTO | null>;
+  updatePosting(
+    postingId: string,
+    posting: PostingRequestDTO,
+  ): Promise<PostingResponseDTO | null>;
 
   /**
-   * Delete a prerequisite by id
-   * @param prerequisiteId prerequisite's prerequisiteId
-   * @throws Error if prerequisite deletion fails
+   * Delete a posting by id
+   * @param postingId posting's postingId
+   * @throws Error if posting deletion fails
    */
-  deletePrerequisite(prerequisiteId: string): Promise<void>;
+  deletePosting(postingId: string): Promise<void>;
 }
 
-export default IPrerequisiteService;
+export default IPostingService;
