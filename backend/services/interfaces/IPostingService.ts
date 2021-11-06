@@ -22,9 +22,7 @@ interface IPostingService {
    * @returns a PostingDTO with the created posting's information
    * @throws Error if posting creation fails
    */
-  createPosting(
-    posting: PostingRequestDTO,
-  ): Promise<PostingResponseDTO>;
+  createPosting(posting: PostingRequestDTO): Promise<PostingResponseDTO>;
 
   /**
    * Update a posting.
