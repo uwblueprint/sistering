@@ -13,6 +13,8 @@ import entityResolvers from "./resolvers/entityResolvers";
 import entityType from "./types/entityType";
 import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
+import postingResolvers from "./resolvers/postingResolvers";
+import postingType from "./types/postingType";
 
 const query = gql`
   type Query {
@@ -27,8 +29,13 @@ const mutation = gql`
 `;
 
 const executableSchema = makeExecutableSchema({
-  typeDefs: [query, mutation, authType, entityType, userType],
-  resolvers: merge(authResolvers, entityResolvers, userResolvers),
+  typeDefs: [query, mutation, authType, entityType, userType, postingType],
+  resolvers: merge(
+    authResolvers,
+    entityResolvers,
+    userResolvers,
+    postingResolvers,
+  ),
 });
 
 const authorizedByAllRoles = () =>
@@ -42,6 +49,8 @@ const graphQLMiddlewares = {
     userById: authorizedByAdmin(),
     userByEmail: authorizedByAdmin(),
     users: authorizedByAdmin(),
+    posting: authorizedByAdmin(),
+    postings: authorizedByAdmin(),
   },
   Mutation: {
     createEntity: authorizedByAllRoles(),
@@ -53,6 +62,9 @@ const graphQLMiddlewares = {
     deleteUserByEmail: authorizedByAdmin(),
     logout: isAuthorizedByUserId("userId"),
     resetPassword: isAuthorizedByEmail("email"),
+    createPosting: authorizedByAdmin(),
+    updatePosting: authorizedByAdmin(),
+    deletePosting: authorizedByAdmin(),
   },
 };
 
