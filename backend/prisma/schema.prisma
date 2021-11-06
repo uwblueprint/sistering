@@ -167,6 +167,7 @@ model PostingOnSkill {
   @@map("postings_on_skills")
 }
 
+// TODO - do we delete this?? (https://app.zenhub.com/workspaces/sistering-614f8dad6afeb8001d428787/issues/uwblueprint/sistering/48)
 // model PostingOnPrerequisite {
 //   posting        Posting      @relation(fields: [postingId], references: [id])
 //   postingId      Int          @map("postings_id")
