@@ -15,10 +15,9 @@ export type UserDTO = {
 
 export type PostingDTO = {
   id: string;
-  // TODO: need BranchDTO
-  // branch: Branch;
-  // shifts: Shift[];
-  // skills: PostingOnSkill[];
+  branchId: string;
+  shifts: string[]; // ask Sherry
+  skills: string[];
   employee: string;
   title: string;
   type: PostingType;
@@ -31,7 +30,10 @@ export type PostingDTO = {
 
 export type PostingRequestDTO = Omit<PostingDTO, "id">;
 
-export type PostingResponseDTO = PostingDTO;
+export type PostingResponseDTO = Omit<PostingDTO, "branchId" | "skills"> & {
+  branchName: string;
+  skillNames: string[];
+};
 
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
 

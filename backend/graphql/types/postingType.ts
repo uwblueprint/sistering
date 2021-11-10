@@ -1,39 +1,45 @@
 import { gql } from "apollo-server-express";
 
 const postingType = gql`
-  type PostingResponseDTO {
+  enum PostingType {
+    INDIVIDUAL
+    GROUP
+  }
+
+  type PostingRequestDTO{
     id: ID!
-    # TODO: need BranchDTO
-    # branch: Branch;
-    # shifts: Shift[];
-    # skills: PostingOnSkill[];
-    employee: string;
-    title: string;
+    branchId: String;
+    shifts: [String];
+    skills: [String];
+    employee: String;
+    title: String;
     type: PostingType;
     description: string;
     startDate: Date;
     endDate: Date;
     autoClosingDate: Date;
-    numVolunteers: number;
+    numVolunteers: Int;
   }
-  input PostingRequestDTO {
-    # TODO: need BranchDTO
-    # branch: Branch;
-    # shifts: Shift[];
-    # skills: PostingOnSkill[];
-    employee: string;
-    title: string;
+
+  input PostingResponseDTO {
+    branchName: String;
+    shifts: [String];
+    skillNames: [String];
+    employee: String;
+    title: String;
     type: PostingType;
-    description: string;
+    description: String;
     startDate: Date;
     endDate: Date;
     autoClosingDate: Date;
-    numVolunteers: number;
+    numVolunteers: Int;
   }
+
   extend type Query {
     posting(id: ID!): PostingResponseDTO!
     postings: [PostingResponseDTO!]!
   }
+
   extend type Mutation {
     createPosting(posting: PostingRequestDTO!): PostingResponseDTO!
     updatePosting(id: ID!, posting: PostingRequestDTO!): PostingResponseDTO!

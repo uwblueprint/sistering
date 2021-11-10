@@ -1,4 +1,4 @@
-import { PrismaClient, Posting } from "@prisma/client";
+import { PrismaClient, Posting, Branch, Skill } from "@prisma/client";
 import IPostingService from "../interfaces/IPostingService";
 import { PostingRequestDTO, PostingResponseDTO } from "../../types";
 import logger from "../../utilities/logger";
@@ -7,11 +7,38 @@ const prisma = new PrismaClient();
 
 const Logger = logger(__filename);
 
+async function getPostingBranch(posting: Posting) {
+  const postingBranch = prisma.branch.findUnique({
+    where: {
+      id: Number(posting.branchId),
+    },
+  });
+
+  if (!postingBranch) {
+    throw new Error(`postingBranch ${posting.branchId} not found.`);
+  }
+  return postingBranch;
+}
+
+async function getPostingSkillNames(posting: Posting) {
+  const postingSkillNames = prisma.skill
+    .findMany()
+    .filter((skill: Skill) => posting.skills.includes(skill.id))
+    .map((skill: Skill) => skill.name);
+
+  if (!postingSkillNames) {
+    throw new Error(`posting skills ${posting.skills} not found.`);
+  }
+  return postingSkillNames;
+}
+
 class PostingService implements IPostingService {
   /* eslint-disable class-methods-use-this */
 
   async getPosting(postingId: string): Promise<PostingResponseDTO> {
     let posting: Posting | null;
+    let postingBranch: Branch | null;
+    let postingSkillNames: Array<string>;
 
     try {
       posting = await prisma.posting.findUnique({
@@ -23,6 +50,9 @@ class PostingService implements IPostingService {
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
       }
+
+      postingBranch = await getPostingBranch(posting);
+      postingSkillNames = await getPostingSkillNames(posting);
     } catch (error) {
       Logger.error(`Failed to get posting. Reason = ${error.message}`);
       throw error;
@@ -30,10 +60,9 @@ class PostingService implements IPostingService {
 
     return {
       id: String(posting.id),
-      // TODO: need BranchDTO
-      // branch: Branch;
-      // shifts: Shift[];
-      // skills: PostingOnSkill[];
+      branchName: postingBranch.name,
+      shifts: posting.shifts,
+      skillNames: postingSkillNames,
       employee: posting.employee,
       title: posting.title,
       type: posting.type,
@@ -48,22 +77,29 @@ class PostingService implements IPostingService {
   async getPostings(): Promise<PostingResponseDTO[]> {
     try {
       const postings: Array<Posting> = await prisma.posting.findMany();
-      return postings.map((posting) => ({
-        id: String(posting.id),
-        // TODO: need BranchDTO
-        // branch: Branch;
-        // shifts: Shift[];
-        // skills: PostingOnSkill[];
-        employee: posting.employee,
-        title: posting.title,
-        type: posting.type,
-        description: posting.description,
-        startDate: posting.startDate,
-        endDate: posting.endDate,
-        autoClosingDate: posting.autoClosingDate,
-        numVolunteers: posting.numVolunteers,
-        requiresAdminVerification: posting.requiresAdminVerification,
-      }));
+      return await Promise.all(
+        postings.map(async (posting) => {
+          const postingBranch: Branch | null = await getPostingBranch(posting);
+          const postingSkillNames: Array<string> = await getPostingSkillNames(
+            posting,
+          );
+
+          return {
+            id: String(posting.id),
+            branchName: postingBranch.name,
+            shifts: posting.shifts,
+            skillNames: postingSkillNames,
+            employee: posting.employee,
+            title: posting.title,
+            type: posting.type,
+            description: posting.description,
+            startDate: posting.startDate,
+            endDate: posting.endDate,
+            autoClosingDate: posting.autoClosingDate,
+            numVolunteers: posting.numVolunteers,
+          };
+        }),
+      );
     } catch (error) {
       Logger.error(`Failed to get postings. Reason = ${error.message}`);
       throw error;
@@ -95,10 +131,9 @@ class PostingService implements IPostingService {
     }
     return {
       id: String(newPosting.id),
-      // TODO: need BranchDTO
-      // branch: Branch;
-      // shifts: Shift[];
-      // skills: PostingOnSkill[];
+      branchName: String(posting.branchId),
+      shifts: posting.shifts,
+      skillNames: posting.skills,
       employee: posting.employee,
       title: posting.title,
       type: posting.type,
@@ -148,10 +183,9 @@ class PostingService implements IPostingService {
     }
     return {
       id: String(updateResult.id),
-      // TODO: need BranchDTO
-      // branch: Branch;
-      // shifts: Shift[];
-      // skills: PostingOnSkill[];
+      branchName: String(posting.branchId),
+      shifts: posting.shifts,
+      skillNames: posting.skills,
       employee: posting.employee,
       title: posting.title,
       type: posting.type,
