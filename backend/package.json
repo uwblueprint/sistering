@@ -5,7 +5,7 @@
   "main": "server.ts",
   "scripts": {
     "test": "dotenv -e prisma/.env.test -- jest --runInBand --forceExit --detectOpenHandles",
-    "dev": "nodemon -L",
+    "dev": "npx prisma generate && nodemon -L",
     "lint": "eslint . --ext .ts,.js",
     "fix": "eslint . --ext .ts,.js --fix"
   },
