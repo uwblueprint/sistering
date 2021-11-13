@@ -16,15 +16,14 @@ export type UserDTO = {
 export type PostingDTO = {
   id: string;
   branchId: string;
-  shifts: string[]; // ask Sherry
   skills: string[];
   employee: string;
   title: string;
   type: PostingType;
   description: string;
-  startDate: Date;
-  endDate: Date;
-  autoClosingDate: Date;
+  startDate: string;
+  endDate: string;
+  autoClosingDate: string;
   numVolunteers: number;
 };
 
@@ -33,7 +32,10 @@ export type PostingRequestDTO = Omit<PostingDTO, "id">;
 export type PostingResponseDTO = Omit<PostingDTO, "branchId" | "skills"> & {
   branchName: string;
   skillNames: string[];
+  shifts: ShiftDTO[]; // shift object in response
 };
+
+export type ShiftDTO = { _: null };
 
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
 

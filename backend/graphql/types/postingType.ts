@@ -9,15 +9,14 @@ const postingType = gql`
   type PostingRequestDTO{
     id: ID!
     branchId: String;
-    shifts: [String];
     skills: [String];
     employee: String;
     title: String;
     type: PostingType;
     description: string;
-    startDate: Date;
-    endDate: Date;
-    autoClosingDate: Date;
+    startDate: String;
+    endDate: String;
+    autoClosingDate: String;
     numVolunteers: Int;
   }
 
@@ -29,9 +28,9 @@ const postingType = gql`
     title: String;
     type: PostingType;
     description: String;
-    startDate: Date;
-    endDate: Date;
-    autoClosingDate: Date;
+    startDate: String;
+    endDate: String;
+    autoClosingDate: String;
     numVolunteers: Int;
   }
 
