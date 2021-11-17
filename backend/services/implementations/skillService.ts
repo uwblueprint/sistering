@@ -50,6 +50,11 @@ class SkillService implements ISkillService {
   async createSkill(skill: SkillRequestDTO): Promise<SkillResponseDTO> {
     let newSkill: Skill | null;
     try {
+      if (!skill.name || skill.name.trim() === "") {
+        throw new Error(
+          "Failed to create skill. Reason = Skill name is required.",
+        );
+      }
       newSkill = await prisma.skill.create({
         data: {
           name: skill.name,
@@ -71,6 +76,11 @@ class SkillService implements ISkillService {
   ): Promise<SkillResponseDTO | null> {
     let updateResult: Skill | null;
     try {
+      if (!skill.name || skill.name.trim() === "") {
+        throw new Error(
+          "Failed to create skill. Reason = Skill name is required.",
+        );
+      }
       await prisma.skill.findUnique({
         where: {
           id: Number(skillId),

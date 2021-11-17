@@ -26,7 +26,6 @@ interface ISkillService {
 
   /**
    * Update a skill.
-   * Note: the password cannot be updated using this method, use IAuthService.resetPassword instead
    * @param skillId skill's id
    * @param skill the skill to be updated
    * @returns a SkillDTO with the updated skill's information
