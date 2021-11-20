@@ -21,6 +21,38 @@ export type RegisterUserDTO = Omit<CreateUserDTO, "role">;
 
 export type AuthDTO = Token & UserDTO;
 
+export type TimeBlock = {
+  startTime: Date;
+  endTime: Date;
+};
+
+export type TimeBlockDTO = {
+  date: string;
+  startTime: string;
+  endTime: string;
+};
+
+export type RecurrenceInterval = "Weekly" | "Biweekly" | "Monthly" | "None";
+
+export type ShiftDTO = {
+  id: string;
+  postingId: string;
+  startTime: Date;
+  endTime: Date;
+  // TODO: Add signups DTO
+};
+
+export type ShiftRequestDTO = Omit<ShiftDTO, "id">;
+
+export type BulkShiftRequestDTO = {
+  postingId: string;
+  times: TimeBlockDTO[];
+  endDate: string;
+  recurrenceInterval: RecurrenceInterval;
+};
+
+export type ShiftResponseDTO = ShiftDTO;
+
 export type Letters = "A" | "B" | "C" | "D";
 
 export type NodemailerConfig = {
