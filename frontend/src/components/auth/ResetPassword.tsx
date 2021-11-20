@@ -19,7 +19,11 @@ const ResetPassword = (): React.ReactElement => {
   );
 
   const onResetPasswordClick = async () => {
-    await resetPassword({ variables: { email } });
+    try {
+      await resetPassword({ variables: { email } });
+    } catch (e) {
+      alert('invalid email');
+    }
   };
 
   const onBackToLoginClick = () => {
