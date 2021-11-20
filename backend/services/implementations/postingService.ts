@@ -8,7 +8,7 @@ const prisma = new PrismaClient();
 const Logger = logger(__filename);
 
 async function getPostingBranchName(posting: Posting) {
-  const postingBranch = prisma.branch.findUnique({
+  const postingBranch: Branch | null = await prisma.branch.findUnique({
     where: {
       id: Number(posting.branchId),
     },
@@ -21,10 +21,18 @@ async function getPostingBranchName(posting: Posting) {
 }
 
 async function getPostingSkillNames(posting: Posting) {
-  const postingSkillNames = prisma.skill
-    .findMany()
-    .filter((skill: Skill) => posting.skills.includes(skill.id))
-    .map((skill: Skill) => skill.name);
+  const postingSkillNames: string[] = posting.skills.map(
+    (skill: Skill) => skill.name,
+  );
+  // const postingSkillNames:
+  //   | string[]
+  //   | null = await prisma.skill
+  //   .findMany()
+  //   .then((skills: Skill[]) =>
+  //     skills
+  //       .filter((skill: Skill) => posting.skills.includes(skill.id))
+  //       .map((skill: Skill) => skill.name),
+  //   );
 
   if (!postingSkillNames) {
     throw new Error(`posting skills ${posting.skills} not found.`);
@@ -33,7 +41,7 @@ async function getPostingSkillNames(posting: Posting) {
 }
 
 function validateDate(date: string) {
-  const d = new Date(date);
+  const d = new Date(date); // date: YYYY-MM-DD
   const e = d.toISOString(); // d.toISOString() should error if d is invalid date
   return true;
 }
@@ -58,6 +66,13 @@ class PostingService implements IPostingService {
       posting = await prisma.posting.findUnique({
         where: {
           id: Number(postingId),
+        },
+        include: {
+          skills: {
+            include: {
+              skill: true,
+            },
+          },
         },
       });
 
@@ -90,7 +105,11 @@ class PostingService implements IPostingService {
 
   async getPostings(): Promise<PostingResponseDTO[]> {
     try {
-      const postings: Array<Posting> = await prisma.posting.findMany();
+      const postings: Array<Posting> = await prisma.posting.findMany({
+        include: {
+          skills: true,
+        },
+      });
       return await Promise.all(
         postings.map(async (posting) => {
           const postingBranchName: string = await getPostingBranchName(posting);
@@ -131,7 +150,7 @@ class PostingService implements IPostingService {
 
       newPosting = await prisma.posting.create({
         data: {
-          branchId: posting.branchId,
+          branchId: Number(posting.branchId),
           skills: posting.skills,
           employee: posting.employee,
           title: posting.title,
@@ -141,6 +160,9 @@ class PostingService implements IPostingService {
           endDate: new Date(posting.endDate),
           autoClosingDate: new Date(posting.autoClosingDate),
           numVolunteers: posting.numVolunteers,
+        },
+        include: {
+          skills: true,
         },
       });
 
@@ -177,11 +199,6 @@ class PostingService implements IPostingService {
     try {
       validatePostingDates(posting);
 
-      await prisma.posting.findUnique({
-        where: {
-          id: Number(postingId),
-        },
-      });
       updateResult = await prisma.posting.update({
         where: { id: Number(postingId) },
         data: {
@@ -196,14 +213,17 @@ class PostingService implements IPostingService {
           autoClosingDate: new Date(posting.autoClosingDate),
           numVolunteers: posting.numVolunteers,
         },
+        include: {
+          skills: true,
+        },
       });
 
       if (!updateResult) {
         throw new Error(`Posting id ${postingId} not found`);
       }
 
-      postingBranchName = await getPostingBranchName(posting);
-      postingSkillNames = await getPostingSkillNames(posting);
+      postingBranchName = await getPostingBranchName(updateResult);
+      postingSkillNames = await getPostingSkillNames(updateResult);
     } catch (error) {
       Logger.error(`Failed to update posting. Reason = ${error.message}`);
       throw error;
