@@ -22,13 +22,13 @@ const ResetPassword = (): React.ReactElement => {
     try {
       await resetPassword({ variables: { email } });
     } catch (e) {
-      alert('invalid email');
+      alert("invalid email");
     }
   };
 
   const onBackToLoginClick = () => {
-    history.push(LOGIN_PAGE)
-  }
+    history.push(LOGIN_PAGE);
+  };
 
   return (
     <div style={{ textAlign: "center" }}>

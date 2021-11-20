@@ -8,7 +8,11 @@ import {
 import { gql, useMutation } from "@apollo/client";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import { RESET_PASSWORD_PAGE, HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import {
+  RESET_PASSWORD_PAGE,
+  HOME_PAGE,
+  SIGNUP_PAGE,
+} from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
@@ -66,7 +70,7 @@ const Login = (): React.ReactElement => {
 
   const onForgotPasswordClick = () => {
     history.push(RESET_PASSWORD_PAGE);
-  }
+  };
 
   const onGoogleLoginSuccess = async (idToken: string) => {
     const user: AuthenticatedUser = await authAPIClient.loginWithGoogle(
