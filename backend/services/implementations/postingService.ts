@@ -20,7 +20,8 @@ async function getPostingBranchName(posting: Posting) {
   return postingBranch.name;
 }
 
-async function getPostingSkillNames(posting: Posting) {
+//fix
+async function getPostingSkillNames(posting: any) { 
   const postingSkillNames: string[] = posting.skills.map(
     (skill: Skill) => skill.name,
   );
@@ -58,7 +59,7 @@ class PostingService implements IPostingService {
   /* eslint-disable class-methods-use-this */
 
   async getPosting(postingId: string): Promise<PostingResponseDTO> {
-    let posting: Posting | null;
+    let posting: any; //Posting | null;
     let postingBranchName: string;
     let postingSkillNames: Array<string>;
 
@@ -68,11 +69,8 @@ class PostingService implements IPostingService {
           id: Number(postingId),
         },
         include: {
-          skills: {
-            include: {
-              skill: true,
-            },
-          },
+          shifts: true,
+          skills: true
         },
       });
 
@@ -92,7 +90,7 @@ class PostingService implements IPostingService {
       branchName: postingBranchName,
       shifts: posting.shifts,
       skillNames: postingSkillNames,
-      employee: posting.employee,
+      employees: posting.employees,
       title: posting.title,
       type: posting.type,
       description: posting.description,
@@ -105,13 +103,14 @@ class PostingService implements IPostingService {
 
   async getPostings(): Promise<PostingResponseDTO[]> {
     try {
-      const postings: Array<Posting> = await prisma.posting.findMany({
+      const postings: any /*Array<Posting>*/ = await prisma.posting.findMany({
         include: {
-          skills: true,
+          shifts: true,
+          skills: true
         },
       });
       return await Promise.all(
-        postings.map(async (posting) => {
+        postings.map(async (posting: any) => {
           const postingBranchName: string = await getPostingBranchName(posting);
           const postingSkillNames: Array<string> = await getPostingSkillNames(
             posting,
@@ -122,7 +121,7 @@ class PostingService implements IPostingService {
             branchName: postingBranchName,
             shifts: posting.shifts,
             skillNames: postingSkillNames,
-            employee: posting.employee,
+            employees: posting.employees,
             title: posting.title,
             type: posting.type,
             description: posting.description,
@@ -142,7 +141,7 @@ class PostingService implements IPostingService {
   }
 
   async createPosting(posting: PostingRequestDTO): Promise<PostingResponseDTO> {
-    let newPosting: Posting | null;
+    let newPosting: any; //Posting | null;
     let postingBranchName: string;
     let postingSkillNames: Array<string>;
     try {
@@ -151,8 +150,16 @@ class PostingService implements IPostingService {
       newPosting = await prisma.posting.create({
         data: {
           branchId: Number(posting.branchId),
-          skills: posting.skills,
-          employee: posting.employee,
+          // skills: {
+          //   connect: posting.skills.map((skillId: string) => {
+          //     return { id: Number(skillId) };
+          //   }),
+          // },
+          // employees: {
+          //   connect: posting.employees.map((employeeId: string) => {
+          //     return { id: Number(employeeId) };
+          //   }),
+          // },
           title: posting.title,
           type: posting.type,
           description: posting.description,
@@ -162,12 +169,14 @@ class PostingService implements IPostingService {
           numVolunteers: posting.numVolunteers,
         },
         include: {
+          employees: true,
           skills: true,
+          shifts: true,
         },
       });
 
-      postingBranchName = await getPostingBranchName(posting);
-      postingSkillNames = await getPostingSkillNames(posting);
+      postingBranchName = await getPostingBranchName(newPosting);
+      postingSkillNames = await getPostingSkillNames(newPosting);
     } catch (error) {
       Logger.error(`Failed to create posting. Reason = ${error.message}`);
       throw error;
@@ -177,7 +186,7 @@ class PostingService implements IPostingService {
       branchName: postingBranchName,
       shifts: newPosting.shifts,
       skillNames: postingSkillNames,
-      employee: posting.employee,
+      employees: posting.employees,
       title: posting.title,
       type: posting.type,
       description: posting.description,
@@ -192,7 +201,7 @@ class PostingService implements IPostingService {
     postingId: string,
     posting: PostingRequestDTO,
   ): Promise<PostingResponseDTO | null> {
-    let updateResult: Posting | null;
+    let updateResult: any; //Posting | null;
     let postingBranchName: string;
     let postingSkillNames: Array<string>;
 
@@ -202,9 +211,17 @@ class PostingService implements IPostingService {
       updateResult = await prisma.posting.update({
         where: { id: Number(postingId) },
         data: {
-          branchId: posting.branchId,
-          skills: posting.skills,
-          employee: posting.employee,
+          branchId: Number(posting.branchId)!,
+          // skills: {
+          //   connect: posting.skills?.map((skillId: string) => {
+          //     return { id: Number(skillId) };
+          //   }),
+          // },
+          // employees: {
+          //   connect: posting.employees?.map((employeeId: string) => {
+          //     return { id: Number(employeeId) };
+          //   }),
+          // },
           title: posting.title,
           type: posting.type,
           description: posting.description,
@@ -214,6 +231,7 @@ class PostingService implements IPostingService {
           numVolunteers: posting.numVolunteers,
         },
         include: {
+          employees: true,
           skills: true,
         },
       });
@@ -233,7 +251,7 @@ class PostingService implements IPostingService {
       branchName: postingBranchName,
       shifts: updateResult.shifts,
       skillNames: postingSkillNames,
-      employee: posting.employee,
+      employees: posting.employees,
       title: posting.title,
       type: posting.type,
       description: posting.description,

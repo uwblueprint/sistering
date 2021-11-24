@@ -53,19 +53,19 @@ enum Role {
 }
 
 model Posting {
-  id              Int                    @id @default(autoincrement())
-  branchId        Int                    @map("branch_id")
-  branch          Branch                 @relation(fields: [branchId], references: [id])
+  id              Int         @id @default(autoincrement())
+  branchId        Int         @map("branch_id")
+  branch          Branch      @relation(fields: [branchId], references: [id])
   shifts          Shift[]
-  skills          PostingOnSkill[]
-  employee        PostingOnEmployeePoc[]
+  skills          Skill[]
+  employees       Employee[]
   title           String
   type            PostingType
   description     String
-  startDate       DateTime               @map("start_date")
-  endDate         DateTime               @map("end_date")
-  autoClosingDate DateTime               @map("auto_closing_date")
-  numVolunteers   Int                    @default(1) @map("num_volunteers")
+  startDate       DateTime    @map("start_date")
+  endDate         DateTime    @map("end_date")
+  autoClosingDate DateTime    @map("auto_closing_date")
+  numVolunteers   Int         @default(1) @map("num_volunteers")
 
   @@map("postings")
 }
@@ -73,7 +73,8 @@ model Posting {
 model Skill {
   id         Int                @id @default(autoincrement())
   name       String
-  postings   PostingOnSkill[]
+  //postings   PostingOnSkill[]
+  postings   Posting[]
   volunteers VolunteerOnSkill[]
 
   @@map("skills")
@@ -148,24 +149,24 @@ model Volunteer {
 }
 
 model Employee {
-  id       Int                    @id @default(autoincrement())
-  userId   Int                    @unique
-  branchId Int                    @map("branch_id")
-  branch   Branch                 @relation(fields: [branchId], references: [id])
-  postings PostingOnEmployeePoc[]
+  id       Int       @id @default(autoincrement())
+  userId   Int       @unique
+  branchId Int       @map("branch_id")
+  branch   Branch    @relation(fields: [branchId], references: [id])
+  postings Posting[]
 
   @@map("employees")
 }
 
-model PostingOnSkill {
-  posting   Posting @relation(fields: [postingId], references: [id])
-  postingId Int     @map("postings_id")
-  skill     Skill   @relation(fields: [skillId], references: [id])
-  skillId   Int     @map("skills_id")
+// model PostingOnSkill {
+//   posting   Posting @relation(fields: [postingId], references: [id])
+//   postingId Int     @map("postings_id")
+//   skill     Skill   @relation(fields: [skillId], references: [id])
+//   skillId   Int     @map("skills_id")
 
-  @@id([postingId, skillId])
-  @@map("postings_on_skills")
-}
+//   @@id([postingId, skillId])
+//   @@map("postings_on_skills")
+// }
 
 // TODO - do we delete this?? (https://app.zenhub.com/workspaces/sistering-614f8dad6afeb8001d428787/issues/uwblueprint/sistering/48)
 // model PostingOnPrerequisite {
@@ -178,15 +179,15 @@ model PostingOnSkill {
 //   @@map("postings_on_prerequisites")
 // }
 
-model PostingOnEmployeePoc {
-  postingId  Int      @map("posting_id")
-  posting    Posting  @relation(fields: [postingId], references: [id])
-  employeeId Int      @map("employee_id")
-  employee   Employee @relation(fields: [employeeId], references: [id])
+// model PostingOnEmployeePoc {
+//   postingId  Int      @map("posting_id")
+//   posting    Posting  @relation(fields: [postingId], references: [id])
+//   employeeId Int      @map("employee_id")
+//   employee   Employee @relation(fields: [employeeId], references: [id])
 
-  @@id([postingId, employeeId])
-  @@map("postings_on_employees_pocs")
-}
+//   @@id([postingId, employeeId])
+//   @@map("postings_on_employees_pocs")
+// }
 
 model VolunteerOnSkill {
   volunteer   Volunteer @relation(fields: [volunteerId], references: [id])

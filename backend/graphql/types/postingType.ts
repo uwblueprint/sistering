@@ -6,32 +6,32 @@ const postingType = gql`
     GROUP
   }
 
-  type PostingRequestDTO{
-    id: ID!
-    branchId: String;
-    skills: [String];
-    employee: String;
-    title: String;
-    type: PostingType;
-    description: string;
-    startDate: String;
-    endDate: String;
-    autoClosingDate: String;
-    numVolunteers: Int;
+  input PostingRequestDTO{
+    branchId: String!
+    skills: [String]!
+    employees: [String]!
+    title: String!
+    type: PostingType!
+    description: String!
+    startDate: String!
+    endDate: String!
+    autoClosingDate: String!
+    numVolunteers: Int!
   }
 
-  input PostingResponseDTO {
-    branchName: String;
-    shifts: [String];
-    skillNames: [String];
-    employee: String;
-    title: String;
-    type: PostingType;
-    description: String;
-    startDate: String;
-    endDate: String;
-    autoClosingDate: String;
-    numVolunteers: Int;
+  type PostingResponseDTO {
+    id: ID!
+    branchName: String!
+    shifts: [String]!
+    skillNames: [String]!
+    employees: [String]!
+    title: String!
+    type: PostingType!
+    description: String!
+    startDate: String!
+    endDate: String!
+    autoClosingDate: String!
+    numVolunteers: Int!
   }
 
   extend type Query {

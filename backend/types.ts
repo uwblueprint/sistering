@@ -17,7 +17,7 @@ export type PostingDTO = {
   id: string;
   branchId: string;
   skills: string[];
-  employee: string;
+  employees: string[];
   title: string;
   type: PostingType;
   description: string;
