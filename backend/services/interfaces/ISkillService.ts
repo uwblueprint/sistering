@@ -41,7 +41,7 @@ interface ISkillService {
    * @param skillId skill's skillId
    * @throws Error if skill deletion fails
    */
-  deleteSkill(skillId: string): Promise<void>;
+  deleteSkill(skillId: string): Promise<string>;
 }
 
 export default ISkillService;

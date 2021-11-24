@@ -33,7 +33,7 @@ const skillResolvers = {
     deleteSkill: async (
       _parent: undefined,
       { id }: { id: string },
-    ): Promise<void> => {
+    ): Promise<string> => {
       return skillService.deleteSkill(id);
     },
   },

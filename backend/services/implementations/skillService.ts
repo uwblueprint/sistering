@@ -81,21 +81,12 @@ class SkillService implements ISkillService {
           "Failed to create skill. Reason = Skill name is required.",
         );
       }
-      await prisma.skill.findUnique({
-        where: {
-          id: Number(skillId),
-        },
-      });
       updateResult = await prisma.skill.update({
         where: { id: Number(skillId) },
         data: {
           name: skill.name,
         },
       });
-
-      if (!updateResult) {
-        throw new Error(`Skill id ${skillId} not found`);
-      }
     } catch (error) {
       Logger.error(`Failed to update skill. Reason = ${error.message}`);
       throw error;
@@ -106,18 +97,12 @@ class SkillService implements ISkillService {
     };
   }
 
-  async deleteSkill(skillId: string): Promise<void> {
+  async deleteSkill(skillId: string): Promise<string> {
     try {
-      const skillToDelete = await prisma.skill.findUnique({
-        where: { id: Number(skillId) },
-      });
       const deleteResult: Skill | null = await prisma.skill.delete({
         where: { id: Number(skillId) },
       });
-
-      if (!skillToDelete || !deleteResult) {
-        throw new Error(`Skill id ${skillId} not found`);
-      }
+      return String(deleteResult.id);
     } catch (error) {
       Logger.error(`Failed to delete skill. Reason = ${error.message}`);
       throw error;
