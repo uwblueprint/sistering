@@ -21,6 +21,15 @@ export type RegisterUserDTO = Omit<CreateUserDTO, "role">;
 
 export type AuthDTO = Token & UserDTO;
 
+export type SkillDTO = {
+  id: string;
+  name: string;
+};
+
+export type SkillRequestDTO = Omit<SkillDTO, "id">;
+
+export type SkillResponseDTO = SkillDTO;
+
 export type Letters = "A" | "B" | "C" | "D";
 
 export type NodemailerConfig = {
