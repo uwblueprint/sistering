@@ -56,7 +56,7 @@ class ShiftService implements IShiftService {
         latestDate = moment(tb.date, "YYYY-MM-DD");
     });
 
-    if (moment.duration(earliestDate.diff(latestDate)).asDays() > 7)
+    if (moment.duration(latestDate.diff(earliestDate)).asDays() >= 7)
       return false;
 
     return true;
@@ -146,28 +146,29 @@ class ShiftService implements IShiftService {
 
       console.log(shiftTimes);
 
-      shiftTimes.forEach(async (shiftTime: TimeBlock) => {
-        newShifts.push(
-          await prisma.shift.create({
+      await Promise.all(
+        shiftTimes.map(async (shiftTime: TimeBlock) => {
+          const newShift = await prisma.shift.create({
             data: {
               postingId: Number(shifts.postingId),
               startTime: shiftTime.startTime,
               endTime: shiftTime.endTime,
             },
-          }),
-        );
-      });
+          });
+          newShifts.push(newShift);
+        }),
+      );
+
+      return newShifts.map((shift) => ({
+        id: String(shift.id),
+        postingId: String(shift.postingId),
+        startTime: shift.startTime,
+        endTime: shift.endTime,
+      }));
     } catch (error) {
       Logger.error(`Failed to create shift. Reason = ${error.message}`);
       throw error;
     }
-
-    return newShifts.map((shift) => ({
-      id: String(shift.id),
-      postingId: String(shift.postingId),
-      startTime: shift.startTime,
-      endTime: shift.endTime,
-    }));
   }
 
   async updateShift(
