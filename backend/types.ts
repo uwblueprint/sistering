@@ -32,7 +32,7 @@ export type TimeBlockDTO = {
   endTime: string;
 };
 
-export type RecurrenceInterval = "Weekly" | "Biweekly" | "Monthly" | "None";
+export type RecurrenceInterval = "WEEKLY" | "BIWEEKLY" | "MONTHLY" | "NONE";
 
 export type ShiftDTO = {
   id: string;

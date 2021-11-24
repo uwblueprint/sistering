@@ -19,13 +19,13 @@ class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
   getDuration(recurrence: RecurrenceInterval): DurationArgs {
     switch (recurrence) {
-      case "None":
+      case "NONE":
         return { unit: "day", value: 1 };
-      case "Weekly":
+      case "WEEKLY":
         return { unit: "week", value: 1 };
-      case "Biweekly":
+      case "BIWEEKLY":
         return { unit: "week", value: 2 };
-      case "Monthly":
+      case "MONTHLY":
         return { unit: "month", value: 1 };
       default:
         return { unit: "day", value: -1 };
@@ -127,19 +127,24 @@ class ShiftService implements IShiftService {
       if (!this.validateTimeBlocks(shifts.times))
         throw new Error("Invalid time blocks");
 
+      // TODO: Check that postingId is valid
+
       for (let i = 0; i < startTimes.length; i += 1) {
+        let end = endTimes[i];
         for (
           let start = startTimes[i].clone();
           start < endDate;
           start.add(duration.value, duration.unit)
         ) {
-          const end = endTimes[i].clone().add(duration.value, duration.unit);
           shiftTimes.push({
             startTime: start.toDate(),
             endTime: end.toDate(),
           });
+          end = end.add(duration.value, duration.unit);
         }
       }
+
+      console.log(shiftTimes);
 
       shiftTimes.forEach(async (shiftTime: TimeBlock) => {
         newShifts.push(

@@ -13,8 +13,11 @@ import entityResolvers from "./resolvers/entityResolvers";
 import entityType from "./types/entityType";
 import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
+import shiftResolvers from "./resolvers/shiftResolvers";
+import shiftType from "./types/shiftType";
 
 const query = gql`
+  scalar Date
   type Query {
     _empty: String
   }
@@ -27,8 +30,13 @@ const mutation = gql`
 `;
 
 const executableSchema = makeExecutableSchema({
-  typeDefs: [query, mutation, authType, entityType, userType],
-  resolvers: merge(authResolvers, entityResolvers, userResolvers),
+  typeDefs: [query, mutation, authType, entityType, userType, shiftType],
+  resolvers: merge(
+    authResolvers,
+    entityResolvers,
+    userResolvers,
+    shiftResolvers,
+  ),
 });
 
 const authorizedByAllRoles = () =>
@@ -42,6 +50,8 @@ const graphQLMiddlewares = {
     userById: authorizedByAdmin(),
     userByEmail: authorizedByAdmin(),
     users: authorizedByAdmin(),
+    shift: authorizedByAdmin(),
+    shifts: authorizedByAdmin(),
   },
   Mutation: {
     createEntity: authorizedByAllRoles(),
@@ -53,6 +63,11 @@ const graphQLMiddlewares = {
     deleteUserByEmail: authorizedByAdmin(),
     logout: isAuthorizedByUserId("userId"),
     resetPassword: isAuthorizedByEmail("email"),
+    createShifts: authorizedByAdmin(),
+    updateShift: authorizedByAdmin(),
+    updateShifts: authorizedByAdmin(),
+    deleteShift: authorizedByAdmin(),
+    deleteShifts: authorizedByAdmin(),
   },
 };
 
