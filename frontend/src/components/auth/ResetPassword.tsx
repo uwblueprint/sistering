@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router-dom";
 
-import { LOGIN_PAGE } from "../../constants/Routes";
+import { DONE_RESET_PASSWORD_PAGE } from "../../constants/Routes";
 
 const RESET_PASSWORD = gql`
   mutation ResetPassword($email: String!) {
@@ -21,13 +21,10 @@ const ResetPassword = (): React.ReactElement => {
   const onResetPasswordClick = async () => {
     try {
       await resetPassword({ variables: { email } });
+      history.push(DONE_RESET_PASSWORD_PAGE);
     } catch (e) {
       alert("invalid email");
     }
-  };
-
-  const onBackToLoginClick = () => {
-    history.push(LOGIN_PAGE);
   };
 
   return (
@@ -48,15 +45,6 @@ const ResetPassword = (): React.ReactElement => {
           onClick={onResetPasswordClick}
         >
           Reset Password
-        </button>
-      </div>
-      <div>
-        <button
-          className="btn btn-primary"
-          type="button"
-          onClick={onBackToLoginClick}
-        >
-          Back to Login
         </button>
       </div>
     </div>
