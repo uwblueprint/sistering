@@ -8,7 +8,11 @@ import {
 import { gql, useMutation } from "@apollo/client";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import { HOME_PAGE, SIGNUP_PAGE } from "../../constants/Routes";
+import {
+  RESET_PASSWORD_PAGE,
+  HOME_PAGE,
+  SIGNUP_PAGE,
+} from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
@@ -62,6 +66,10 @@ const Login = (): React.ReactElement => {
 
   const onSignUpClick = () => {
     history.push(SIGNUP_PAGE);
+  };
+
+  const onForgotPasswordClick = () => {
+    history.push(RESET_PASSWORD_PAGE);
   };
 
   const onGoogleLoginSuccess = async (idToken: string) => {
@@ -120,6 +128,15 @@ const Login = (): React.ReactElement => {
           onFailure={(error) => window.alert(error)}
         />
       </form>
+      <div>
+        <button
+          className="btn btn-primary"
+          type="button"
+          onClick={onForgotPasswordClick}
+        >
+          Forgot Password
+        </button>
+      </div>
       <div>
         <button
           className="btn btn-primary"
