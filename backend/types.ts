@@ -52,6 +52,15 @@ export type ShiftBulkRequestDTO = {
 
 export type ShiftResponseDTO = ShiftDTO;
 
+export type SkillDTO = {
+  id: string;
+  name: string;
+};
+
+export type SkillRequestDTO = Omit<SkillDTO, "id">;
+
+export type SkillResponseDTO = SkillDTO;
+
 export type Letters = "A" | "B" | "C" | "D";
 
 export type NodemailerConfig = {

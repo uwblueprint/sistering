@@ -15,6 +15,8 @@ import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
 import shiftResolvers from "./resolvers/shiftResolvers";
 import shiftType from "./types/shiftType";
+import skillResolvers from "./resolvers/skillResolvers";
+import skillType from "./types/skillType";
 
 const query = gql`
   scalar Date
@@ -30,12 +32,21 @@ const mutation = gql`
 `;
 
 const executableSchema = makeExecutableSchema({
-  typeDefs: [query, mutation, authType, entityType, userType, shiftType],
+  typeDefs: [
+    query,
+    mutation,
+    authType,
+    entityType,
+    userType,
+    shiftType,
+    skillType,
+  ],
   resolvers: merge(
     authResolvers,
     entityResolvers,
     userResolvers,
     shiftResolvers,
+    skillResolvers,
   ),
 });
 
@@ -52,6 +63,8 @@ const graphQLMiddlewares = {
     users: authorizedByAdmin(),
     shift: authorizedByAdmin(),
     shifts: authorizedByAdmin(),
+    skill: authorizedByAdmin(),
+    skills: authorizedByAdmin(),
   },
   Mutation: {
     createEntity: authorizedByAllRoles(),
@@ -68,6 +81,9 @@ const graphQLMiddlewares = {
     updateShifts: authorizedByAdmin(),
     deleteShift: authorizedByAdmin(),
     deleteShifts: authorizedByAdmin(),
+    createSkill: authorizedByAdmin(),
+    updateSkill: authorizedByAdmin(),
+    deleteSkill: authorizedByAdmin(),
   },
 };
 
