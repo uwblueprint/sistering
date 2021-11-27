@@ -1,7 +1,7 @@
 import ShiftService from "../../services/implementations/shiftService";
 import IShiftService from "../../services/interfaces/IShiftService";
 import {
-  BulkShiftRequestDTO,
+  ShiftBulkRequestDTO,
   ShiftRequestDTO,
   ShiftResponseDTO,
 } from "../../types";
@@ -23,7 +23,7 @@ const shiftResolvers = {
   Mutation: {
     createShifts: async (
       _parent: undefined,
-      { shifts }: { shifts: BulkShiftRequestDTO },
+      { shifts }: { shifts: ShiftBulkRequestDTO },
     ): Promise<ShiftResponseDTO[]> => {
       const newShifts = await shiftService.createShifts(shifts);
       return newShifts;
@@ -36,7 +36,7 @@ const shiftResolvers = {
     },
     updateShifts: async (
       _parent: undefined,
-      { id, shifts }: { id: string; shifts: BulkShiftRequestDTO },
+      { id, shifts }: { id: string; shifts: ShiftBulkRequestDTO },
     ): Promise<ShiftResponseDTO[] | null> => {
       return shiftService.updateShifts(id, shifts);
     },

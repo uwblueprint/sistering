@@ -39,12 +39,11 @@ export type ShiftDTO = {
   postingId: string;
   startTime: Date;
   endTime: Date;
-  // TODO: Add signups DTO
 };
 
-export type ShiftRequestDTO = Omit<ShiftDTO, "id">;
+export type ShiftRequestDTO = Omit<ShiftDTO, "id" | "postingId">;
 
-export type BulkShiftRequestDTO = {
+export type ShiftBulkRequestDTO = {
   postingId: string;
   times: TimeBlockDTO[];
   endDate: string;

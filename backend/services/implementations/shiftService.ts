@@ -2,8 +2,8 @@ import moment, { Moment } from "moment";
 import { PrismaClient, Shift } from "@prisma/client";
 import IShiftService, { DurationArgs } from "../interfaces/IShiftService";
 import {
-  BulkShiftRequestDTO,
   RecurrenceInterval,
+  ShiftBulkRequestDTO,
   ShiftRequestDTO,
   ShiftResponseDTO,
   TimeBlock,
@@ -19,16 +19,15 @@ class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
   getDuration(recurrence: RecurrenceInterval): DurationArgs {
     switch (recurrence) {
-      case "NONE":
+      case "NONE": // No recurrence
         return { unit: "day", value: 1 };
-      case "WEEKLY":
+      case "WEEKLY": // Weekly
         return { unit: "week", value: 1 };
-      case "BIWEEKLY":
+      case "BIWEEKLY": // Biweekly
         return { unit: "week", value: 2 };
-      case "MONTHLY":
-        return { unit: "month", value: 1 };
       default:
-        return { unit: "day", value: -1 };
+        // Monthly
+        return { unit: "month", value: 1 };
     }
   }
 
@@ -103,8 +102,40 @@ class ShiftService implements IShiftService {
     }
   }
 
-  async createShifts(shifts: BulkShiftRequestDTO): Promise<ShiftResponseDTO[]> {
-    const newShifts: Shift[] = [];
+  async createShift(
+    shift: ShiftRequestDTO,
+    postingId: number,
+  ): Promise<ShiftResponseDTO> {
+    return prisma.$transaction(async (prismaClient) => {
+      const shifts = await prismaClient.shift.findMany();
+      for (let i = 0; i < shifts.length; i += 1) {
+        if (
+          moment(shifts[i].startTime).isSame(shift.startTime, "minute") &&
+          moment(shifts[i].endTime).isSame(shift.endTime, "minute")
+        ) {
+          throw new Error(
+            `Shift already exists with start time ${shifts[i].startTime} and end time ${shifts[i].endTime}`,
+          );
+        }
+      }
+      const newShift = await prismaClient.shift.create({
+        data: {
+          postingId,
+          startTime: shift.startTime,
+          endTime: shift.endTime,
+        },
+      });
+      return {
+        id: String(newShift.id),
+        postingId: String(newShift.postingId),
+        startTime: newShift.startTime,
+        endTime: newShift.endTime,
+      };
+    });
+  }
+
+  async createShifts(shifts: ShiftBulkRequestDTO): Promise<ShiftResponseDTO[]> {
+    const newShifts: ShiftResponseDTO[] = [];
 
     try {
       const shiftTimes: TimeBlock[] = [];
@@ -119,16 +150,26 @@ class ShiftService implements IShiftService {
         "day",
       );
 
+      // Get moment's duration function args using recurrence
       const duration: DurationArgs = this.getDuration(
         shifts.recurrenceInterval,
       );
-      if (duration.value === -1) throw new Error("Invalid recurrence interval");
 
+      // Check that input times are valid
       if (!this.validateTimeBlocks(shifts.times))
         throw new Error("Invalid time blocks");
 
-      // TODO: Check that postingId is valid
+      // Validate postingId
+      const posting = await prisma.posting.findUnique({
+        where: {
+          id: Number(shifts.postingId),
+        },
+      });
+      if (!posting) {
+        throw new Error(`Posting ${shifts.postingId} not found.`);
+      }
 
+      // Build shiftTimes object
       for (let i = 0; i < startTimes.length; i += 1) {
         let end = endTimes[i];
         for (
@@ -144,27 +185,23 @@ class ShiftService implements IShiftService {
         }
       }
 
-      console.log(shiftTimes);
-
       await Promise.all(
         shiftTimes.map(async (shiftTime: TimeBlock) => {
-          const newShift = await prisma.shift.create({
-            data: {
-              postingId: Number(shifts.postingId),
-              startTime: shiftTime.startTime,
-              endTime: shiftTime.endTime,
-            },
-          });
-          newShifts.push(newShift);
+          try {
+            const newShift = await this.createShift(
+              {
+                startTime: shiftTime.startTime,
+                endTime: shiftTime.endTime,
+              },
+              Number(shifts.postingId),
+            );
+            newShifts.push(newShift);
+          } catch (error) {
+            Logger.warn(error.message);
+          }
         }),
       );
-
-      return newShifts.map((shift) => ({
-        id: String(shift.id),
-        postingId: String(shift.postingId),
-        startTime: shift.startTime,
-        endTime: shift.endTime,
-      }));
+      return newShifts;
     } catch (error) {
       Logger.error(`Failed to create shift. Reason = ${error.message}`);
       throw error;
@@ -212,8 +249,18 @@ class ShiftService implements IShiftService {
 
   async updateShifts(
     postingId: string,
-    shifts: BulkShiftRequestDTO,
+    shifts: ShiftBulkRequestDTO,
   ): Promise<ShiftResponseDTO[] | null> {
+    // Validate postingId
+    const posting = await prisma.posting.findUnique({
+      where: {
+        id: Number(shifts.postingId),
+      },
+    });
+    if (!posting) {
+      throw new Error(`Posting ${shifts.postingId} not found.`);
+    }
+
     if (!this.validateTimeBlocks(shifts.times))
       throw new Error("Invalid time blocks");
 
@@ -243,6 +290,16 @@ class ShiftService implements IShiftService {
 
   async deleteShifts(postingId: string): Promise<void> {
     try {
+      // Validate postingId
+      const posting = await prisma.posting.findUnique({
+        where: {
+          id: Number(postingId),
+        },
+      });
+      if (!posting) {
+        throw new Error(`Posting ${postingId} not found.`);
+      }
+
       const shiftToDelete = await prisma.shift.findMany({
         where: { postingId: Number(postingId) },
       });

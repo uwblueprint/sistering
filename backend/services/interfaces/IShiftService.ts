@@ -1,7 +1,7 @@
 import { DurationInputArg1, DurationInputArg2 } from "moment";
 import {
-  BulkShiftRequestDTO,
   RecurrenceInterval,
+  ShiftBulkRequestDTO,
   ShiftRequestDTO,
   ShiftResponseDTO,
   TimeBlockDTO,
@@ -46,11 +46,23 @@ interface IShiftService {
 
   /**
    * Create a shift
+   * @param shift the shift to be created
+   * @param postingId the id of the posting associated with the shift
+   * @returns a ShiftDTO with the created shift's information
+   * @throws Error if shift creation fails
+   */
+  createShift(
+    shift: ShiftRequestDTO,
+    postingId: number,
+  ): Promise<ShiftResponseDTO>;
+
+  /**
+   * Create shifts by bulk
    * @param shifts the shifts to be created
    * @returns a ShiftDTO with the created shifts's information
    * @throws Error if shifts creation fails
    */
-  createShifts(shifts: BulkShiftRequestDTO): Promise<ShiftResponseDTO[]>;
+  createShifts(shifts: ShiftBulkRequestDTO): Promise<ShiftResponseDTO[]>;
 
   /**
    * Update a shift.
@@ -73,7 +85,7 @@ interface IShiftService {
    */
   updateShifts(
     postingId: string,
-    shifts: BulkShiftRequestDTO,
+    shifts: ShiftBulkRequestDTO,
   ): Promise<ShiftResponseDTO[] | null>;
 
   /**
