@@ -14,7 +14,7 @@ const shiftType = gql`
     endTime: String!
   }
 
-  input BulkShiftRequestDTO {
+  input ShiftBulkRequestDTO {
     postingId: String!
     times: [TimeBlockDTO!]!
     endDate: String!
@@ -22,7 +22,6 @@ const shiftType = gql`
   }
 
   input ShiftRequestDTO {
-    postingId: String!
     startTime: Date!
     endTime: Date!
   }
@@ -40,9 +39,9 @@ const shiftType = gql`
   }
 
   extend type Mutation {
-    createShifts(shifts: BulkShiftRequestDTO!): [ShiftResponseDTO!]!
+    createShifts(shifts: ShiftBulkRequestDTO!): [ShiftResponseDTO!]!
     updateShift(id: ID!, shift: ShiftRequestDTO!): ShiftResponseDTO!
-    updateShifts(id: ID!, shifts: BulkShiftRequestDTO!): [ShiftResponseDTO!]!
+    updateShifts(id: ID!, shifts: ShiftBulkRequestDTO!): [ShiftResponseDTO!]!
     deleteShift(id: ID!): ID
     deleteShifts(id: ID!): ID
   }

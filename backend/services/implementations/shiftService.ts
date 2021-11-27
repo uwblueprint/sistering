@@ -40,19 +40,34 @@ class ShiftService implements IShiftService {
           !tb.date ||
           !tb.startTime ||
           !tb.endTime ||
+          !moment(
+            `${tb.date} ${tb.startTime}`,
+            "YYYY-MM-DD HH:mm",
+            true,
+          ).isValid() ||
+          !moment(
+            `${tb.date} ${tb.endTime}`,
+            "YYYY-MM-DD HH:mm",
+            true,
+          ).isValid() ||
           moment(tb.startTime, "HH:mm") >= moment(tb.endTime, "HH:mm"),
       )
     )
       return false;
 
     // Check that start dates are within the range of 1 week
-    let earliestDate = moment(timeBlocks[0].date, "YYYY-MM-DD");
-    let latestDate = moment(timeBlocks[0].date, "YYYY-MM-DD");
+    let earliestDate = moment(timeBlocks[0].date, "YYYY-MM-DD", true);
+    let latestDate = moment(timeBlocks[0].date, "YYYY-MM-DD", true);
+
+    if (!earliestDate.isValid() || !latestDate.isValid()) {
+      return false;
+    }
+
     timeBlocks.forEach((tb) => {
-      if (moment(tb.date, "YYYY-MM-DD").isBefore(earliestDate))
-        earliestDate = moment(tb.date, "YYYY-MM-DD");
-      if (moment(tb.date, "YYYY-MM-DD").isAfter(latestDate))
-        latestDate = moment(tb.date, "YYYY-MM-DD");
+      if (moment(tb.date, "YYYY-MM-DD", true).isBefore(earliestDate))
+        earliestDate = moment(tb.date, "YYYY-MM-DD", true);
+      if (moment(tb.date, "YYYY-MM-DD", true).isAfter(latestDate))
+        latestDate = moment(tb.date, "YYYY-MM-DD", true);
     });
 
     if (moment.duration(latestDate.diff(earliestDate)).asDays() >= 7)
@@ -140,12 +155,12 @@ class ShiftService implements IShiftService {
     try {
       const shiftTimes: TimeBlock[] = [];
       const startTimes: Moment[] = shifts.times.map((time) =>
-        moment(`${time.date} ${time.startTime}`, "YYYY-MM-DD HH:mm"),
+        moment(`${time.date} ${time.startTime}`, "YYYY-MM-DD HH:mm", true),
       );
       const endTimes: Moment[] = shifts.times.map((time) =>
-        moment(`${time.date} ${time.endTime}`, "YYYY-MM-DD HH:mm"),
+        moment(`${time.date} ${time.endTime}`, "YYYY-MM-DD HH:mm", true),
       );
-      const endDate: Moment = moment(shifts.endDate, "YYYY-MM-DD").add(
+      const endDate: Moment = moment(shifts.endDate, "YYYY-MM-DD", true).add(
         1,
         "day",
       );
@@ -214,9 +229,22 @@ class ShiftService implements IShiftService {
   ): Promise<ShiftResponseDTO | null> {
     let updateResult: Shift | null;
     try {
-      if (moment(shift.startTime).isAfter(shift.endTime)) {
+      const startTime = moment(shift.startTime, "YYYY-MM-DD HH:mm", true);
+      const endTime = moment(shift.endTime, "YYYY-MM-DD HH:mm", true);
+      // Check that startTime and endTime are valid
+      if (!startTime.isValid() || !endTime.isValid()) {
+        throw new Error("Invalid startTime or endTime");
+      }
+      // Check that endTime is after startTime
+      if (endTime.isBefore(startTime)) {
         throw new Error(
-          `Failed to update shift. Reason = Start time ${shift.startTime} is after end time ${shift.endTime}`,
+          `Start time ${shift.startTime} is after end time ${shift.endTime}`,
+        );
+      }
+      // Check that startTime and endTime are in the same day
+      if (startTime.format("YYYY-MM-DD") !== endTime.format("YYYY-MM-DD")) {
+        throw new Error(
+          `Start time ${shift.startTime} and end time ${shift.endTime} are not in the same day`,
         );
       }
       await prisma.shift.findUnique({
@@ -227,8 +255,8 @@ class ShiftService implements IShiftService {
       updateResult = await prisma.shift.update({
         where: { id: Number(shiftId) },
         data: {
-          startTime: shift.startTime,
-          endTime: shift.endTime,
+          startTime: startTime.toDate(),
+          endTime: endTime.toDate(),
         },
       });
 
