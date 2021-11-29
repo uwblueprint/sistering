@@ -142,10 +142,6 @@ class EntityService implements IEntityService {
           fileName,
         },
       });
-
-      if (!updateResult) {
-        throw new Error(`Entity id ${id} not found`);
-      }
     } catch (error) {
       Logger.error(`Failed to update entity. Reason = ${error.message}`);
       throw error;
@@ -163,13 +159,9 @@ class EntityService implements IEntityService {
 
   async deleteEntity(id: string): Promise<void> {
     try {
-      const deleteResult: Entity | null = await prisma.entity.delete({
+      const deleteResult: Entity = await prisma.entity.delete({
         where: { id: Number(id) },
       });
-
-      if (!deleteResult) {
-        throw new Error(`Entity id ${id} not found`);
-      }
 
       if (deleteResult.fileName) {
         await this.storageService.deleteFile(deleteResult.fileName);
