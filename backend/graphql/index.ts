@@ -15,6 +15,8 @@ import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
 import postingResolvers from "./resolvers/postingResolvers";
 import postingType from "./types/postingType";
+import skillResolvers from "./resolvers/skillResolvers";
+import skillType from "./types/skillType";
 
 const query = gql`
   type Query {
@@ -29,12 +31,21 @@ const mutation = gql`
 `;
 
 const executableSchema = makeExecutableSchema({
-  typeDefs: [query, mutation, authType, entityType, userType, postingType],
+  typeDefs: [
+    query,
+    mutation,
+    authType,
+    entityType,
+    userType,
+    skillType,
+    postingType,
+  ],
   resolvers: merge(
     authResolvers,
     entityResolvers,
     userResolvers,
     postingResolvers,
+    skillResolvers,
   ),
 });
 
@@ -51,6 +62,8 @@ const graphQLMiddlewares = {
     users: authorizedByAdmin(),
     posting: authorizedByAdmin(),
     postings: authorizedByAdmin(),
+    skill: authorizedByAdmin(),
+    skills: authorizedByAdmin(),
   },
   Mutation: {
     createEntity: authorizedByAllRoles(),
@@ -65,6 +78,9 @@ const graphQLMiddlewares = {
     createPosting: authorizedByAdmin(),
     updatePosting: authorizedByAdmin(),
     deletePosting: authorizedByAdmin(),
+    createSkill: authorizedByAdmin(),
+    updateSkill: authorizedByAdmin(),
+    deleteSkill: authorizedByAdmin(),
   },
 };
 
