@@ -40,24 +40,12 @@ type PostingWithRelations = {
 
 // Given a PostingWithRelations, return the array of skill names
 function getPostingSkillNames(posting: PostingWithRelations): string[] {
-  const postingSkillNames: string[] = posting.skills.map(
-    (skill: Skill) => skill.name,
-  );
-  if (!postingSkillNames) {
-    throw new Error(`posting skills ${posting.skills} not found.`);
-  }
-  return postingSkillNames;
+  return posting.skills.map((skill: Skill) => skill.name);
 }
 
 // Given a PostingWithRelations, return the array of employee ids
 function getPostingEmployeeIds(posting: PostingWithRelations): string[] {
-  const postingEmployeeIds: string[] = posting.employees.map(
-    (employee: Employee) => String(employee.id),
-  );
-  if (!postingEmployeeIds) {
-    throw new Error(`posting employees ${posting.skills} not found.`);
-  }
-  return postingEmployeeIds;
+  return posting.employees.map((employee: Employee) => String(employee.id));
 }
 
 // Given a PostingWithRelations, return the array of shifts as ShiftDTO
@@ -263,9 +251,6 @@ class PostingService implements IPostingService {
           employees: true,
         },
       });
-      if (!updateResult) {
-        throw new Error(`Posting id ${postingId} not found`);
-      }
     } catch (error) {
       Logger.error(`Failed to update posting. Reason = ${error.message}`);
       throw error;
