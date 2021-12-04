@@ -6,7 +6,7 @@ const postingType = gql`
     GROUP
   }
 
-  input PostingRequestDTO{
+  input PostingRequestDTO {
     branchId: String!
     skills: [String]!
     employees: [String]!

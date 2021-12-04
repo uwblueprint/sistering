@@ -42,7 +42,7 @@ interface IPostingService {
    * @param postingId posting's postingId
    * @throws Error if posting deletion fails
    */
-  deletePosting(postingId: string): Promise<void>;
+  deletePosting(postingId: string): Promise<string>;
 }
 
 export default IPostingService;

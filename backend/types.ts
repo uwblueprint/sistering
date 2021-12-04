@@ -35,7 +35,12 @@ export type PostingResponseDTO = Omit<PostingDTO, "branchId" | "skills"> & {
   shifts: ShiftDTO[]; // shift object in response
 };
 
-export type ShiftDTO = { _: null };
+export type ShiftDTO = {
+  id: string;
+  postingId: string;
+  startTime: Date;
+  endTime: Date;
+};
 
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
 
