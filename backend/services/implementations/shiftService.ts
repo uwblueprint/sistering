@@ -15,6 +15,10 @@ const prisma = new PrismaClient();
 
 const Logger = logger(__filename);
 
+const dateFormat = "YYYY-MM-DD";
+const timeFormat = "HH:mm";
+const dateTimeFormat = "YYYY-MM-DD HH:mm";
+
 class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
   getDuration(recurrence: RecurrenceInterval): DurationArgs {
@@ -25,55 +29,111 @@ class ShiftService implements IShiftService {
         return { unit: "week", value: 1 };
       case "BIWEEKLY": // Biweekly
         return { unit: "week", value: 2 };
-      default:
-        // Monthly
+      case "MONTHLY": // Monthly
         return { unit: "month", value: 1 };
+      default:
+        throw new Error(`Invalid recurrence ${recurrence}`);
     }
   }
 
-  validateTimeBlocks(timeBlocks: TimeBlockDTO[]): boolean {
-    if (timeBlocks.length === 0) return false;
+  validateShift(shift: ShiftRequestDTO): [boolean, string] {
+    const startTime = moment(shift.startTime, dateTimeFormat, true);
+    const endTime = moment(shift.endTime, dateTimeFormat, true);
+    // Check that startTime and endTime are valid
+    if (!startTime.isValid() || !endTime.isValid()) {
+      return [false, "Invalid startTime or endTime"];
+    }
+    // Check that endTime is after startTime
+    if (endTime.isBefore(startTime)) {
+      return [false, "endTime must be after startTime"];
+    }
+    // Check that startTime and endTime are in the same day
+    if (startTime.format(dateFormat) !== endTime.format(dateFormat)) {
+      return [false, "startTime and endTime must be in the same day"];
+    }
+    return [true, ""];
+  }
+
+  validateTimeBlocks(timeBlocks: TimeBlockDTO[]): [boolean, string] {
+    if (timeBlocks.length === 0) return [false, "No time blocks provided"];
     // Check that start time is before end time
     if (
-      timeBlocks.every(
+      timeBlocks.some(
         (tb) =>
           !tb.date ||
           !tb.startTime ||
           !tb.endTime ||
           !moment(
             `${tb.date} ${tb.startTime}`,
-            "YYYY-MM-DD HH:mm",
+            dateTimeFormat,
             true,
           ).isValid() ||
-          !moment(
-            `${tb.date} ${tb.endTime}`,
-            "YYYY-MM-DD HH:mm",
-            true,
-          ).isValid() ||
-          moment(tb.startTime, "HH:mm") >= moment(tb.endTime, "HH:mm"),
+          !moment(`${tb.date} ${tb.endTime}`, dateTimeFormat, true).isValid() ||
+          moment(tb.startTime, timeFormat) >= moment(tb.endTime, timeFormat),
       )
     )
-      return false;
+      return [false, "Invalid time blocks"];
 
-    // Check that start dates are within the range of 1 week
-    let earliestDate = moment(timeBlocks[0].date, "YYYY-MM-DD", true);
-    let latestDate = moment(timeBlocks[0].date, "YYYY-MM-DD", true);
-
-    if (!earliestDate.isValid() || !latestDate.isValid()) {
-      return false;
-    }
-
-    timeBlocks.forEach((tb) => {
-      if (moment(tb.date, "YYYY-MM-DD", true).isBefore(earliestDate))
-        earliestDate = moment(tb.date, "YYYY-MM-DD", true);
-      if (moment(tb.date, "YYYY-MM-DD", true).isAfter(latestDate))
-        latestDate = moment(tb.date, "YYYY-MM-DD", true);
-    });
+    const [earliestDate, latestDate] = timeBlocks.reduce(
+      (earliestLatestSoFar, currentTimeblock) => {
+        const earliestLatestTuple = earliestLatestSoFar;
+        const currentDate = moment(currentTimeblock.date, dateFormat, true);
+        earliestLatestTuple[0] = currentDate.isBefore(earliestLatestSoFar[0])
+          ? currentDate
+          : earliestLatestSoFar[0];
+        earliestLatestTuple[1] = currentDate.isAfter(earliestLatestSoFar[1])
+          ? currentDate
+          : earliestLatestSoFar[1];
+        return earliestLatestTuple;
+      },
+      [
+        moment(timeBlocks[0].date, dateFormat, true),
+        moment(timeBlocks[0].date, dateFormat, true),
+      ],
+    );
 
     if (moment.duration(latestDate.diff(earliestDate)).asDays() >= 7)
-      return false;
+      return [false, "Time blocks must be within a week"];
 
-    return true;
+    return [true, ""];
+  }
+
+  buildTimeBlocks(shifts: ShiftBulkRequestDTO): TimeBlock[] {
+    const endDate: Moment = moment(shifts.endDate, dateFormat, true).add(
+      1,
+      "day",
+    );
+
+    // Get moment's duration function args using recurrence
+    const duration: DurationArgs = this.getDuration(shifts.recurrenceInterval);
+
+    const shiftTimes: TimeBlock[] = shifts.times.flatMap((time) => {
+      const startTime = moment(
+        `${time.date} ${time.startTime}`,
+        dateTimeFormat,
+        true,
+      );
+      const endTime = moment(
+        `${time.date} ${time.endTime}`,
+        dateTimeFormat,
+        true,
+      );
+      const recurringShifts = [];
+      let end = endTime;
+      for (
+        let start = startTime.clone();
+        start < endDate;
+        start.add(duration.value, duration.unit)
+      ) {
+        recurringShifts.push({
+          startTime: start.toDate(),
+          endTime: end.toDate(),
+        });
+        end = end.add(duration.value, duration.unit);
+      }
+      return recurringShifts;
+    });
+    return shiftTimes;
   }
 
   async getShift(shiftId: string): Promise<ShiftResponseDTO> {
@@ -121,8 +181,13 @@ class ShiftService implements IShiftService {
     shift: ShiftRequestDTO,
     postingId: number,
   ): Promise<ShiftResponseDTO> {
+    const [valid, errorMessage] = this.validateShift(shift);
+    if (!valid) throw new Error(errorMessage);
+
     return prisma.$transaction(async (prismaClient) => {
-      const shifts = await prismaClient.shift.findMany();
+      const shifts = await prismaClient.shift.findMany({
+        where: { postingId },
+      });
       for (let i = 0; i < shifts.length; i += 1) {
         if (
           moment(shifts[i].startTime).isSame(shift.startTime, "minute") &&
@@ -150,57 +215,15 @@ class ShiftService implements IShiftService {
   }
 
   async createShifts(shifts: ShiftBulkRequestDTO): Promise<ShiftResponseDTO[]> {
-    const newShifts: ShiftResponseDTO[] = [];
-
     try {
-      const shiftTimes: TimeBlock[] = [];
-      const startTimes: Moment[] = shifts.times.map((time) =>
-        moment(`${time.date} ${time.startTime}`, "YYYY-MM-DD HH:mm", true),
-      );
-      const endTimes: Moment[] = shifts.times.map((time) =>
-        moment(`${time.date} ${time.endTime}`, "YYYY-MM-DD HH:mm", true),
-      );
-      const endDate: Moment = moment(shifts.endDate, "YYYY-MM-DD", true).add(
-        1,
-        "day",
-      );
-
-      // Get moment's duration function args using recurrence
-      const duration: DurationArgs = this.getDuration(
-        shifts.recurrenceInterval,
-      );
-
       // Check that input times are valid
-      if (!this.validateTimeBlocks(shifts.times))
-        throw new Error("Invalid time blocks");
-
-      // Validate postingId
-      const posting = await prisma.posting.findUnique({
-        where: {
-          id: Number(shifts.postingId),
-        },
-      });
-      if (!posting) {
-        throw new Error(`Posting ${shifts.postingId} not found.`);
-      }
+      const [valid, errorMessage] = this.validateTimeBlocks(shifts.times);
+      if (!valid) throw new Error(errorMessage);
 
       // Build shiftTimes object
-      for (let i = 0; i < startTimes.length; i += 1) {
-        let end = endTimes[i];
-        for (
-          let start = startTimes[i].clone();
-          start < endDate;
-          start.add(duration.value, duration.unit)
-        ) {
-          shiftTimes.push({
-            startTime: start.toDate(),
-            endTime: end.toDate(),
-          });
-          end = end.add(duration.value, duration.unit);
-        }
-      }
+      const shiftTimes: TimeBlock[] = this.buildTimeBlocks(shifts);
 
-      await Promise.all(
+      const newShifts = await Promise.all(
         shiftTimes.map(async (shiftTime: TimeBlock) => {
           try {
             const newShift = await this.createShift(
@@ -210,13 +233,14 @@ class ShiftService implements IShiftService {
               },
               Number(shifts.postingId),
             );
-            newShifts.push(newShift);
+            return newShift;
           } catch (error) {
             Logger.warn(error.message);
+            return null;
           }
         }),
       );
-      return newShifts;
+      return newShifts.filter((shift) => shift !== null) as ShiftResponseDTO[];
     } catch (error) {
       Logger.error(`Failed to create shift. Reason = ${error.message}`);
       throw error;
@@ -229,29 +253,12 @@ class ShiftService implements IShiftService {
   ): Promise<ShiftResponseDTO | null> {
     let updateResult: Shift | null;
     try {
+      const [valid, errorMessage] = this.validateShift(shift);
+      if (!valid) throw new Error(errorMessage);
+
       const startTime = moment(shift.startTime, "YYYY-MM-DD HH:mm", true);
       const endTime = moment(shift.endTime, "YYYY-MM-DD HH:mm", true);
-      // Check that startTime and endTime are valid
-      if (!startTime.isValid() || !endTime.isValid()) {
-        throw new Error("Invalid startTime or endTime");
-      }
-      // Check that endTime is after startTime
-      if (endTime.isBefore(startTime)) {
-        throw new Error(
-          `Start time ${shift.startTime} is after end time ${shift.endTime}`,
-        );
-      }
-      // Check that startTime and endTime are in the same day
-      if (startTime.format("YYYY-MM-DD") !== endTime.format("YYYY-MM-DD")) {
-        throw new Error(
-          `Start time ${shift.startTime} and end time ${shift.endTime} are not in the same day`,
-        );
-      }
-      await prisma.shift.findUnique({
-        where: {
-          id: Number(shiftId),
-        },
-      });
+
       updateResult = await prisma.shift.update({
         where: { id: Number(shiftId) },
         data: {
@@ -259,10 +266,6 @@ class ShiftService implements IShiftService {
           endTime: endTime.toDate(),
         },
       });
-
-      if (!updateResult) {
-        throw new Error(`Shift id ${shiftId} not found`);
-      }
     } catch (error) {
       Logger.error(`Failed to update shift. Reason = ${error.message}`);
       throw error;
@@ -279,37 +282,50 @@ class ShiftService implements IShiftService {
     postingId: string,
     shifts: ShiftBulkRequestDTO,
   ): Promise<ShiftResponseDTO[] | null> {
-    // Validate postingId
-    const posting = await prisma.posting.findUnique({
-      where: {
-        id: Number(shifts.postingId),
-      },
+    const [valid, errorMessage] = this.validateTimeBlocks(shifts.times);
+    if (!valid) throw new Error(errorMessage);
+
+    return prisma.$transaction(async (prismaClient) => {
+      await prismaClient.shift.deleteMany({
+        where: { postingId: Number(postingId) },
+      });
+
+      const shiftTimes: TimeBlock[] = this.buildTimeBlocks(shifts);
+
+      const newShifts = await Promise.all(
+        shiftTimes.map(async (shiftTime: TimeBlock) => {
+          try {
+            const newShift = await prismaClient.shift.create({
+              data: {
+                postingId: Number(postingId),
+                startTime: shiftTime.startTime,
+                endTime: shiftTime.endTime,
+              },
+            });
+            return newShift;
+          } catch (error) {
+            Logger.warn(error.message);
+            return null;
+          }
+        }),
+      );
+
+      return (newShifts.filter((shift) => shift !== null) as Shift[]).map(
+        (shift) => ({
+          id: String(shift.id),
+          postingId: String(shift.postingId),
+          startTime: shift.startTime,
+          endTime: shift.endTime,
+        }),
+      );
     });
-    if (!posting) {
-      throw new Error(`Posting ${shifts.postingId} not found.`);
-    }
-
-    if (!this.validateTimeBlocks(shifts.times))
-      throw new Error("Invalid time blocks");
-
-    await this.deleteShifts(postingId);
-    const newShifts: ShiftResponseDTO[] = await this.createShifts(shifts);
-
-    return newShifts;
   }
 
   async deleteShift(shiftId: string): Promise<void> {
     try {
-      const shiftToDelete = await prisma.shift.findUnique({
+      await prisma.shift.delete({
         where: { id: Number(shiftId) },
       });
-      const deleteResult: Shift | null = await prisma.shift.delete({
-        where: { id: Number(shiftId) },
-      });
-
-      if (!shiftToDelete || !deleteResult) {
-        throw new Error(`Shift id ${shiftId} not found`);
-      }
     } catch (error) {
       Logger.error(`Failed to delete shift. Reason = ${error.message}`);
       throw error;
@@ -318,26 +334,9 @@ class ShiftService implements IShiftService {
 
   async deleteShifts(postingId: string): Promise<void> {
     try {
-      // Validate postingId
-      const posting = await prisma.posting.findUnique({
-        where: {
-          id: Number(postingId),
-        },
-      });
-      if (!posting) {
-        throw new Error(`Posting ${postingId} not found.`);
-      }
-
-      const shiftToDelete = await prisma.shift.findMany({
+      await prisma.shift.deleteMany({
         where: { postingId: Number(postingId) },
       });
-      const deleteResultCount = await prisma.shift.deleteMany({
-        where: { postingId: Number(postingId) },
-      });
-
-      if (!shiftToDelete || !deleteResultCount) {
-        throw new Error(`Shift with posting id ${postingId} not found`);
-      }
     } catch (error) {
       Logger.error(`Failed to delete shift. Reason = ${error.message}`);
       throw error;

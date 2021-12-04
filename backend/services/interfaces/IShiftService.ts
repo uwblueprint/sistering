@@ -14,22 +14,6 @@ export type DurationArgs = {
 
 interface IShiftService {
   /**
-   * Get moment.js method parameters using recurrence interval
-   * @param recurrence a recurrence interval
-   * @returns value & unit of time
-   */
-  getDuration(recurrence: RecurrenceInterval): DurationArgs;
-
-  /**
-   * Validate a TimeBlockDTO array to ensure that
-   * - All dates, startTimes, and endTimes are defined
-   * - All startTimes are before endTimes
-   * - All dates occur in a span of a week
-   * @param timeBlocks a TimeBlockDTO array
-   * @returns true if valid, false otherwise
-   */
-  validateTimeBlocks(timeBlocks: TimeBlockDTO[]): boolean;
-  /**
    * Get ShiftDTO associated with id
    * @param id shift's id
    * @returns a ShiftDTO with shift's information
