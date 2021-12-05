@@ -1,8 +1,9 @@
 import React from "react";
+import { Box } from "@chakra-ui/react";
 
 const DoneResetPassword = (): React.ReactElement => (
   <div style={{ textAlign: "center" }}>
-    <h1>Reset Password</h1>
+    <Box textStyle="display-large">Reset Password</Box>
     <p>
       We have sent you an e-mail. Please contact us if you do not receive it
       within a few minutes.

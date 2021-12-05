@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
+import { Box, HStack, Tag } from "@chakra-ui/react";
+
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
 
@@ -22,7 +24,7 @@ const TeamInfoDisplay = () => {
   const { teamName, numTerms, members, isActive } = useContext(SampleContext);
   return (
     <div>
-      <h2>Team Info</h2>
+      <Box textStyle="display-large">Team Info</Box>
       <div>Name: {teamName}</div>
       <div># terms: {numTerms}</div>
       <div>
@@ -36,10 +38,105 @@ const TeamInfoDisplay = () => {
   );
 };
 
+const DesignSystemDisplay = () => {
+  return (
+    <div style={{ marginTop: "2rem" }}>
+      <Box textStyle="display-large">Design System</Box>
+      <div style={{ height: "1rem" }} />
+
+      <HStack spacing={4} justify="center">
+        {[
+          {
+            backgroundColor: "violet",
+            textColor: "text.white",
+            displayText: "Violet",
+          },
+          {
+            backgroundColor: "teal",
+            textColor: "text.white",
+            displayText: "Teal",
+          },
+          {
+            backgroundColor: "green.light",
+            textColor: "text.default",
+            displayText: "Light Green",
+          },
+          {
+            backgroundColor: "green.dark",
+            textColor: "text.white",
+            displayText: "Dark Green",
+          },
+        ].map((style, index) => (
+          <Tag
+            bg={style.backgroundColor}
+            color={style.textColor}
+            size="lg"
+            key={index}
+          >
+            {style.displayText}
+          </Tag>
+        ))}
+      </HStack>
+
+      <div style={{ height: "1rem" }} />
+      {[
+        {
+          textStyle: "display-large",
+          displayText: "Display Large",
+        },
+        {
+          textStyle: "display-medium",
+          displayText: "Display Medium",
+        },
+        {
+          textStyle: "display-small-semibold",
+          displayText: "Display Small - Semibold",
+        },
+        {
+          textStyle: "display-small-regular",
+          displayText: "Display Small - Regular",
+        },
+        {
+          textStyle: "heading",
+          displayText: "Heading",
+        },
+        {
+          textStyle: "subheading",
+          displayText: "Subheading",
+        },
+        {
+          textStyle: "button-semibold",
+          displayText: "Button - Semibold",
+        },
+        {
+          textStyle: "button-regular",
+          displayText: "Button - Regular",
+        },
+        {
+          textStyle: "body-regular",
+          displayText: "Body - Regular",
+        },
+        {
+          textStyle: "body-bold",
+          displayText: "Body - Bold",
+        },
+        {
+          textStyle: "caption",
+          displayText: "Caption",
+        },
+      ].map((style, index) => (
+        <Box textStyle={style.textStyle} key={index}>
+          {style.displayText}
+        </Box>
+      ))}
+    </div>
+  );
+};
+
 const Default = (): React.ReactElement => {
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
-      <h1>Default Page</h1>
+      <Box textStyle="display-large">Default Page</Box>
       <div className="btn-group" style={{ paddingRight: "10px" }}>
         <Logout />
         <RefreshCredentials />
@@ -53,6 +150,7 @@ const Default = (): React.ReactElement => {
       <div style={{ height: "2rem" }} />
 
       <TeamInfoDisplay />
+      <DesignSystemDisplay />
     </div>
   );
 };

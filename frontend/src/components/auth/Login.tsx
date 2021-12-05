@@ -6,6 +6,7 @@ import {
   GoogleLoginResponseOffline,
 } from "react-google-login";
 import { gql, useMutation } from "@apollo/client";
+import { Box } from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import {
@@ -86,7 +87,7 @@ const Login = (): React.ReactElement => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h1>Login</h1>
+      <Box textStyle="display-large">Login</Box>
       <form>
         <div>
           <input
@@ -94,6 +95,7 @@ const Login = (): React.ReactElement => {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="username@domain.com"
+            style={{ border: "1px solid" }}
           />
         </div>
         <div>
@@ -102,6 +104,7 @@ const Login = (): React.ReactElement => {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="password"
+            style={{ border: "1px solid" }}
           />
         </div>
         <div>
