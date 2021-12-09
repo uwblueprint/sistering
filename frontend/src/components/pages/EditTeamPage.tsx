@@ -1,4 +1,6 @@
 import React, { useContext, useState } from "react";
+import { Text } from "@chakra-ui/react";
+
 import SampleContext from "../../contexts/SampleContext";
 import MainPageButton from "../common/MainPageButton";
 import SampleContextDispatcherContext from "../../contexts/SampleContextDispatcherContext";
@@ -12,6 +14,7 @@ const DeleteMemberButton: React.FC<DeleteButtonProps> = ({
   return (
     <button
       type="button"
+      className="btn btn-link"
       onClick={() => {
         onClick(index);
       }}
@@ -53,13 +56,25 @@ const EditTeamInfoPage = (): React.ReactElement => {
 
   return (
     <div style={{ maxWidth: "300px", margin: "0 auto", paddingTop: "20px" }}>
-      <h1>Edit Team</h1>
+      <Text textStyle="display-large">Edit Team</Text>
       <div>
-        Team Name: <input type="text" value={teamName} onChange={setName} />
+        Team Name:{" "}
+        <input
+          type="text"
+          value={teamName}
+          onChange={setName}
+          style={{ border: "1px solid" }}
+        />
       </div>
       <div style={{ marginTop: "1rem" }}>
         Num Terms:{" "}
-        <input min={0} type="number" value={numTerms} onChange={setNumTerms} />
+        <input
+          min={0}
+          type="number"
+          value={numTerms}
+          onChange={setNumTerms}
+          style={{ border: "1px solid" }}
+        />
       </div>
       <div style={{ marginTop: "1rem" }}>
         Members:
@@ -80,8 +95,9 @@ const EditTeamInfoPage = (): React.ReactElement => {
           onChange={(e) => {
             setNewMember(e.target.value);
           }}
+          style={{ border: "1px solid" }}
         />
-        <button type="button" onClick={onMemberAdd}>
+        <button type="button" onClick={onMemberAdd} className="btn btn-link">
           Add
         </button>
       </div>

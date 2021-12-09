@@ -33,9 +33,6 @@
   padding-bottom: 28px;
   border-bottom: gray 5px solid;
 }
-.page-nav-item {
-  font-size: 1.5rem;
-}
 
 .page-nav-item:hover {
   cursor: pointer;
@@ -60,12 +57,11 @@
 }
 
 .section-emoji {
-  font-size: 64px;
+  font-size: 1.5rem;
 }
 
 .section-description {
   margin-left: 12px;
   height: fit-content;
-  font-size: 1.1rem;
   padding: 10px;
 }
