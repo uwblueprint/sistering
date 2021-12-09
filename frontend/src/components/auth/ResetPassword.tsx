@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
-import { Box } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 
 import { DONE_RESET_PASSWORD_PAGE } from "../../constants/Routes";
 
@@ -31,7 +31,7 @@ const ResetPassword = (): React.ReactElement => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <Box textStyle="display-large">Reset Password</Box>
+      <Text textStyle="display-large">Reset Password</Text>
       <div>
         <input
           type="email"

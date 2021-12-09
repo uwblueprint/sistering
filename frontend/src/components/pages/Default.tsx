@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { Box, HStack, Tag } from "@chakra-ui/react";
+import { HStack, Tag, Text } from "@chakra-ui/react";
 
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
@@ -24,7 +24,7 @@ const TeamInfoDisplay = () => {
   const { teamName, numTerms, members, isActive } = useContext(SampleContext);
   return (
     <div>
-      <Box textStyle="display-large">Team Info</Box>
+      <Text textStyle="display-large">Team Info</Text>
       <div>Name: {teamName}</div>
       <div># terms: {numTerms}</div>
       <div>
@@ -41,7 +41,7 @@ const TeamInfoDisplay = () => {
 const DesignSystemDisplay = () => {
   return (
     <div style={{ marginTop: "2rem" }}>
-      <Box textStyle="display-large">Design System</Box>
+      <Text textStyle="display-large">Design System</Text>
       <div style={{ height: "1rem" }} />
 
       <HStack spacing={4} justify="center">
@@ -125,9 +125,9 @@ const DesignSystemDisplay = () => {
           displayText: "Caption",
         },
       ].map((style, index) => (
-        <Box textStyle={style.textStyle} key={index}>
+        <Text textStyle={style.textStyle} key={index}>
           {style.displayText}
-        </Box>
+        </Text>
       ))}
     </div>
   );
@@ -136,7 +136,7 @@ const DesignSystemDisplay = () => {
 const Default = (): React.ReactElement => {
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
-      <Box textStyle="display-large">Default Page</Box>
+      <Text textStyle="display-large">Default Page</Text>
       <div className="btn-group" style={{ paddingRight: "10px" }}>
         <Logout />
         <RefreshCredentials />

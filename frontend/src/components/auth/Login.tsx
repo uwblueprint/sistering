@@ -6,7 +6,7 @@ import {
   GoogleLoginResponseOffline,
 } from "react-google-login";
 import { gql, useMutation } from "@apollo/client";
-import { Box } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import {
@@ -87,7 +87,7 @@ const Login = (): React.ReactElement => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <Box textStyle="display-large">Login</Box>
+      <Text textStyle="display-large">Login</Text>
       <form>
         <div>
           <input

@@ -35,7 +35,7 @@
 // ***************************************************************
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import { Box } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 
 import { EMOJIS } from "./emojis";
 import EmojiSection from "./EmojiSection";
@@ -172,11 +172,11 @@ const HooksDemo = (): React.ReactElement => {
         </div>
       )}
       <div className="page-content">
-        <Box textStyle="display-large">Emoji Dictionary</Box>
-        <Box textStyle="body-regular">
+        <Text textStyle="display-large">Emoji Dictionary</Text>
+        <Text textStyle="body-regular">
           Some of Internal Tools&apos; fave emojis 🎉
-        </Box>
-        <Box textStyle="body-regular">Click a section to copy the emoji!</Box>
+        </Text>
+        <Text textStyle="body-regular">Click a section to copy the emoji!</Text>
         <div>
           Table of contents:
           <ul className="page-nav">

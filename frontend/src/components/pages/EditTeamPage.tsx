@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Box } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 
 import SampleContext from "../../contexts/SampleContext";
 import MainPageButton from "../common/MainPageButton";
@@ -56,7 +56,7 @@ const EditTeamInfoPage = (): React.ReactElement => {
 
   return (
     <div style={{ maxWidth: "300px", margin: "0 auto", paddingTop: "20px" }}>
-      <Box textStyle="display-large">Edit Team</Box>
+      <Text textStyle="display-large">Edit Team</Text>
       <div>
         Team Name:{" "}
         <input

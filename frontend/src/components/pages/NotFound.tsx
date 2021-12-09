@@ -1,10 +1,10 @@
 import React from "react";
-import { Box } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 
 const NotFound = (): React.ReactElement => {
   return (
     <div style={{ textAlign: "center" }}>
-      <Box textStyle="display-large">404 Not Found 🙁</Box>
+      <Text textStyle="display-large">404 Not Found 🙁</Text>
     </div>
   );
 };

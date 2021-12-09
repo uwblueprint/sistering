@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
-import { Box } from "@chakra-ui/react";
+import { Text } from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
@@ -59,7 +59,7 @@ const Signup = (): React.ReactElement => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <Box textStyle="display-large">Signup</Box>
+      <Text textStyle="display-large">Signup</Text>
       <form>
         <div>
           <input
