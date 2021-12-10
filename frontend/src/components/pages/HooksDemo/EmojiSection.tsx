@@ -1,4 +1,5 @@
 import React, { forwardRef } from "react";
+import { Text } from "@chakra-ui/react";
 
 type Props = {
   title: string;
@@ -24,7 +25,7 @@ const EmojiSection = forwardRef<HTMLDivElement, Props>(
 
     return (
       <div className="section-root" ref={ref} onClick={handleClick}>
-        <h3>{title}</h3>
+        <Text textStyle="body-regular">{title}</Text>
         <div className="section-body">
           <div className="section-emoji">{emoji}</div>
           <p className="section-description">{description}</p>

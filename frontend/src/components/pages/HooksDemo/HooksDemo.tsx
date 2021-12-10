@@ -35,9 +35,10 @@
 // ***************************************************************
 
 import React, { useEffect, useState, useRef, useCallback } from "react";
-import EmojiSection from "./EmojiSection";
+import { Text } from "@chakra-ui/react";
 
 import { EMOJIS } from "./emojis";
+import EmojiSection from "./EmojiSection";
 import "./styles.css";
 
 type BannerState = {
@@ -171,9 +172,11 @@ const HooksDemo = (): React.ReactElement => {
         </div>
       )}
       <div className="page-content">
-        <h1>📖 Emoji Dictionary 🧠</h1>
-        <h3>Some of Internal Tools&apos; fave emojis 🎉</h3>
-        <h5>Click a section to copy the emoji!</h5>
+        <Text textStyle="display-large">Emoji Dictionary</Text>
+        <Text textStyle="body-regular">
+          Some of Internal Tools&apos; fave emojis 🎉
+        </Text>
+        <Text textStyle="body-regular">Click a section to copy the emoji!</Text>
         <div>
           Table of contents:
           <ul className="page-nav">
