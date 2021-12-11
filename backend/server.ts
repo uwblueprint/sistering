@@ -6,7 +6,12 @@ import * as firebaseAdmin from "firebase-admin";
 import { ApolloServer } from "apollo-server-express";
 import schema from "./graphql";
 
-const CORS_ALLOW_LIST = ["http://localhost:3000"];
+const CORS_ALLOW_LIST = [
+  "http://localhost:3000",
+  "https://sistering-dev.firebaseapp.com",
+  "https://sistering-dev.web.app",
+  /^https:\/\/sistering-dev--pr.*\.web\.app$/,
+];
 
 const CORS_OPTIONS: cors.CorsOptions = {
   origin: CORS_ALLOW_LIST,
@@ -39,7 +44,7 @@ firebaseAdmin.initializeApp({
   credential: firebaseAdmin.credential.applicationDefault(),
 });
 
-app.listen({ port: 5000 }, () => {
+app.listen({ port: process.env.PORT || 5000 }, () => {
   /* eslint-disable-next-line no-console */
-  console.info("Server is listening on port 5000!");
+  console.info(`Server is listening on port ${process.env.PORT || 5000}!`);
 });
