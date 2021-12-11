@@ -73,7 +73,6 @@ model Posting {
 model Skill {
   id         Int                @id @default(autoincrement())
   name       String
-  //postings   PostingOnSkill[]
   postings   Posting[]
   volunteers VolunteerOnSkill[]
 
@@ -102,7 +101,7 @@ model Branch {
 model Shift {
   id             Int       @id @default(autoincrement())
   postingId      Int       @map("posting_id")
-  posting        Posting   @relation(fields: [postingId], references: [id])
+  posting        Posting   @relation(fields: [postingId], references: [id], onDelete: Cascade)
   startTime      DateTime  @map("start_time")
   endTime        DateTime  @map("end_time")
   repeatInterval Int?      @map("repeat_interval")
@@ -157,37 +156,6 @@ model Employee {
 
   @@map("employees")
 }
-
-// model PostingOnSkill {
-//   posting   Posting @relation(fields: [postingId], references: [id])
-//   postingId Int     @map("postings_id")
-//   skill     Skill   @relation(fields: [skillId], references: [id])
-//   skillId   Int     @map("skills_id")
-
-//   @@id([postingId, skillId])
-//   @@map("postings_on_skills")
-// }
-
-// TODO - do we delete this?? (https://app.zenhub.com/workspaces/sistering-614f8dad6afeb8001d428787/issues/uwblueprint/sistering/48)
-// model PostingOnPrerequisite {
-//   posting        Posting      @relation(fields: [postingId], references: [id])
-//   postingId      Int          @map("postings_id")
-//   prerequisite   Prerequisite @relation(fields: [prerequisiteId], references: [id])
-//   prerequisiteId Int          @map("prerequisites_id")
-
-//   @@id([postingId, prerequisiteId])
-//   @@map("postings_on_prerequisites")
-// }
-
-// model PostingOnEmployeePoc {
-//   postingId  Int      @map("posting_id")
-//   posting    Posting  @relation(fields: [postingId], references: [id])
-//   employeeId Int      @map("employee_id")
-//   employee   Employee @relation(fields: [employeeId], references: [id])
-
-//   @@id([postingId, employeeId])
-//   @@map("postings_on_employees_pocs")
-// }
 
 model VolunteerOnSkill {
   volunteer   Volunteer @relation(fields: [volunteerId], references: [id])

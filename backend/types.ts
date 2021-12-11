@@ -29,17 +29,32 @@ export type PostingDTO = {
 
 export type PostingRequestDTO = Omit<PostingDTO, "id">;
 
-export type PostingResponseDTO = Omit<PostingDTO, "branchId" | "skills"> & {
-  branchName: string;
-  skillNames: string[];
-  shifts: ShiftDTO[]; // shift object in response
+export type PostingResponseDTO = Omit<
+  PostingDTO,
+  "branchId" | "skills" | "employees"
+> & {
+  branch: BranchResponseDTO;
+  shifts: ShiftResponseDTO[];
+  skills: SkillResponseDTO[];
+  employees: EmployeeResponseDTO[];
 };
 
-export type ShiftDTO = {
+export type BranchResponseDTO = {
+  id: string;
+  name: string;
+};
+
+export type ShiftResponseDTO = {
   id: string;
   postingId: string;
   startTime: Date;
   endTime: Date;
+};
+
+export type EmployeeResponseDTO = {
+  id: string;
+  userId: string;
+  branchId: string;
 };
 
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };

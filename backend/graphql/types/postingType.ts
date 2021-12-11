@@ -21,10 +21,10 @@ const postingType = gql`
 
   type PostingResponseDTO {
     id: ID!
-    branchName: String!
-    shifts: [String]!
-    skillNames: [String]!
-    employees: [String]!
+    branch: BranchResponseDTO!
+    shifts: [ShiftResponseDTO]!
+    skills: [SkillResponseDTO]!
+    employees: [EmployeeResponseDTO]!
     title: String!
     type: PostingType!
     description: String!
@@ -32,6 +32,26 @@ const postingType = gql`
     endDate: String!
     autoClosingDate: String!
     numVolunteers: Int!
+  }
+
+  scalar Date
+
+  type ShiftResponseDTO {
+    id: String!
+    postingId: String!
+    startTime: Date!
+    endTime: Date!
+  }
+
+  type BranchResponseDTO {
+    id: ID!
+    name: String!
+  }
+
+  type EmployeeResponseDTO {
+    id: String!
+    userId: String!
+    branchId: String!
   }
 
   extend type Query {

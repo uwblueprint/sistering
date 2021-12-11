@@ -8,10 +8,13 @@ import {
 } from "@prisma/client";
 import IPostingService from "../interfaces/IPostingService";
 import {
+  BranchResponseDTO,
+  EmployeeResponseDTO,
   PostingRequestDTO,
   PostingResponseDTO,
   PostingType,
-  ShiftDTO,
+  ShiftResponseDTO,
+  SkillResponseDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
 
@@ -19,7 +22,7 @@ const prisma = new PrismaClient();
 
 const Logger = logger(__filename);
 
-// Temporary type for posting with inlcuded relations (i.e. branch, shifts, skills, employees)
+// Temporary type for posting with included relations (i.e. branch, shifts, skills, employees)
 type PostingWithRelations = {
   id: number;
   branchId: number;
@@ -38,19 +41,18 @@ type PostingWithRelations = {
 
 // HELPER FUNCTIONS
 
-// Given a PostingWithRelations, return the array of skill names
-function getPostingSkillNames(posting: PostingWithRelations): string[] {
-  return posting.skills.map((skill: Skill) => skill.name);
-}
+const convertBranchToBranchResponseDTO = (
+  posting: PostingWithRelations,
+): BranchResponseDTO => {
+  return {
+    id: String(posting.branch.id),
+    name: posting.branch.name,
+  };
+};
 
-// Given a PostingWithRelations, return the array of employee ids
-function getPostingEmployeeIds(posting: PostingWithRelations): string[] {
-  return posting.employees.map((employee: Employee) => String(employee.id));
-}
-
-// Given a PostingWithRelations, return the array of shifts as ShiftDTO
-// (i.e. convert id and postingId to strings)
-function convertShiftToShiftDTO(posting: PostingWithRelations): ShiftDTO[] {
+const convertShiftToShiftResponseDTO = (
+  posting: PostingWithRelations,
+): ShiftResponseDTO[] => {
   return posting.shifts.map((shift: Shift) => {
     return {
       id: String(shift.id),
@@ -59,21 +61,48 @@ function convertShiftToShiftDTO(posting: PostingWithRelations): ShiftDTO[] {
       endTime: shift.endTime,
     };
   });
-}
+};
 
-function validateDate(date: string) {
+const convertSkillToSkillResponseDTO = (
+  posting: PostingWithRelations,
+): SkillResponseDTO[] => {
+  return posting.skills.map((skill: Skill) => {
+    return {
+      id: String(skill.id),
+      name: skill.name,
+    };
+  });
+};
+
+const convertEmployeeToEmployeeResponseDTO = (
+  posting: PostingWithRelations,
+): EmployeeResponseDTO[] => {
+  return posting.employees.map((employee: Employee) => {
+    return {
+      id: String(employee.id),
+      userId: String(employee.userId),
+      branchId: String(employee.branchId),
+    };
+  });
+};
+
+const formatDate = (date: Date): string => {
+  return date.toISOString().substring(0, 10);
+};
+
+const validateDate = (date: string) => {
   const d = new Date(date); // date: YYYY-MM-DD
   d.toISOString(); // d.toISOString() should error if d is invalid date
   return true;
-}
+};
 
-function validatePostingDates(posting: PostingRequestDTO) {
+const validatePostingDates = (posting: PostingRequestDTO) => {
   return (
     validateDate(posting.startDate) &&
     validateDate(posting.endDate) &&
     validateDate(posting.autoClosingDate)
   );
-}
+};
 
 class PostingService implements IPostingService {
   /* eslint-disable class-methods-use-this */
@@ -104,16 +133,16 @@ class PostingService implements IPostingService {
 
     return {
       id: String(posting.id),
-      branchName: posting.branch.name,
-      shifts: convertShiftToShiftDTO(posting),
-      skillNames: getPostingSkillNames(posting),
-      employees: getPostingEmployeeIds(posting),
+      branch: convertBranchToBranchResponseDTO(posting),
+      shifts: convertShiftToShiftResponseDTO(posting),
+      skills: convertSkillToSkillResponseDTO(posting),
+      employees: convertEmployeeToEmployeeResponseDTO(posting),
       title: posting.title,
       type: posting.type,
       description: posting.description,
-      startDate: posting.startDate.toISOString().substring(0, 10),
-      endDate: posting.endDate.toISOString().substring(0, 10),
-      autoClosingDate: posting.autoClosingDate.toISOString().substring(0, 10),
+      startDate: formatDate(posting.startDate),
+      endDate: formatDate(posting.endDate),
+      autoClosingDate: formatDate(posting.autoClosingDate),
       numVolunteers: posting.numVolunteers,
     };
   }
@@ -130,26 +159,22 @@ class PostingService implements IPostingService {
           },
         },
       );
-      return await Promise.all(
-        postings.map(async (posting: PostingWithRelations) => {
-          return {
-            id: String(posting.id),
-            branchName: posting.branch.name,
-            shifts: convertShiftToShiftDTO(posting),
-            skillNames: getPostingSkillNames(posting),
-            employees: getPostingEmployeeIds(posting),
-            title: posting.title,
-            type: posting.type,
-            description: posting.description,
-            startDate: posting.startDate.toISOString().substring(0, 10),
-            endDate: posting.endDate.toISOString().substring(0, 10),
-            autoClosingDate: posting.autoClosingDate
-              .toISOString()
-              .substring(0, 10),
-            numVolunteers: posting.numVolunteers,
-          };
-        }),
-      );
+      return postings.map((posting: PostingWithRelations) => {
+        return {
+          id: String(posting.id),
+          branch: convertBranchToBranchResponseDTO(posting),
+          shifts: convertShiftToShiftResponseDTO(posting),
+          skills: convertSkillToSkillResponseDTO(posting),
+          employees: convertEmployeeToEmployeeResponseDTO(posting),
+          title: posting.title,
+          type: posting.type,
+          description: posting.description,
+          startDate: formatDate(posting.startDate),
+          endDate: formatDate(posting.endDate),
+          autoClosingDate: formatDate(posting.autoClosingDate),
+          numVolunteers: posting.numVolunteers,
+        };
+      });
     } catch (error) {
       Logger.error(`Failed to get postings. Reason = ${error.message}`);
       throw error;
@@ -197,10 +222,10 @@ class PostingService implements IPostingService {
     }
     return {
       id: String(newPosting.id),
-      branchName: newPosting.branch.name,
-      shifts: convertShiftToShiftDTO(newPosting),
-      skillNames: getPostingSkillNames(newPosting),
-      employees: posting.employees,
+      branch: convertBranchToBranchResponseDTO(newPosting),
+      shifts: convertShiftToShiftResponseDTO(newPosting),
+      skills: convertSkillToSkillResponseDTO(newPosting),
+      employees: convertEmployeeToEmployeeResponseDTO(newPosting),
       title: posting.title,
       type: posting.type,
       description: posting.description,
@@ -227,11 +252,13 @@ class PostingService implements IPostingService {
             connect: { id: Number(posting.branchId) },
           },
           skills: {
+            set: [],
             connect: posting.skills.map((skillId: string) => {
               return { id: Number(skillId) };
             }),
           },
           employees: {
+            set: [],
             connect: posting.employees.map((employeeId: string) => {
               return { id: Number(employeeId) };
             }),
@@ -257,10 +284,10 @@ class PostingService implements IPostingService {
     }
     return {
       id: String(updateResult.id),
-      branchName: updateResult.branch.name,
-      shifts: convertShiftToShiftDTO(updateResult),
-      skillNames: getPostingSkillNames(updateResult),
-      employees: posting.employees,
+      branch: convertBranchToBranchResponseDTO(updateResult),
+      shifts: convertShiftToShiftResponseDTO(updateResult),
+      skills: convertSkillToSkillResponseDTO(updateResult),
+      employees: convertEmployeeToEmployeeResponseDTO(updateResult),
       title: posting.title,
       type: posting.type,
       description: posting.description,
