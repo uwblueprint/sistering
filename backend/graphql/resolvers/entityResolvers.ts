@@ -15,7 +15,7 @@ import {
 } from "../../services/interfaces/IEntityService";
 import { generateCSV } from "../../utilities/CSVUtils";
 
-const defaultBucket = process.env.DEFAULT_BUCKET || "";
+const defaultBucket = process.env.FIREBASE_STORAGE_DEFAULT_BUCKET || "";
 const fileStorageService = new FileStorageService(defaultBucket);
 const entityService = new EntityService(fileStorageService);
 

@@ -41,7 +41,14 @@ server.applyMiddleware({
 });
 
 firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.applicationDefault(),
+  credential: firebaseAdmin.credential.cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    privateKey: process.env.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY?.replace(
+      /\\n/g,
+      "\n",
+    ),
+    clientEmail: process.env.FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL,
+  }),
 });
 
 app.listen({ port: process.env.PORT || 5000 }, () => {
