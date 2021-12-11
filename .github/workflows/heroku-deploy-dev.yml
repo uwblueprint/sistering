@@ -10,10 +10,6 @@ on:
     paths:
       - "backend/**"
 
-defaults:
-  run:
-    working-directory: backend
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -47,6 +43,7 @@ jobs:
           EOF
         env:
           HEROKU_APP_NAME: "${{ secrets.DEV_PROJECT_ID }}"
+        working-directory: backend
       - name: Write Firebase service account credentials
         run: |
           cat > "${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PATH }}" <<EOF
@@ -73,6 +70,7 @@ jobs:
           FIREBASE_SVC_ACCOUNT_TOKEN_URI: "${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_TOKEN_URI }}"
           FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL: "${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_AUTH_PROVIDER_X509_CERT_URL }}"
           FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL: "${{ secrets.DEV_FIREBASE_SVC_ACCOUNT_CLIENT_X509_CERT_URL }}"
+        working-directory: backend
       - name: Set Heroku config vars
         run: |
           heroku config:set GOOGLE_APPLICATION_CREDENTIALS="${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PATH }}" -a $HEROKU_APP_NAME && \
@@ -90,5 +88,6 @@ jobs:
         run: |
           echo "!${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PATH }}" > .gitignore && \
           echo "!prisma/.env" >> .gitignore
+        working-directory: backend
       - name: Push to Heroku
-        run: cd .. && git subtree push --prefix backend heroku main
+        run: git subtree push --prefix backend heroku main
