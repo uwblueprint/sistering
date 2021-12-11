@@ -3,7 +3,6 @@ import { PrismaClient, User } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import { CreateUserDTO, Role, UpdateUserDTO, UserDTO } from "../../types";
 import logger from "../../utilities/logger";
-// import User from "../../models/user.model";
 
 const prisma = new PrismaClient();
 
