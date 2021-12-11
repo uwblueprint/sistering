@@ -86,5 +86,9 @@ jobs:
           heroku config:set PREVIEW_DEPLOY=true -a $HEROKU_APP_NAME
         env:
           HEROKU_APP_NAME: "${{ secrets.DEV_PROJECT_ID }}"
+      - name: Un-ignore credential files
+        run: |
+          echo "!${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_PATH }}" > .gitignore && \
+          echo "!prisma/.env" >> .gitignore
       - name: Push to Heroku
         run: cd .. && git subtree push --prefix backend heroku main
