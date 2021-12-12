@@ -127,8 +127,14 @@ const Login = (): React.ReactElement => {
               window.alert(response);
             }
           }}
-          // eslint-disable-next-line no-alert
-          onFailure={(error) => window.alert(error)}
+          onFailure={(error) =>
+            // eslint-disable-next-line no-alert
+            window.alert(
+              error instanceof Error
+                ? error.message
+                : "Encountered unknown Google Login error.",
+            )
+          }
         />
       </form>
       <div>
