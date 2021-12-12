@@ -6,14 +6,10 @@ on:
       - main
     paths:
       - "backend/**"
-  pull_request:
-    paths:
-      - "backend/**"
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'push' || github.event.pull_request.head.repo.full_name == github.repository && github.base_ref == 'main' }}
     steps:
       - name: Check out repository
         uses: actions/checkout@v2
