@@ -41,18 +41,14 @@ type PostingWithRelations = {
 
 // HELPER FUNCTIONS
 
-const convertToBranchResponseDTO = (
-  branch: Branch,
-): BranchResponseDTO => {
+const convertToBranchResponseDTO = (branch: Branch): BranchResponseDTO => {
   return {
     id: String(branch.id),
     name: branch.name,
   };
 };
 
-const convertToShiftResponseDTO = (
-  shifts: Shift[],
-): ShiftResponseDTO[] => {
+const convertToShiftResponseDTO = (shifts: Shift[]): ShiftResponseDTO[] => {
   return shifts.map((shift: Shift) => {
     return {
       id: String(shift.id),
@@ -63,9 +59,7 @@ const convertToShiftResponseDTO = (
   });
 };
 
-const convertToSkillResponseDTO = (
-  skills: Skill[],
-): SkillResponseDTO[] => {
+const convertToSkillResponseDTO = (skills: Skill[]): SkillResponseDTO[] => {
   return skills.map((skill: Skill) => {
     return {
       id: String(skill.id),
@@ -182,7 +176,7 @@ class PostingService implements IPostingService {
   }
 
   async createPosting(posting: PostingRequestDTO): Promise<PostingResponseDTO> {
-    let newPosting: PostingWithRelations; 
+    let newPosting: PostingWithRelations;
     try {
       validatePostingDates(posting);
 
