@@ -7,9 +7,9 @@ const postingType = gql`
   }
 
   input PostingRequestDTO {
-    branchId: String!
-    skills: [String]!
-    employees: [String]!
+    branchId: ID!
+    skills: [ID!]!
+    employees: [ID!]!
     title: String!
     type: PostingType!
     description: String!
@@ -22,9 +22,9 @@ const postingType = gql`
   type PostingResponseDTO {
     id: ID!
     branch: BranchResponseDTO!
-    shifts: [ShiftResponseDTO]!
-    skills: [SkillResponseDTO]!
-    employees: [EmployeeResponseDTO]!
+    shifts: [ShiftResponseDTO!]!
+    skills: [SkillResponseDTO!]!
+    employees: [EmployeeResponseDTO!]!
     title: String!
     type: PostingType!
     description: String!
@@ -49,9 +49,9 @@ const postingType = gql`
   }
 
   type EmployeeResponseDTO {
-    id: String!
-    userId: String!
-    branchId: String!
+    id: ID!
+    userId: ID!
+    branchId: ID!
   }
 
   extend type Query {
@@ -62,7 +62,7 @@ const postingType = gql`
   extend type Mutation {
     createPosting(posting: PostingRequestDTO!): PostingResponseDTO!
     updatePosting(id: ID!, posting: PostingRequestDTO!): PostingResponseDTO!
-    deletePosting(id: ID!): ID
+    deletePosting(id: ID!): ID!
   }
 `;
 

@@ -41,19 +41,19 @@ type PostingWithRelations = {
 
 // HELPER FUNCTIONS
 
-const convertBranchToBranchResponseDTO = (
-  posting: PostingWithRelations,
+const convertToBranchResponseDTO = (
+  branch: Branch,
 ): BranchResponseDTO => {
   return {
-    id: String(posting.branch.id),
-    name: posting.branch.name,
+    id: String(branch.id),
+    name: branch.name,
   };
 };
 
-const convertShiftToShiftResponseDTO = (
-  posting: PostingWithRelations,
+const convertToShiftResponseDTO = (
+  shifts: Shift[],
 ): ShiftResponseDTO[] => {
-  return posting.shifts.map((shift: Shift) => {
+  return shifts.map((shift: Shift) => {
     return {
       id: String(shift.id),
       postingId: String(shift.postingId),
@@ -63,10 +63,10 @@ const convertShiftToShiftResponseDTO = (
   });
 };
 
-const convertSkillToSkillResponseDTO = (
-  posting: PostingWithRelations,
+const convertToSkillResponseDTO = (
+  skills: Skill[],
 ): SkillResponseDTO[] => {
-  return posting.skills.map((skill: Skill) => {
+  return skills.map((skill: Skill) => {
     return {
       id: String(skill.id),
       name: skill.name,
@@ -74,10 +74,10 @@ const convertSkillToSkillResponseDTO = (
   });
 };
 
-const convertEmployeeToEmployeeResponseDTO = (
-  posting: PostingWithRelations,
+const convertToEmployeeResponseDTO = (
+  employees: Employee[],
 ): EmployeeResponseDTO[] => {
-  return posting.employees.map((employee: Employee) => {
+  return employees.map((employee: Employee) => {
     return {
       id: String(employee.id),
       userId: String(employee.userId),
@@ -133,10 +133,10 @@ class PostingService implements IPostingService {
 
     return {
       id: String(posting.id),
-      branch: convertBranchToBranchResponseDTO(posting),
-      shifts: convertShiftToShiftResponseDTO(posting),
-      skills: convertSkillToSkillResponseDTO(posting),
-      employees: convertEmployeeToEmployeeResponseDTO(posting),
+      branch: convertToBranchResponseDTO(posting.branch),
+      shifts: convertToShiftResponseDTO(posting.shifts),
+      skills: convertToSkillResponseDTO(posting.skills),
+      employees: convertToEmployeeResponseDTO(posting.employees),
       title: posting.title,
       type: posting.type,
       description: posting.description,
@@ -162,10 +162,10 @@ class PostingService implements IPostingService {
       return postings.map((posting: PostingWithRelations) => {
         return {
           id: String(posting.id),
-          branch: convertBranchToBranchResponseDTO(posting),
-          shifts: convertShiftToShiftResponseDTO(posting),
-          skills: convertSkillToSkillResponseDTO(posting),
-          employees: convertEmployeeToEmployeeResponseDTO(posting),
+          branch: convertToBranchResponseDTO(posting.branch),
+          shifts: convertToShiftResponseDTO(posting.shifts),
+          skills: convertToSkillResponseDTO(posting.skills),
+          employees: convertToEmployeeResponseDTO(posting.employees),
           title: posting.title,
           type: posting.type,
           description: posting.description,
@@ -182,7 +182,7 @@ class PostingService implements IPostingService {
   }
 
   async createPosting(posting: PostingRequestDTO): Promise<PostingResponseDTO> {
-    let newPosting: PostingWithRelations; // Posting | null;
+    let newPosting: PostingWithRelations; 
     try {
       validatePostingDates(posting);
 
@@ -222,10 +222,10 @@ class PostingService implements IPostingService {
     }
     return {
       id: String(newPosting.id),
-      branch: convertBranchToBranchResponseDTO(newPosting),
-      shifts: convertShiftToShiftResponseDTO(newPosting),
-      skills: convertSkillToSkillResponseDTO(newPosting),
-      employees: convertEmployeeToEmployeeResponseDTO(newPosting),
+      branch: convertToBranchResponseDTO(newPosting.branch),
+      shifts: convertToShiftResponseDTO(newPosting.shifts),
+      skills: convertToSkillResponseDTO(newPosting.skills),
+      employees: convertToEmployeeResponseDTO(newPosting.employees),
       title: posting.title,
       type: posting.type,
       description: posting.description,
@@ -240,7 +240,7 @@ class PostingService implements IPostingService {
     postingId: string,
     posting: PostingRequestDTO,
   ): Promise<PostingResponseDTO | null> {
-    let updateResult: PostingWithRelations; // Posting | null;
+    let updateResult: PostingWithRelations;
 
     try {
       validatePostingDates(posting);
@@ -284,10 +284,10 @@ class PostingService implements IPostingService {
     }
     return {
       id: String(updateResult.id),
-      branch: convertBranchToBranchResponseDTO(updateResult),
-      shifts: convertShiftToShiftResponseDTO(updateResult),
-      skills: convertSkillToSkillResponseDTO(updateResult),
-      employees: convertEmployeeToEmployeeResponseDTO(updateResult),
+      branch: convertToBranchResponseDTO(updateResult.branch),
+      shifts: convertToShiftResponseDTO(updateResult.shifts),
+      skills: convertToSkillResponseDTO(updateResult.skills),
+      employees: convertToEmployeeResponseDTO(updateResult.employees),
       title: posting.title,
       type: posting.type,
       description: posting.description,

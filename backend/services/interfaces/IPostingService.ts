@@ -26,7 +26,6 @@ interface IPostingService {
 
   /**
    * Update a posting.
-   * Note: the password cannot be updated using this method, use IAuthService.resetPassword instead
    * @param postingId posting's id
    * @param posting the posting to be updated
    * @returns a PostingDTO with the updated posting's information
