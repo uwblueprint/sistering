@@ -44,13 +44,6 @@ export type BranchResponseDTO = {
   name: string;
 };
 
-export type ShiftResponseDTO = {
-  id: string;
-  postingId: string;
-  startTime: Date;
-  endTime: Date;
-};
-
 export type EmployeeResponseDTO = {
   id: string;
   userId: string;

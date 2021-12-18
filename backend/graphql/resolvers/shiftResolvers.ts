@@ -30,27 +30,27 @@ const shiftResolvers = {
     },
     updateShift: async (
       _parent: undefined,
-      { id, shift }: { id: string; shift: ShiftRequestDTO },
+      { shiftId, shift }: { shiftId: string; shift: ShiftRequestDTO },
     ): Promise<ShiftResponseDTO | null> => {
-      return shiftService.updateShift(id, shift);
+      return shiftService.updateShift(shiftId, shift);
     },
     updateShifts: async (
       _parent: undefined,
-      { id, shifts }: { id: string; shifts: ShiftBulkRequestDTO },
+      { postingId, shifts }: { postingId: string; shifts: ShiftBulkRequestDTO },
     ): Promise<ShiftResponseDTO[] | null> => {
-      return shiftService.updateShifts(id, shifts);
+      return shiftService.updateShifts(postingId, shifts);
     },
     deleteShift: async (
       _parent: undefined,
-      { id }: { id: string },
-    ): Promise<void> => {
-      return shiftService.deleteShift(id);
+      { shiftId }: { shiftId: string },
+    ): Promise<string> => {
+      return shiftService.deleteShift(shiftId);
     },
     deleteShifts: async (
       _parent: undefined,
-      { id }: { id: string },
-    ): Promise<void> => {
-      return shiftService.deleteShifts(id);
+      { postingId }: { postingId: string },
+    ): Promise<string> => {
+      return shiftService.deleteShifts(postingId);
     },
   },
 };

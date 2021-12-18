@@ -1,6 +1,6 @@
-import moment, { Moment } from "moment";
+import moment, { Moment, DurationInputArg1, DurationInputArg2 } from "moment";
 import { PrismaClient, Shift } from "@prisma/client";
-import IShiftService, { DurationArgs } from "../interfaces/IShiftService";
+import IShiftService from "../interfaces/IShiftService";
 import {
   RecurrenceInterval,
   ShiftBulkRequestDTO,
@@ -15,30 +15,36 @@ const prisma = new PrismaClient();
 
 const Logger = logger(__filename);
 
+type DurationArgs = {
+  value: DurationInputArg1;
+  unit: DurationInputArg2;
+};
+
 const dateFormat = "YYYY-MM-DD";
 const timeFormat = "HH:mm";
 const dateTimeFormat = "YYYY-MM-DD HH:mm";
+const STRICT_MODE = true;
 
 class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
-  getDuration(recurrence: RecurrenceInterval): DurationArgs {
+  getDuration(recurrence: RecurrenceInterval): DurationArgs | null {
     switch (recurrence) {
       case "NONE": // No recurrence
-        return { unit: "day", value: 1 };
+        return null;
       case "WEEKLY": // Weekly
         return { unit: "week", value: 1 };
       case "BIWEEKLY": // Biweekly
         return { unit: "week", value: 2 };
       case "MONTHLY": // Monthly
-        return { unit: "month", value: 1 };
+        return { unit: "week", value: 4 };
       default:
         throw new Error(`Invalid recurrence ${recurrence}`);
     }
   }
 
   validateShift(shift: ShiftRequestDTO): [boolean, string] {
-    const startTime = moment(shift.startTime, dateTimeFormat, true);
-    const endTime = moment(shift.endTime, dateTimeFormat, true);
+    const startTime = moment(shift.startTime, dateTimeFormat, STRICT_MODE);
+    const endTime = moment(shift.endTime, dateTimeFormat, STRICT_MODE);
     // Check that startTime and endTime are valid
     if (!startTime.isValid() || !endTime.isValid()) {
       return [false, "Invalid startTime or endTime"];
@@ -68,7 +74,11 @@ class ShiftService implements IShiftService {
             dateTimeFormat,
             true,
           ).isValid() ||
-          !moment(`${tb.date} ${tb.endTime}`, dateTimeFormat, true).isValid() ||
+          !moment(
+            `${tb.date} ${tb.endTime}`,
+            dateTimeFormat,
+            STRICT_MODE,
+          ).isValid() ||
           moment(tb.startTime, timeFormat) >= moment(tb.endTime, timeFormat),
       )
     )
@@ -77,7 +87,11 @@ class ShiftService implements IShiftService {
     const [earliestDate, latestDate] = timeBlocks.reduce(
       (earliestLatestSoFar, currentTimeblock) => {
         const earliestLatestTuple = earliestLatestSoFar;
-        const currentDate = moment(currentTimeblock.date, dateFormat, true);
+        const currentDate = moment(
+          currentTimeblock.date,
+          dateFormat,
+          STRICT_MODE,
+        );
         earliestLatestTuple[0] = currentDate.isBefore(earliestLatestSoFar[0])
           ? currentDate
           : earliestLatestSoFar[0];
@@ -87,8 +101,8 @@ class ShiftService implements IShiftService {
         return earliestLatestTuple;
       },
       [
-        moment(timeBlocks[0].date, dateFormat, true),
-        moment(timeBlocks[0].date, dateFormat, true),
+        moment(timeBlocks[0].date, dateFormat, STRICT_MODE),
+        moment(timeBlocks[0].date, dateFormat, STRICT_MODE),
       ],
     );
 
@@ -99,13 +113,15 @@ class ShiftService implements IShiftService {
   }
 
   buildTimeBlocks(shifts: ShiftBulkRequestDTO): TimeBlock[] {
-    const endDate: Moment = moment(shifts.endDate, dateFormat, true).add(
+    const endDate: Moment = moment(shifts.endDate, dateFormat, STRICT_MODE).add(
       1,
       "day",
     );
 
     // Get moment's duration function args using recurrence
-    const duration: DurationArgs = this.getDuration(shifts.recurrenceInterval);
+    const duration: DurationArgs | null = this.getDuration(
+      shifts.recurrenceInterval,
+    );
 
     const shiftTimes: TimeBlock[] = shifts.times.flatMap((time) => {
       const startTime = moment(
@@ -120,16 +136,23 @@ class ShiftService implements IShiftService {
       );
       const recurringShifts = [];
       let end = endTime;
-      for (
-        let start = startTime.clone();
-        start < endDate;
-        start.add(duration.value, duration.unit)
-      ) {
+      if (duration) {
+        for (
+          let start = startTime.clone();
+          start < endDate;
+          start.add(duration.value, duration.unit)
+        ) {
+          recurringShifts.push({
+            startTime: start.toDate(),
+            endTime: end.toDate(),
+          });
+          end = end.add(duration.value, duration.unit);
+        }
+      } else {
         recurringShifts.push({
-          startTime: start.toDate(),
-          endTime: end.toDate(),
+          startTime: startTime.toDate(),
+          endTime: endTime.toDate(),
         });
-        end = end.add(duration.value, duration.unit);
       }
       return recurringShifts;
     });
@@ -256,8 +279,8 @@ class ShiftService implements IShiftService {
       const [valid, errorMessage] = this.validateShift(shift);
       if (!valid) throw new Error(errorMessage);
 
-      const startTime = moment(shift.startTime, "YYYY-MM-DD HH:mm", true);
-      const endTime = moment(shift.endTime, "YYYY-MM-DD HH:mm", true);
+      const startTime = moment(shift.startTime, dateTimeFormat, STRICT_MODE);
+      const endTime = moment(shift.endTime, dateTimeFormat, STRICT_MODE);
 
       updateResult = await prisma.shift.update({
         where: { id: Number(shiftId) },
@@ -285,12 +308,12 @@ class ShiftService implements IShiftService {
     const [valid, errorMessage] = this.validateTimeBlocks(shifts.times);
     if (!valid) throw new Error(errorMessage);
 
+    const shiftTimes: TimeBlock[] = this.buildTimeBlocks(shifts);
+
     return prisma.$transaction(async (prismaClient) => {
       await prismaClient.shift.deleteMany({
         where: { postingId: Number(postingId) },
       });
-
-      const shiftTimes: TimeBlock[] = this.buildTimeBlocks(shifts);
 
       const newShifts = await Promise.all(
         shiftTimes.map(async (shiftTime: TimeBlock) => {
@@ -321,22 +344,24 @@ class ShiftService implements IShiftService {
     });
   }
 
-  async deleteShift(shiftId: string): Promise<void> {
+  async deleteShift(shiftId: string): Promise<string> {
     try {
       await prisma.shift.delete({
         where: { id: Number(shiftId) },
       });
+      return shiftId;
     } catch (error) {
       Logger.error(`Failed to delete shift. Reason = ${error.message}`);
       throw error;
     }
   }
 
-  async deleteShifts(postingId: string): Promise<void> {
+  async deleteShifts(postingId: string): Promise<string> {
     try {
       await prisma.shift.deleteMany({
         where: { postingId: Number(postingId) },
       });
+      return postingId;
     } catch (error) {
       Logger.error(`Failed to delete shift. Reason = ${error.message}`);
       throw error;

@@ -40,10 +40,13 @@ const shiftType = gql`
 
   extend type Mutation {
     createShifts(shifts: ShiftBulkRequestDTO!): [ShiftResponseDTO!]!
-    updateShift(id: ID!, shift: ShiftRequestDTO!): ShiftResponseDTO!
-    updateShifts(id: ID!, shifts: ShiftBulkRequestDTO!): [ShiftResponseDTO!]!
-    deleteShift(id: ID!): ID
-    deleteShifts(id: ID!): ID
+    updateShift(shiftId: ID!, shift: ShiftRequestDTO!): ShiftResponseDTO!
+    updateShifts(
+      postingId: ID!
+      shifts: ShiftBulkRequestDTO!
+    ): [ShiftResponseDTO!]!
+    deleteShift(shiftId: ID!): ID
+    deleteShifts(postingId: ID!): ID
   }
 `;
 

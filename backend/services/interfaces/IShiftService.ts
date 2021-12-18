@@ -1,16 +1,8 @@
-import { DurationInputArg1, DurationInputArg2 } from "moment";
 import {
-  RecurrenceInterval,
   ShiftBulkRequestDTO,
   ShiftRequestDTO,
   ShiftResponseDTO,
-  TimeBlockDTO,
 } from "../../types";
-
-export type DurationArgs = {
-  value: DurationInputArg1;
-  unit: DurationInputArg2;
-};
 
 interface IShiftService {
   /**
@@ -77,14 +69,14 @@ interface IShiftService {
    * @param shiftId shift's shiftId
    * @throws Error if shift deletion fails
    */
-  deleteShift(shiftId: string): Promise<void>;
+  deleteShift(shiftId: string): Promise<string>;
 
   /**
    * Delete shifts by postingId
    * @param postingId shift's postingId
    * @throws Error if shift deletion fails
    */
-  deleteShifts(postingId: string): Promise<void>;
+  deleteShifts(postingId: string): Promise<string>;
 }
 
 export default IShiftService;
