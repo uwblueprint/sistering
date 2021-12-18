@@ -4,12 +4,14 @@ import express from "express";
 import * as firebaseAdmin from "firebase-admin";
 
 import { ApolloServer } from "apollo-server-express";
-import { PrismaClient } from "@prisma/client";
 import schema from "./graphql";
 
-const prisma = new PrismaClient();
-
-const CORS_ALLOW_LIST = ["http://localhost:3000"];
+const CORS_ALLOW_LIST = [
+  "http://localhost:3000",
+  "https://sistering-dev.firebaseapp.com",
+  "https://sistering-dev.web.app",
+  /^https:\/\/sistering-dev--pr.*\.web\.app$/,
+];
 
 const CORS_OPTIONS: cors.CorsOptions = {
   origin: CORS_ALLOW_LIST,
@@ -39,25 +41,17 @@ server.applyMiddleware({
 });
 
 firebaseAdmin.initializeApp({
-  credential: firebaseAdmin.credential.applicationDefault(),
+  credential: firebaseAdmin.credential.cert({
+    projectId: process.env.FIREBASE_PROJECT_ID,
+    privateKey: process.env.FIREBASE_SVC_ACCOUNT_PRIVATE_KEY?.replace(
+      /\\n/g,
+      "\n",
+    ),
+    clientEmail: process.env.FIREBASE_SVC_ACCOUNT_CLIENT_EMAIL,
+  }),
 });
 
-async function main() {
-  await prisma.$connect();
-  console.log("Successfully connected to DB using Prisma!");
-}
-
-main()
-  .catch((e) => {
-    // e should be a PrismaClientInitializationError if connection fails
-    console.error("Error connecting to DB using Prisma!");
-    throw e;
-  })
-  .finally(async () => {
-    await prisma.$disconnect();
-  });
-
-app.listen({ port: 5000 }, () => {
+app.listen({ port: process.env.PORT || 5000 }, () => {
   /* eslint-disable-next-line no-console */
-  console.info("Server is listening on port 5000!");
+  console.info(`Server is listening on port ${process.env.PORT || 5000}!`);
 });

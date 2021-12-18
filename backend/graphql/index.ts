@@ -2,11 +2,7 @@ import { makeExecutableSchema, gql } from "apollo-server-express";
 import { applyMiddleware } from "graphql-middleware";
 import { merge } from "lodash";
 
-import {
-  isAuthorizedByEmail,
-  isAuthorizedByRole,
-  isAuthorizedByUserId,
-} from "../middlewares/auth";
+import { isAuthorizedByRole, isAuthorizedByUserId } from "../middlewares/auth";
 import authResolvers from "./resolvers/authResolvers";
 import authType from "./types/authType";
 import entityResolvers from "./resolvers/entityResolvers";
@@ -15,6 +11,8 @@ import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
 import shiftResolvers from "./resolvers/shiftResolvers";
 import shiftType from "./types/shiftType";
+import postingResolvers from "./resolvers/postingResolvers";
+import postingType from "./types/postingType";
 import skillResolvers from "./resolvers/skillResolvers";
 import skillType from "./types/skillType";
 
@@ -40,12 +38,15 @@ const executableSchema = makeExecutableSchema({
     userType,
     shiftType,
     skillType,
+    skillType,
+    postingType,
   ],
   resolvers: merge(
     authResolvers,
     entityResolvers,
     userResolvers,
     shiftResolvers,
+    postingResolvers,
     skillResolvers,
   ),
 });
@@ -63,6 +64,8 @@ const graphQLMiddlewares = {
     users: authorizedByAdmin(),
     shift: authorizedByAdmin(),
     shifts: authorizedByAdmin(),
+    posting: authorizedByAdmin(),
+    postings: authorizedByAdmin(),
     skill: authorizedByAdmin(),
     skills: authorizedByAdmin(),
   },
@@ -75,12 +78,14 @@ const graphQLMiddlewares = {
     deleteUserById: authorizedByAdmin(),
     deleteUserByEmail: authorizedByAdmin(),
     logout: isAuthorizedByUserId("userId"),
-    resetPassword: isAuthorizedByEmail("email"),
     createShifts: authorizedByAdmin(),
     updateShift: authorizedByAdmin(),
     updateShifts: authorizedByAdmin(),
     deleteShift: authorizedByAdmin(),
     deleteShifts: authorizedByAdmin(),
+    createPosting: authorizedByAdmin(),
+    updatePosting: authorizedByAdmin(),
+    deletePosting: authorizedByAdmin(),
     createSkill: authorizedByAdmin(),
     updateSkill: authorizedByAdmin(),
     deleteSkill: authorizedByAdmin(),

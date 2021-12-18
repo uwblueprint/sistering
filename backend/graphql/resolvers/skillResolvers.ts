@@ -1,5 +1,5 @@
 import SkillService from "../../services/implementations/skillService";
-import ISkillService from "../../services/interfaces/ISkillService";
+import ISkillService from "../../services/interfaces/skillService";
 import { SkillRequestDTO, SkillResponseDTO } from "../../types";
 
 const skillService: ISkillService = new SkillService();

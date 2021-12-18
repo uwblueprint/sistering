@@ -21,11 +21,11 @@ model Entity {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  firstName      String         @map("first_name")
-  lastName       String         @map("last_name")
-  authId         String         @unique @map("auth_id")
-  role           Role
+  id        Int    @id @default(autoincrement())
+  firstName String @map("first_name")
+  lastName  String @map("last_name")
+  authId    String @unique @map("auth_id")
+  role      Role
 
   @@map("users")
 }
@@ -49,28 +49,24 @@ enum PostingType {
 }
 
 enum Role {
-  User 
+  User
   Admin
 }
 
 model Posting {
-  id                  Int                     @id @default(autoincrement())
-  branchId            Int                     @map("branch_id")
-  branch              Branch                  @relation(fields: [branchId], references: [id])
-  shifts              Shift[]
-  skills              PostingOnSkill[]
-  prerequisite        PostingOnPrerequisite[]
-  employee            PostingOnEmployeePoc[]
-  title               String
-  type                PostingType
-  purpose             String
-  responsibilitie     String
-  tasks               String
-  desiredQualitie     String                  @map("desired_qualities")
-  mandatoryActivities String                  @map("mandatory_activities")
-  benefits            String
-  workingConditions   String                  @map("working_conditions")
-  numVolunteers       Int                     @default(1) @map("num_volunteers")
+  id              Int         @id @default(autoincrement())
+  branchId        Int         @map("branch_id")
+  branch          Branch      @relation(fields: [branchId], references: [id])
+  shifts          Shift[]
+  skills          Skill[]
+  employees       Employee[]
+  title           String
+  type            PostingType
+  description     String
+  startDate       DateTime    @map("start_date")
+  endDate         DateTime    @map("end_date")
+  autoClosingDate DateTime    @map("auto_closing_date")
+  numVolunteers   Int         @default(1) @map("num_volunteers")
 
   @@map("postings")
 }
@@ -78,7 +74,7 @@ model Posting {
 model Skill {
   id         Int                @id @default(autoincrement())
   name       String             @unique
-  postings   PostingOnSkill[]
+  postings   Posting[]
   volunteers VolunteerOnSkill[]
 
   @@map("skills")
@@ -88,7 +84,6 @@ model Prerequisite {
   id         Int                       @id @default(autoincrement())
   name       String
   completed  Boolean
-  postings   PostingOnPrerequisite[]
   volunteers VolunteerOnPrerequisite[]
 
   @@map("prerequisites")
@@ -107,7 +102,7 @@ model Branch {
 model Shift {
   id             Int       @id @default(autoincrement())
   postingId      Int       @map("posting_id")
-  posting        Posting   @relation(fields: [postingId], references: [id])
+  posting        Posting   @relation(fields: [postingId], references: [id], onDelete: Cascade)
   startTime      DateTime  @map("start_time")
   endTime        DateTime  @map("end_time")
   signups        Signup[]
@@ -152,43 +147,13 @@ model Volunteer {
 }
 
 model Employee {
-  id       Int                    @id @default(autoincrement())
-  userId   Int                    @unique
-  branchId Int                    @map("branch_id")
-  branch   Branch                 @relation(fields: [branchId], references: [id])
-  postings PostingOnEmployeePoc[]
+  id       Int       @id @default(autoincrement())
+  userId   Int       @unique
+  branchId Int       @map("branch_id")
+  branch   Branch    @relation(fields: [branchId], references: [id])
+  postings Posting[]
 
   @@map("employees")
-}
-
-model PostingOnSkill {
-  posting   Posting @relation(fields: [postingId], references: [id])
-  postingId Int     @map("postings_id")
-  skill     Skill   @relation(fields: [skillId], references: [id])
-  skillId   Int     @map("skills_id")
-
-  @@id([postingId, skillId])
-  @@map("postings_on_skills")
-}
-
-model PostingOnPrerequisite {
-  posting        Posting      @relation(fields: [postingId], references: [id])
-  postingId      Int          @map("postings_id")
-  prerequisite   Prerequisite @relation(fields: [prerequisiteId], references: [id])
-  prerequisiteId Int          @map("prerequisites_id")
-
-  @@id([postingId, prerequisiteId])
-  @@map("postings_on_prerequisites")
-}
-
-model PostingOnEmployeePoc {
-  postingId  Int      @map("posting_id")
-  posting    Posting  @relation(fields: [postingId], references: [id])
-  employeeId Int      @map("employee_id")
-  employee   Employee @relation(fields: [employeeId], references: [id])
-
-  @@id([postingId, employeeId])
-  @@map("postings_on_employees_pocs")
 }
 
 model VolunteerOnSkill {

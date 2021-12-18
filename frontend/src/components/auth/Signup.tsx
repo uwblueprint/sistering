@@ -1,6 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
+import { Text } from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
@@ -58,7 +59,7 @@ const Signup = (): React.ReactElement => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h1>Signup</h1>
+      <Text textStyle="display-large">Signup</Text>
       <form>
         <div>
           <input
@@ -66,6 +67,7 @@ const Signup = (): React.ReactElement => {
             value={firstName}
             onChange={(event) => setFirstName(event.target.value)}
             placeholder="first name"
+            style={{ border: "1px solid" }}
           />
         </div>
         <div>
@@ -74,6 +76,7 @@ const Signup = (): React.ReactElement => {
             value={lastName}
             onChange={(event) => setLastName(event.target.value)}
             placeholder="last name"
+            style={{ border: "1px solid" }}
           />
         </div>
         <div>
@@ -82,6 +85,7 @@ const Signup = (): React.ReactElement => {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             placeholder="username@domain.com"
+            style={{ border: "1px solid" }}
           />
         </div>
         <div>
@@ -90,6 +94,7 @@ const Signup = (): React.ReactElement => {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             placeholder="password"
+            style={{ border: "1px solid" }}
           />
         </div>
         <div>

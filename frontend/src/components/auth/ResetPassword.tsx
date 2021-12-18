@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router-dom";
+import { gql, useMutation } from "@apollo/client";
+import { Text } from "@chakra-ui/react";
 
 import { DONE_RESET_PASSWORD_PAGE } from "../../constants/Routes";
 
@@ -23,19 +24,21 @@ const ResetPassword = (): React.ReactElement => {
       await resetPassword({ variables: { email } });
       history.push(DONE_RESET_PASSWORD_PAGE);
     } catch (e) {
+      /* eslint-disable-next-line no-alert */
       alert("invalid email");
     }
   };
 
   return (
     <div style={{ textAlign: "center" }}>
-      <h1>Reset Password</h1>
+      <Text textStyle="display-large">Reset Password</Text>
       <div>
         <input
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
           placeholder="username@domain.com"
+          style={{ border: "1px solid" }}
         />
       </div>
       <div>

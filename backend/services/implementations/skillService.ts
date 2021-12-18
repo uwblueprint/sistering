@@ -1,5 +1,5 @@
 import { PrismaClient, Skill } from "@prisma/client";
-import ISkillService from "../interfaces/ISkillService";
+import ISkillService from "../interfaces/skillService";
 import { SkillRequestDTO, SkillResponseDTO } from "../../types";
 import logger from "../../utilities/logger";
 
