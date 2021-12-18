@@ -7,3 +7,4 @@
 .vscode
 **/*.cache
 **/uploads
+**/firebaseServiceAccount.json
