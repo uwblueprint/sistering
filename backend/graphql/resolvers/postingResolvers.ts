@@ -1,5 +1,5 @@
 import PostingService from "../../services/implementations/postingService";
-import IPostingService from "../../services/interfaces/IPostingService";
+import IPostingService from "../../services/interfaces/postingService";
 import { PostingRequestDTO, PostingResponseDTO } from "../../types";
 
 const postingService: IPostingService = new PostingService();

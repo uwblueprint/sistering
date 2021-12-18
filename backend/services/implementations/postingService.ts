@@ -6,7 +6,7 @@ import {
   Branch,
   Shift,
 } from "@prisma/client";
-import IPostingService from "../interfaces/IPostingService";
+import IPostingService from "../interfaces/postingService";
 import {
   BranchResponseDTO,
   EmployeeResponseDTO,
