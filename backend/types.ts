@@ -39,11 +39,6 @@ export type PostingResponseDTO = Omit<
   employees: EmployeeResponseDTO[];
 };
 
-export type BranchResponseDTO = {
-  id: string;
-  name: string;
-};
-
 export type ShiftResponseDTO = {
   id: string;
   postingId: string;
@@ -73,6 +68,15 @@ export type SkillDTO = {
 export type SkillRequestDTO = Omit<SkillDTO, "id">;
 
 export type SkillResponseDTO = SkillDTO;
+
+export type BranchDTO = {
+  id: string;
+  name: string;
+};
+
+export type BranchRequestDTO = Omit<BranchDTO, "id">;
+
+export type BranchResponseDTO = BranchDTO;
 
 export type Letters = "A" | "B" | "C" | "D";
 
