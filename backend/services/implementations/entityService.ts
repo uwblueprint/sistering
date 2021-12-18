@@ -5,7 +5,7 @@ import {
   IEntityService,
   EntityRequestDTO,
   EntityResponseDTO,
-} from "../interfaces/IEntityService";
+} from "../interfaces/entityService";
 import IFileStorageService from "../interfaces/fileStorageService";
 import logger from "../../utilities/logger";
 

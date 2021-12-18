@@ -13,6 +13,50 @@ export type UserDTO = {
   role: Role;
 };
 
+export type PostingDTO = {
+  id: string;
+  branchId: string;
+  skills: string[];
+  employees: string[];
+  title: string;
+  type: PostingType;
+  description: string;
+  startDate: string;
+  endDate: string;
+  autoClosingDate: string;
+  numVolunteers: number;
+};
+
+export type PostingRequestDTO = Omit<PostingDTO, "id">;
+
+export type PostingResponseDTO = Omit<
+  PostingDTO,
+  "branchId" | "skills" | "employees"
+> & {
+  branch: BranchResponseDTO;
+  shifts: ShiftResponseDTO[];
+  skills: SkillResponseDTO[];
+  employees: EmployeeResponseDTO[];
+};
+
+export type BranchResponseDTO = {
+  id: string;
+  name: string;
+};
+
+export type ShiftResponseDTO = {
+  id: string;
+  postingId: string;
+  startTime: Date;
+  endTime: Date;
+};
+
+export type EmployeeResponseDTO = {
+  id: string;
+  userId: string;
+  branchId: string;
+};
+
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
 
 export type UpdateUserDTO = Omit<UserDTO, "id">;
@@ -31,6 +75,8 @@ export type SkillRequestDTO = Omit<SkillDTO, "id">;
 export type SkillResponseDTO = SkillDTO;
 
 export type Letters = "A" | "B" | "C" | "D";
+
+export type PostingType = "INDIVIDUAL" | "GROUP";
 
 export type NodemailerConfig = {
   service: "gmail";
