@@ -72,7 +72,7 @@ class ShiftService implements IShiftService {
           !moment(
             `${tb.date} ${tb.startTime}`,
             dateTimeFormat,
-            true,
+            STRICT_MODE,
           ).isValid() ||
           !moment(
             `${tb.date} ${tb.endTime}`,
@@ -127,26 +127,25 @@ class ShiftService implements IShiftService {
       const startTime = moment(
         `${time.date} ${time.startTime}`,
         dateTimeFormat,
-        true,
+        STRICT_MODE,
       );
       const endTime = moment(
         `${time.date} ${time.endTime}`,
         dateTimeFormat,
-        true,
+        STRICT_MODE,
       );
       const recurringShifts = [];
-      let end = endTime;
       if (duration) {
         for (
-          let start = startTime.clone();
+          let start = startTime.clone(), end = endTime;
           start < endDate;
-          start.add(duration.value, duration.unit)
+          start.add(duration.value, duration.unit),
+            end.add(duration.value, duration.unit)
         ) {
           recurringShifts.push({
             startTime: start.toDate(),
             endTime: end.toDate(),
           });
-          end = end.add(duration.value, duration.unit);
         }
       } else {
         recurringShifts.push({
