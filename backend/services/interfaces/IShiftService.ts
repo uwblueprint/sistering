@@ -2,6 +2,7 @@ import {
   ShiftBulkRequestDTO,
   ShiftRequestDTO,
   ShiftResponseDTO,
+  TimeBlock,
 } from "../../types";
 
 interface IShiftService {
@@ -27,10 +28,7 @@ interface IShiftService {
    * @returns a ShiftDTO with the created shift's information
    * @throws Error if shift creation fails
    */
-  createShift(
-    shift: ShiftRequestDTO,
-    postingId: number,
-  ): Promise<ShiftResponseDTO>;
+  createShift(shift: TimeBlock, postingId: string): Promise<ShiftResponseDTO>;
 
   /**
    * Create shifts by bulk

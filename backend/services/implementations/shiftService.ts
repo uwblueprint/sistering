@@ -1,5 +1,7 @@
+import { Prisma, PrismaClient, Shift } from "@prisma/client";
+import { Promise as BluebirdPromise } from "bluebird";
 import moment, { Moment, DurationInputArg1, DurationInputArg2 } from "moment";
-import { PrismaClient, Shift } from "@prisma/client";
+
 import IShiftService from "../interfaces/IShiftService";
 import {
   RecurrenceInterval,
@@ -19,6 +21,15 @@ type DurationArgs = {
   value: DurationInputArg1;
   unit: DurationInputArg2;
 };
+
+type PrismaTransactionClient = Omit<
+  PrismaClient<
+    Prisma.PrismaClientOptions,
+    never,
+    Prisma.RejectOnNotFound | Prisma.RejectPerOperation | undefined
+  >,
+  "$connect" | "$disconnect" | "$on" | "$transaction" | "$use"
+>;
 
 const dateFormat = "YYYY-MM-DD";
 const timeFormat = "HH:mm";
@@ -158,6 +169,27 @@ class ShiftService implements IShiftService {
     return shiftTimes;
   }
 
+  async checkConflictingShifts(
+    prismaClient: PrismaTransactionClient,
+    shiftTime: TimeBlock,
+    postingId: string,
+  ): Promise<void> {
+    const shifts = await prismaClient.shift.findMany({
+      where: { postingId: Number(postingId) },
+    });
+
+    shifts.forEach((shift) => {
+      if (
+        moment(shift.startTime).isSame(shiftTime.startTime, "minute") &&
+        moment(shift.endTime).isSame(shiftTime.endTime, "minute")
+      ) {
+        throw new Error(
+          `Shift already exists with start time ${shift.startTime} and end time ${shift.endTime}`,
+        );
+      }
+    });
+  }
+
   async getShift(shiftId: string): Promise<ShiftResponseDTO> {
     let shift: Shift | null;
 
@@ -200,29 +232,18 @@ class ShiftService implements IShiftService {
   }
 
   async createShift(
-    shift: ShiftRequestDTO,
-    postingId: number,
+    shift: TimeBlock,
+    postingId: string,
   ): Promise<ShiftResponseDTO> {
     const [valid, errorMessage] = this.validateShift(shift);
     if (!valid) throw new Error(errorMessage);
 
     return prisma.$transaction(async (prismaClient) => {
-      const shifts = await prismaClient.shift.findMany({
-        where: { postingId },
-      });
-      for (let i = 0; i < shifts.length; i += 1) {
-        if (
-          moment(shifts[i].startTime).isSame(shift.startTime, "minute") &&
-          moment(shifts[i].endTime).isSame(shift.endTime, "minute")
-        ) {
-          throw new Error(
-            `Shift already exists with start time ${shifts[i].startTime} and end time ${shifts[i].endTime}`,
-          );
-        }
-      }
+      await this.checkConflictingShifts(prismaClient, shift, postingId);
+
       const newShift = await prismaClient.shift.create({
         data: {
-          postingId,
+          postingId: Number(postingId),
           startTime: shift.startTime,
           endTime: shift.endTime,
         },
@@ -245,22 +266,24 @@ class ShiftService implements IShiftService {
       // Build shiftTimes object
       const shiftTimes: TimeBlock[] = this.buildTimeBlocks(shifts);
 
-      const newShifts = await Promise.all(
-        shiftTimes.map(async (shiftTime: TimeBlock) => {
+      const newShifts = await BluebirdPromise.mapSeries(
+        shiftTimes,
+        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+        async (shiftTime: TimeBlock, _index: number, _arrayLength: number) => {
           try {
             const newShift = await this.createShift(
               {
                 startTime: shiftTime.startTime,
                 endTime: shiftTime.endTime,
               },
-              Number(shifts.postingId),
+              shifts.postingId,
             );
             return newShift;
           } catch (error) {
             Logger.warn(error.message);
             return null;
           }
-        }),
+        },
       );
       return newShifts.filter((shift) => shift !== null) as ShiftResponseDTO[];
     } catch (error) {
@@ -314,9 +337,17 @@ class ShiftService implements IShiftService {
         where: { postingId: Number(postingId) },
       });
 
-      const newShifts = await Promise.all(
-        shiftTimes.map(async (shiftTime: TimeBlock) => {
+      const newShifts = await BluebirdPromise.mapSeries(
+        shiftTimes,
+        /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+        async (shiftTime: TimeBlock, _index: number, _arrayLength: number) => {
           try {
+            await this.checkConflictingShifts(
+              prismaClient,
+              shiftTime,
+              postingId,
+            );
+
             const newShift = await prismaClient.shift.create({
               data: {
                 postingId: Number(postingId),
@@ -329,7 +360,7 @@ class ShiftService implements IShiftService {
             Logger.warn(error.message);
             return null;
           }
-        }),
+        },
       );
 
       return (newShifts.filter((shift) => shift !== null) as Shift[]).map(
