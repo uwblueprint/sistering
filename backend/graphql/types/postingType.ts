@@ -43,11 +43,6 @@ const postingType = gql`
     endTime: Date!
   }
 
-  type BranchResponseDTO {
-    id: ID!
-    name: String!
-  }
-
   type EmployeeResponseDTO {
     id: ID!
     userId: ID!

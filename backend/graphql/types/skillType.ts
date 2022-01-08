@@ -15,7 +15,7 @@ const skillType = gql`
   extend type Mutation {
     createSkill(skill: SkillRequestDTO!): SkillResponseDTO!
     updateSkill(id: ID!, skill: SkillRequestDTO!): SkillResponseDTO!
-    deleteSkill(id: ID!): ID
+    deleteSkill(id: ID!): ID!
   }
 `;
 
