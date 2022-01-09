@@ -34,11 +34,6 @@ const postingType = gql`
     numVolunteers: Int!
   }
 
-  type BranchResponseDTO {
-    id: ID!
-    name: String!
-  }
-
   type EmployeeResponseDTO {
     id: ID!
     userId: ID!

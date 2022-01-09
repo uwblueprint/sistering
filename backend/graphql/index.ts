@@ -15,6 +15,8 @@ import postingResolvers from "./resolvers/postingResolvers";
 import postingType from "./types/postingType";
 import skillResolvers from "./resolvers/skillResolvers";
 import skillType from "./types/skillType";
+import branchResolvers from "./resolvers/branchResolvers";
+import branchType from "./types/branchType";
 
 const query = gql`
   scalar Date
@@ -40,6 +42,7 @@ const executableSchema = makeExecutableSchema({
     skillType,
     skillType,
     postingType,
+    branchType,
   ],
   resolvers: merge(
     authResolvers,
@@ -48,6 +51,7 @@ const executableSchema = makeExecutableSchema({
     shiftResolvers,
     postingResolvers,
     skillResolvers,
+    branchResolvers,
   ),
 });
 
@@ -68,6 +72,8 @@ const graphQLMiddlewares = {
     postings: authorizedByAdmin(),
     skill: authorizedByAdmin(),
     skills: authorizedByAdmin(),
+    branch: authorizedByAdmin(),
+    branches: authorizedByAdmin(),
   },
   Mutation: {
     createEntity: authorizedByAllRoles(),
@@ -89,6 +95,9 @@ const graphQLMiddlewares = {
     createSkill: authorizedByAdmin(),
     updateSkill: authorizedByAdmin(),
     deleteSkill: authorizedByAdmin(),
+    createBranch: authorizedByAdmin(),
+    updateBranch: authorizedByAdmin(),
+    deleteBranch: authorizedByAdmin(),
   },
 };
 

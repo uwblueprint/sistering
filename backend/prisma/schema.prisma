@@ -92,7 +92,7 @@ model Prerequisite {
 model Branch {
   id         Int         @id @default(autoincrement())
   posting    Posting[]
-  name       String
+  name       String      @unique
   employees  Employee[]
   volunteers Volunteer[]
 
