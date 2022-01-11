@@ -9,6 +9,8 @@ import entityResolvers from "./resolvers/entityResolvers";
 import entityType from "./types/entityType";
 import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
+import shiftResolvers from "./resolvers/shiftResolvers";
+import shiftType from "./types/shiftType";
 import postingResolvers from "./resolvers/postingResolvers";
 import postingType from "./types/postingType";
 import skillResolvers from "./resolvers/skillResolvers";
@@ -17,6 +19,7 @@ import branchResolvers from "./resolvers/branchResolvers";
 import branchType from "./types/branchType";
 
 const query = gql`
+  scalar Date
   type Query {
     _empty: String
   }
@@ -35,6 +38,8 @@ const executableSchema = makeExecutableSchema({
     authType,
     entityType,
     userType,
+    shiftType,
+    skillType,
     skillType,
     postingType,
     branchType,
@@ -43,6 +48,7 @@ const executableSchema = makeExecutableSchema({
     authResolvers,
     entityResolvers,
     userResolvers,
+    shiftResolvers,
     postingResolvers,
     skillResolvers,
     branchResolvers,
@@ -60,6 +66,8 @@ const graphQLMiddlewares = {
     userById: authorizedByAdmin(),
     userByEmail: authorizedByAdmin(),
     users: authorizedByAdmin(),
+    shift: authorizedByAdmin(),
+    shifts: authorizedByAdmin(),
     posting: authorizedByAdmin(),
     postings: authorizedByAdmin(),
     skill: authorizedByAdmin(),
@@ -76,6 +84,11 @@ const graphQLMiddlewares = {
     deleteUserById: authorizedByAdmin(),
     deleteUserByEmail: authorizedByAdmin(),
     logout: isAuthorizedByUserId("userId"),
+    createShifts: authorizedByAdmin(),
+    updateShift: authorizedByAdmin(),
+    updateShifts: authorizedByAdmin(),
+    deleteShift: authorizedByAdmin(),
+    deleteShifts: authorizedByAdmin(),
     createPosting: authorizedByAdmin(),
     updatePosting: authorizedByAdmin(),
     deletePosting: authorizedByAdmin(),

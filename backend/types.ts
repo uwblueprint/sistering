@@ -39,13 +39,6 @@ export type PostingResponseDTO = Omit<
   employees: EmployeeResponseDTO[];
 };
 
-export type ShiftResponseDTO = {
-  id: string;
-  postingId: string;
-  startTime: Date;
-  endTime: Date;
-};
-
 export type EmployeeResponseDTO = {
   id: string;
   userId: string;
@@ -59,6 +52,37 @@ export type UpdateUserDTO = Omit<UserDTO, "id">;
 export type RegisterUserDTO = Omit<CreateUserDTO, "role">;
 
 export type AuthDTO = Token & UserDTO;
+
+export type TimeBlock = {
+  startTime: Date;
+  endTime: Date;
+};
+
+export type TimeBlockDTO = {
+  date: string;
+  startTime: string;
+  endTime: string;
+};
+
+export type RecurrenceInterval = "WEEKLY" | "BIWEEKLY" | "MONTHLY" | "NONE";
+
+export type ShiftDTO = {
+  id: string;
+  postingId: string;
+  startTime: Date;
+  endTime: Date;
+};
+
+export type ShiftRequestDTO = Omit<ShiftDTO, "id" | "postingId">;
+
+export type ShiftBulkRequestDTO = {
+  postingId: string;
+  times: TimeBlockDTO[];
+  endDate: string;
+  recurrenceInterval: RecurrenceInterval;
+};
+
+export type ShiftResponseDTO = ShiftDTO;
 
 export type SkillDTO = {
   id: string;

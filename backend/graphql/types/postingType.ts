@@ -34,15 +34,6 @@ const postingType = gql`
     numVolunteers: Int!
   }
 
-  scalar Date
-
-  type ShiftResponseDTO {
-    id: String!
-    postingId: String!
-    startTime: Date!
-    endTime: Date!
-  }
-
   type EmployeeResponseDTO {
     id: ID!
     userId: ID!
