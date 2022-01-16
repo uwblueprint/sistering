@@ -11,7 +11,7 @@ interface IShiftSignupService {
    * @returns an array of ShiftSignupResponseDTO
    * @throws Error if any of the shifts signups cannot be created
    */
-  createShiftSignups(shiftSignups: CreateShiftSignupDTO[]): ShiftSignupResponseDTO[];
+  createShiftSignups(shiftSignups: CreateShiftSignupDTO[]): Promise<ShiftSignupResponseDTO[]>;
 
   /**
    * Update a shift signup entry
@@ -21,7 +21,7 @@ interface IShiftSignupService {
    * @returns a ShiftSignupResponseDTO containing the updated information
    * @throws Error if the shift signup 
    */
-  updateShiftSignup(shiftId: string, userId: string, shiftSignup: UpdateShiftSignupRequestDTO): ShiftSignupResponseDTO;
+  updateShiftSignup(shiftId: string, userId: string, shiftSignup: UpdateShiftSignupRequestDTO): Promise<ShiftSignupResponseDTO>;
 
   /**
    * Gets all shifts the user has signed up for
@@ -29,7 +29,7 @@ interface IShiftSignupService {
    * @returns an array of ShiftSignupResponseDTOs for each shift the user signed up for
    * @throws Error if the shift signup retrieval fails
    */
-  getShiftSignupsForUser(userId: string): ShiftSignupResponseDTO[];
+  getShiftSignupsForUser(userId: string): Promise<ShiftSignupResponseDTO[]>;
 }
 
 export default IShiftSignupService;
