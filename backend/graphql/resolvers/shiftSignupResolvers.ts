@@ -1,6 +1,6 @@
 import ShiftSignupService from "../../services/implementations/shiftSignupService";
 import IShiftSignupService from "../../services/interfaces/shiftSignupService";
-import { CreateShiftSignupDTO, ShiftSignupResponseDTO } from "../../types";
+import { CreateShiftSignupDTO, ShiftSignupResponseDTO, UpdateShiftSignupRequestDTO } from "../../types";
 
 const shiftSignupService: IShiftSignupService = new ShiftSignupService();
 
@@ -19,15 +19,14 @@ const shiftSignupResolvers = {
       { shifts } : { shifts: CreateShiftSignupDTO[] },
     ): Promise<ShiftSignupResponseDTO[]> => {
       return shiftSignupService.createShiftSignups(shifts);
+    },
+
+    updateShiftSignup: async (
+      _parent: undefined,
+      { shiftId, userId, update }: { shiftId: string; userId: string; update: UpdateShiftSignupRequestDTO}
+    ): Promise<ShiftSignupResponseDTO> => {
+      return shiftSignupService.updateShiftSignup(shiftId, userId, update);
     }
-    // createUser: async (
-    //   _parent: undefined,
-    //   { user }: { user: CreateUserDTO },
-    // ): Promise<UserDTO> => {
-    //   const newUser = await userService.createUser(user);
-    //   await authService.sendEmailVerificationLink(newUser.email);
-    //   return newUser;
-    // },
   },
 };
 
