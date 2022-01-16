@@ -7,6 +7,7 @@ import authResolvers from "./resolvers/authResolvers";
 import authType from "./types/authType";
 import entityResolvers from "./resolvers/entityResolvers";
 import entityType from "./types/entityType";
+import shiftSignupType from "./types/shiftSignupType";
 import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
 import shiftResolvers from "./resolvers/shiftResolvers";
@@ -39,6 +40,7 @@ const executableSchema = makeExecutableSchema({
     entityType,
     userType,
     shiftType,
+    shiftSignupType,
     skillType,
     skillType,
     postingType,
