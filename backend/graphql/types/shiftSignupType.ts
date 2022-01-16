@@ -33,8 +33,14 @@ const shiftSignupType = gql`
   }
 
   extend type Mutation {
-    createShiftSignups(shifts: [CreateShiftSignupRequestDTO!]!): [ShiftSignupResponseDTO!]!
-    updateShiftSignup(shiftId: ID!, userId: ID!, update: UpdateShiftSignupRequestDTO!): ShiftSignupResponseDTO!
+    createShiftSignups(
+      shifts: [CreateShiftSignupRequestDTO!]!
+    ): [ShiftSignupResponseDTO!]!
+    updateShiftSignup(
+      shiftId: ID!
+      userId: ID!
+      update: UpdateShiftSignupRequestDTO!
+    ): ShiftSignupResponseDTO!
   }
 `;
 

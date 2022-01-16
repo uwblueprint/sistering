@@ -84,7 +84,7 @@ export type ShiftBulkRequestDTO = {
 
 export type ShiftResponseDTO = ShiftDTO;
 
-export type ShiftSignupStatus = 'PENDING' | 'CONFIRMED' | 'CANCELED';
+export type ShiftSignupStatus = "PENDING" | "CONFIRMED" | "CANCELED";
 
 export type ShiftSignupDTO = {
   shiftId: string;
@@ -94,9 +94,12 @@ export type ShiftSignupDTO = {
   status: ShiftSignupStatus;
 };
 
-export type CreateShiftSignupDTO = Omit<ShiftSignupDTO, 'status'>;
+export type CreateShiftSignupDTO = Omit<ShiftSignupDTO, "status">;
 
-export type UpdateShiftSignupRequestDTO = Omit<ShiftSignupDTO, 'shiftId' | 'userId'>;
+export type UpdateShiftSignupRequestDTO = Omit<
+  ShiftSignupDTO,
+  "shiftId" | "userId"
+>;
 
 export type ShiftSignupResponseDTO = ShiftSignupDTO;
 
