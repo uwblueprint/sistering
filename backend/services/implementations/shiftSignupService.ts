@@ -23,6 +23,18 @@ class ShiftSignupService implements IShiftSignupService {
     };
   }
 
+  async getShiftSignupsForUser(userId: string): Promise<ShiftSignupResponseDTO[]> {
+    try {
+      const shiftSignups = await prisma.signup.findMany({
+        where: { userId: Number(userId) }
+      })
+      return shiftSignups.map(signup => this.convertSignupToDTO(signup));
+    } catch (error) {
+      Logger.error(`Failed to shift signups. Reason = ${error.message}`);
+      throw error;
+    }
+  };
+
   async createShiftSignups(shiftSignups: CreateShiftSignupDTO[]): Promise<ShiftSignupResponseDTO[]> {
     try {
       const newShiftSignups = await prisma.$transaction(
@@ -58,16 +70,6 @@ class ShiftSignupService implements IShiftSignupService {
       Logger.error(`Failed to update shift signup. Reason = ${error.message}`);
       throw error;
     }
-  }
-
-  async getShiftSignupsForUser(userId: string): Promise<ShiftSignupResponseDTO[]> {
-    return [{
-      shiftId: "",
-      userId: "",
-      numVolunteers: 0,
-      note: "",
-      status: 'PENDING'
-    }];
   }
 }
 
