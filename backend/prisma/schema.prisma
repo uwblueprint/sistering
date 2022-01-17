@@ -154,10 +154,11 @@ model Volunteer {
 }
 
 model Employee {
-  id       Int                    @unique @id
-  user     User                   @relation(fields: [id], references: [id])
-  branchId Int                    @map("branch_id")
-  branch   Branch                 @relation(fields: [branchId], references: [id])
+  id       Int       @unique @id
+  userId   Int       @unique
+  user     User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  branchId Int       @map("branch_id")
+  branch   Branch    @relation(fields: [branchId], references: [id])
   postings Posting[]
 
   @@map("employees")
