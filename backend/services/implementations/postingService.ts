@@ -12,6 +12,7 @@ import {
   EmployeeResponseDTO,
   PostingRequestDTO,
   PostingResponseDTO,
+  PostingStatus,
   PostingType,
   ShiftResponseDTO,
   SkillResponseDTO,
@@ -28,6 +29,7 @@ type PostingWithRelations = {
   branchId: number;
   title: string;
   type: PostingType;
+  status: PostingStatus;
   description: string;
   startDate: Date;
   endDate: Date;
@@ -133,6 +135,7 @@ class PostingService implements IPostingService {
       employees: convertToEmployeeResponseDTO(posting.employees),
       title: posting.title,
       type: posting.type,
+      status: posting.status,
       description: posting.description,
       startDate: formatDate(posting.startDate),
       endDate: formatDate(posting.endDate),
@@ -162,6 +165,7 @@ class PostingService implements IPostingService {
           employees: convertToEmployeeResponseDTO(posting.employees),
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
           startDate: formatDate(posting.startDate),
           endDate: formatDate(posting.endDate),
@@ -197,6 +201,7 @@ class PostingService implements IPostingService {
           },
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
           startDate: new Date(posting.startDate),
           endDate: new Date(posting.endDate),
@@ -222,6 +227,7 @@ class PostingService implements IPostingService {
       employees: convertToEmployeeResponseDTO(newPosting.employees),
       title: posting.title,
       type: posting.type,
+      status: posting.status,
       description: posting.description,
       startDate: posting.startDate,
       endDate: posting.endDate,
@@ -259,6 +265,7 @@ class PostingService implements IPostingService {
           },
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
           startDate: new Date(posting.startDate),
           endDate: new Date(posting.endDate),
@@ -284,6 +291,7 @@ class PostingService implements IPostingService {
       employees: convertToEmployeeResponseDTO(updateResult.employees),
       title: posting.title,
       type: posting.type,
+      status: posting.status,
       description: posting.description,
       startDate: posting.startDate,
       endDate: posting.endDate,

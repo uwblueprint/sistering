@@ -48,6 +48,12 @@ enum PostingType {
   GROUP
 }
 
+enum PostingStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
 enum Role {
   User
   Admin
@@ -62,6 +68,7 @@ model Posting {
   employees       Employee[]
   title           String
   type            PostingType
+  status          PostingStatus
   description     String
   startDate       DateTime    @map("start_date")
   endDate         DateTime    @map("end_date")
