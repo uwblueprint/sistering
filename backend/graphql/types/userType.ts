@@ -15,16 +15,6 @@ const userType = gql`
     role: Role!
   }
 
-  type SkillDTO {
-    id: ID!
-    name: String!
-  }
-
-  type BranchDTO {
-    id: ID!
-    name: String!
-  }
-
   type VolunteerUserResponseDTO {
     id: ID!
     firstName: String!
@@ -35,8 +25,8 @@ const userType = gql`
     hireDate: Date
     dateOfBirth: Date
     pronouns: String
-    skills: [BranchDTO!]!
-    branches: [SkillDTO!]!
+    skills: [SkillResponseDTO!]!
+    branches: [BranchResponseDTO!]!
   }
 
   input CreateUserDTO {

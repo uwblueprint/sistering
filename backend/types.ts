@@ -5,21 +5,6 @@ export type Token = {
   refreshToken: string;
 };
 
-export type SkillResponseDTO = {
-  id: string;
-  name: string;
-};
-
-export type SkillDTO = {
-  id: string;
-  name: string;
-};
-
-export type BranchResponseDTO = {
-  id: string;
-  name: string;
-};
-
 export type UserDTO = {
   id: string;
   firstName: string;
@@ -138,7 +123,14 @@ export type ShiftBulkRequestDTO = {
 
 export type ShiftResponseDTO = ShiftDTO;
 
-export type SkillRequestDTO = Omit<SkillResponseDTO, "id">;
+export type SkillDTO = {
+  id: string;
+  name: string;
+};
+
+export type SkillRequestDTO = Omit<SkillDTO, "id">;
+
+export type SkillResponseDTO = SkillDTO;
 
 export type BranchDTO = {
   id: string;
@@ -146,6 +138,8 @@ export type BranchDTO = {
 };
 
 export type BranchRequestDTO = Omit<BranchDTO, "id">;
+
+export type BranchResponseDTO = BranchDTO;
 
 export type Letters = "A" | "B" | "C" | "D";
 
