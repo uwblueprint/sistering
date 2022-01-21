@@ -20,6 +20,7 @@ export type PostingDTO = {
   employees: string[];
   title: string;
   type: PostingType;
+  status: PostingStatus;
   description: string;
   startDate: string;
   endDate: string;
@@ -105,6 +106,8 @@ export type BranchResponseDTO = BranchDTO;
 export type Letters = "A" | "B" | "C" | "D";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
+
+export type PostingStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type NodemailerConfig = {
   service: "gmail";
