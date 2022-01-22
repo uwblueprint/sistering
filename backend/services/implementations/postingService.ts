@@ -209,9 +209,9 @@ class PostingService implements IPostingService {
       type: newPosting.type,
       status: newPosting.status,
       description: newPosting.description,
-      startDate: String(newPosting.startDate),
-      endDate: String(newPosting.endDate),
-      autoClosingDate: String(newPosting.autoClosingDate),
+      startDate: newPosting.startDate,
+      endDate: newPosting.endDate,
+      autoClosingDate: newPosting.autoClosingDate,
       numVolunteers: newPosting.numVolunteers,
     };
   }
@@ -271,9 +271,9 @@ class PostingService implements IPostingService {
       type: updateResult.type,
       status: updateResult.status,
       description: updateResult.description,
-      startDate: String(updateResult.startDate),
-      endDate: String(updateResult.endDate),
-      autoClosingDate: String(updateResult.autoClosingDate),
+      startDate: updateResult.startDate,
+      endDate: updateResult.endDate,
+      autoClosingDate: updateResult.autoClosingDate,
       numVolunteers: updateResult.numVolunteers,
     };
   }

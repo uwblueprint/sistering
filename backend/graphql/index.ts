@@ -1,5 +1,5 @@
 import { makeExecutableSchema, gql } from "apollo-server-express";
-import { GraphQLScalarType, Kind, GraphQLScalarType, Kind } from "graphql";
+import { GraphQLScalarType, Kind } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { merge } from "lodash";
 
