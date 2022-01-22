@@ -66,7 +66,7 @@ class UserService implements IUserService {
         throw new Error(`userId ${userId} not found.`);
       }
       firebaseUser = await firebaseAdmin.auth().getUser(user.authId);
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -96,7 +96,7 @@ class UserService implements IUserService {
       if (!user) {
         throw new Error(`userId with authID ${firebaseUser.uid} not found.`);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -122,7 +122,7 @@ class UserService implements IUserService {
         throw new Error(`userId with authId ${authId} not found.`);
       }
       return user.role;
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to get user role. Reason = ${getErrorMessage(error)}`,
       );
@@ -141,7 +141,7 @@ class UserService implements IUserService {
         throw new Error(`user with authId ${authId} not found.`);
       }
       return String(user.id);
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to get user id. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -158,7 +158,7 @@ class UserService implements IUserService {
         throw new Error(`userId ${userId} not found.`);
       }
       return user.authId;
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to get authId. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -192,7 +192,7 @@ class UserService implements IUserService {
           };
         }),
       );
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to get users. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -245,7 +245,7 @@ class UserService implements IUserService {
 
         throw postgresError;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to create user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -317,7 +317,7 @@ class UserService implements IUserService {
 
         throw error;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to update user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -365,7 +365,7 @@ class UserService implements IUserService {
 
         throw error;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to delete user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -408,7 +408,7 @@ class UserService implements IUserService {
 
         throw error;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to delete user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -447,7 +447,7 @@ class UserService implements IUserService {
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to get volunteer user. Reason = ${getErrorMessage(error)}`,
       );
@@ -493,7 +493,7 @@ class UserService implements IUserService {
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to get volunteer user. Reason = ${getErrorMessage(error)}`,
       );
@@ -529,7 +529,7 @@ class UserService implements IUserService {
         }),
       );
       return volunteerUsers;
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to get volunteer user. Reason = ${getErrorMessage(error)}`,
       );
@@ -616,7 +616,7 @@ class UserService implements IUserService {
 
         throw postgresError;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to create VolunteerUser. Reason = ${getErrorMessage(error)}`,
       );
@@ -696,7 +696,7 @@ class UserService implements IUserService {
           skills: convertToSkillResponseDTO(updatedVolunteerUser.skills),
           branches: convertToBranchResponseDTO(updatedVolunteerUser.branches),
         };
-      } catch (error: any) {
+      } catch (error: unknown) {
         try {
           prisma.volunteer.update({
             where: {
@@ -733,7 +733,7 @@ class UserService implements IUserService {
         }
         throw error;
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to update user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
@@ -836,7 +836,7 @@ class UserService implements IUserService {
       }
 
       return String(deletedVolunteerUser.id);
-    } catch (error: any) {
+    } catch (error: unknown) {
       Logger.error(`Failed to delete user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
