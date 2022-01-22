@@ -31,7 +31,7 @@ class AuthService implements IAuthService {
       );
       const user = await this.userService.getUserByEmail(email);
       return { ...token, ...user };
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error(`Failed to generate token for user with email ${email}`);
       throw error;
     }
@@ -55,7 +55,7 @@ class AuthService implements IAuthService {
         const user = await this.userService.getUserByEmail(googleUser.email);
         return { ...token, ...user };
         /* eslint-disable-next-line no-empty */
-      } catch (error) {}
+      } catch (error: unknown) {}
 
       const user = await this.userService.createUser(
         {
@@ -71,7 +71,7 @@ class AuthService implements IAuthService {
       );
 
       return { ...token, ...user };
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error(`Failed to generate token for user with OAuth ID token`);
       throw error;
     }
@@ -98,7 +98,7 @@ class AuthService implements IAuthService {
   async renewToken(refreshToken: string): Promise<Token> {
     try {
       return await FirebaseRestClient.refreshToken(refreshToken);
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error("Failed to refresh token");
       throw error;
     }
@@ -126,7 +126,7 @@ class AuthService implements IAuthService {
       <a href=${resetLink}>Reset Password</a>`;
 
       this.emailService.sendEmail(email, "Your Password Reset Link", emailBody);
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to generate password reset link for user with email ${email}`,
       );
@@ -155,7 +155,7 @@ class AuthService implements IAuthService {
       <a href=${emailVerificationLink}>Verify email</a>`;
 
       this.emailService.sendEmail(email, "Verify your email", emailBody);
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to generate email verification link for user with email ${email}`,
       );
@@ -180,7 +180,7 @@ class AuthService implements IAuthService {
         .getUser(decodedIdToken.uid);
 
       return firebaseUser.emailVerified && roles.has(userRole);
-    } catch (error) {
+    } catch (error: unknown) {
       return false;
     }
   }
@@ -204,7 +204,7 @@ class AuthService implements IAuthService {
       return (
         firebaseUser.emailVerified && String(tokenUserId) === requestedUserId
       );
-    } catch (error) {
+    } catch (error: unknown) {
       return false;
     }
   }
@@ -225,7 +225,7 @@ class AuthService implements IAuthService {
       return (
         firebaseUser.emailVerified && decodedIdToken.email === requestedEmail
       );
-    } catch (error) {
+    } catch (error: unknown) {
       return false;
     }
   }

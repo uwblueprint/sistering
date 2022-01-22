@@ -12,6 +12,7 @@ import {
   TimeBlockDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
+import { getErrorMessage } from "../../utilities/errorUtils";
 
 const prisma = new PrismaClient();
 
@@ -204,7 +205,7 @@ class ShiftService implements IShiftService {
         throw new Error(`shiftId ${shiftId} not found.`);
       }
     } catch (error) {
-      Logger.error(`Failed to get shift. Reason = ${error.message}`);
+      Logger.error(`Failed to get shift. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
 
@@ -226,7 +227,7 @@ class ShiftService implements IShiftService {
         endTime: shift.endTime,
       }));
     } catch (error) {
-      Logger.error(`Failed to get shifts. Reason = ${error.message}`);
+      Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
   }
@@ -287,7 +288,9 @@ class ShiftService implements IShiftService {
       );
       return newShifts.filter((shift) => shift !== null) as ShiftResponseDTO[];
     } catch (error) {
-      Logger.error(`Failed to create shift. Reason = ${error.message}`);
+      Logger.error(
+        `Failed to create shift. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -312,7 +315,9 @@ class ShiftService implements IShiftService {
         },
       });
     } catch (error) {
-      Logger.error(`Failed to update shift. Reason = ${error.message}`);
+      Logger.error(
+        `Failed to update shift. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -381,7 +386,9 @@ class ShiftService implements IShiftService {
       });
       return shiftId;
     } catch (error) {
-      Logger.error(`Failed to delete shift. Reason = ${error.message}`);
+      Logger.error(
+        `Failed to delete shift. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -393,7 +400,9 @@ class ShiftService implements IShiftService {
       });
       return postingId;
     } catch (error) {
-      Logger.error(`Failed to delete shift. Reason = ${error.message}`);
+      Logger.error(
+        `Failed to delete shift. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }

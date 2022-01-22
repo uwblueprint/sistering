@@ -33,8 +33,8 @@ class EmailService implements IEmailService {
 
     try {
       return await this.transporter.sendMail(mailOptions);
-    } catch (error) {
-      Logger.error(`Failed to send email. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(`Failed to send email. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
   }

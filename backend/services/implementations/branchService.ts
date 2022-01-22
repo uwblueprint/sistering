@@ -2,6 +2,7 @@ import { PrismaClient, Branch } from "@prisma/client";
 import IBranchService from "../interfaces/branchService";
 import { BranchRequestDTO, BranchResponseDTO } from "../../types";
 import logger from "../../utilities/logger";
+import { getErrorMessage } from "../../utilities/errorUtils";
 
 const prisma = new PrismaClient();
 
@@ -23,8 +24,8 @@ class BranchService implements IBranchService {
       if (!branch) {
         throw new Error(`branchId ${branchId} not found.`);
       }
-    } catch (error) {
-      Logger.error(`Failed to get branch. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(`Failed to get branch. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
 
@@ -41,8 +42,10 @@ class BranchService implements IBranchService {
         id: String(branch.id),
         name: branch.name,
       }));
-    } catch (error) {
-      Logger.error(`Failed to get branches. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get branches. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -60,8 +63,10 @@ class BranchService implements IBranchService {
           name: branch.name,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to create branch. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create branch. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -87,8 +92,10 @@ class BranchService implements IBranchService {
           name: branch.name,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to update branch. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to update branch. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -103,8 +110,10 @@ class BranchService implements IBranchService {
         where: { id: Number(branchId) },
       });
       return String(deleteResult.id);
-    } catch (error) {
-      Logger.error(`Failed to delete branch. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to delete branch. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
