@@ -2,6 +2,7 @@ import nodemailer, { Transporter } from "nodemailer";
 import IEmailService from "../interfaces/emailService";
 import { NodemailerConfig } from "../../types";
 import logger from "../../utilities/logger";
+import { getErrorMessage } from "../../utilities/errorUtils";
 
 const Logger = logger(__filename);
 
