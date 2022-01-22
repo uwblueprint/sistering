@@ -81,7 +81,7 @@ const dateTimeScalar = new GraphQLScalarType({
     return value.toISOString().slice(0, 16); // value for client
   },
   parseValue(value) {
-    if (isValidDate(value)) return new Date(`${value}:00+00:00`); // value for server
+    if (isValidDateTime(value)) return new Date(`${value}:00+00:00`); // value for server
     throw new Error(`${value} is not a valid date in format YYYY-MM-DDTHH:mm`);
   },
   parseLiteral(ast) {
