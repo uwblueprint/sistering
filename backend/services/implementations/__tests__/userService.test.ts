@@ -8,13 +8,13 @@ const testUsers = [
     firstName: "Peter",
     lastName: "Pan",
     authId: "123",
-    role: Role.Admin,
+    role: Role.ADMIN,
   },
   {
     firstName: "Wendy",
     lastName: "Darling",
     authId: "321",
-    role: Role.User,
+    role: Role.ADMIN,
   },
 ];
 

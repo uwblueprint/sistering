@@ -12,6 +12,7 @@ import {
   EmployeeResponseDTO,
   PostingRequestDTO,
   PostingResponseDTO,
+  PostingStatus,
   PostingType,
   ShiftResponseDTO,
   SkillResponseDTO,
@@ -28,6 +29,7 @@ type PostingWithRelations = {
   branchId: number;
   title: string;
   type: PostingType;
+  status: PostingStatus;
   description: string;
   startDate: Date;
   endDate: Date;
@@ -115,6 +117,7 @@ class PostingService implements IPostingService {
       employees: convertToEmployeeResponseDTO(posting.employees),
       title: posting.title,
       type: posting.type,
+      status: posting.status,
       description: posting.description,
       startDate: posting.startDate,
       endDate: posting.endDate,
@@ -144,6 +147,7 @@ class PostingService implements IPostingService {
           employees: convertToEmployeeResponseDTO(posting.employees),
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
           startDate: posting.startDate,
           endDate: posting.endDate,
@@ -177,6 +181,7 @@ class PostingService implements IPostingService {
           },
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
           startDate: posting.startDate,
           endDate: posting.endDate,
@@ -200,13 +205,14 @@ class PostingService implements IPostingService {
       shifts: convertToShiftResponseDTO(newPosting.shifts),
       skills: convertToSkillResponseDTO(newPosting.skills),
       employees: convertToEmployeeResponseDTO(newPosting.employees),
-      title: posting.title,
-      type: posting.type,
-      description: posting.description,
-      startDate: posting.startDate,
-      endDate: posting.endDate,
-      autoClosingDate: posting.autoClosingDate,
-      numVolunteers: posting.numVolunteers,
+      title: newPosting.title,
+      type: newPosting.type,
+      status: newPosting.status,
+      description: newPosting.description,
+      startDate: String(newPosting.startDate),
+      endDate: String(newPosting.endDate),
+      autoClosingDate: String(newPosting.autoClosingDate),
+      numVolunteers: newPosting.numVolunteers,
     };
   }
 
@@ -237,6 +243,7 @@ class PostingService implements IPostingService {
           },
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
           startDate: posting.startDate,
           endDate: posting.endDate,
@@ -260,13 +267,14 @@ class PostingService implements IPostingService {
       shifts: convertToShiftResponseDTO(updateResult.shifts),
       skills: convertToSkillResponseDTO(updateResult.skills),
       employees: convertToEmployeeResponseDTO(updateResult.employees),
-      title: posting.title,
-      type: posting.type,
-      description: posting.description,
-      startDate: posting.startDate,
-      endDate: posting.endDate,
-      autoClosingDate: posting.autoClosingDate,
-      numVolunteers: posting.numVolunteers,
+      title: updateResult.title,
+      type: updateResult.type,
+      status: updateResult.status,
+      description: updateResult.description,
+      startDate: String(updateResult.startDate),
+      endDate: String(updateResult.endDate),
+      autoClosingDate: String(updateResult.autoClosingDate),
+      numVolunteers: updateResult.numVolunteers,
     };
   }
 

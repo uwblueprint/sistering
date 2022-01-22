@@ -1,4 +1,4 @@
-export type Role = "User" | "Admin";
+export type Role = "ADMIN" | "VOLUNTEER" | "EMPLOYEE";
 
 export type Token = {
   accessToken: string;
@@ -11,6 +11,7 @@ export type UserDTO = {
   lastName: string;
   email: string;
   role: Role;
+  phoneNumber: string | null;
 };
 
 export type PostingDTO = {
@@ -20,6 +21,7 @@ export type PostingDTO = {
   employees: string[];
   title: string;
   type: PostingType;
+  status: PostingStatus;
   description: string;
   startDate: Date;
   endDate: Date;
@@ -43,6 +45,44 @@ export type EmployeeResponseDTO = {
   id: string;
   userId: string;
   branchId: string;
+};
+
+export type VolunteerDTO = {
+  id: string;
+  hireDate: Date;
+  dateOfBirth: Date | null;
+  pronouns: string | null;
+  skills: SkillResponseDTO[];
+  branches: BranchResponseDTO[];
+};
+
+export type EmployeeDTO = {
+  id: string;
+  userId: string;
+};
+
+export type VolunteerUserRequestDTO = UserDTO &
+  Omit<VolunteerDTO, "skills" | "branches"> & {
+    skills: string[];
+    branches: string[];
+  };
+
+export type VolunteerUserResponseDTO = UserDTO & VolunteerDTO;
+
+export type CreateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id"> & {
+  password: string;
+};
+
+export type UpdateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id">;
+
+export type EmployeeUserDTO = UserDTO & EmployeeDTO;
+
+export type CreateEmployeeUserDTO = Omit<EmployeeUserDTO, "id"> & {
+  password: string;
+};
+
+export type UpdateEmployeeUserDTO = Omit<EmployeeUserDTO, "id"> & {
+  password: string;
 };
 
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
@@ -97,6 +137,8 @@ export type BranchResponseDTO = BranchDTO;
 export type Letters = "A" | "B" | "C" | "D";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
+
+export type PostingStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type NodemailerConfig = {
   service: "gmail";
