@@ -46,7 +46,8 @@ const authResolvers = {
       { user }: { user: RegisterUserDTO },
       { res }: { res: Response },
     ): Promise<Omit<AuthDTO, "refreshToken">> => {
-      await userService.createUser({ ...user, role: "User" });
+      // TODO: remove these user model specific calls
+      await userService.createUser({ ...user, role: "VOLUNTEER" });
       const authDTO = await authService.generateToken(
         user.email,
         user.password,

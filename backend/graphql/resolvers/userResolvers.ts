@@ -5,7 +5,14 @@ import UserService from "../../services/implementations/userService";
 import IAuthService from "../../services/interfaces/authService";
 import IEmailService from "../../services/interfaces/emailService";
 import IUserService from "../../services/interfaces/userService";
-import { CreateUserDTO, UpdateUserDTO, UserDTO } from "../../types";
+import {
+  CreateUserDTO,
+  UpdateUserDTO,
+  UserDTO,
+  VolunteerUserResponseDTO,
+  CreateVolunteerUserDTO,
+  UpdateVolunteerUserDTO,
+} from "../../types";
 import { generateCSV } from "../../utilities/CSVUtils";
 
 const userService: IUserService = new UserService();
@@ -34,6 +41,23 @@ const userResolvers = {
       const csv = await generateCSV<UserDTO>({ data: users });
       return csv;
     },
+
+    // VolunteerUsers
+    volunteerUserById: async (
+      _parent: undefined,
+      { id }: { id: string },
+    ): Promise<VolunteerUserResponseDTO> => {
+      return userService.getVolunteerUserById(id);
+    },
+    volunteerUserByEmail: async (
+      _parent: undefined,
+      { email }: { email: string },
+    ): Promise<VolunteerUserResponseDTO> => {
+      return userService.getVolunteerUserByEmail(email);
+    },
+    volunteerUsers: async (): Promise<VolunteerUserResponseDTO[]> => {
+      return userService.getVolunteerUsers();
+    },
   },
   Mutation: {
     createUser: async (
@@ -61,6 +85,42 @@ const userResolvers = {
       { email }: { email: string },
     ): Promise<void> => {
       return userService.deleteUserByEmail(email);
+    },
+
+    // VolunteerUsers
+    createVolunteerUser: async (
+      _parent: undefined,
+      { volunteerUser }: { volunteerUser: CreateVolunteerUserDTO },
+    ): Promise<VolunteerUserResponseDTO> => {
+      const newVolunteerUser = await userService.createVolunteerUser(
+        volunteerUser,
+      );
+      await authService.sendEmailVerificationLink(newVolunteerUser.email);
+      return newVolunteerUser;
+    },
+
+    updateVolunteerUserById: async (
+      _parent: undefined,
+      {
+        id,
+        volunteerUser,
+      }: { id: string; volunteerUser: UpdateVolunteerUserDTO },
+    ): Promise<VolunteerUserResponseDTO> => {
+      return userService.updateVolunteerUserById(id, volunteerUser);
+    },
+
+    deleteVolunteerUserById: async (
+      _parent: undefined,
+      { id }: { id: string },
+    ): Promise<string> => {
+      return userService.deleteVolunteerUserById(id);
+    },
+
+    deleteVolunteerUserByEmail: async (
+      _parent: undefined,
+      { email }: { email: string },
+    ): Promise<string> => {
+      return userService.deleteVolunteerUserByEmail(email);
     },
   },
 };
