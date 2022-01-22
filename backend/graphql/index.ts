@@ -43,12 +43,11 @@ const isValidDate = (dateString: string) => {
 };
 
 const isValidDateTime = (dateTimeString: string) => {
-  const regEx = /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}$/; // YYYY-MM-DD HH:mm
+  const regEx = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/; // YYYY-MM-DDTHH:mm
   if (!dateTimeString.match(regEx)) return false; // Invalid format
   return (
-    !Number.isNaN(Date.parse(dateTimeString)) && // cover cases of DD > 31
-    new Date(dateTimeString).toISOString().slice(0, 16) ===
-      dateTimeString.replace(" ", "T") // cover cases of DD <= 31
+    !Number.isNaN(Date.parse(`${dateTimeString}:00`)) && // cover cases of DD > 31
+    new Date(dateTimeString).toISOString().slice(0, 16) === dateTimeString
   );
 };
 
@@ -59,13 +58,13 @@ const dateScalar = new GraphQLScalarType({
     return value.toISOString().slice(0, 10); // value for client
   },
   parseValue(value) {
-    if (isValidDate(value)) return new Date(value); // value for server
+    if (isValidDate(value)) return new Date(`${value}:00+00:00`); // value for server
     throw new Error(`${value} is not a valid date in format YYYY-MM-DD`);
   },
   parseLiteral(ast) {
     if (ast.kind === Kind.STRING) {
       if (isValidDate(ast.value)) {
-        return new Date(ast.value);
+        return new Date(`${ast.value}:00+00:00`);
       }
       throw new Error(`${ast.value} was not a valid date in format YYYY-MM-DD`);
     }
