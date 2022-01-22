@@ -1,6 +1,5 @@
 import { Prisma, PrismaClient, Shift } from "@prisma/client";
 import { Promise as BluebirdPromise } from "bluebird";
-import moment, { Moment, DurationInputArg1, DurationInputArg2 } from "moment";
 
 import IShiftService from "../interfaces/IShiftService";
 import {
@@ -9,18 +8,12 @@ import {
   ShiftRequestDTO,
   ShiftResponseDTO,
   TimeBlock,
-  TimeBlockDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
 
 const prisma = new PrismaClient();
 
 const Logger = logger(__filename);
-
-type DurationArgs = {
-  value: DurationInputArg1;
-  unit: DurationInputArg2;
-};
 
 type PrismaTransactionClient = Omit<
   PrismaClient<
@@ -31,137 +24,109 @@ type PrismaTransactionClient = Omit<
   "$connect" | "$disconnect" | "$on" | "$transaction" | "$use"
 >;
 
-const dateFormat = "YYYY-MM-DD";
-const timeFormat = "HH:mm";
-const dateTimeFormat = "YYYY-MM-DD HH:mm";
-const STRICT_MODE = true;
+const WEEK_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 7;
+const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
-  getDuration(recurrence: RecurrenceInterval): DurationArgs | null {
+
+  getInterval(recurrence: RecurrenceInterval): number {
+    // Return interval in milliseconds
     switch (recurrence) {
       case "NONE": // No recurrence
-        return null;
+        return 0;
       case "WEEKLY": // Weekly
-        return { unit: "week", value: 1 };
+        return WEEK_IN_MILLISECONDS;
       case "BIWEEKLY": // Biweekly
-        return { unit: "week", value: 2 };
+        return WEEK_IN_MILLISECONDS * 2;
       case "MONTHLY": // Monthly
-        return { unit: "week", value: 4 };
+        return WEEK_IN_MILLISECONDS * 4;
       default:
         throw new Error(`Invalid recurrence ${recurrence}`);
     }
   }
 
+  isSameDate(date1: Date, date2: Date): boolean {
+    return (
+      date1.getUTCFullYear() === date2.getUTCFullYear() &&
+      date1.getUTCMonth() === date2.getUTCMonth() &&
+      date1.getUTCDate() === date2.getUTCDate()
+    );
+  }
+
+  isSameDateTime(date1: Date, date2: Date): boolean {
+    return (
+      this.isSameDate(date1, date2) &&
+      date1.getUTCHours() === date2.getUTCHours() &&
+      date1.getUTCMinutes() === date2.getUTCMinutes()
+    );
+  }
+
   validateShift(shift: ShiftRequestDTO): [boolean, string] {
-    const startTime = moment(shift.startTime, dateTimeFormat, STRICT_MODE);
-    const endTime = moment(shift.endTime, dateTimeFormat, STRICT_MODE);
-    // Check that startTime and endTime are valid
-    if (!startTime.isValid() || !endTime.isValid()) {
-      return [false, "Invalid startTime or endTime"];
-    }
     // Check that endTime is after startTime
-    if (endTime.isBefore(startTime)) {
+    if (shift.startTime.getTime() >= shift.endTime.getTime()) {
       return [false, "endTime must be after startTime"];
     }
     // Check that startTime and endTime are in the same day
-    if (startTime.format(dateFormat) !== endTime.format(dateFormat)) {
+    if (!this.isSameDate(shift.startTime, shift.endTime)) {
       return [false, "startTime and endTime must be in the same day"];
     }
     return [true, ""];
   }
 
-  validateTimeBlocks(timeBlocks: TimeBlockDTO[]): [boolean, string] {
+  validateTimeBlocks(timeBlocks: TimeBlock[]): [boolean, string] {
     if (timeBlocks.length === 0) return [false, "No time blocks provided"];
     // Check that start time is before end time
     if (
-      timeBlocks.some(
-        (tb) =>
-          !tb.date ||
-          !tb.startTime ||
-          !tb.endTime ||
-          !moment(
-            `${tb.date} ${tb.startTime}`,
-            dateTimeFormat,
-            STRICT_MODE,
-          ).isValid() ||
-          !moment(
-            `${tb.date} ${tb.endTime}`,
-            dateTimeFormat,
-            STRICT_MODE,
-          ).isValid() ||
-          moment(tb.startTime, timeFormat) >= moment(tb.endTime, timeFormat),
-      )
+      timeBlocks.some((timeBlock) => this.validateShift(timeBlock)[0] === false)
     )
       return [false, "Invalid time blocks"];
 
     const [earliestDate, latestDate] = timeBlocks.reduce(
-      (earliestLatestSoFar, currentTimeblock) => {
+      (earliestLatestSoFar, currentTimeBlock) => {
         const earliestLatestTuple = earliestLatestSoFar;
-        const currentDate = moment(
-          currentTimeblock.date,
-          dateFormat,
-          STRICT_MODE,
-        );
-        earliestLatestTuple[0] = currentDate.isBefore(earliestLatestSoFar[0])
-          ? currentDate
-          : earliestLatestSoFar[0];
-        earliestLatestTuple[1] = currentDate.isAfter(earliestLatestSoFar[1])
-          ? currentDate
-          : earliestLatestSoFar[1];
+        earliestLatestTuple[0] =
+          currentTimeBlock.startTime.getTime() <
+          earliestLatestSoFar[0].getTime()
+            ? currentTimeBlock.startTime
+            : earliestLatestSoFar[0];
+        earliestLatestTuple[1] =
+          currentTimeBlock.endTime.getTime() > earliestLatestSoFar[1].getTime()
+            ? currentTimeBlock.endTime
+            : earliestLatestSoFar[1];
         return earliestLatestTuple;
       },
-      [
-        moment(timeBlocks[0].date, dateFormat, STRICT_MODE),
-        moment(timeBlocks[0].date, dateFormat, STRICT_MODE),
-      ],
+      [timeBlocks[0].startTime, timeBlocks[0].endTime],
     );
 
-    if (moment.duration(latestDate.diff(earliestDate)).asDays() >= 7)
+    if (latestDate.getTime() - earliestDate.getTime() > WEEK_IN_MILLISECONDS)
       return [false, "Time blocks must be within a week"];
 
     return [true, ""];
   }
 
   buildTimeBlocks(shifts: ShiftBulkRequestDTO): TimeBlock[] {
-    const endDate: Moment = moment(shifts.endDate, dateFormat, STRICT_MODE).add(
-      1,
-      "day",
-    );
+    const endDate = new Date(shifts.endDate.getTime() + DAY_IN_MILLISECONDS);
 
-    // Get moment's duration function args using recurrence
-    const duration: DurationArgs | null = this.getDuration(
-      shifts.recurrenceInterval,
-    );
+    const interval = this.getInterval(shifts.recurrenceInterval);
 
     const shiftTimes: TimeBlock[] = shifts.times.flatMap((time) => {
-      const startTime = moment(
-        `${time.date} ${time.startTime}`,
-        dateTimeFormat,
-        STRICT_MODE,
-      );
-      const endTime = moment(
-        `${time.date} ${time.endTime}`,
-        dateTimeFormat,
-        STRICT_MODE,
-      );
       const recurringShifts = [];
-      if (duration) {
+      if (interval > 0) {
         for (
-          let start = startTime.clone(), end = endTime;
-          start < endDate;
-          start.add(duration.value, duration.unit),
-            end.add(duration.value, duration.unit)
+          let start = time.startTime.getTime(), end = time.endTime.getTime();
+          start < endDate.getTime();
+          start += interval, end += interval
         ) {
           recurringShifts.push({
-            startTime: start.toDate(),
-            endTime: end.toDate(),
+            startTime: new Date(start),
+            endTime: new Date(end),
           });
         }
       } else {
         recurringShifts.push({
-          startTime: startTime.toDate(),
-          endTime: endTime.toDate(),
+          startTime: time.startTime,
+          endTime: time.endTime,
         });
       }
       return recurringShifts;
@@ -180,8 +145,8 @@ class ShiftService implements IShiftService {
 
     shifts.forEach((shift) => {
       if (
-        moment(shift.startTime).isSame(shiftTime.startTime, "minute") &&
-        moment(shift.endTime).isSame(shiftTime.endTime, "minute")
+        this.isSameDateTime(shift.startTime, shiftTime.startTime) &&
+        this.isSameDateTime(shift.endTime, shiftTime.endTime)
       ) {
         throw new Error(
           `Shift already exists with start time ${shift.startTime} and end time ${shift.endTime}`,
@@ -301,14 +266,11 @@ class ShiftService implements IShiftService {
       const [valid, errorMessage] = this.validateShift(shift);
       if (!valid) throw new Error(errorMessage);
 
-      const startTime = moment(shift.startTime, dateTimeFormat, STRICT_MODE);
-      const endTime = moment(shift.endTime, dateTimeFormat, STRICT_MODE);
-
       updateResult = await prisma.shift.update({
         where: { id: Number(shiftId) },
         data: {
-          startTime: startTime.toDate(),
-          endTime: endTime.toDate(),
+          startTime: shift.startTime,
+          endTime: shift.endTime,
         },
       });
     } catch (error) {

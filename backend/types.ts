@@ -23,9 +23,9 @@ export type PostingDTO = {
   type: PostingType;
   status: PostingStatus;
   description: string;
-  startDate: string;
-  endDate: string;
-  autoClosingDate: string;
+  startDate: Date;
+  endDate: Date;
+  autoClosingDate: Date;
   numVolunteers: number;
 };
 
@@ -98,27 +98,19 @@ export type TimeBlock = {
   endTime: Date;
 };
 
-export type TimeBlockDTO = {
-  date: string;
-  startTime: string;
-  endTime: string;
-};
-
 export type RecurrenceInterval = "WEEKLY" | "BIWEEKLY" | "MONTHLY" | "NONE";
 
 export type ShiftDTO = {
   id: string;
   postingId: string;
-  startTime: Date;
-  endTime: Date;
-};
+} & TimeBlock;
 
 export type ShiftRequestDTO = Omit<ShiftDTO, "id" | "postingId">;
 
 export type ShiftBulkRequestDTO = {
   postingId: string;
-  times: TimeBlockDTO[];
-  endDate: string;
+  times: TimeBlock[];
+  endDate: Date;
   recurrenceInterval: RecurrenceInterval;
 };
 

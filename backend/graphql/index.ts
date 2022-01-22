@@ -22,7 +22,7 @@ import branchType from "./types/branchType";
 
 const query = gql`
   scalar Date
-
+  scalar DateTime
   type Query {
     _empty: String
   }
@@ -43,6 +43,16 @@ const isValidDate = (dateString: string) => {
   );
 };
 
+const isValidDateTime = (dateTimeString: string) => {
+  const regEx = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/; // YYYY-MM-DDTHH:mm
+  if (!dateTimeString.match(regEx)) return false; // Invalid format
+  return (
+    !Number.isNaN(Date.parse(`${dateTimeString}:00`)) && // cover cases of DD > 31
+    new Date(`${dateTimeString}:00+00:00`).toISOString().slice(0, 16) ===
+      dateTimeString
+  );
+};
+
 const dateScalar = new GraphQLScalarType({
   name: "Date",
   description: "Date type",
@@ -60,7 +70,29 @@ const dateScalar = new GraphQLScalarType({
       }
       throw new Error(`${ast.value} was not a valid date in format YYYY-MM-DD`);
     }
+    throw new Error(`${ast} is not valid`);
+  },
+});
 
+const dateTimeScalar = new GraphQLScalarType({
+  name: "DateTime",
+  description: "DateTime type",
+  serialize(value) {
+    return value.toISOString().slice(0, 16); // value for client
+  },
+  parseValue(value) {
+    if (isValidDateTime(value)) return new Date(`${value}:00+00:00`); // value for server
+    throw new Error(`${value} is not a valid date in format YYYY-MM-DDTHH:mm`);
+  },
+  parseLiteral(ast) {
+    if (ast.kind === Kind.STRING) {
+      if (isValidDateTime(ast.value)) {
+        return new Date(`${ast.value}:00+00:00`);
+      }
+      throw new Error(
+        `${ast.value} was not a valid date in format YYYY-MM-DDTHH:mm`,
+      );
+    }
     throw new Error(`${ast} is not valid`);
   },
 });
@@ -80,6 +112,7 @@ const executableSchema = makeExecutableSchema({
   ],
   resolvers: merge(
     { Date: dateScalar },
+    { DateTime: dateTimeScalar },
     authResolvers,
     entityResolvers,
     userResolvers,

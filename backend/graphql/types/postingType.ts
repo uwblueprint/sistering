@@ -20,9 +20,9 @@ const postingType = gql`
     type: PostingType!
     status: PostingStatus!
     description: String!
-    startDate: String!
-    endDate: String!
-    autoClosingDate: String!
+    startDate: Date!
+    endDate: Date!
+    autoClosingDate: Date!
     numVolunteers: Int!
   }
 
@@ -36,9 +36,9 @@ const postingType = gql`
     type: PostingType!
     status: PostingStatus!
     description: String!
-    startDate: String!
-    endDate: String!
-    autoClosingDate: String!
+    startDate: Date!
+    endDate: Date!
+    autoClosingDate: Date!
     numVolunteers: Int!
   }
 
