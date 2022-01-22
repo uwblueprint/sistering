@@ -18,6 +18,7 @@ import {
   SkillResponseDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
+import { getErrorMessage } from "../../utilities/errorUtils";
 
 const prisma = new PrismaClient();
 
@@ -104,8 +105,8 @@ class PostingService implements IPostingService {
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
       }
-    } catch (error) {
-      Logger.error(`Failed to get posting. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(`Failed to get posting. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
 
@@ -155,8 +156,10 @@ class PostingService implements IPostingService {
           numVolunteers: posting.numVolunteers,
         };
       });
-    } catch (error) {
-      Logger.error(`Failed to get postings. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get postings. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -195,8 +198,10 @@ class PostingService implements IPostingService {
           employees: true,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to create posting. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create posting. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -257,8 +262,10 @@ class PostingService implements IPostingService {
           employees: true,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to update posting. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to update posting. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -284,8 +291,10 @@ class PostingService implements IPostingService {
         where: { id: Number(postingId) },
       });
       return String(deleteResult.id);
-    } catch (error) {
-      Logger.error(`Failed to delete posting. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to delete posting. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }

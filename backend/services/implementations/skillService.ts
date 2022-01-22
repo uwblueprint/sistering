@@ -2,6 +2,7 @@ import { PrismaClient, Skill } from "@prisma/client";
 import ISkillService from "../interfaces/skillService";
 import { SkillRequestDTO, SkillResponseDTO } from "../../types";
 import logger from "../../utilities/logger";
+import { getErrorMessage } from "../../utilities/errorUtils";
 
 const prisma = new PrismaClient();
 
@@ -23,8 +24,8 @@ class SkillService implements ISkillService {
       if (!skill) {
         throw new Error(`skillId ${skillId} not found.`);
       }
-    } catch (error) {
-      Logger.error(`Failed to get skill. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(`Failed to get skill. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
 
@@ -41,8 +42,8 @@ class SkillService implements ISkillService {
         id: String(skill.id),
         name: skill.name,
       }));
-    } catch (error) {
-      Logger.error(`Failed to get skills. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(`Failed to get skills. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
   }
@@ -60,8 +61,10 @@ class SkillService implements ISkillService {
           name: skill.name,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to create skill. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create skill. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -87,8 +90,10 @@ class SkillService implements ISkillService {
           name: skill.name,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to update skill. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to update skill. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -103,8 +108,10 @@ class SkillService implements ISkillService {
         where: { id: Number(skillId) },
       });
       return String(deleteResult.id);
-    } catch (error) {
-      Logger.error(`Failed to delete skill. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to delete skill. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
