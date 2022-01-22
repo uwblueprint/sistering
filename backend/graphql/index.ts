@@ -48,7 +48,8 @@ const isValidDateTime = (dateTimeString: string) => {
   if (!dateTimeString.match(regEx)) return false; // Invalid format
   return (
     !Number.isNaN(Date.parse(`${dateTimeString}:00`)) && // cover cases of DD > 31
-    new Date(dateTimeString).toISOString().slice(0, 16) === dateTimeString
+    new Date(`${dateTimeString}:00`).toISOString().slice(0, 19) ===
+      dateTimeString
   );
 };
 
@@ -81,7 +82,7 @@ const dateTimeScalar = new GraphQLScalarType({
   },
   parseValue(value) {
     if (isValidDate(value)) return new Date(`${value}:00+00:00`); // value for server
-    throw new Error(`${value} is not a valid date in format YYYY-MM-DD HH:mm`);
+    throw new Error(`${value} is not a valid date in format YYYY-MM-DDTHH:mm`);
   },
   parseLiteral(ast) {
     if (ast.kind === Kind.STRING) {
@@ -89,7 +90,7 @@ const dateTimeScalar = new GraphQLScalarType({
         return new Date(`${ast.value}:00+00:00`);
       }
       throw new Error(
-        `${ast.value} was not a valid date in format YYYY-MM-DD HH:mm`,
+        `${ast.value} was not a valid date in format YYYY-MM-DDTHH:mm`,
       );
     }
     throw new Error(`${ast} is not valid`);
