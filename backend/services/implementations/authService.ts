@@ -82,7 +82,7 @@ class AuthService implements IAuthService {
       const authId = await this.userService.getAuthIdById(userId);
 
       await firebaseAdmin.auth().revokeRefreshTokens(authId);
-    } catch (error: unknown) {
+    } catch (error: any) {
       const errorMessage = [
         "Failed to revoke refresh tokens of user with id",
         `${userId}.`,
