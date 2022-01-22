@@ -59,13 +59,13 @@ const dateScalar = new GraphQLScalarType({
     return value.toISOString().slice(0, 10); // value for client
   },
   parseValue(value) {
-    if (isValidDate(value)) return new Date(`${value}:00+00:00`); // value for server
+    if (isValidDate(value)) return new Date(value); // value for server
     throw new Error(`${value} is not a valid date in format YYYY-MM-DD`);
   },
   parseLiteral(ast) {
     if (ast.kind === Kind.STRING) {
       if (isValidDate(ast.value)) {
-        return new Date(`${ast.value}:00+00:00`);
+        return new Date(ast.value);
       }
       throw new Error(`${ast.value} was not a valid date in format YYYY-MM-DD`);
     }
@@ -80,13 +80,13 @@ const dateTimeScalar = new GraphQLScalarType({
     return value.toISOString().slice(0, 16); // value for client
   },
   parseValue(value) {
-    if (isValidDateTime(value)) return new Date(value); // value for server
+    if (isValidDate(value)) return new Date(`${value}:00+00:00`); // value for server
     throw new Error(`${value} is not a valid date in format YYYY-MM-DD HH:mm`);
   },
   parseLiteral(ast) {
     if (ast.kind === Kind.STRING) {
       if (isValidDateTime(ast.value)) {
-        return new Date(ast.value);
+        return new Date(`${ast.value}:00+00:00`);
       }
       throw new Error(
         `${ast.value} was not a valid date in format YYYY-MM-DD HH:mm`,
