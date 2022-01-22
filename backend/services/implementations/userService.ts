@@ -233,10 +233,10 @@ class UserService implements IUserService {
       } catch (postgresError) {
         try {
           await firebaseAdmin.auth().deleteUser(firebaseUser.uid);
-        } catch (firebaseError: any) {
+        } catch (firebaseError: unknown) {
           const errorMessage = [
             "Failed to rollback Firebase user creation after Postgres user creation failure. Reason =",
-            firebaseError.message,
+            getErrorMessage(firebaseError),
             "Orphaned authId (Firebase uid) =",
             firebaseUser.uid,
           ];
@@ -305,10 +305,10 @@ class UserService implements IUserService {
               phoneNumber: oldUser.phoneNumber,
             },
           });
-        } catch (postgresError: any) {
+        } catch (postgresError: unknown) {
           const errorMessage = [
             "Failed to rollback Postgres user update after Firebase user update failure. Reason =",
-            postgresError.message,
+            getErrorMessage(postgresError),
             "Postgres user id with possibly inconsistent data =",
             oldUser.id,
           ];
@@ -353,10 +353,10 @@ class UserService implements IUserService {
               phoneNumber: deletedUser.phoneNumber,
             },
           });
-        } catch (postgresError: any) {
+        } catch (postgresError: unknown) {
           const errorMessage = [
             "Failed to rollback Postgres user deletion after Firebase user deletion failure. Reason =",
-            postgresError.message,
+            getErrorMessage(postgresError),
             "Firebase uid with non-existent Postgres record =",
             deletedUser.authId,
           ];
@@ -396,10 +396,10 @@ class UserService implements IUserService {
               phoneNumber: deletedUser.phoneNumber,
             },
           });
-        } catch (postgresError: any) {
+        } catch (postgresError: unknown) {
           const errorMessage = [
             "Failed to rollback Postgres user deletion after Firebase user deletion failure. Reason =",
-            postgresError.message,
+            getErrorMessage(postgresError),
             "Firebase uid with non-existent Postgres record =",
             deletedUser.authId,
           ];
@@ -604,10 +604,10 @@ class UserService implements IUserService {
       } catch (postgresError) {
         try {
           await firebaseAdmin.auth().deleteUser(firebaseUser.uid);
-        } catch (firebaseError: any) {
+        } catch (firebaseError: unknown) {
           const errorMessage = [
             "Failed to rollback Firebase user creation after Postgres user creation failure. Reason =",
-            firebaseError.message,
+            getErrorMessage(firebaseError),
             "Orphaned authId (Firebase uid) =",
             firebaseUser.uid,
           ];
@@ -722,10 +722,10 @@ class UserService implements IUserService {
               },
             },
           });
-        } catch (postgresError: any) {
+        } catch (postgresError: unknown) {
           const errorMessage = [
             "Failed to rollback Postgres user update after Firebase user update failure. Reason =",
-            postgresError.message,
+            getErrorMessage(postgresError),
             "Postgres user id with possibly inconsistent data =",
             oldVolunteerUser?.id,
           ];
@@ -822,10 +822,10 @@ class UserService implements IUserService {
               },
             },
           });
-        } catch (postgresError: any) {
+        } catch (postgresError: unknown) {
           const errorMessage = [
             "Failed to rollback Postgres user deletion after Firebase user deletion failure. Reason =",
-            postgresError.message,
+            getErrorMessage(postgresError),
             "Firebase uid with non-existent Postgres record =",
             deletedVolunteerUser.authId,
           ];
