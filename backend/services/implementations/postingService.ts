@@ -83,24 +83,6 @@ const convertToEmployeeResponseDTO = (
   });
 };
 
-const formatDate = (date: Date): string => {
-  return date.toISOString().substring(0, 10);
-};
-
-const validateDate = (date: string) => {
-  const d = new Date(date); // date: YYYY-MM-DD
-  d.toISOString(); // d.toISOString() should error if d is invalid date
-  return true;
-};
-
-const validatePostingDates = (posting: PostingRequestDTO) => {
-  return (
-    validateDate(posting.startDate) &&
-    validateDate(posting.endDate) &&
-    validateDate(posting.autoClosingDate)
-  );
-};
-
 class PostingService implements IPostingService {
   /* eslint-disable class-methods-use-this */
 
@@ -138,9 +120,9 @@ class PostingService implements IPostingService {
       type: posting.type,
       status: posting.status,
       description: posting.description,
-      startDate: formatDate(posting.startDate),
-      endDate: formatDate(posting.endDate),
-      autoClosingDate: formatDate(posting.autoClosingDate),
+      startDate: posting.startDate,
+      endDate: posting.endDate,
+      autoClosingDate: posting.autoClosingDate,
       numVolunteers: posting.numVolunteers,
     };
   }
@@ -168,9 +150,9 @@ class PostingService implements IPostingService {
           type: posting.type,
           status: posting.status,
           description: posting.description,
-          startDate: formatDate(posting.startDate),
-          endDate: formatDate(posting.endDate),
-          autoClosingDate: formatDate(posting.autoClosingDate),
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+          autoClosingDate: posting.autoClosingDate,
           numVolunteers: posting.numVolunteers,
         };
       });
@@ -185,8 +167,6 @@ class PostingService implements IPostingService {
   async createPosting(posting: PostingRequestDTO): Promise<PostingResponseDTO> {
     let newPosting: PostingWithRelations;
     try {
-      validatePostingDates(posting);
-
       newPosting = await prisma.posting.create({
         data: {
           branch: {
@@ -206,9 +186,9 @@ class PostingService implements IPostingService {
           type: posting.type,
           status: posting.status,
           description: posting.description,
-          startDate: new Date(posting.startDate),
-          endDate: new Date(posting.endDate),
-          autoClosingDate: new Date(posting.autoClosingDate),
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+          autoClosingDate: posting.autoClosingDate,
           numVolunteers: posting.numVolunteers,
         },
         include: {
@@ -234,9 +214,9 @@ class PostingService implements IPostingService {
       type: newPosting.type,
       status: newPosting.status,
       description: newPosting.description,
-      startDate: String(newPosting.startDate),
-      endDate: String(newPosting.endDate),
-      autoClosingDate: String(newPosting.autoClosingDate),
+      startDate: newPosting.startDate,
+      endDate: newPosting.endDate,
+      autoClosingDate: newPosting.autoClosingDate,
       numVolunteers: newPosting.numVolunteers,
     };
   }
@@ -248,8 +228,6 @@ class PostingService implements IPostingService {
     let updateResult: PostingWithRelations;
 
     try {
-      validatePostingDates(posting);
-
       updateResult = await prisma.posting.update({
         where: { id: Number(postingId) },
         data: {
@@ -272,9 +250,9 @@ class PostingService implements IPostingService {
           type: posting.type,
           status: posting.status,
           description: posting.description,
-          startDate: new Date(posting.startDate),
-          endDate: new Date(posting.endDate),
-          autoClosingDate: new Date(posting.autoClosingDate),
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+          autoClosingDate: posting.autoClosingDate,
           numVolunteers: posting.numVolunteers,
         },
         include: {
@@ -300,9 +278,9 @@ class PostingService implements IPostingService {
       type: updateResult.type,
       status: updateResult.status,
       description: updateResult.description,
-      startDate: String(updateResult.startDate),
-      endDate: String(updateResult.endDate),
-      autoClosingDate: String(updateResult.autoClosingDate),
+      startDate: updateResult.startDate,
+      endDate: updateResult.endDate,
+      autoClosingDate: updateResult.autoClosingDate,
       numVolunteers: updateResult.numVolunteers,
     };
   }
