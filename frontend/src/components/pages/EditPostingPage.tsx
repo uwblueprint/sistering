@@ -50,98 +50,98 @@ const EditPostingPage = (): React.ReactElement => {
 
   const setBranchId = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_BRANCH_ID",
+      type: "ADMIN_POSTING_EDIT_BRANCH_ID",
       value: e.currentTarget.value,
     });
   };
 
   const onSkillDelete = (index: number) => {
     dispatchPostingUpdate({
-      type: "EDIT_SKILLS",
+      type: "ADMIN_POSTING_EDIT_SKILLS",
       value: [...skills.slice(0, index), ...skills.slice(index + 1)],
     });
   };
 
   const onSkillAdd = () => {
     dispatchPostingUpdate({
-      type: "EDIT_SKILLS",
+      type: "ADMIN_POSTING_EDIT_SKILLS",
       value: [...skills, newSkill],
     });
   };
 
   const onEmployeeDelete = (index: number) => {
     dispatchPostingUpdate({
-      type: "EDIT_EMPLOYEES",
+      type: "ADMIN_POSTING_EDIT_EMPLOYEES",
       value: [...employees.slice(0, index), ...employees.slice(index + 1)],
     });
   };
 
   const onEmployeeAdd = () => {
     dispatchPostingUpdate({
-      type: "EDIT_EMPLOYEES",
+      type: "ADMIN_POSTING_EDIT_EMPLOYEES",
       value: [...employees, newEmployee],
     });
   };
 
   const setTitle = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_TITLE",
+      type: "ADMIN_POSTING_EDIT_TITLE",
       value: e.currentTarget.value,
     });
   };
 
   const setType = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_TYPE",
+      type: "ADMIN_POSTING_EDIT_TYPE",
       value: e.currentTarget.value as PostingType,
     });
   };
 
   const setStatus = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_STATUS",
+      type: "ADMIN_POSTING_EDIT_STATUS",
       value: e.currentTarget.value as PostingStatus,
     });
   };
 
   const setDescription = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_DESCRIPTION",
+      type: "ADMIN_POSTING_EDIT_DESCRIPTION",
       value: e.currentTarget.value,
     });
   };
 
   const setStartDate = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_START_DATE",
+      type: "ADMIN_POSTING_EDIT_START_DATE",
       value: e.currentTarget.value,
     });
   };
 
   const setEndDate = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_END_DATE",
+      type: "ADMIN_POSTING_EDIT_END_DATE",
       value: e.currentTarget.value,
     });
   };
 
   const setAutoClosingDate = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_AUTO_CLOSING_DATE",
+      type: "ADMIN_POSTING_EDIT_AUTO_CLOSING_DATE",
       value: e.currentTarget.value,
     });
   };
 
   const setNumVolunteers = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_NUM_VOLUNTEERS",
+      type: "ADMIN_POSTING_EDIT_NUM_VOLUNTEERS",
       value: parseInt(e.currentTarget.value, 10),
     });
   };
 
   const setRecurrenceInterval = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
-      type: "EDIT_RECURRENCE_INTERVAL",
+      type: "ADMIN_POSTING_EDIT_RECURRENCE_INTERVAL",
       value: e.currentTarget.value as RecurrenceInterval,
     });
   };

@@ -23,54 +23,54 @@ export type PostingContextType = {
 
 export type PostingContextAction =
   | {
-      type: "EDIT_BRANCH_ID";
+      type: "ADMIN_POSTING_EDIT_BRANCH_ID";
       value: string;
     }
   | {
-      type: "EDIT_SKILLS";
+      type: "ADMIN_POSTING_EDIT_SKILLS";
       value: string[];
     }
   | {
-      type: "EDIT_EMPLOYEES";
+      type: "ADMIN_POSTING_EDIT_EMPLOYEES";
       value: string[];
     }
   | {
-      type: "EDIT_TITLE";
+      type: "ADMIN_POSTING_EDIT_TITLE";
       value: string;
     }
   | {
-      type: "EDIT_TYPE";
+      type: "ADMIN_POSTING_EDIT_TYPE";
       value: PostingType;
     }
   | {
-      type: "EDIT_STATUS";
+      type: "ADMIN_POSTING_EDIT_STATUS";
       value: PostingStatus;
     }
   | {
-      type: "EDIT_DESCRIPTION";
+      type: "ADMIN_POSTING_EDIT_DESCRIPTION";
       value: string;
     }
   | {
-      type: "EDIT_START_DATE";
+      type: "ADMIN_POSTING_EDIT_START_DATE";
       value: string;
     }
   | {
-      type: "EDIT_END_DATE";
+      type: "ADMIN_POSTING_EDIT_END_DATE";
       value: string;
     }
   | {
-      type: "EDIT_AUTO_CLOSING_DATE";
+      type: "ADMIN_POSTING_EDIT_AUTO_CLOSING_DATE";
       value: string;
     }
   | {
-      type: "EDIT_NUM_VOLUNTEERS";
+      type: "ADMIN_POSTING_EDIT_NUM_VOLUNTEERS";
       value: number;
     }
   | {
-      type: "EDIT_TIMES";
+      type: "ADMIN_POSTING_EDIT_TIMES";
       value: Shift[];
     }
   | {
-      type: "EDIT_RECURRENCE_INTERVAL";
+      type: "ADMIN_POSTING_EDIT_RECURRENCE_INTERVAL";
       value: RecurrenceInterval;
     };

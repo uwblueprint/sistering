@@ -9,67 +9,67 @@ export default (
   action: PostingContextAction,
 ): PostingContextType => {
   switch (action.type) {
-    case "EDIT_BRANCH_ID":
+    case "ADMIN_POSTING_EDIT_BRANCH_ID":
       return {
         ...state,
         branchId: action.value,
       };
-    case "EDIT_SKILLS":
+    case "ADMIN_POSTING_EDIT_SKILLS":
       return {
         ...state,
         skills: action.value,
       };
-    case "EDIT_EMPLOYEES":
+    case "ADMIN_POSTING_EDIT_EMPLOYEES":
       return {
         ...state,
         employees: action.value,
       };
-    case "EDIT_TITLE":
+    case "ADMIN_POSTING_EDIT_TITLE":
       return {
         ...state,
         title: action.value,
       };
-    case "EDIT_TYPE":
+    case "ADMIN_POSTING_EDIT_TYPE":
       return {
         ...state,
         type: action.value,
       };
-    case "EDIT_STATUS":
+    case "ADMIN_POSTING_EDIT_STATUS":
       return {
         ...state,
         status: action.value,
       };
-    case "EDIT_DESCRIPTION":
+    case "ADMIN_POSTING_EDIT_DESCRIPTION":
       return {
         ...state,
         description: action.value,
       };
-    case "EDIT_START_DATE":
+    case "ADMIN_POSTING_EDIT_START_DATE":
       return {
         ...state,
         startDate: action.value,
       };
-    case "EDIT_END_DATE":
+    case "ADMIN_POSTING_EDIT_END_DATE":
       return {
         ...state,
         endDate: action.value,
       };
-    case "EDIT_AUTO_CLOSING_DATE":
+    case "ADMIN_POSTING_EDIT_AUTO_CLOSING_DATE":
       return {
         ...state,
         autoClosingDate: action.value,
       };
-    case "EDIT_NUM_VOLUNTEERS":
+    case "ADMIN_POSTING_EDIT_NUM_VOLUNTEERS":
       return {
         ...state,
         numVolunteers: action.value,
       };
-    case "EDIT_TIMES":
+    case "ADMIN_POSTING_EDIT_TIMES":
       return {
         ...state,
         times: action.value,
       };
-    case "EDIT_RECURRENCE_INTERVAL":
+    case "ADMIN_POSTING_EDIT_RECURRENCE_INTERVAL":
       return {
         ...state,
         recurrenceInterval: action.value,
