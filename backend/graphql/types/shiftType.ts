@@ -8,29 +8,23 @@ const shiftType = gql`
     NONE
   }
 
-  input TimeBlockDTO {
-    date: String!
-    startTime: String!
-    endTime: String!
-  }
-
   input ShiftBulkRequestDTO {
     postingId: String!
-    times: [TimeBlockDTO!]!
-    endDate: String!
+    times: [ShiftRequestDTO!]!
+    endDate: Date!
     recurrenceInterval: RecurrenceInterval!
   }
 
   input ShiftRequestDTO {
-    startTime: Date!
-    endTime: Date!
+    startTime: DateTime!
+    endTime: DateTime!
   }
 
   type ShiftResponseDTO {
     id: ID!
     postingId: String!
-    startTime: Date!
-    endTime: Date!
+    startTime: DateTime!
+    endTime: DateTime!
   }
 
   extend type Query {

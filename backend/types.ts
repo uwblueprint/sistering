@@ -1,4 +1,4 @@
-export type Role = "User" | "Admin";
+export type Role = "ADMIN" | "VOLUNTEER" | "EMPLOYEE";
 
 export type Token = {
   accessToken: string;
@@ -11,6 +11,7 @@ export type UserDTO = {
   lastName: string;
   email: string;
   role: Role;
+  phoneNumber: string | null;
 };
 
 export type PostingDTO = {
@@ -20,10 +21,11 @@ export type PostingDTO = {
   employees: string[];
   title: string;
   type: PostingType;
+  status: PostingStatus;
   description: string;
-  startDate: string;
-  endDate: string;
-  autoClosingDate: string;
+  startDate: Date;
+  endDate: Date;
+  autoClosingDate: Date;
   numVolunteers: number;
 };
 
@@ -45,6 +47,44 @@ export type EmployeeResponseDTO = {
   branchId: string;
 };
 
+export type VolunteerDTO = {
+  id: string;
+  hireDate: Date;
+  dateOfBirth: Date | null;
+  pronouns: string | null;
+  skills: SkillResponseDTO[];
+  branches: BranchResponseDTO[];
+};
+
+export type EmployeeDTO = {
+  id: string;
+  userId: string;
+};
+
+export type VolunteerUserRequestDTO = UserDTO &
+  Omit<VolunteerDTO, "skills" | "branches"> & {
+    skills: string[];
+    branches: string[];
+  };
+
+export type VolunteerUserResponseDTO = UserDTO & VolunteerDTO;
+
+export type CreateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id"> & {
+  password: string;
+};
+
+export type UpdateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id">;
+
+export type EmployeeUserDTO = UserDTO & EmployeeDTO;
+
+export type CreateEmployeeUserDTO = Omit<EmployeeUserDTO, "id"> & {
+  password: string;
+};
+
+export type UpdateEmployeeUserDTO = Omit<EmployeeUserDTO, "id"> & {
+  password: string;
+};
+
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
 
 export type UpdateUserDTO = Omit<UserDTO, "id">;
@@ -58,27 +98,19 @@ export type TimeBlock = {
   endTime: Date;
 };
 
-export type TimeBlockDTO = {
-  date: string;
-  startTime: string;
-  endTime: string;
-};
-
 export type RecurrenceInterval = "WEEKLY" | "BIWEEKLY" | "MONTHLY" | "NONE";
 
 export type ShiftDTO = {
   id: string;
   postingId: string;
-  startTime: Date;
-  endTime: Date;
-};
+} & TimeBlock;
 
 export type ShiftRequestDTO = Omit<ShiftDTO, "id" | "postingId">;
 
 export type ShiftBulkRequestDTO = {
   postingId: string;
-  times: TimeBlockDTO[];
-  endDate: string;
+  times: TimeBlock[];
+  endDate: Date;
   recurrenceInterval: RecurrenceInterval;
 };
 
@@ -124,6 +156,8 @@ export type BranchResponseDTO = BranchDTO;
 export type Letters = "A" | "B" | "C" | "D";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
+
+export type PostingStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
 export type NodemailerConfig = {
   service: "gmail";

@@ -8,6 +8,7 @@ import {
 } from "../interfaces/entityService";
 import IFileStorageService from "../interfaces/fileStorageService";
 import logger from "../../utilities/logger";
+import { getErrorMessage } from "../../utilities/errorUtils";
 
 const prisma = new PrismaClient();
 
@@ -30,8 +31,8 @@ class EntityService implements IEntityService {
       if (!entity) {
         throw new Error(`Entity id ${id} not found`);
       }
-    } catch (error) {
-      Logger.error(`Failed to get entity. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(`Failed to get entity. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
 
@@ -58,8 +59,10 @@ class EntityService implements IEntityService {
         boolField: entity.boolField,
         fileName: entity.fileName,
       }));
-    } catch (error) {
-      Logger.error(`Failed to get entities. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get entities. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -85,8 +88,10 @@ class EntityService implements IEntityService {
           fileName,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to create entity. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create entity. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -142,8 +147,10 @@ class EntityService implements IEntityService {
           fileName,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to update entity. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to update entity. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -166,8 +173,10 @@ class EntityService implements IEntityService {
       if (deleteResult.fileName) {
         await this.storageService.deleteFile(deleteResult.fileName);
       }
-    } catch (error) {
-      Logger.error(`Failed to delete entity. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to delete entity. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }

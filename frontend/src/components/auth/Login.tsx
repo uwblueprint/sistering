@@ -19,6 +19,11 @@ import { AuthenticatedUser } from "../../types/AuthTypes";
 
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
+type GoogleErrorResponse = {
+  error: string;
+  details: string;
+};
+
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
@@ -127,13 +132,9 @@ const Login = (): React.ReactElement => {
               window.alert(response);
             }
           }}
-          onFailure={(error) =>
+          onFailure={(error: GoogleErrorResponse) =>
             // eslint-disable-next-line no-alert
-            window.alert(
-              error instanceof Error
-                ? error.message
-                : "Encountered unknown Google Login error.",
-            )
+            window.alert(JSON.stringify(error))
           }
         />
       </form>

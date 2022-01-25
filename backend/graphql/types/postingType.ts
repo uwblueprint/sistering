@@ -6,16 +6,23 @@ const postingType = gql`
     GROUP
   }
 
+  enum PostingStatus {
+    DRAFT
+    PUBLISHED
+    ARCHIVED
+  }
+
   input PostingRequestDTO {
     branchId: ID!
     skills: [ID!]!
     employees: [ID!]!
     title: String!
     type: PostingType!
+    status: PostingStatus!
     description: String!
-    startDate: String!
-    endDate: String!
-    autoClosingDate: String!
+    startDate: Date!
+    endDate: Date!
+    autoClosingDate: Date!
     numVolunteers: Int!
   }
 
@@ -27,10 +34,11 @@ const postingType = gql`
     employees: [EmployeeResponseDTO!]!
     title: String!
     type: PostingType!
+    status: PostingStatus!
     description: String!
-    startDate: String!
-    endDate: String!
-    autoClosingDate: String!
+    startDate: Date!
+    endDate: Date!
+    autoClosingDate: Date!
     numVolunteers: Int!
   }
 

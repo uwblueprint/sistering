@@ -12,11 +12,13 @@ import {
   EmployeeResponseDTO,
   PostingRequestDTO,
   PostingResponseDTO,
+  PostingStatus,
   PostingType,
   ShiftResponseDTO,
   SkillResponseDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
+import { getErrorMessage } from "../../utilities/errorUtils";
 
 const prisma = new PrismaClient();
 
@@ -28,6 +30,7 @@ type PostingWithRelations = {
   branchId: number;
   title: string;
   type: PostingType;
+  status: PostingStatus;
   description: string;
   startDate: Date;
   endDate: Date;
@@ -80,24 +83,6 @@ const convertToEmployeeResponseDTO = (
   });
 };
 
-const formatDate = (date: Date): string => {
-  return date.toISOString().substring(0, 10);
-};
-
-const validateDate = (date: string) => {
-  const d = new Date(date); // date: YYYY-MM-DD
-  d.toISOString(); // d.toISOString() should error if d is invalid date
-  return true;
-};
-
-const validatePostingDates = (posting: PostingRequestDTO) => {
-  return (
-    validateDate(posting.startDate) &&
-    validateDate(posting.endDate) &&
-    validateDate(posting.autoClosingDate)
-  );
-};
-
 class PostingService implements IPostingService {
   /* eslint-disable class-methods-use-this */
 
@@ -120,8 +105,8 @@ class PostingService implements IPostingService {
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
       }
-    } catch (error) {
-      Logger.error(`Failed to get posting. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(`Failed to get posting. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
 
@@ -133,10 +118,11 @@ class PostingService implements IPostingService {
       employees: convertToEmployeeResponseDTO(posting.employees),
       title: posting.title,
       type: posting.type,
+      status: posting.status,
       description: posting.description,
-      startDate: formatDate(posting.startDate),
-      endDate: formatDate(posting.endDate),
-      autoClosingDate: formatDate(posting.autoClosingDate),
+      startDate: posting.startDate,
+      endDate: posting.endDate,
+      autoClosingDate: posting.autoClosingDate,
       numVolunteers: posting.numVolunteers,
     };
   }
@@ -162,15 +148,18 @@ class PostingService implements IPostingService {
           employees: convertToEmployeeResponseDTO(posting.employees),
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
-          startDate: formatDate(posting.startDate),
-          endDate: formatDate(posting.endDate),
-          autoClosingDate: formatDate(posting.autoClosingDate),
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+          autoClosingDate: posting.autoClosingDate,
           numVolunteers: posting.numVolunteers,
         };
       });
-    } catch (error) {
-      Logger.error(`Failed to get postings. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get postings. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -178,8 +167,6 @@ class PostingService implements IPostingService {
   async createPosting(posting: PostingRequestDTO): Promise<PostingResponseDTO> {
     let newPosting: PostingWithRelations;
     try {
-      validatePostingDates(posting);
-
       newPosting = await prisma.posting.create({
         data: {
           branch: {
@@ -197,10 +184,11 @@ class PostingService implements IPostingService {
           },
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
-          startDate: new Date(posting.startDate),
-          endDate: new Date(posting.endDate),
-          autoClosingDate: new Date(posting.autoClosingDate),
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+          autoClosingDate: posting.autoClosingDate,
           numVolunteers: posting.numVolunteers,
         },
         include: {
@@ -210,8 +198,10 @@ class PostingService implements IPostingService {
           employees: true,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to create posting. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create posting. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -220,13 +210,14 @@ class PostingService implements IPostingService {
       shifts: convertToShiftResponseDTO(newPosting.shifts),
       skills: convertToSkillResponseDTO(newPosting.skills),
       employees: convertToEmployeeResponseDTO(newPosting.employees),
-      title: posting.title,
-      type: posting.type,
-      description: posting.description,
-      startDate: posting.startDate,
-      endDate: posting.endDate,
-      autoClosingDate: posting.autoClosingDate,
-      numVolunteers: posting.numVolunteers,
+      title: newPosting.title,
+      type: newPosting.type,
+      status: newPosting.status,
+      description: newPosting.description,
+      startDate: newPosting.startDate,
+      endDate: newPosting.endDate,
+      autoClosingDate: newPosting.autoClosingDate,
+      numVolunteers: newPosting.numVolunteers,
     };
   }
 
@@ -237,8 +228,6 @@ class PostingService implements IPostingService {
     let updateResult: PostingWithRelations;
 
     try {
-      validatePostingDates(posting);
-
       updateResult = await prisma.posting.update({
         where: { id: Number(postingId) },
         data: {
@@ -259,10 +248,11 @@ class PostingService implements IPostingService {
           },
           title: posting.title,
           type: posting.type,
+          status: posting.status,
           description: posting.description,
-          startDate: new Date(posting.startDate),
-          endDate: new Date(posting.endDate),
-          autoClosingDate: new Date(posting.autoClosingDate),
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+          autoClosingDate: posting.autoClosingDate,
           numVolunteers: posting.numVolunteers,
         },
         include: {
@@ -272,8 +262,10 @@ class PostingService implements IPostingService {
           employees: true,
         },
       });
-    } catch (error) {
-      Logger.error(`Failed to update posting. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to update posting. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
     return {
@@ -282,13 +274,14 @@ class PostingService implements IPostingService {
       shifts: convertToShiftResponseDTO(updateResult.shifts),
       skills: convertToSkillResponseDTO(updateResult.skills),
       employees: convertToEmployeeResponseDTO(updateResult.employees),
-      title: posting.title,
-      type: posting.type,
-      description: posting.description,
-      startDate: posting.startDate,
-      endDate: posting.endDate,
-      autoClosingDate: posting.autoClosingDate,
-      numVolunteers: posting.numVolunteers,
+      title: updateResult.title,
+      type: updateResult.type,
+      status: updateResult.status,
+      description: updateResult.description,
+      startDate: updateResult.startDate,
+      endDate: updateResult.endDate,
+      autoClosingDate: updateResult.autoClosingDate,
+      numVolunteers: updateResult.numVolunteers,
     };
   }
 
@@ -298,8 +291,10 @@ class PostingService implements IPostingService {
         where: { id: Number(postingId) },
       });
       return String(deleteResult.id);
-    } catch (error) {
-      Logger.error(`Failed to delete posting. Reason = ${error.message}`);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to delete posting. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
