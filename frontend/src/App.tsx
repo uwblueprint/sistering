@@ -37,6 +37,7 @@ import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import VolunteerPostingsPage from "./components/pages/volunteer/posting/VolunteerPostingsPage";
 import CreatePostingShiftsPage from "./components/pages/admin/posting/CreatePostingShiftsPage";
+import CreatePostingReviewPage from "./components/pages/admin/posting/CreatePostingReviewPage";
 
 import customTheme from "./theme";
 import { AuthenticatedUser } from "./types/AuthTypes";
@@ -134,6 +135,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.ADMIN_POSTING_CREATE_SHIFTS_PAGE}
                       component={CreatePostingShiftsPage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_POSTING_CREATE_REVIEW_PAGE}
+                      component={CreatePostingReviewPage}
                     />
                     <Route exact path="*" component={NotFound} />
                   </Switch>
