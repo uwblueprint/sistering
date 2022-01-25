@@ -104,7 +104,7 @@ const graphQLMiddlewares = {
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
     createShiftSignups: authorizedByAdmin(),
-    updateShiftSignups: authorizedByAdmin(),
+    updateShiftSignup: authorizedByAdmin(),
   },
 };
 
