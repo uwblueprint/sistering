@@ -22,11 +22,17 @@ import * as Routes from "./constants/Routes";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
 import AuthContext from "./contexts/AuthContext";
 import { getLocalStorageObj } from "./utils/LocalStorageUtils";
+import PostingContext, {
+  DEFAULT_POSTING_CONTEXT,
+} from "./contexts/admin/PostingContext";
 import SampleContext, {
   DEFAULT_SAMPLE_CONTEXT,
 } from "./contexts/SampleContext";
+import postingContextReducer from "./reducers/PostingContextReducer";
 import sampleContextReducer from "./reducers/SampleContextReducer";
+import PostingContextDispatcherContext from "./contexts/admin/PostingContextDispatcherContext";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
+import EditPostingPage from "./components/pages/EditPostingPage";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import VolunteerPostingsPage from "./components/pages/volunteer/posting/VolunteerPostingsPage";
@@ -52,6 +58,11 @@ const App = (): React.ReactElement => {
     DEFAULT_SAMPLE_CONTEXT,
   );
 
+  const [postingContext, dispatchPostingContextUpdate] = useReducer(
+    postingContextReducer,
+    DEFAULT_POSTING_CONTEXT,
+  );
+
   return (
     <ChakraProvider theme={customTheme}>
       <SampleContext.Provider value={sampleContext}>
@@ -61,63 +72,74 @@ const App = (): React.ReactElement => {
           <AuthContext.Provider
             value={{ authenticatedUser, setAuthenticatedUser }}
           >
-            <Router>
-              <Switch>
-                <Route exact path={Routes.LOGIN_PAGE} component={Login} />
-                <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
-                <Route
-                  exact
-                  path={Routes.RESET_PASSWORD_PAGE}
-                  component={ResetPassword}
-                />
-                <Route
-                  exact
-                  path={Routes.DONE_RESET_PASSWORD_PAGE}
-                  component={DoneResetPassword}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.HOME_PAGE}
-                  component={Default}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.CREATE_ENTITY_PAGE}
-                  component={CreatePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.UPDATE_ENTITY_PAGE}
-                  component={UpdatePage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.DISPLAY_ENTITY_PAGE}
-                  component={DisplayPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.EDIT_TEAM_PAGE}
-                  component={EditTeamInfoPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.HOOKS_PAGE}
-                  component={HooksDemo}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.VOLUNTEER_POSTINGS_PAGE}
-                  component={VolunteerPostingsPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.ADMIN_POSTING_CREATE_SHIFTS_PAGE}
-                  component={CreatePostingShiftsPage}
-                />
-                <Route exact path="*" component={NotFound} />
-              </Switch>
-            </Router>
+            <PostingContext.Provider value={postingContext}>
+              <PostingContextDispatcherContext.Provider
+                value={dispatchPostingContextUpdate}
+              >
+                <Router>
+                  <Switch>
+                    <Route exact path={Routes.LOGIN_PAGE} component={Login} />
+                    <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
+                    <Route
+                      exact
+                      path={Routes.RESET_PASSWORD_PAGE}
+                      component={ResetPassword}
+                    />
+                    <Route
+                      exact
+                      path={Routes.DONE_RESET_PASSWORD_PAGE}
+                      component={DoneResetPassword}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.HOME_PAGE}
+                      component={Default}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.CREATE_ENTITY_PAGE}
+                      component={CreatePage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.UPDATE_ENTITY_PAGE}
+                      component={UpdatePage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.DISPLAY_ENTITY_PAGE}
+                      component={DisplayPage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.EDIT_TEAM_PAGE}
+                      component={EditTeamInfoPage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.EDIT_POSTING_PAGE}
+                      component={EditPostingPage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.HOOKS_PAGE}
+                      component={HooksDemo}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.VOLUNTEER_POSTINGS_PAGE}
+                      component={VolunteerPostingsPage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_POSTING_CREATE_SHIFTS_PAGE}
+                      component={CreatePostingShiftsPage}
+                    />
+                    <Route exact path="*" component={NotFound} />
+                  </Switch>
+                </Router>
+              </PostingContextDispatcherContext.Provider>
+            </PostingContext.Provider>
           </AuthContext.Provider>
         </SampleContextDispatcherContext.Provider>
       </SampleContext.Provider>
