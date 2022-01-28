@@ -81,9 +81,9 @@ const FirebaseRestClient = {
       },
     );
 
-    const responseJson:
+    const responseJson = (await response.json()) as
       | PasswordSignInResponse
-      | RequestError = await response.json();
+      | RequestError;
 
     if (!response.ok) {
       const errorMessage = [
@@ -123,9 +123,9 @@ const FirebaseRestClient = {
       },
     );
 
-    const responseJson:
+    const responseJson = (await response.json()) as
       | OAuthSignInResponse
-      | RequestError = await response.json();
+      | RequestError;
 
     if (!response.ok) {
       const errorMessage = [
@@ -155,9 +155,9 @@ const FirebaseRestClient = {
       },
     );
 
-    const responseJson:
+    const responseJson = (await response.json()) as
       | RefreshTokenResponse
-      | RequestError = await response.json();
+      | RequestError;
 
     if (!response.ok) {
       const errorMessage = [
