@@ -30,7 +30,6 @@ model User {
   employee       Employee?
   volunteer      Volunteer?
   signups        Signup[]
-  availabilities Availability[]
 
   @@map("users")
 }
@@ -93,15 +92,6 @@ model Skill {
   @@map("skills")
 }
 
-model Prerequisite {
-  id         Int                       @id @default(autoincrement())
-  name       String
-  completed  Boolean
-  volunteers Volunteer[]
-
-  @@map("prerequisites")
-}
-
 model Branch {
   id         Int         @id @default(autoincrement())
   posting    Posting[]
@@ -135,18 +125,6 @@ model Signup {
   @@map("signups")
 }
 
-model Availability {
-  id             Int       @id @default(autoincrement())
-  user           User      @relation(fields: [userId], references: [id])
-  userId         Int
-  startTime      DateTime  @map("start_time")
-  endTime        DateTime  @map("end_time")
-  repeatInterval Int?      @map("repeat_interval")
-  repeatEnd      DateTime? @map("repeat_end")
-
-  @@map("availabilities")
-}
-
 model Volunteer {
   id              Int                       @unique @id
   user            User                      @relation(fields: [id], references: [id], onDelete: Cascade)
@@ -155,7 +133,6 @@ model Volunteer {
   skills          Skill[]
   dateOfBirth     DateTime                  @map("date_of_birth")
   pronouns        String
-  prerequisite    Prerequisite[]
 
   @@map("volunteers")
 }
