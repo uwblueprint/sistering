@@ -10,6 +10,9 @@
     "fix": "eslint . --ext .ts,.js --fix",
     "postinstall": "tsc"
   },
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
