@@ -124,7 +124,6 @@ model Shift {
 }
 
 model Signup {
-  id            Int          @id @default(autoincrement())
   shift         Shift        @relation(fields: [shiftId], references: [id])
   shiftId       Int          @map("shifts_id")
   user          User         @relation(fields: [userId], references: [id])
@@ -134,7 +133,7 @@ model Signup {
   note          String
 
   @@map("signups")
-  @@unique([shiftId, userId])
+  @@id([shiftId, userId])
 }
 
 model Availability {

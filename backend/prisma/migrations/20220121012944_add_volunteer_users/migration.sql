@@ -99,6 +99,9 @@ CREATE UNIQUE INDEX "employees_id_key" ON "employees"("id");
 CREATE UNIQUE INDEX "volunteers_id_key" ON "volunteers"("id");
 
 -- AddForeignKey
+ALTER TABLE "signups" ADD CONSTRAINT "signups_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "availabilities" ADD CONSTRAINT "availabilities_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
