@@ -132,6 +132,8 @@ const authorizedByAllRoles = () =>
 const authorizedByAdmin = () => isAuthorizedByRole(new Set(["ADMIN"]));
 const authorizedByAdminAndVolunteer = () =>
   isAuthorizedByRole(new Set(["ADMIN", "VOLUNTEER"]));
+const authorizedByVolunteer = () =>
+  isAuthorizedByRole(new Set(["VOLUNTEER"]));
 
 const graphQLMiddlewares = {
   Query: {
@@ -180,7 +182,7 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
-    createShiftSignups: authorizedByAdmin(),
+    createShiftSignups: authorizedByVolunteer(),
     updateShiftSignup: authorizedByAdmin(),
   },
 };

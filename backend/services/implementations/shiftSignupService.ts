@@ -15,11 +15,10 @@ const Logger = logger(__filename);
 
 class ShiftSignupService implements IShiftSignupService {
   convertSignupToDTO = (signup: Signup): ShiftSignupDTO => {
-    const { id, ...rest } = signup;
     return {
-      ...rest,
-      shiftId: String(rest.shiftId),
-      userId: String(rest.userId),
+      ...signup,
+      shiftId: String(signup.shiftId),
+      userId: String(signup.userId),
     };
   };
 
