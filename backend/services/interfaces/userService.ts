@@ -7,6 +7,9 @@ import {
   VolunteerUserResponseDTO,
   UpdateVolunteerUserDTO,
   CreateVolunteerUserDTO,
+  CreateEmployeeUserDTO,
+  EmployeeUserResponseDTO,
+  UpdateEmployeeUserDTO,
 } from "../../types";
 
 interface IUserService {
@@ -156,6 +159,68 @@ interface IUserService {
    * @throws Error if VolunteerUser deletion fails
    */
   deleteVolunteerUserByEmail(email: string): Promise<string>;
+
+  /**
+   * Get EmployeeUser associated with id
+   * @param id EmployeeUser's id
+   * @returns a EmployeeUserResponseDTO with EmployeeUser's information
+   * @throws Error if EmployeeUser retrieval fails
+   */
+  getEmployeeUserById(userId: string): Promise<EmployeeUserResponseDTO>;
+
+  /**
+   * Get EmployeeUser associated with email
+   * @param email EmployeeUser's email
+   * @returns a EmployeeUserResponseDTO with EmployeeUser's information
+   * @throws Error if EmployeeUser retrieval fails
+   */
+  getEmployeeUserByEmail(email: string): Promise<EmployeeUserResponseDTO>;
+
+  /**
+   * Get all EmployeeUser information (possibly paginated in the future)
+   * @returns array of EmployeeUserResponseDTOs
+   * @throws Error if EmployeeUser retrieval fails
+   */
+  getEmployeeUsers(): Promise<EmployeeUserResponseDTO[]>;
+
+  /**
+   * Create a EmployeeUser, email verification configurable
+   * @param volunteerUser the EmployeeUser to be created
+   * @param authId the EmployeeUser's firebase auth id, optional
+   * @param signUpMethod the method EmployeeUser used to signup
+   * @returns a EmployeeUserResponseDTO with the created EmployeeUser's information
+   * @throws Error if EmployeeUser creation fails
+   */
+  createEmployeeUser(
+    volunteerUser: CreateEmployeeUserDTO,
+  ): Promise<EmployeeUserResponseDTO>;
+
+  /**
+   * Update a EmployeeUser.
+   * Note: the password cannot be updated using this method, use IAuthService.resetPassword instead
+   * @param userId user's id
+   * @param volunteerUser the EmployeeUser to be updated
+   * @returns a EmployeeUserResponseDTO with the updated user's information
+   * @throws Error if EmployeeUser update fails
+   */
+  updateEmployeeUserById(
+    userId: string,
+    volunteerUser: UpdateEmployeeUserDTO,
+  ): Promise<EmployeeUserResponseDTO>;
+
+  /**
+   * Delete a EmployeeUser by id
+   * @param userId user's userId
+   * @throws Error if EmployeeUser deletion fails
+   */
+  deleteEmployeeUserById(userId: string): Promise<string>;
+
+  /**
+   * Delete a EmployeeUser by email
+   * @param email user's email
+   * @throws Error if EmployeeUser deletion fails
+   */
+  deleteEmployeeUserByEmail(email: string): Promise<string>;
 }
 
 export default IUserService;

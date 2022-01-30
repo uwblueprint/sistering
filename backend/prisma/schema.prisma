@@ -127,7 +127,7 @@ model Signup {
 }
 
 model Volunteer {
-  id              Int                       @unique @id
+  id              Int                       @id
   user            User                      @relation(fields: [id], references: [id], onDelete: Cascade)
   branches        Branch[]                   
   hireDate        DateTime                  @map("hire_date")
@@ -139,11 +139,10 @@ model Volunteer {
 }
 
 model Employee {
-  id       Int       @unique @id
-  userId   Int       @unique
+  id       Int       @id
   user     User      @relation(fields: [id], references: [id], onDelete: Cascade)
   branchId Int       @map("branch_id")
-  branch   Branch    @relation(fields: [branchId], references: [id])
+  branch   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   postings Posting[]
 
   @@map("employees")
