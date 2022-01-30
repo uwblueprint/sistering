@@ -92,6 +92,10 @@ docker exec -it <container-name> /bin/bash -c "yarn fix"
 docker exec -it <container-name> /bin/bash -c "yarn test"
 ```
 
+## Migration
+
+To create a new migration, change the schema.prisma file as required
+and run `prisma migrate dev --name <DESCRIPTIVE_NAME> --create-only`
 
 ## Version Control Guide
 
