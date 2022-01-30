@@ -132,7 +132,7 @@ const authorizedByAllRoles = () =>
 const authorizedByAdmin = () => isAuthorizedByRole(new Set(["ADMIN"]));
 const authorizedByAdminAndVolunteer = () =>
   isAuthorizedByRole(new Set(["ADMIN", "VOLUNTEER"]));
-const authorizedByVolunteer = async () => {
+const authorizedByVolunteer = () => {
   return (
     isAuthorizedByRole(new Set(["VOLUNTEER"])) && isAuthorizedByUserId("userid")
   );
