@@ -4,6 +4,7 @@ import { Container, Divider } from "@chakra-ui/react";
 import ShiftCalendar, {
   Event,
 } from "../../../admin/ShiftCalendar/ShiftCalendar";
+import CreatePostingShifts from "../../../admin/posting/CreatePostingShifts";
 
 const CreatePostingShiftsPage = (): React.ReactElement => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -47,6 +48,7 @@ const CreatePostingShiftsPage = (): React.ReactElement => {
 
   return (
     <Container maxW="container.lg">
+      <CreatePostingShifts />
       <ShiftCalendar
         events={events}
         selectedEvent={selectedEvent}
