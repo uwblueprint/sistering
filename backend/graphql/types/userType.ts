@@ -29,6 +29,17 @@ const userType = gql`
     branches: [BranchResponseDTO!]!
   }
 
+  type EmployeeUserResponseDTO {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    email: String!
+    role: Role!
+    phoneNumber: String
+    branchId: ID!
+    postings: [ID!]!
+  }
+
   input CreateUserDTO {
     firstName: String!
     lastName: String!
@@ -71,6 +82,25 @@ const userType = gql`
     branches: [ID!]!
   }
 
+  input CreateEmployeeUserDTO {
+    firstName: String!
+    lastName: String!
+    email: String!
+    phoneNumber: String
+    password: String!
+    branchId: ID!
+    postings: [ID!]!
+  }
+
+  input UpdateEmployeeUserDTO {
+    firstName: String!
+    lastName: String!
+    email: String!
+    phoneNumber: String
+    branchId: ID!
+    postings: [ID!]!
+  }
+
   extend type Query {
     userById(id: ID!): UserDTO!
     userByEmail(email: String!): UserDTO!
@@ -79,6 +109,9 @@ const userType = gql`
     volunteerUserById(id: ID!): VolunteerUserResponseDTO!
     volunteerUserByEmail(email: String!): VolunteerUserResponseDTO!
     volunteerUsers: [VolunteerUserResponseDTO!]!
+    employeeUserById(id: ID!): EmployeeUserResponseDTO!
+    employeeUserByEmail(email: String!): EmployeeUserResponseDTO!
+    employeeUsers: [EmployeeUserResponseDTO!]!
   }
 
   extend type Mutation {
@@ -95,6 +128,15 @@ const userType = gql`
     ): VolunteerUserResponseDTO!
     deleteVolunteerUserById(id: ID!): ID!
     deleteVolunteerUserByEmail(email: String!): ID!
+    createEmployeeUser(
+      employeeUser: CreateEmployeeUserDTO!
+    ): EmployeeUserResponseDTO!
+    updateEmployeeUserById(
+      id: ID!
+      employeeUser: UpdateEmployeeUserDTO!
+    ): EmployeeUserResponseDTO!
+    deleteEmployeeUserById(id: ID!): ID!
+    deleteEmployeeUserByEmail(email: String!): ID!
   }
 `;
 

@@ -185,14 +185,14 @@ interface IUserService {
 
   /**
    * Create a EmployeeUser, email verification configurable
-   * @param volunteerUser the EmployeeUser to be created
+   * @param employeeUser the EmployeeUser to be created
    * @param authId the EmployeeUser's firebase auth id, optional
    * @param signUpMethod the method EmployeeUser used to signup
    * @returns a EmployeeUserResponseDTO with the created EmployeeUser's information
    * @throws Error if EmployeeUser creation fails
    */
   createEmployeeUser(
-    volunteerUser: CreateEmployeeUserDTO,
+    employeeUser: CreateEmployeeUserDTO,
   ): Promise<EmployeeUserResponseDTO>;
 
   /**
@@ -205,7 +205,7 @@ interface IUserService {
    */
   updateEmployeeUserById(
     userId: string,
-    volunteerUser: UpdateEmployeeUserDTO,
+    employeeUser: UpdateEmployeeUserDTO,
   ): Promise<EmployeeUserResponseDTO>;
 
   /**
