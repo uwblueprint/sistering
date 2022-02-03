@@ -1,4 +1,4 @@
-import fetch, { Response } from "node-fetch";
+import axios, { AxiosResponse } from "axios";
 
 import { Token } from "../types";
 import logger from "./logger";
@@ -66,14 +66,14 @@ const FirebaseRestClient = {
     email: string,
     password: string,
   ): Promise<Token> => {
-    const response: Response = await fetch(
+    const response: AxiosResponse = await axios(
       `${FIREBASE_SIGN_IN_URL}?key=${process.env.FIREBASE_WEB_API_KEY}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
+        data: JSON.stringify({
           email,
           password,
           returnSecureToken: true,
@@ -83,9 +83,9 @@ const FirebaseRestClient = {
 
     const responseJson:
       | PasswordSignInResponse
-      | RequestError = await response.json();
+      | RequestError = await response.data;
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       const errorMessage = [
         "Failed to sign-in via Firebase REST API, status code =",
         `${response.status},`,
@@ -107,14 +107,14 @@ const FirebaseRestClient = {
   signInWithGoogleOAuth: async (
     idToken: string,
   ): Promise<OAuthSignInResponse> => {
-    const response: Response = await fetch(
+    const response: AxiosResponse = await axios(
       `${FIREBASE_OAUTH_SIGN_IN_URL}?key=${process.env.FIREBASE_WEB_API_KEY}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({
+        data: JSON.stringify({
           postBody: `id_token=${idToken}&providerId=google.com`,
           requestUri: process.env.FIREBASE_REQUEST_URI,
           returnIdpCredential: true,
@@ -125,9 +125,9 @@ const FirebaseRestClient = {
 
     const responseJson:
       | OAuthSignInResponse
-      | RequestError = await response.json();
+      | RequestError = await response.data;
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       const errorMessage = [
         "Failed to sign-in via Firebase REST API with OAuth, status code =",
         `${response.status},`,
@@ -144,22 +144,22 @@ const FirebaseRestClient = {
 
   // Docs: https://firebase.google.com/docs/reference/rest/auth/#section-refresh-token
   refreshToken: async (refreshToken: string): Promise<Token> => {
-    const response: Response = await fetch(
+    const response: AxiosResponse = await axios(
       `${FIREBASE_REFRESH_TOKEN_URL}?key=${process.env.FIREBASE_WEB_API_KEY}`,
       {
         method: "POST",
         headers: {
           "Content-Type": "application/x-www-form-urlencoded",
         },
-        body: `grant_type=refresh_token&refresh_token=${refreshToken}`,
+        data: `grant_type=refresh_token&refresh_token=${refreshToken}`,
       },
     );
 
     const responseJson:
       | RefreshTokenResponse
-      | RequestError = await response.json();
+      | RequestError = await response.data;
 
-    if (!response.ok) {
+    if (response.status !== 200) {
       const errorMessage = [
         "Failed to refresh token via Firebase REST API, status code =",
         `${response.status},`,

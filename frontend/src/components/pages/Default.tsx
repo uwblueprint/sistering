@@ -3,6 +3,7 @@ import { useHistory } from "react-router-dom";
 import { HStack, Tag, Text } from "@chakra-ui/react";
 
 import * as Routes from "../../constants/Routes";
+import PostingContext from "../../contexts/admin/PostingContext";
 import SampleContext from "../../contexts/SampleContext";
 
 import Logout from "../auth/Logout";
@@ -17,6 +18,50 @@ const Button = ({ text, path }: ButtonProps) => {
     <button className="btn btn-primary" onClick={navigateTo} type="button">
       {text}
     </button>
+  );
+};
+
+const PostingInfoDisplay = () => {
+  const {
+    branchId,
+    skills,
+    employees,
+    title,
+    type,
+    status,
+    description,
+    startDate,
+    endDate,
+    autoClosingDate,
+    numVolunteers,
+    recurrenceInterval,
+  } = useContext(PostingContext);
+  return (
+    <div>
+      <Text textStyle="display-large">Posting Info</Text>
+      <div>Branch ID: {branchId}</div>
+      <div>Title: {title}</div>
+      <div>Type: {type}</div>
+      <div>Status: {status}</div>
+      <div>Description: {description}</div>
+      <div>Start Date: {startDate}</div>
+      <div>End Date: {endDate}</div>
+      <div>Auto-Closing Date: {autoClosingDate}</div>
+      <div># Volunteers: {numVolunteers}</div>
+      <div>Recurrence Interval: {recurrenceInterval}</div>
+      <div>
+        Skills:{" "}
+        {skills.map(
+          (name, i) => ` ${name}${i === skills.length - 1 ? "" : ","}`,
+        )}
+      </div>
+      <div>
+        Employees:{" "}
+        {employees.map(
+          (name, i) => ` ${name}${i === skills.length - 1 ? "" : ","}`,
+        )}
+      </div>
+    </div>
   );
 };
 
@@ -144,12 +189,14 @@ const Default = (): React.ReactElement => {
         <Button text="Update Entity" path={Routes.UPDATE_ENTITY_PAGE} />
         <Button text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />
         <Button text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
+        <Button text="Edit Posting" path={Routes.EDIT_POSTING_PAGE} />
         <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
       </div>
 
       <div style={{ height: "2rem" }} />
 
       <TeamInfoDisplay />
+      <PostingInfoDisplay />
       <DesignSystemDisplay />
     </div>
   );
