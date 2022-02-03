@@ -31,7 +31,7 @@ class ShiftSignupService implements IShiftSignupService {
         where: { userId: Number(userId) },
       });
       return shiftSignups.map((signup) => this.convertSignupToDTO(signup));
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to shift signups. Reason = ${getErrorMessage(error)}`,
       );
@@ -58,7 +58,7 @@ class ShiftSignupService implements IShiftSignupService {
       return newShiftSignups?.map((newShiftSignup) =>
         this.convertSignupToDTO(newShiftSignup),
       );
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to create shift signup. Reason = ${getErrorMessage(error)}`,
       );
@@ -82,7 +82,7 @@ class ShiftSignupService implements IShiftSignupService {
         data: shiftSignup,
       });
       return this.convertSignupToDTO(updateResult);
-    } catch (error) {
+    } catch (error: unknown) {
       Logger.error(
         `Failed to update shift signup. Reason = ${getErrorMessage(error)}`,
       );
