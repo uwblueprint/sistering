@@ -8,6 +8,7 @@ import {
   UpdateShiftSignupRequestDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
+import { getErrorMessage } from "../../utilities/errorUtils";
 
 const prisma = new PrismaClient();
 
@@ -31,7 +32,9 @@ class ShiftSignupService implements IShiftSignupService {
       });
       return shiftSignups.map((signup) => this.convertSignupToDTO(signup));
     } catch (error) {
-      Logger.error(`Failed to shift signups. Reason = ${error.message}`);
+      Logger.error(
+        `Failed to shift signups. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -56,7 +59,9 @@ class ShiftSignupService implements IShiftSignupService {
         this.convertSignupToDTO(newShiftSignup),
       );
     } catch (error) {
-      Logger.error(`Failed to create shift signup. Reason = ${error.message}`);
+      Logger.error(
+        `Failed to create shift signup. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -78,7 +83,9 @@ class ShiftSignupService implements IShiftSignupService {
       });
       return this.convertSignupToDTO(updateResult);
     } catch (error) {
-      Logger.error(`Failed to update shift signup. Reason = ${error.message}`);
+      Logger.error(
+        `Failed to update shift signup. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
