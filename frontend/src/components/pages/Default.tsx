@@ -1,6 +1,14 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { HStack, Tag, Text } from "@chakra-ui/react";
+import {
+  HStack,
+  Tag,
+  Text,
+  Button as ChakraButton,
+  TabList,
+  Tabs,
+  Tab,
+} from "@chakra-ui/react";
 
 import * as Routes from "../../constants/Routes";
 import PostingContext from "../../contexts/admin/PostingContext";
@@ -192,9 +200,34 @@ const Default = (): React.ReactElement => {
         <Button text="Edit Posting" path={Routes.EDIT_POSTING_PAGE} />
         <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
       </div>
-
       <div style={{ height: "2rem" }} />
-
+      <ChakraButton textStyle="button-regular">Default</ChakraButton>
+      <ChakraButton isDisabled>Default Disabled</ChakraButton>
+      <ChakraButton variant="outline">Outline</ChakraButton>
+      <ChakraButton variant="outline" isDisabled>
+        Outline Disabled
+      </ChakraButton>
+      <ChakraButton variant="ghost">Ghost</ChakraButton>
+      <ChakraButton variant="ghost" isDisabled>
+        Ghost Disabled
+      </ChakraButton>
+      <ChakraButton variant="link">Link</ChakraButton>
+      <ChakraButton variant="link" isDisabled>
+        Link Disabled
+      </ChakraButton>
+      <br />
+      HOVER
+      <br />
+      <ChakraButton>Default</ChakraButton>
+      <ChakraButton variant="outline">Outline</ChakraButton>
+      <ChakraButton variant="ghost">Ghost</ChakraButton>
+      <ChakraButton variant="link">Link</ChakraButton>
+      <Tabs>
+        <TabList>
+          <Tab>Tab 1</Tab>
+          <Tab>Tab 2</Tab>
+        </TabList>
+      </Tabs>
       <TeamInfoDisplay />
       <PostingInfoDisplay />
       <DesignSystemDisplay />
