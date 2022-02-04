@@ -150,11 +150,9 @@ const graphQLMiddlewares = {
     volunteerUserById: authorizedByAdminAndVolunteer(),
     volunteerUserByEmail: authorizedByAdminAndVolunteer(),
     volunteerUsers: authorizedByAdmin(),
-
     employeeUserById: authorizedByAdminAndEmployee(),
     employeeUserByEmail: authorizedByAdminAndEmployee(),
     employeeUsers: authorizedByAdmin(),
-
     skill: authorizedByAdmin(),
     skills: authorizedByAdmin(),
     branch: authorizedByAdmin(),
@@ -173,12 +171,10 @@ const graphQLMiddlewares = {
     updateVolunteerUserById: authorizedByAdminAndVolunteer(),
     deleteVolunteerUserById: authorizedByAdmin(),
     deleteVolunteerUserByEmail: authorizedByAdmin(),
-
     createEmployeeUser: authorizedByAdminAndEmployee(),
     updateEmployeeUserById: authorizedByAdminAndEmployee(),
     deleteEmployeeUserById: authorizedByAdmin(),
     deleteEmployeeUserByEmail: authorizedByAdmin(),
-
     logout: isAuthorizedByUserId("userId"),
     createShifts: authorizedByAdmin(),
     updateShift: authorizedByAdmin(),

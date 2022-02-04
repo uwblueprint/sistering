@@ -816,14 +816,6 @@ class UserService implements IUserService {
                 },
               },
             },
-            include: {
-              volunteer: {
-                include: {
-                  branches: true,
-                  skills: true,
-                },
-              },
-            },
           });
         } catch (postgresError: unknown) {
           const errorMessage = [
@@ -857,7 +849,6 @@ class UserService implements IUserService {
         where: { id: Number(userId) },
         include: {
           user: true,
-          postings: true,
         },
       });
 
@@ -876,9 +867,6 @@ class UserService implements IUserService {
         role: user.role,
         phoneNumber: user.phoneNumber,
         branchId: String(employee.branchId),
-        postings: employee.postings.map((p) => {
-          return String(p.id);
-        }),
       };
     } catch (error: unknown) {
       Logger.error(
@@ -898,11 +886,7 @@ class UserService implements IUserService {
           authId: firebaseUser.uid,
         },
         include: {
-          employee: {
-            include: {
-              postings: true,
-            },
-          },
+          employee: true,
         },
       });
 
@@ -920,9 +904,6 @@ class UserService implements IUserService {
         phoneNumber: user.phoneNumber,
         role: user.role,
         branchId: String(employee.branchId),
-        postings: employee.postings.map((p) => {
-          return String(p.id);
-        }),
       };
     } catch (error: unknown) {
       Logger.error(
@@ -939,7 +920,6 @@ class UserService implements IUserService {
       const employees = await prisma.employee.findMany({
         include: {
           user: true,
-          postings: true,
         },
       });
       const employeeUsers = await Promise.all(
@@ -954,9 +934,6 @@ class UserService implements IUserService {
             id: String(employee.id),
             email: firebaseUser.email ?? "",
             branchId: String(employee.branchId),
-            postings: employee.postings.map((p) => {
-              return String(p.id);
-            }),
           };
         }),
       );
@@ -1002,18 +979,11 @@ class UserService implements IUserService {
                 branch: {
                   connect: { id: Number(employeeUser.branchId) },
                 },
-                postings: {
-                  connect: convertToNumberIds(employeeUser.postings),
-                },
               },
             },
           },
           include: {
-            employee: {
-              include: {
-                postings: true,
-              },
-            },
+            employee: true,
           },
         });
 
@@ -1024,9 +994,6 @@ class UserService implements IUserService {
           id: String(newUser.id),
           email: firebaseUser.email ?? "",
           branchId: String(employee!.branchId),
-          postings: employee!.postings.map((p: Posting) => {
-            return String(p.id);
-          }),
         };
       } catch (postgresError) {
         try {
@@ -1083,14 +1050,9 @@ class UserService implements IUserService {
             branch: {
               connect: { id: Number(employeeUser.branchId) },
             },
-            postings: {
-              set: [],
-              connect: convertToNumberIds(employeeUser.postings),
-            },
           },
           include: {
             user: true,
-            postings: true,
           },
         }),
       ]);
@@ -1108,9 +1070,6 @@ class UserService implements IUserService {
           id: String(user.id),
           email: updatedFirebaseUser.email ?? "",
           branchId: String(updatedEmployeeUser.branchId),
-          postings: updatedEmployeeUser.postings.map((p) => {
-            return String(p.id);
-          }),
         };
       } catch (error: unknown) {
         try {
@@ -1202,13 +1161,6 @@ class UserService implements IUserService {
                       return { id: Number(p.id) };
                     }),
                   },
-                },
-              },
-            },
-            include: {
-              employee: {
-                include: {
-                  postings: true,
                 },
               },
             },
