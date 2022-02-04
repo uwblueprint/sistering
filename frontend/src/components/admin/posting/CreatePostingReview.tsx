@@ -1,18 +1,23 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Container,
   Flex,
-  Box,
-  SimpleGrid,
-  GridItem,
   Stack,
   VStack,
   HStack,
+  SimpleGrid,
+  GridItem,
+  Table,
+  Tbody,
+  Tr,
+  Td,
   Text,
   Tag,
   Circle,
 } from "@chakra-ui/react";
 import { EmailIcon, PhoneIcon } from "@chakra-ui/icons";
+
+import PostingContext from "../../../contexts/admin/PostingContext";
 
 type BasicInfoGridItemProps = { title: string; info: string };
 type PocCardProps = {
@@ -22,6 +27,7 @@ type PocCardProps = {
   phoneNumber: string;
 };
 type SkillTagProps = { name: string };
+type ScheduledShiftsTrProps = { date: string; time: string };
 
 const BasicInfoGridItem: React.FC<BasicInfoGridItemProps> = ({
   title,
@@ -54,13 +60,14 @@ const PocCard: React.FC<PocCardProps> = ({
 }: PocCardProps) => {
   return (
     <Stack
-      minW={260}
+      minW="260px"
       px={4}
       py={3}
       border="1px"
       borderColor="#E5E5E5"
       borderRadius={3}
       shadow="base"
+      spacing={3.5}
     >
       <HStack spacing={0} alignItems="baseline">
         <Text textStyle="caption" fontWeight="medium">
@@ -70,13 +77,13 @@ const PocCard: React.FC<PocCardProps> = ({
           &nbsp;– {title}
         </Text>
       </HStack>
-      <HStack spacing={3}>
-        <EmailIcon color="#C4C4C4" />
+      <HStack spacing={4}>
+        <EmailIcon color="#C4C4C4" w="20px" h="20px" />
         <Text textStyle="caption" fontSize="14px">
           {email}
         </Text>
       </HStack>
-      <HStack spacing={3}>
+      <HStack spacing="20px">
         <PhoneIcon color="#C4C4C4" />
         <Text textStyle="caption" fontSize="14px">
           {phoneNumber}
@@ -102,7 +109,43 @@ const SkillTag: React.FC<SkillTagProps> = ({ name }: SkillTagProps) => {
   );
 };
 
+const ScheduledShiftsTr: React.FC<ScheduledShiftsTrProps> = ({
+  date,
+  time,
+}: ScheduledShiftsTrProps) => {
+  return (
+    <Tbody>
+      <Tr>
+        <Td maxW="120px">
+          <Text textStyle="caption" fontSize="14px" fontWeight="medium">
+            {date}
+          </Text>
+        </Td>
+        <Td>
+          <Text textStyle="caption" fontSize="14px" fontWeight="medium">
+            {time}
+          </Text>
+        </Td>
+      </Tr>
+    </Tbody>
+  );
+};
+
 const CreatePostingReview = (): React.ReactElement => {
+  const {
+    branchId,
+    skills,
+    employees,
+    title,
+    type,
+    status,
+    description,
+    startDate,
+    endDate,
+    autoClosingDate,
+    numVolunteers,
+    recurrenceInterval,
+  } = useContext(PostingContext);
   return (
     <Container border="1px" maxW="container.xl" p={0}>
       <Flex p={10}>
@@ -111,27 +154,25 @@ const CreatePostingReview = (): React.ReactElement => {
             <Circle
               size="46px"
               bg="transparent"
-              color="violet"
               borderWidth="3px"
               borderColor="violet"
+              pb={1}
             >
-              <Text fontFamily="Open Sans" fontSize="20px" fontWeight="bold">
+              <Text textStyle="heading" color="violet" fontWeight="bold">
                 3
               </Text>
             </Circle>
             <Text textStyle="heading">Review and Post</Text>
           </HStack>
-          <VStack w="full" spacing={8} alignItems="flex-start" px={2}>
+          <VStack w="full" spacing={9} alignItems="flex-start" px={2}>
             <Text textStyle="caption">
               Enter all the details of your volunteer posting. Please take
               advantage of the Role Description section and add any information
               that will help. Once you have completed filling it out, press
               next.
             </Text>
-            <Stack spacing={6}>
-              <Text textStyle="heading" color="#333" mt={1}>
-                Basic Information
-              </Text>
+            <Stack spacing={6} w="full">
+              <Text textStyle="heading">Basic Information</Text>
               <SimpleGrid columns={3} w="full">
                 <BasicInfoGridItem title="Branch" info="Kitchen" />
                 <BasicInfoGridItem title="Title" info="Kitchen Volunteer" />
@@ -196,11 +237,33 @@ const CreatePostingReview = (): React.ReactElement => {
                   Skills
                 </Text>
                 <HStack>
+                  {skills.map((name, i) => (
+                    <SkillTag name={name} key={i} />
+                  ))}
                   <SkillTag name="CPR" />
                   <SkillTag name="First Aid" />
                   <SkillTag name="Being Fun" />
                 </HStack>
               </Stack>
+            </Stack>
+            <Stack spacing={3} width="full">
+              <Text textStyle="heading" mt={3}>
+                Scheduled Shifts
+              </Text>
+              <Table maxW="1000px">
+                <ScheduledShiftsTr
+                  date="Wednesday, November 3"
+                  time="9:30 AM - 1:30 PM (4 hours)"
+                />
+                <ScheduledShiftsTr
+                  date="Wednesday, November 3"
+                  time="9:30 AM - 1:30 PM (4 hours)"
+                />
+                <ScheduledShiftsTr
+                  date="Wednesday, November 3"
+                  time="9:30 AM - 1:30 PM (4 hours)"
+                />
+              </Table>
             </Stack>
           </VStack>
         </VStack>
