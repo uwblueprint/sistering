@@ -1942,11 +1942,6 @@
   resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-4.5.1.tgz#058d8a02354f3c78e369d452c15d33557ec1b705"
   integrity sha512-mvtOvXNNVLlF1p/UbLgLrmz2RCOl6Ow+TqyiK10SosoLKX7edsXYiHFHb7XIZdjII6F2sJVPPsJXWhBnbXT2DQ==
 
-"@fontsource/open-sans@^4.5.3":
-  version "4.5.3"
-  resolved "https://registry.yarnpkg.com/@fontsource/open-sans/-/open-sans-4.5.3.tgz#168670a01d195fcff29a169b0c70a676a8e63fdf"
-  integrity sha512-zabYpvz2XkZ4Vp1EN2/k0r5X9kQgwjdj1+kJ6B0T/oN4h9yqJqr9VKxa+JspRxClxDEo23K5GqfuIEH1+WyFOw==
-
 "@fontsource/raleway@^4.5.0":
   version "4.5.0"
   resolved "https://registry.yarnpkg.com/@fontsource/raleway/-/raleway-4.5.0.tgz#d5c464abe655d2e2cb134c503db455b7af6c03a6"
