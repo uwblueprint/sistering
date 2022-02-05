@@ -132,11 +132,7 @@ const authorizedByAllRoles = () =>
 const authorizedByAdmin = () => isAuthorizedByRole(new Set(["ADMIN"]));
 const authorizedByAdminAndVolunteer = () =>
   isAuthorizedByRole(new Set(["ADMIN", "VOLUNTEER"]));
-const authorizedByVolunteer = () => {
-  return (
-    isAuthorizedByRole(new Set(["VOLUNTEER"])) && isAuthorizedByUserId("userid")
-  );
-};
+const authorizedByVolunteer = () => isAuthorizedByRole(new Set(["VOLUNTEER"]));
 
 const graphQLMiddlewares = {
   Query: {

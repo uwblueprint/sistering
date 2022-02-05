@@ -44,7 +44,7 @@ class ShiftSignupService implements IShiftSignupService {
   ): Promise<ShiftSignupResponseDTO[]> {
     try {
       const newShiftSignups = await prisma.$transaction(
-        shiftSignups?.map((shiftSignup) =>
+        shiftSignups.map((shiftSignup) =>
           prisma.signup.create({
             data: {
               ...shiftSignup,
@@ -55,7 +55,7 @@ class ShiftSignupService implements IShiftSignupService {
           }),
         ),
       );
-      return newShiftSignups?.map((newShiftSignup) =>
+      return newShiftSignups.map((newShiftSignup) =>
         this.convertSignupToDTO(newShiftSignup),
       );
     } catch (error: unknown) {
