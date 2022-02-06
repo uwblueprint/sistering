@@ -8,13 +8,11 @@ const PostingCard = ({id, title, skills, description, startDate, endDate, autoCl
   return (
     <Box m={1} mb={5} bg='white' borderRadius={2} borderColor=" #E7E7E7">
       <VStack p={6} align="flex-start" fontSize="xs" spacing='1.5'> 
-        {/* how to tell type of event? */}
         <Tag px={2} borderRadius="100px" variant="subtle" bg="green.light" color="green.dark" fontSize='12' fontWeight={400} textTransform="inherit">{branchName}</Tag>
         <Text textStyle="heading" fontSize='lg' lineHeight="lg">{title}</Text>
         <HStack spacing={4}>
-          {/* how to tell it is a single or reoccuring event  */}
-          <Text fontSize='12'><TimeIcon w={4} pr={1}/>See Posting Details
-           </Text>
+          {/* toAdd: conditionally displaying time for event listings*/}
+          <Text fontSize='12'><TimeIcon w={4} pr={1}/>See Posting Details</Text>
           <Text fontSize='12'><CalendarIcon w={4} pr={1}/>{`${startDate.toLocaleDateString('en-US', { weekday: 'long', month:'long', day: '2-digit'})} - ${endDate.toLocaleDateString('en-US', { weekday: 'long', month:'long', day: '2-digit'})}`}</Text>
         </HStack>
         <Text lineHeight="1.1rem">{description}</Text>
