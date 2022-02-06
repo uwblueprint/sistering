@@ -120,7 +120,7 @@ model Signup {
   userId        Int
   status        SignupStatus
   numVolunteers Int          @default(1) @map("num_volunteers")
-  note          String
+  note          String?      
 
   @@map("signups")
   @@id([shiftId, userId])
