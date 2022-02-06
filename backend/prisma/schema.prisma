@@ -114,15 +114,16 @@ model Shift {
 }
 
 model Signup {
-  id            Int          @id @default(autoincrement())
   shift         Shift        @relation(fields: [shiftId], references: [id])
   shiftId       Int          @map("shifts_id")
   user          User         @relation(fields: [userId], references: [id])
   userId        Int
   status        SignupStatus
   numVolunteers Int          @default(1) @map("num_volunteers")
+  note          String
 
   @@map("signups")
+  @@id([shiftId, userId])
 }
 
 model Volunteer {

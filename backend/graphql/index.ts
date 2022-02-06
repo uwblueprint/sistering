@@ -12,6 +12,8 @@ import userResolvers from "./resolvers/userResolvers";
 import userType from "./types/userType";
 import shiftResolvers from "./resolvers/shiftResolvers";
 import shiftType from "./types/shiftType";
+import shiftSignupResolvers from "./resolvers/shiftSignupResolvers";
+import shiftSignupType from "./types/shiftSignupType";
 import postingResolvers from "./resolvers/postingResolvers";
 import postingType from "./types/postingType";
 import skillResolvers from "./resolvers/skillResolvers";
@@ -105,6 +107,7 @@ const executableSchema = makeExecutableSchema({
     entityType,
     userType,
     shiftType,
+    shiftSignupType,
     skillType,
     skillType,
     postingType,
@@ -117,6 +120,7 @@ const executableSchema = makeExecutableSchema({
     entityResolvers,
     userResolvers,
     shiftResolvers,
+    shiftSignupResolvers,
     postingResolvers,
     skillResolvers,
     branchResolvers,
@@ -128,6 +132,7 @@ const authorizedByAllRoles = () =>
 const authorizedByAdmin = () => isAuthorizedByRole(new Set(["ADMIN"]));
 const authorizedByAdminAndVolunteer = () =>
   isAuthorizedByRole(new Set(["ADMIN", "VOLUNTEER"]));
+const authorizedByVolunteer = () => isAuthorizedByRole(new Set(["VOLUNTEER"]));
 
 const graphQLMiddlewares = {
   Query: {
@@ -147,6 +152,7 @@ const graphQLMiddlewares = {
     skills: authorizedByAdmin(),
     branch: authorizedByAdmin(),
     branches: authorizedByAdmin(),
+    getShiftSignupsForUser: authorizedByAdmin(),
   },
   Mutation: {
     createEntity: authorizedByAllRoles(),
@@ -175,6 +181,8 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
+    createShiftSignups: authorizedByVolunteer(),
+    updateShiftSignup: authorizedByAdmin(),
   },
 };
 
