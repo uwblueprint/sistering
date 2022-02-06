@@ -15,7 +15,7 @@ const stepLabel = (key: string) => (
 );
 
 const steps = [
-  { heading: "STEP 1", label: stepLabel("Step 1"), content: null },
+  { heading: "Step 1", label: stepLabel("Step 1"), content: null },
   { heading: "Step 2", label: stepLabel("Step 2"), content: null },
   { heading: "Step 3", label: stepLabel("Step 3"), content: null },
 ];
@@ -43,10 +43,10 @@ const SideNavbarDemo = (): React.ReactElement => {
           ))}
         </Steps>
         <Flex flexDir="row" justifyContent="center" mt={5}>
-          <Button mr={2} onClick={prevStep} background="violet" color="white">
+          <Button mr={2} onClick={prevStep} bg="violet" color="white" >
             Prev
           </Button>
-          <Button onClick={nextStep} background="violet" color="white">
+          <Button onClick={nextStep} bg="violet" color="white">
             Next
           </Button>
         </Flex>

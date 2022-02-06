@@ -2,6 +2,7 @@ import { extendTheme, withDefaultColorScheme } from "@chakra-ui/react";
 import { Dict } from "@chakra-ui/utils";
 
 import colors from "./colors";
+import CustomStepsTheme from "./stepsTheme";
 
 const customTheme = extendTheme(
   {
@@ -100,6 +101,7 @@ const customTheme = extendTheme(
     },
     colors,
     components: {
+      Steps: CustomStepsTheme,
       Tabs: {
         baseStyle: {
           tab: {
