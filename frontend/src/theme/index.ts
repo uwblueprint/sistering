@@ -1,8 +1,4 @@
-import {
-  extendTheme,
-  withDefaultColorScheme,
-  withDefaultProps,
-} from "@chakra-ui/react";
+import { extendTheme, withDefaultColorScheme } from "@chakra-ui/react";
 import { Dict } from "@chakra-ui/utils";
 
 import colors from "./colors";
@@ -124,6 +120,20 @@ const customTheme = extendTheme(
         baseStyle: {
           label: {
             textStyle: "caption",
+          },
+        },
+        variants: {
+          subtle: {
+            container: {
+              backgroundColor: "green.light",
+              color: "green.dark",
+            },
+          },
+          outline: {
+            container: {
+              color: "text.gray",
+              boxShadow: `inset 0 0 0px 1px ${colors.text.gray}`,
+            },
           },
         },
       },

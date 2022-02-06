@@ -121,7 +121,7 @@ const DesignSystemDisplay = () => {
           },
         ].map((style, index) => (
           <Tag
-            bg={style.backgroundColor}
+            bgColor={style.backgroundColor}
             color={style.textColor}
             size="lg"
             key={index}
@@ -202,6 +202,8 @@ const DesignSystemDisplay = () => {
           <Tab>Tab 2</Tab>
         </TabList>
       </Tabs>
+      <Tag>Tag</Tag>
+      <Tag variant="outline">Tag</Tag>
     </div>
   );
 };
