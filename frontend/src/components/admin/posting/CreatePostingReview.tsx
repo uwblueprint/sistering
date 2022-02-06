@@ -36,12 +36,7 @@ const BasicInfoGridItem: React.FC<BasicInfoGridItemProps> = ({
   return (
     <GridItem colSpan={1}>
       <Stack spacing={1}>
-        <Text
-          fontFamily="Raleway"
-          fontSize="18px"
-          fontWeight="medium"
-          color="#737B7D"
-        >
+        <Text textStyle="subheading" color="text.gray">
           {title}
         </Text>
         <Text fontFamily="Inter" fontSize="18px" fontWeight="medium">
@@ -83,8 +78,8 @@ const PocCard: React.FC<PocCardProps> = ({
           {email}
         </Text>
       </HStack>
-      <HStack spacing="20px">
-        <PhoneIcon color="#C4C4C4" />
+      <HStack spacing="18px">
+        <PhoneIcon color="#C4C4C4" w="18px" h="18px" />
         <Text textStyle="caption" fontSize="14px">
           {phoneNumber}
         </Text>
@@ -137,17 +132,12 @@ const CreatePostingReview = (): React.ReactElement => {
     skills,
     employees,
     title,
-    type,
-    status,
     description,
-    startDate,
-    endDate,
     autoClosingDate,
-    numVolunteers,
-    recurrenceInterval,
+    times,
   } = useContext(PostingContext);
   return (
-    <Container border="1px" maxW="container.xl" p={0}>
+    <Container maxW="container.xl" p={0}>
       <Flex p={10}>
         <VStack w="full" spacing={5} alignItems="flex-start">
           <HStack spacing={5}>
@@ -174,75 +164,43 @@ const CreatePostingReview = (): React.ReactElement => {
             <Stack spacing={6} w="full">
               <Text textStyle="heading">Basic Information</Text>
               <SimpleGrid columns={3} w="full">
-                <BasicInfoGridItem title="Branch" info="Kitchen" />
-                <BasicInfoGridItem title="Title" info="Kitchen Volunteer" />
+                <BasicInfoGridItem title="Branch" info={branchId} />
+                <BasicInfoGridItem title="Title" info={title} />
                 <BasicInfoGridItem
                   title="Posting Closing Date"
-                  info="22/11/2021"
+                  info={autoClosingDate}
                 />
               </SimpleGrid>
               <Stack>
-                <Text
-                  fontFamily="Raleway"
-                  fontSize="18px"
-                  fontWeight="medium"
-                  color="#737B7D"
-                  mt={3}
-                >
+                <Text textStyle="subheading" color="text.gray" mt={3}>
                   Description
                 </Text>
-                <Text textStyle="body-regular">
-                  A job for the biggest people <br />
-                  <br /> This role will require someone who is paitent,
-                  energetic, and understanding. You will be asked to find Zuko’s
-                  honour and stay moving. Majority of your time will be spent
-                  engaging with customers and serving food. Ocassionally you
-                  maybe asked to cook. First Aid and CPR experience is also
-                  required.
-                </Text>
+                <Text textStyle="body-regular">{description}</Text>
               </Stack>
               <Stack spacing={4}>
-                <Text
-                  fontFamily="Raleway"
-                  fontSize="18px"
-                  fontWeight="medium"
-                  color="#737B7D"
-                  mt={5}
-                >
+                <Text textStyle="subheading" color="text.gray" mt={5}>
                   Point(s) of Contact
                 </Text>
                 <HStack spacing={6}>
-                  <PocCard
-                    name="Amanda Du"
-                    title="Kitchen Manager"
-                    email="atdu@uwblueprint.org"
-                    phoneNumber="6131234579"
-                  />
-                  <PocCard
-                    name="Amanda Du"
-                    title="Kitchen Manager"
-                    email="atdu@uwblueprint.org"
-                    phoneNumber="6131234579"
-                  />
+                  {employees.map((name, i) => (
+                    <PocCard
+                      name={name}
+                      title="hard code"
+                      email="hard code"
+                      phoneNumber="hard code"
+                      key={i}
+                    />
+                  ))}
                 </HStack>
               </Stack>
               <Stack>
-                <Text
-                  fontFamily="Raleway"
-                  fontSize="18px"
-                  fontWeight="medium"
-                  color="#737B7D"
-                  mt={4}
-                >
+                <Text textStyle="subheading" color="text.gray" mt={4}>
                   Skills
                 </Text>
                 <HStack>
                   {skills.map((name, i) => (
                     <SkillTag name={name} key={i} />
                   ))}
-                  <SkillTag name="CPR" />
-                  <SkillTag name="First Aid" />
-                  <SkillTag name="Being Fun" />
                 </HStack>
               </Stack>
             </Stack>
@@ -251,18 +209,26 @@ const CreatePostingReview = (): React.ReactElement => {
                 Scheduled Shifts
               </Text>
               <Table maxW="1000px">
-                <ScheduledShiftsTr
-                  date="Wednesday, November 3"
-                  time="9:30 AM - 1:30 PM (4 hours)"
-                />
-                <ScheduledShiftsTr
-                  date="Wednesday, November 3"
-                  time="9:30 AM - 1:30 PM (4 hours)"
-                />
-                <ScheduledShiftsTr
-                  date="Wednesday, November 3"
-                  time="9:30 AM - 1:30 PM (4 hours)"
-                />
+                {times.map((t, i) => {
+                  const startDT = new Date(t.startTime);
+                  const endDT = new Date(t.endTime);
+                  const date = startDT.toLocaleDateString("en-US", {
+                    weekday: "long",
+                    month: "long",
+                    day: "numeric",
+                  });
+                  const startTime = startDT.toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "numeric",
+                  });
+                  const endTime = endDT.toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "numeric",
+                  });
+                  const hours = (endDT.valueOf() - startDT.valueOf()) / 36e5;
+                  const time = `${startTime} - ${endTime} (${hours} hours)`;
+                  return <ScheduledShiftsTr date={date} time={time} key={i} />;
+                })}
               </Table>
             </Stack>
           </VStack>
