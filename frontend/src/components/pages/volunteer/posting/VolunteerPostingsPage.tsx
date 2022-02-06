@@ -98,7 +98,7 @@ const postingArr = [{
   },
   title: "Medical Reception Volunteer",
   startDate: new Date('December 17, 2021'),
-  endDate: new Date("Monday, January 20"),
+  endDate: new Date("January 20, 2022"),
   autoClosingDate: new Date("Monday, November 30"), 
   isSignedUp: false,
   description: "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis."
@@ -112,7 +112,7 @@ const postingArr = [{
   },
   title: "Medical Reception Volunteer",
   startDate: new Date('December 17, 2021'),
-  endDate: new Date("Monday, January 20"),
+  endDate: new Date("January 20, 2022"),
   autoClosingDate: new Date("Monday, November 30"), 
   isSignedUp: false,
   description: "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis."
@@ -126,7 +126,7 @@ const postingArr = [{
   },
   title: "Medical Reception Volunteer",
   startDate: new Date('December 17, 2021'),
-  endDate: new Date("Monday, January 20"),
+  endDate: new Date("January 20, 2022"),
   autoClosingDate: new Date("Monday, November 30"), 
   isSignedUp: false,
   description: "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis."
@@ -165,6 +165,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
 
   
   const isVolunteerOpportunity = (start: Date, end: Date): boolean => {
+    console.log(end, start)
     return (end.getTime() - start.getTime()) > 1000 * 60 * 60 * 24;
   }
   const volunteerOpportunities = postingArr?.filter((posting) => isVolunteerOpportunity(posting.startDate, posting.endDate))
