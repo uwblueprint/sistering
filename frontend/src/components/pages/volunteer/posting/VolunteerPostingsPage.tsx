@@ -4,6 +4,7 @@ import { Text, Box, HStack, Select } from "@chakra-ui/react";
 import PostingCard from "./PostingCard";
 import { PostingResponseDTO } from "../../../../types/PostingTypes";
 
+// delete before merging to main
 const postingArr = [{
   id: "1",
   skills: [{id: '1', name:"CPR"}, {id: '2', name: "WHMIS"}, {id: '3', name: "Photocopying"}], 
@@ -52,8 +53,13 @@ const POSTINGS = gql`
 query VolunteerPostingsPage_postings {
   postings {
     id
-    skills
-    employees
+    skills {
+      id
+      name
+    }
+    employees {
+      userId
+    }
     title
     type
     status
@@ -68,14 +74,20 @@ query VolunteerPostingsPage_postings {
 const VolunteerPostingsPage = (): React.ReactElement => {
 
   const [postings, setPostings] = useState<PostingResponseDTO[] | null>(null);
-  // how does this work??
 
   useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
-    onCompleted: (data) => setPostings(data)
+    onCompleted: (data) => setPostings(data.postings)
     });
 
     console.log(postings)
+
+  
+  const isVolunteerOpportunity = (start: Date, end: Date): boolean => {
+    return (end.getTime() - start.getTime()) > 1000 * 60 * 60 * 24;
+  }
+  const volunteerOpportunities = postingArr?.filter((posting) => isVolunteerOpportunity(posting.startDate, posting.endDate))
+  const events = postingArr?.filter((posting) => !isVolunteerOpportunity(posting.startDate, posting.endDate))
 
   // const {loading, error, postings} = useQuery(GET_POSTINGS)
   return (
@@ -92,7 +104,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
           </Select>
           </HStack>
       </HStack>
-      {postingArr?.map((posting) => (
+      {events?.map((posting) => (
         <PostingCard 
         key={posting.id}
         id={posting.id}
@@ -103,6 +115,22 @@ const VolunteerPostingsPage = (): React.ReactElement => {
         autoClosingDate={posting.autoClosingDate}
         description={posting.description}
         branchName={posting.branch.name}
+        type="EVENT"
+        />  
+      ))}
+      <Text fontSize="xl" fontWeight="600" >Volunteer Opportunities</Text>
+      {volunteerOpportunities?.map((posting) => (
+        <PostingCard 
+        key={posting.id}
+        id={posting.id}
+        skills={posting.skills} 
+        title={posting.title} 
+        startDate={posting.startDate} 
+        endDate={posting.endDate} 
+        autoClosingDate={posting.autoClosingDate}
+        description={posting.description}
+        branchName={posting.branch.name}
+        type="OPPORTUNITY"
         />
       ))}
     </Box>

@@ -52,4 +52,5 @@ export type PostingCardProps = {
   endDate: Date, 
   autoClosingDate: Date, 
   branchName: string,
+  type: "EVENT" | "OPPORTUNITY"
 }
