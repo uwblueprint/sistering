@@ -19,6 +19,7 @@ const VolunteerAvailabilityTableRow = ({
   end,
 }: VolunteerAvailabilityTableRowProps): React.ReactElement => {
   const [note, setNote] = React.useState("");
+  const [checked, setChecked] = React.useState(false);
 
   return (
     <Flex>
@@ -29,12 +30,14 @@ const VolunteerAvailabilityTableRow = ({
       </Checkbox>
       <InputGroup>
         <Input
+          isDisabled={!checked}
+          bg="white"
           placeholder="Add note (optional)"
           value={note}
           onChange={(event) => setNote(event.target.value)}
         />
         <InputRightElement
-          visibility={note.trim().length > 0 ? "visible" : "hidden"}
+          visibility={note.trim().length > 0 && checked ? "visible" : "hidden"}
         >
           <CheckIcon color="brand.500" />
         </InputRightElement>
