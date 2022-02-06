@@ -10,6 +10,10 @@ const customTheme = extendTheme(
         "html, body": props.theme.textStyles["body-regular"],
       }),
     },
+    fonts: {
+      heading: "Raleway",
+      body: "Inter",
+    },
     textStyles: {
       "display-large": {
         fontFamily: "Raleway",
@@ -97,6 +101,11 @@ const customTheme = extendTheme(
     colors,
     components: {
       Tabs: {
+        baseStyle: {
+          tab: {
+            textStyle: "button-semibold",
+          },
+        },
         variants: {
           line: {
             tab: {
@@ -107,7 +116,17 @@ const customTheme = extendTheme(
           },
         },
       },
+      Tag: {
+        baseStyle: {
+          label: {
+            textStyle: "caption",
+          },
+        },
+      },
       Button: {
+        baseStyle: {
+          textStyle: "button-regular",
+        },
         variants: {
           outline: {
             ringColor: "brand.500",
