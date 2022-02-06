@@ -127,12 +127,14 @@ const customTheme = extendTheme(
             container: {
               backgroundColor: "green.light",
               color: "green.dark",
+              borderRadius: "full",
             },
           },
           outline: {
             container: {
               color: "text.gray",
               boxShadow: `inset 0 0 0px 1px ${colors.text.gray}`,
+              borderRadius: "full",
             },
           },
         },

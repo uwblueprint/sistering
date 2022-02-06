@@ -196,14 +196,15 @@ const DesignSystemDisplay = () => {
       <ChakraButton variant="link" isDisabled>
         Link Disabled
       </ChakraButton>
+      <br />
+      <Tag>Default Tag</Tag>
+      <Tag variant="outline">Outline Tag</Tag>
       <Tabs>
         <TabList>
           <Tab>Tab 1</Tab>
           <Tab>Tab 2</Tab>
         </TabList>
       </Tabs>
-      <Tag>Tag</Tag>
-      <Tag variant="outline">Tag</Tag>
     </div>
   );
 };
