@@ -18,7 +18,7 @@ const SideNavbarDemo = (): React.ReactElement => {
       alignItems="center"
       backgroundColor="#F3F3F3"
     >
-      <Flex flexDir="column" width="225px">
+      <Flex flexDir="column" width="250px">
         <SideNavbar
           activeStep={activeStep}
           labels={["Basic Information", "Time Slots", "Review and Post"]}

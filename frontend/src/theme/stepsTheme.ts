@@ -7,8 +7,10 @@ const CustomStepsTheme = {
     ...StepsStyleConfig.baseStyle(props),
     connector: {
       ...StepsStyleConfig.baseStyle(props).connector,
+      paddingTop: '30px',
       borderColor: "violet",
       opacity: "0.5",
+      minHeight: '50px',
       _highlighted: {
         opacity: "1",
       },
@@ -16,7 +18,7 @@ const CustomStepsTheme = {
     label: {
       ...StepsStyleConfig.baseStyle(props).label,
       color: "currentColor",
-      // fontFamily: 'Open Sans'
+      fontFamily: 'Open Sans'
     },
     stepIconContainer: {
       ...StepsStyleConfig.baseStyle(props).stepIconContainer,

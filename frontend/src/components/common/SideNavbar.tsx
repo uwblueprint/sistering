@@ -12,11 +12,11 @@ const createStepLabel = (
   activeStep: number,
   label: string,
 ): React.ReactNode => (
-  <VStack spacing="-8px" alignItems="left" justifyContent="center">
-    <Text variant="subheading" fontSize="12px" textAlign="left" color="#8B8B8B">
+  <VStack marginLeft='20px' spacing='-2px' alignItems="left" justifyContent="center">
+    <Text opacity={1} marginTop='-8px' fontFamily='raleway' fontSize="12px" textAlign="left" color="#8B8B8B">
       STEP {idx + 1}
     </Text>
-    <Text variant="heading" fontWeight={activeStep === idx ? "bold" : "normal"}>
+    <Text opacity={1} fontFamily='raleway' fontSize='20px' fontWeight={activeStep === idx ? "bold" : "normal"}>
       {label}
     </Text>
   </VStack>
