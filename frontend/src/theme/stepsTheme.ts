@@ -7,10 +7,10 @@ const CustomStepsTheme = {
     ...StepsStyleConfig.baseStyle(props),
     connector: {
       ...StepsStyleConfig.baseStyle(props).connector,
-      paddingTop: '30px',
+      paddingTop: "30px",
       borderColor: "violet",
       opacity: "0.5",
-      minHeight: '50px',
+      minHeight: "50px",
       _highlighted: {
         opacity: "1",
       },
@@ -18,7 +18,7 @@ const CustomStepsTheme = {
     label: {
       ...StepsStyleConfig.baseStyle(props).label,
       color: "currentColor",
-      fontFamily: 'Open Sans'
+      fontFamily: "Open Sans",
     },
     stepIconContainer: {
       ...StepsStyleConfig.baseStyle(props).stepIconContainer,
@@ -53,17 +53,17 @@ const CustomStepsTheme = {
       ...StepsStyleConfig.sizes.sm,
       stepIconContainer: {
         ...StepsStyleConfig.sizes.sm.stepIconContainer,
-        borderWidth: '3px',
-      }
+        borderWidth: "3px",
+      },
     },
     md: {
       ...StepsStyleConfig.sizes.md,
       stepIconContainer: {
         ...StepsStyleConfig.sizes.md.stepIconContainer,
-        borderWidth: '3px',
-      }
+        borderWidth: "3px",
+      },
     },
-  }
+  },
 };
 
 export default CustomStepsTheme;
