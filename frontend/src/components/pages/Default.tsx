@@ -121,7 +121,7 @@ const DesignSystemDisplay = () => {
           },
         ].map((style, index) => (
           <Tag
-            bg={style.backgroundColor}
+            bgColor={style.backgroundColor}
             color={style.textColor}
             size="lg"
             key={index}
@@ -196,6 +196,9 @@ const DesignSystemDisplay = () => {
       <ChakraButton variant="link" isDisabled>
         Link Disabled
       </ChakraButton>
+      <br />
+      <Tag>Default Tag</Tag>
+      <Tag variant="outline">Outline Tag</Tag>
       <Tabs>
         <TabList>
           <Tab>Tab 1</Tab>
