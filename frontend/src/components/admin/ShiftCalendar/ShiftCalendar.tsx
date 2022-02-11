@@ -29,13 +29,11 @@ type Event = {
 };
 
 type ShiftCalendarProps = {
-  eventsProp: Event[];
+  shifts: Event[];
 };
 
-const ShiftCalendar = ({
-  eventsProp,
-}: ShiftCalendarProps): React.ReactElement => {
-  const [events, setEvents] = useState<Event[]>(eventsProp);
+const ShiftCalendar = ({ shifts }: ShiftCalendarProps): React.ReactElement => {
+  const [events, setEvents] = useState<Event[]>(shifts);
   const [eventCount, setEventCount] = useState<number>(0);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
