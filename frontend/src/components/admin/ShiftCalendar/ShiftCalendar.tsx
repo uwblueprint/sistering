@@ -12,7 +12,7 @@ type Event = {
   end: Date;
 };
 
-const Calendar = (): React.ReactElement => {
+const ShiftCalendar = (): React.ReactElement => {
   const [events, setEvents] = React.useState<Event[]>([
     {
       start: new Date("2022-01-30T12:00"),
@@ -73,4 +73,4 @@ const Calendar = (): React.ReactElement => {
   );
 };
 
-export default Calendar;
+export default ShiftCalendar;
