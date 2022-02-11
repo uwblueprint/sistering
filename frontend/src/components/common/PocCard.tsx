@@ -35,13 +35,13 @@ const PocCard: React.FC<PocCardProps> = ({
         </Text>
       </HStack>
       <HStack spacing={4}>
-        <EmailIcon color="#C4C4C4" w="20px" h="20px" />
+        <EmailIcon color="text.gray" w="20px" h="20px" />
         <Text textStyle="caption" fontSize="14px">
           {email}
         </Text>
       </HStack>
-      <HStack spacing="18px">
-        <PhoneIcon color="#C4C4C4" w="18px" h="18px" />
+      <HStack spacing="20px">
+        <PhoneIcon color="text.gray" w="18px" h="18px" />
         <Text textStyle="caption" fontSize="14px">
           {phoneNumber}
         </Text>

@@ -5,13 +5,7 @@ type SkillTagProps = { name: string };
 
 const SkillTag: React.FC<SkillTagProps> = ({ name }: SkillTagProps) => {
   return (
-    <Tag
-      size="md"
-      bgColor="violet"
-      borderRadius={100}
-      border="2px"
-      borderColor="violet"
-    >
+    <Tag variant="brand">
       <Text textStyle="caption" color="text.white">
         {name}
       </Text>

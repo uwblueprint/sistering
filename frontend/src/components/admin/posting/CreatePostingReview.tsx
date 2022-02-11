@@ -15,7 +15,7 @@ import {
 import BasicInfoGridItem from "../../common/BasicInfoGridItem";
 import PocCard from "../../common/PocCard";
 import SkillTag from "../../common/SkillTag";
-import ScheduledShiftsTr from "../../common/ScheduledShiftsTr";
+import ScheduledShiftsTr from "./ScheduledShiftsTr";
 
 import PostingContext from "../../../contexts/admin/PostingContext";
 
