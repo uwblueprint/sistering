@@ -19,6 +19,7 @@ import PocCard from "../../common/PocCard";
 import ScheduledShiftsTr from "./ScheduledShiftsTr";
 
 import PostingContext from "../../../contexts/admin/PostingContext";
+import { ADMIN_POSTING_CREATE_REVIEW_ENTER_ALL_DETAILS } from "../../../constants/Copy";
 
 const CreatePostingReview = (): React.ReactElement => {
   const {
@@ -50,10 +51,7 @@ const CreatePostingReview = (): React.ReactElement => {
           </HStack>
           <VStack w="full" spacing={9} alignItems="flex-start" px={2}>
             <Text textStyle="caption">
-              Enter all the details of your volunteer posting. Please take
-              advantage of the Role Description section and add any information
-              that will help. Once you have completed filling it out, press
-              next.
+              {ADMIN_POSTING_CREATE_REVIEW_ENTER_ALL_DETAILS}
             </Text>
             <Stack spacing={6} w="full">
               <Text textStyle="heading">Basic Information</Text>
