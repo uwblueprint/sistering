@@ -27,4 +27,4 @@ export const ADMIN_POSTING_CREATE_SHIFTS_PAGE = "/admin/posting/create/shifts";
 export const ADMIN_POSTING_CREATE_REVIEW_PAGE = "/admin/posting/create/review";
 
 // Temporary route for testing
-export const VOLUNTEER_POSTINGS_DETAILS = "/volunteer/postings/:id";
+export const VOLUNTEER_POSTING_DETAILS = "/volunteer/posting/:id";
