@@ -130,6 +130,7 @@ const customTheme = extendTheme(
               border: "2px",
               borderColor: "violet",
               borderRadius: "full",
+              color: "text.white",
             },
           },
           subtle: {

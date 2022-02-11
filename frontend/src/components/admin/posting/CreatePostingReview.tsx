@@ -10,11 +10,11 @@ import {
   Tbody,
   Text,
   Circle,
+  Tag,
 } from "@chakra-ui/react";
 
 import BasicInfoGridItem from "../../common/BasicInfoGridItem";
 import PocCard from "../../common/PocCard";
-import SkillTag from "../../common/SkillTag";
 import ScheduledShiftsTr from "./ScheduledShiftsTr";
 
 import PostingContext from "../../../contexts/admin/PostingContext";
@@ -92,7 +92,9 @@ const CreatePostingReview = (): React.ReactElement => {
                 </Text>
                 <HStack>
                   {skills.map((name, i) => (
-                    <SkillTag name={name} key={i} />
+                    <Tag variant="brand" key={i}>
+                      {name}
+                    </Tag>
                   ))}
                 </HStack>
               </Stack>
