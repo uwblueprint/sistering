@@ -3,7 +3,6 @@ import FullCalendar, {
   EventChangeArg,
   EventClickArg,
   EventInput,
-  EventRemoveArg,
 } from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -87,8 +86,6 @@ const ShiftCalendar = (): React.ReactElement => {
     openModal();
     setSelectedEvent(event);
   };
-
-  console.log(events);
 
   return (
     <Box>
