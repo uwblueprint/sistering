@@ -142,7 +142,7 @@ model Employee {
   id       Int       @id
   user     User      @relation(fields: [id], references: [id], onDelete: Cascade)
   branchId Int       @map("branch_id")
-  branch   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  branch   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
   postings Posting[]
 
   @@map("employees")

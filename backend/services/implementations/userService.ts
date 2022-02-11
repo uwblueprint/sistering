@@ -1,5 +1,5 @@
 import * as firebaseAdmin from "firebase-admin";
-import { PrismaClient, User, Skill, Branch, Posting } from "@prisma/client";
+import { PrismaClient, User, Skill, Branch } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import {
   CreateUserDTO,
@@ -745,42 +745,19 @@ class UserService implements IUserService {
   async deleteVolunteerUserById(userId: string): Promise<string> {
     try {
       /* eslint-disable-next-line @typescript-eslint/naming-convention */
-      const [_, deletedVolunteerUser] = await prisma.$transaction([
-        // use update to remove relations from volunteer and user before deleting
-        prisma.user.update({
-          where: {
-            id: Number(userId),
-          },
-          data: {
-            signups: {
-              set: [],
-            },
-            volunteer: {
-              update: {
-                branches: {
-                  set: [],
-                },
-                skills: {
-                  set: [],
-                },
-              },
+      const deletedVolunteerUser = await prisma.user.delete({
+        where: {
+          id: Number(userId),
+        },
+        include: {
+          volunteer: {
+            include: {
+              branches: true,
+              skills: true,
             },
           },
-        }),
-        prisma.user.delete({
-          where: {
-            id: Number(userId),
-          },
-          include: {
-            volunteer: {
-              include: {
-                branches: true,
-                skills: true,
-              },
-            },
-          },
-        }),
-      ]);
+        },
+      });
       try {
         await firebaseAdmin.auth().deleteUser(deletedVolunteerUser.authId);
       } catch (error: unknown) {
@@ -1073,7 +1050,7 @@ class UserService implements IUserService {
         };
       } catch (error: unknown) {
         try {
-          prisma.volunteer.update({
+          prisma.employee.update({
             where: {
               id: Number(userId),
             },
@@ -1085,6 +1062,9 @@ class UserService implements IUserService {
                   role: oldEmployeeUser!.user.role,
                   phoneNumber: oldEmployeeUser!.user.phoneNumber,
                 },
+              },
+              branch: {
+                connect: { id: Number(oldEmployeeUser!.branchId) },
               },
             },
           });
@@ -1108,36 +1088,18 @@ class UserService implements IUserService {
   async deleteEmployeeUserById(userId: string): Promise<string> {
     try {
       /* eslint-disable-next-line @typescript-eslint/naming-convention */
-      const [_, deletedEmployeeUser] = await prisma.$transaction([
-        // use update to remove relations from employee and user before deleting
-        prisma.user.update({
-          where: {
-            id: Number(userId),
-          },
-          data: {
-            employee: {
-              update: {
-                postings: {
-                  set: [],
-                },
-              },
+      const deletedEmployeeUser = await prisma.user.delete({
+        where: {
+          id: Number(userId),
+        },
+        include: {
+          employee: {
+            include: {
+              postings: true,
             },
           },
-        }),
-        prisma.user.delete({
-          where: {
-            id: Number(userId),
-          },
-          include: {
-            employee: {
-              include: {
-                postings: true,
-                branch: true,
-              },
-            },
-          },
-        }),
-      ]);
+        },
+      });
       try {
         await firebaseAdmin.auth().deleteUser(deletedEmployeeUser.authId);
       } catch (error: unknown) {
