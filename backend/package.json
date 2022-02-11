@@ -14,7 +14,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@chakra-ui/icons": "^1.1.1",
     "@prisma/client": "^3.3.0",
     "apollo-server": "^2.22.2",
     "apollo-server-express": "^2.22.2",
