@@ -1,0 +1,75 @@
+a:hover {
+  text-decoration: none;
+  color: inherit;
+}
+
+.fc table {
+  font-weight: 400;
+  letter-spacing: 0.2px;
+  line-height: 18px;
+  font-size: 16px;
+}
+
+.fc .fc-col-header-cell-cushion {
+  font-family: "Work Sans", sans-serif;
+  font-size: 18px;
+  font-weight: 500;
+  letter-spacing: 0.2px;
+  line-height: 18px;
+  text-transform: uppercase;
+}
+
+.fc .fc-scrollgrid-sync-inner {
+  align-items: center;
+  display: flex;
+  height: 75px;
+  justify-content: center;
+}
+
+.fc-theme-standard .fc-scrollgrid {
+  border: none;
+}
+
+.fc-v-event .fc-event-main-frame {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: row;
+}
+
+.fc-timegrid-event-harness > .fc-timegrid-event {
+  display: block;
+}
+
+.fc-event-title-container {
+  display: none;
+}
+
+.fc .fc-timegrid-axis-cushion,
+.fc .fc-timegrid-slot-label-cushion {
+  font-size: 14px;
+  padding-right: 0.5rem;
+  padding-left: 0.5rem;
+}
+
+.fc-timegrid-event .fc-event-time {
+  white-space: normal;
+  text-align: center;
+  flex-shrink: unset;
+  padding-left: 0.3rem;
+  padding-right: 0.3rem;
+}
+
+.fc-timegrid-event-harness > .fc-timegrid-event {
+  box-shadow: 0px -5px 4px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+}
+
+.fc-theme-standard td,
+.fc-theme-standard th {
+  border: 0.5px solid #ddd;
+}
+
+.fc .fc-timegrid-col.fc-day-today {
+  background-color: inherit;
+}

@@ -6,6 +6,8 @@ import FullCalendar, {
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import React from "react";
+import colors from "../../../theme/colors";
+import "./ShiftCalendar.css";
 
 type Event = {
   start: Date;
@@ -15,12 +17,12 @@ type Event = {
 const ShiftCalendar = (): React.ReactElement => {
   const [events, setEvents] = React.useState<Event[]>([
     {
-      start: new Date("2022-01-30T12:00"),
-      end: new Date("2022-01-30T14:00"),
+      start: new Date("2022-02-10T12:00"),
+      end: new Date("2022-02-10T14:00"),
     },
     {
-      start: new Date("2022-02-01T14:00"),
-      end: new Date("2022-02-01T16:00"),
+      start: new Date("2022-02-09T14:00"),
+      end: new Date("2022-02-09T16:00"),
     },
   ]);
 
@@ -56,19 +58,27 @@ const ShiftCalendar = (): React.ReactElement => {
 
   return (
     <FullCalendar
-      plugins={[timeGridPlugin, interactionPlugin]}
-      dayHeaderFormat={{ weekday: "short" }}
-      headerToolbar={false}
-      initialView="timeGridWeek"
       allDaySlot={false}
-      events={events as EventInput[]}
+      dayHeaderFormat={{ weekday: "short" }}
+      editable
       eventChange={(arg: EventChangeArg) =>
         changeEvent(arg.event as Event, arg.oldEvent as Event)
       }
-      editable
+      eventColor={colors.violet}
+      eventTimeFormat={{
+        hour: "numeric",
+        minute: "2-digit",
+        meridiem: "short",
+      }}
+      events={events as EventInput[]}
+      headerToolbar={false}
+      initialView="timeGridWeek"
+      plugins={[timeGridPlugin, interactionPlugin]}
       select={(selectInfo: DateSelectArg) => addEvent(selectInfo)}
-      selectable
       selectMirror
+      selectable
+      slotDuration="00:15:00"
+      slotLabelInterval="01:00"
     />
   );
 };
