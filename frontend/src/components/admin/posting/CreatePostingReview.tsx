@@ -6,6 +6,7 @@ import {
   VStack,
   HStack,
   SimpleGrid,
+  GridItem,
   Table,
   Tbody,
   Text,
@@ -13,7 +14,7 @@ import {
   Tag,
 } from "@chakra-ui/react";
 
-import BasicInfoGridItem from "../../common/BasicInfoGridItem";
+import LabelledText from "../../common/LabelledText";
 import PocCard from "../../common/PocCard";
 import ScheduledShiftsTr from "./ScheduledShiftsTr";
 
@@ -57,12 +58,18 @@ const CreatePostingReview = (): React.ReactElement => {
             <Stack spacing={6} w="full">
               <Text textStyle="heading">Basic Information</Text>
               <SimpleGrid columns={3} w="full">
-                <BasicInfoGridItem title="Branch" info={branchId} />
-                <BasicInfoGridItem title="Title" info={title} />
-                <BasicInfoGridItem
-                  title="Posting Closing Date"
-                  info={autoClosingDate}
-                />
+                <GridItem colSpan={1}>
+                  <LabelledText label="Branch" text={branchId} />
+                </GridItem>
+                <GridItem colSpan={1}>
+                  <LabelledText label="Title" text={title} />
+                </GridItem>
+                <GridItem colSpan={1}>
+                  <LabelledText
+                    label="Posting Closing Date"
+                    text={autoClosingDate}
+                  />
+                </GridItem>
               </SimpleGrid>
               <Stack>
                 <Text textStyle="subheading" color="text.gray" mt={3}>
