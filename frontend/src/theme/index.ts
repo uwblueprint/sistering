@@ -123,6 +123,16 @@ const customTheme = extendTheme(
           },
         },
         variants: {
+          brand: {
+            container: {
+              size: "md",
+              bgColor: "violet",
+              border: "2px",
+              borderColor: "violet",
+              borderRadius: "full",
+              color: "text.white",
+            },
+          },
           subtle: {
             container: {
               backgroundColor: "green.light",

@@ -18,7 +18,12 @@ export const DEFAULT_POSTING_CONTEXT = {
   endDate: "",
   autoClosingDate: "",
   numVolunteers: 0,
-  times: [],
+  times: [
+    {
+      startTime: "2022-02-06T09:30",
+      endTime: "2022-02-06T13:30",
+    },
+  ],
   recurrenceInterval: "NONE" as RecurrenceInterval,
 };
 
