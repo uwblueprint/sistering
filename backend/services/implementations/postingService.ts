@@ -77,7 +77,6 @@ const convertToEmployeeResponseDTO = (
   return employees.map((employee: Employee) => {
     return {
       id: String(employee.id),
-      userId: String(employee.userId),
       branchId: String(employee.branchId),
     };
   });

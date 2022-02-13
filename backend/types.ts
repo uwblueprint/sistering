@@ -43,7 +43,6 @@ export type PostingResponseDTO = Omit<
 
 export type EmployeeResponseDTO = {
   id: string;
-  userId: string;
   branchId: string;
 };
 
@@ -54,11 +53,6 @@ export type VolunteerDTO = {
   pronouns: string | null;
   skills: SkillResponseDTO[];
   branches: BranchResponseDTO[];
-};
-
-export type EmployeeDTO = {
-  id: string;
-  userId: string;
 };
 
 export type VolunteerUserRequestDTO = UserDTO &
@@ -75,15 +69,20 @@ export type CreateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id"> & {
 
 export type UpdateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id">;
 
-export type EmployeeUserDTO = UserDTO & EmployeeDTO;
+export type EmployeeUserDTO = {
+  id: string;
+  branchId: string;
+};
 
-export type CreateEmployeeUserDTO = Omit<EmployeeUserDTO, "id"> & {
+export type EmployeeUserRequestDTO = UserDTO & EmployeeUserDTO;
+
+export type EmployeeUserResponseDTO = UserDTO & EmployeeUserDTO;
+
+export type CreateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id"> & {
   password: string;
 };
 
-export type UpdateEmployeeUserDTO = Omit<EmployeeUserDTO, "id"> & {
-  password: string;
-};
+export type UpdateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id">;
 
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
 

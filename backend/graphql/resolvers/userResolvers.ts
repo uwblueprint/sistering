@@ -12,6 +12,9 @@ import {
   VolunteerUserResponseDTO,
   CreateVolunteerUserDTO,
   UpdateVolunteerUserDTO,
+  EmployeeUserResponseDTO,
+  UpdateEmployeeUserDTO,
+  CreateEmployeeUserDTO,
 } from "../../types";
 import { generateCSV } from "../../utilities/CSVUtils";
 
@@ -57,6 +60,23 @@ const userResolvers = {
     },
     volunteerUsers: async (): Promise<VolunteerUserResponseDTO[]> => {
       return userService.getVolunteerUsers();
+    },
+
+    // EmployeeUsers
+    employeeUserById: async (
+      _parent: undefined,
+      { id }: { id: string },
+    ): Promise<EmployeeUserResponseDTO> => {
+      return userService.getEmployeeUserById(id);
+    },
+    employeeUserByEmail: async (
+      _parent: undefined,
+      { email }: { email: string },
+    ): Promise<EmployeeUserResponseDTO> => {
+      return userService.getEmployeeUserByEmail(email);
+    },
+    employeeUsers: async (): Promise<EmployeeUserResponseDTO[]> => {
+      return userService.getEmployeeUsers();
     },
   },
   Mutation: {
@@ -121,6 +141,39 @@ const userResolvers = {
       { email }: { email: string },
     ): Promise<string> => {
       return userService.deleteVolunteerUserByEmail(email);
+    },
+
+    // EmployeeUsers
+    createEmployeeUser: async (
+      _parent: undefined,
+      { employeeUser }: { employeeUser: CreateEmployeeUserDTO },
+    ): Promise<EmployeeUserResponseDTO> => {
+      const newEmployeeUser = await userService.createEmployeeUser(
+        employeeUser,
+      );
+      await authService.sendEmailVerificationLink(newEmployeeUser.email);
+      return newEmployeeUser;
+    },
+
+    updateEmployeeUserById: async (
+      _parent: undefined,
+      { id, employeeUser }: { id: string; employeeUser: UpdateEmployeeUserDTO },
+    ): Promise<EmployeeUserResponseDTO> => {
+      return userService.updateEmployeeUserById(id, employeeUser);
+    },
+
+    deleteEmployeeUserById: async (
+      _parent: undefined,
+      { id }: { id: string },
+    ): Promise<string> => {
+      return userService.deleteEmployeeUserById(id);
+    },
+
+    deleteEmployeeUserByEmail: async (
+      _parent: undefined,
+      { email }: { email: string },
+    ): Promise<string> => {
+      return userService.deleteEmployeeUserByEmail(email);
     },
   },
 };

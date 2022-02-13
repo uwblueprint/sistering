@@ -1,5 +1,5 @@
 import * as firebaseAdmin from "firebase-admin";
-import { PrismaClient, User, Volunteer, Skill, Branch } from "@prisma/client";
+import { PrismaClient, User, Skill, Branch } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import {
   CreateUserDTO,
@@ -11,6 +11,9 @@ import {
   UpdateVolunteerUserDTO,
   BranchResponseDTO,
   SkillResponseDTO,
+  CreateEmployeeUserDTO,
+  EmployeeUserResponseDTO,
+  UpdateEmployeeUserDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
@@ -742,42 +745,19 @@ class UserService implements IUserService {
   async deleteVolunteerUserById(userId: string): Promise<string> {
     try {
       /* eslint-disable-next-line @typescript-eslint/naming-convention */
-      const [_, deletedVolunteerUser] = await prisma.$transaction([
-        // use update to remove relations from volunteer and user before deleting
-        prisma.user.update({
-          where: {
-            id: Number(userId),
-          },
-          data: {
-            signups: {
-              set: [],
-            },
-            volunteer: {
-              update: {
-                branches: {
-                  set: [],
-                },
-                skills: {
-                  set: [],
-                },
-              },
+      const deletedVolunteerUser = await prisma.user.delete({
+        where: {
+          id: Number(userId),
+        },
+        include: {
+          volunteer: {
+            include: {
+              branches: true,
+              skills: true,
             },
           },
-        }),
-        prisma.user.delete({
-          where: {
-            id: Number(userId),
-          },
-          include: {
-            volunteer: {
-              include: {
-                branches: true,
-                skills: true,
-              },
-            },
-          },
-        }),
-      ]);
+        },
+      });
       try {
         await firebaseAdmin.auth().deleteUser(deletedVolunteerUser.authId);
       } catch (error: unknown) {
@@ -813,14 +793,6 @@ class UserService implements IUserService {
                 },
               },
             },
-            include: {
-              volunteer: {
-                include: {
-                  branches: true,
-                  skills: true,
-                },
-              },
-            },
           });
         } catch (postgresError: unknown) {
           const errorMessage = [
@@ -845,6 +817,339 @@ class UserService implements IUserService {
   async deleteVolunteerUserByEmail(email: string): Promise<string> {
     const user = await this.getUserByEmail(email);
     await this.deleteVolunteerUserById(user.id);
+    return String(user.id);
+  }
+
+  async getEmployeeUserById(userId: string): Promise<EmployeeUserResponseDTO> {
+    try {
+      const employee = await prisma.employee.findUnique({
+        where: { id: Number(userId) },
+        include: {
+          user: true,
+        },
+      });
+
+      if (!employee) {
+        throw new Error(`Employee with userId ${userId} not found.`);
+      }
+
+      const { user } = employee;
+      const firebaseUser = await firebaseAdmin.auth().getUser(user.authId);
+
+      return {
+        id: String(user.id),
+        email: firebaseUser.email ?? "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        role: user.role,
+        phoneNumber: user.phoneNumber,
+        branchId: String(employee.branchId),
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get employee user. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async getEmployeeUserByEmail(
+    email: string,
+  ): Promise<EmployeeUserResponseDTO> {
+    try {
+      const firebaseUser = await firebaseAdmin.auth().getUserByEmail(email);
+      const user = await prisma.user.findUnique({
+        where: {
+          authId: firebaseUser.uid,
+        },
+        include: {
+          employee: true,
+        },
+      });
+
+      if (!user || !user.employee) {
+        throw new Error(`No User or Employee with email ${email}.`);
+      }
+
+      const { employee } = user;
+
+      return {
+        id: String(user.id),
+        email: firebaseUser.email ?? "",
+        firstName: user.firstName,
+        lastName: user.lastName,
+        phoneNumber: user.phoneNumber,
+        role: user.role,
+        branchId: String(employee.branchId),
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get employee user. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async getEmployeeUsers(): Promise<EmployeeUserResponseDTO[]> {
+    let firebaseUser: firebaseAdmin.auth.UserRecord;
+
+    try {
+      const employees = await prisma.employee.findMany({
+        include: {
+          user: true,
+        },
+      });
+      const employeeUsers = await Promise.all(
+        employees.map(async (employee) => {
+          firebaseUser = await firebaseAdmin
+            .auth()
+            .getUser(employee.user.authId!);
+
+          return {
+            ...employee.user,
+            ...employee,
+            id: String(employee.id),
+            email: firebaseUser.email ?? "",
+            branchId: String(employee.branchId),
+          };
+        }),
+      );
+      return employeeUsers;
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get employee user. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async createEmployeeUser(
+    employeeUser: CreateEmployeeUserDTO,
+    authId?: string,
+    signUpMethod = "PASSWORD",
+  ): Promise<EmployeeUserResponseDTO> {
+    let firebaseUser: firebaseAdmin.auth.UserRecord;
+
+    try {
+      if (signUpMethod === "GOOGLE") {
+        /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+        firebaseUser = await firebaseAdmin.auth().getUser(authId!);
+      } else {
+        // signUpMethod === PASSWORD
+        firebaseUser = await firebaseAdmin.auth().createUser({
+          email: employeeUser.email,
+          password: employeeUser.password,
+        });
+      }
+
+      try {
+        // nested writes provide transactional guarantees
+        const newUser = await prisma.user.create({
+          data: {
+            firstName: employeeUser.firstName,
+            lastName: employeeUser.lastName,
+            authId: firebaseUser.uid,
+            role: "EMPLOYEE",
+            phoneNumber: employeeUser.phoneNumber,
+            employee: {
+              create: {
+                branch: {
+                  connect: { id: Number(employeeUser.branchId) },
+                },
+              },
+            },
+          },
+          include: {
+            employee: true,
+          },
+        });
+
+        const { employee } = newUser;
+
+        return {
+          ...newUser,
+          id: String(newUser.id),
+          email: firebaseUser.email ?? "",
+          branchId: String(employee!.branchId),
+        };
+      } catch (postgresError) {
+        try {
+          await firebaseAdmin.auth().deleteUser(firebaseUser.uid);
+        } catch (firebaseError: unknown) {
+          const errorMessage = [
+            "Failed to rollback Firebase user creation after Postgres user creation failure. Reason =",
+            getErrorMessage(firebaseError),
+            "Orphaned authId (Firebase uid) =",
+            firebaseUser.uid,
+          ];
+          Logger.error(errorMessage.join(" "));
+        }
+
+        throw postgresError;
+      }
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create EmployeeUser. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async updateEmployeeUserById(
+    userId: string,
+    employeeUser: UpdateEmployeeUserDTO,
+  ): Promise<EmployeeUserResponseDTO> {
+    let updatedFirebaseUser: firebaseAdmin.auth.UserRecord;
+
+    try {
+      const [oldEmployeeUser, updatedEmployeeUser] = await prisma.$transaction([
+        prisma.employee.findUnique({
+          where: {
+            id: Number(userId),
+          },
+          include: {
+            user: true,
+          },
+        }),
+        prisma.employee.update({
+          where: {
+            id: Number(userId),
+          },
+          data: {
+            user: {
+              update: {
+                firstName: employeeUser.firstName,
+                lastName: employeeUser.lastName,
+                role: "EMPLOYEE",
+                phoneNumber: employeeUser.phoneNumber,
+              },
+            },
+            branch: {
+              connect: { id: Number(employeeUser.branchId) },
+            },
+          },
+          include: {
+            user: true,
+          },
+        }),
+      ]);
+      try {
+        updatedFirebaseUser = await firebaseAdmin
+          .auth()
+          .updateUser(updatedEmployeeUser.user.authId, {
+            email: employeeUser.email,
+          });
+
+        const { user } = updatedEmployeeUser;
+
+        return {
+          ...user,
+          id: String(user.id),
+          email: updatedFirebaseUser.email ?? "",
+          branchId: String(updatedEmployeeUser.branchId),
+        };
+      } catch (error: unknown) {
+        try {
+          prisma.employee.update({
+            where: {
+              id: Number(userId),
+            },
+            data: {
+              user: {
+                update: {
+                  firstName: oldEmployeeUser!.user.firstName,
+                  lastName: oldEmployeeUser!.user.lastName,
+                  role: oldEmployeeUser!.user.role,
+                  phoneNumber: oldEmployeeUser!.user.phoneNumber,
+                },
+              },
+              branch: {
+                connect: { id: Number(oldEmployeeUser!.branchId) },
+              },
+            },
+          });
+        } catch (postgresError: unknown) {
+          const errorMessage = [
+            "Failed to rollback Postgres user update after Firebase user update failure. Reason =",
+            getErrorMessage(postgresError),
+            "Postgres user id with possibly inconsistent data =",
+            oldEmployeeUser?.id,
+          ];
+          Logger.error(errorMessage.join(" "));
+        }
+        throw error;
+      }
+    } catch (error: unknown) {
+      Logger.error(`Failed to update user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+  }
+
+  async deleteEmployeeUserById(userId: string): Promise<string> {
+    try {
+      /* eslint-disable-next-line @typescript-eslint/naming-convention */
+      const deletedEmployeeUser = await prisma.user.delete({
+        where: {
+          id: Number(userId),
+        },
+        include: {
+          employee: {
+            include: {
+              postings: true,
+            },
+          },
+        },
+      });
+      try {
+        await firebaseAdmin.auth().deleteUser(deletedEmployeeUser.authId);
+      } catch (error: unknown) {
+        // rollback user deletion in Postgres
+        try {
+          const { employee: deletedEmployee } = deletedEmployeeUser;
+          await prisma.user.create({
+            data: {
+              firstName: deletedEmployeeUser.firstName,
+              lastName: deletedEmployeeUser.lastName,
+              authId: deletedEmployeeUser.authId,
+              role: deletedEmployeeUser.role,
+              phoneNumber: deletedEmployeeUser.phoneNumber,
+              employee: {
+                create: {
+                  branch: {
+                    connect: { id: Number(deletedEmployee!.branchId) },
+                  },
+                  postings: {
+                    connect: deletedEmployee!.postings.map((p) => {
+                      return { id: Number(p.id) };
+                    }),
+                  },
+                },
+              },
+            },
+          });
+        } catch (postgresError: unknown) {
+          const errorMessage = [
+            "Failed to rollback Postgres user deletion after Firebase user deletion failure. Reason =",
+            getErrorMessage(postgresError),
+            "Firebase uid with non-existent Postgres record =",
+            deletedEmployeeUser.authId,
+          ];
+          Logger.error(errorMessage.join(" "));
+        }
+
+        throw error;
+      }
+
+      return String(deletedEmployeeUser.id);
+    } catch (error: unknown) {
+      Logger.error(`Failed to delete user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+  }
+
+  async deleteEmployeeUserByEmail(email: string): Promise<string> {
+    const user = await this.getUserByEmail(email);
+    await this.deleteEmployeeUserById(user.id);
     return String(user.id);
   }
 }

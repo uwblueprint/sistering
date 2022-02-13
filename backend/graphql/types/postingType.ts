@@ -44,7 +44,6 @@ const postingType = gql`
 
   type EmployeeResponseDTO {
     id: ID!
-    userId: ID!
     branchId: ID!
   }
 
