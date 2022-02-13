@@ -82,9 +82,7 @@ export type CreateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id"> & {
   password: string;
 };
 
-export type UpdateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id"> & {
-  password: string;
-};
+export type UpdateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id">;
 
 export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
 

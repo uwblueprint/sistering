@@ -20,4 +20,4 @@ DROP INDEX "volunteers_id_key";
 ALTER TABLE "employees" DROP COLUMN "userId";
 
 -- AddForeignKey
-ALTER TABLE "employees" ADD CONSTRAINT "employees_branch_id_fkey" FOREIGN KEY ("branch_id") REFERENCES "branches"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "employees" ADD CONSTRAINT "employees_branch_id_fkey" FOREIGN KEY ("branch_id") REFERENCES "branches"("id") ON DELETE CASCADE;
