@@ -31,6 +31,7 @@ const CreatePostingReview = (): React.ReactElement => {
     autoClosingDate,
     times,
   } = useContext(PostingContext);
+
   return (
     <Container maxW="container.xl" p={0}>
       <Flex p={10}>
