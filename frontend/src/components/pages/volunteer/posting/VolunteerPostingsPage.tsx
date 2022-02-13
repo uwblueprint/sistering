@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { gql, useApolloClient, useQuery } from "@apollo/client";
-import { Text, Box, HStack, Select, Divider } from "@chakra-ui/react";
+import { gql, useQuery } from "@apollo/client";
+import { Text, Box, HStack, Select,} from "@chakra-ui/react";
 import PostingCard from "../../../volunteer/PostingCard";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 
@@ -95,7 +95,6 @@ const VolunteerPostingsPage = (): React.ReactElement => {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => setPostings(data.postings),
   });
-
 
   const isVolunteerOpportunity = (start: Date, end: Date): boolean => {
     return end.getTime() - start.getTime() > 1000 * 60 * 60 * 24;
