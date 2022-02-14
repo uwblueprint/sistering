@@ -15,8 +15,7 @@ import { useParams } from "react-router-dom";
 import { CalendarIcon, TimeIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PocCard from "../../../common/PocCard";
-
-// Description is the markdown description
+import { formatDateString } from "../../../../utils/DateUtils";
 
 const POSTING = gql`
   query Posting($id: ID!) {
@@ -39,16 +38,6 @@ const POSTING = gql`
     }
   }
 `;
-
-const formatDateString = (dateStringInput: Date) => {
-  const date = new Date(dateStringInput);
-  return date.toLocaleDateString([], {
-    weekday: "long",
-    month: "long",
-    day: "numeric",
-    timeZone: "UTC",
-  });
-};
 
 const VolunteerPostingDetails = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
