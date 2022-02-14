@@ -15,7 +15,6 @@ import { useParams } from "react-router-dom";
 import { CalendarIcon, TimeIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PocCard from "../../../common/PocCard";
-import colors from "../../../../theme/colors";
 
 // Description is the markdown description
 
@@ -68,7 +67,7 @@ const VolunteerPostingDetails = (): React.ReactElement => {
     },
   });
   return (
-    <Box bg={colors.background.light} py={7} px={10} minH="100vh">
+    <Box bg="background.light" py={7} px={10} minH="100vh">
       <VStack>
         <Container pt={0} pb={4} px={0} maxW="container.xl">
           <HStack justifyContent="space-between">
@@ -80,7 +79,7 @@ const VolunteerPostingDetails = (): React.ReactElement => {
         </Container>
 
         <Container
-          bg={colors.background.white}
+          bg="background.white"
           maxW="container.xl"
           centerContent
           borderRadius={10}
@@ -92,7 +91,7 @@ const VolunteerPostingDetails = (): React.ReactElement => {
                   <VStack alignItems="start" marginBottom={4} w="full">
                     <HStack justifyContent="space-between" w="full">
                       <Tag>{postingDetails.branch.name}</Tag>
-                      <Text textStyle="caption" color={colors.text.gray}>
+                      <Text textStyle="caption" color="text.gray">
                         Deadline:{" "}
                         {formatDateString(postingDetails.autoClosingDate)}
                       </Text>
@@ -126,7 +125,6 @@ const VolunteerPostingDetails = (): React.ReactElement => {
                   </Text>
                   <Text textStyle="body-regular">Point(s) of contact:</Text>
                   <HStack pb={4}>
-                    {/* {postingDetails.employees.map((employee) => <PocCard />)} */}
                     <PocCard
                       name="John Doe"
                       title="hard code"
@@ -144,7 +142,7 @@ const VolunteerPostingDetails = (): React.ReactElement => {
                   </HStack>
                   <Divider />
                   <HStack justifyContent="space-between" pt={4} w="full">
-                    <Text textStyle="caption" color={colors.text.gray}>
+                    <Text textStyle="caption" color="text.gray">
                       Deadline:{" "}
                       {formatDateString(postingDetails.autoClosingDate)}
                     </Text>
