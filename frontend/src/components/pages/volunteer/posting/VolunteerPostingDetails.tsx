@@ -62,9 +62,6 @@ const VolunteerPostingDetails = (): React.ReactElement => {
     onCompleted: (data) => {
       setPostingDetails(data.posting);
     },
-    onError: (error) => {
-      console.error(error.message);
-    },
   });
   return (
     <Box bg="background.light" py={7} px={10} minH="100vh">
