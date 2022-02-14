@@ -1,7 +1,7 @@
-import { BranchResponseDTO } from "./BranchType";
-import { SkillResponseDTO } from "./SkillType";
-import { ShiftResponseDTO } from "./ShiftType";
-import { EmployeeResponseDTO } from "./EmployeeType";
+import { BranchResponseDTO } from "./BranchTypes";
+import { SkillResponseDTO } from "./SkillTypes";
+import { ShiftResponseDTO } from "./ShiftTypes";
+import { EmployeeResponseDTO } from "./EmployeeTypes";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
 
