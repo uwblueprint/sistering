@@ -16,7 +16,7 @@ const EmptyPostingCard = ({ type }: EmptyPostingCardProps): JSX.Element => {
     >
       <VStack justify="center" align="center" height="121px">
         <Box>
-          <Text textStyle="body-regular" textAlign="center" my="auto">
+          <Text textStyle="body-regular" textAlign="center" my="auto" color="text.gray">
             There are no{" "}
             {type === "event" ? "events" : "regular volunteer opportunities"} at
             this time. Please check back soon.
