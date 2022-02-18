@@ -44,7 +44,7 @@ import VolunteerPostingDetails from "./components/pages/volunteer/posting/Volunt
 
 import customTheme from "./theme";
 import { AuthenticatedUser } from "./types/AuthTypes";
-import VolunteerShiftsPage from "./components/pages/volunteer/shifts/VolunteerShiftsPage";
+import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
