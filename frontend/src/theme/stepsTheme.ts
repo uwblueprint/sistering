@@ -64,10 +64,10 @@ const CustomStepsTheme = {
       },
       label: {
         ...StepsStyleConfig.sizes.md.label,
-        position: 'relative',
-        fontSize: '18px',
-        fontWeight: 'bold',
-      }
+        position: "relative",
+        fontSize: "18px",
+        fontWeight: "bold",
+      },
     },
   },
 };
