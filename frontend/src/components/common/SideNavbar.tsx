@@ -21,7 +21,7 @@ const createStepLabel = (
     <Text
       opacity={1}
       marginTop="-8px"
-      fontFamily="raleway"
+      fontFamily="Raleway"
       fontSize="12px"
       textAlign="left"
       color="#8B8B8B"
@@ -30,7 +30,7 @@ const createStepLabel = (
     </Text>
     <Text
       opacity={1}
-      fontFamily="raleway"
+      fontFamily="Raleway"
       fontSize="20px"
       fontWeight={activeStep === idx ? "bold" : "normal"}
     >

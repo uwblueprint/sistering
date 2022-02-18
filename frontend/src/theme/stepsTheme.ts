@@ -18,7 +18,7 @@ const CustomStepsTheme = {
     label: {
       ...StepsStyleConfig.baseStyle(props).label,
       color: "currentColor",
-      fontFamily: "Open Sans",
+      fontFamily: "Inter",
     },
     stepIconContainer: {
       ...StepsStyleConfig.baseStyle(props).stepIconContainer,
@@ -62,6 +62,12 @@ const CustomStepsTheme = {
         ...StepsStyleConfig.sizes.md.stepIconContainer,
         borderWidth: "3px",
       },
+      label: {
+        ...StepsStyleConfig.sizes.md.label,
+        position: 'relative',
+        fontSize: '18px',
+        fontWeight: 'bold',
+      }
     },
   },
 };
