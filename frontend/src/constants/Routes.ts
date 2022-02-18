@@ -20,6 +20,8 @@ export const UPDATE_ENTITY_PAGE = "/entity/update";
 
 export const HOOKS_PAGE = "/hooks";
 
+export const SIDE_NAVBAR_DEMO_PAGE = "/sidebar-demo";
+
 export const VOLUNTEER_POSTINGS_PAGE = "/volunteer/postings";
 
 export const ADMIN_POSTING_CREATE_SHIFTS_PAGE = "/admin/posting/create/shifts";
