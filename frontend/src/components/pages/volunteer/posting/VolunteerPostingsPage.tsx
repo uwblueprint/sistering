@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Text, Box, HStack, Select,} from "@chakra-ui/react";
+import { Text, Box, HStack, Select } from "@chakra-ui/react";
 import PostingCard from "../../../volunteer/PostingCard";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
+import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
 
 // delete before merging to main
 const postingArr = [
@@ -65,7 +66,6 @@ const postingArr = [
   },
 ];
 
-
 // can refactor this query in the future to be more specific (depending on the data this page needs)
 const POSTINGS = gql`
   query VolunteerPostingsPage_postings {
@@ -104,12 +104,10 @@ const POSTINGS = gql`
 
 const VolunteerPostingsPage = (): React.ReactElement => {
   const [postings, setPostings] = useState<PostingResponseDTO[] | null>(null);
-  console.log(postings)
   useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => setPostings(data.postings),
   });
-
 
   // need to refactor this function based on definition of what is an opportunity / event
   const isVolunteerOpportunity = (start: Date, end: Date): boolean => {
@@ -127,15 +125,11 @@ const VolunteerPostingsPage = (): React.ReactElement => {
     <Box bg="background.light" pt="48px" minHeight="100vh">
       <Box maxW="1280px" mx="auto">
         <HStack justify="space-between" bg="#F4F4F4" pb="36px">
-          <Text textStyle="display-small-semibold">
-            Events
-          </Text>
+          <Text textStyle="display-small-semibold">Events</Text>
           <HStack>
-            <Text>
-              Showing:{" "}
-            </Text>
+            <Text>Showing: </Text>
             <Select
-            width="194px"
+              width="194px"
               placeholder="This week"
               size="sm"
               bg="white"
@@ -147,27 +141,32 @@ const VolunteerPostingsPage = (): React.ReactElement => {
             </Select>
           </HStack>
         </HStack>
-        {events?.map((posting) => (
-          <Box key={posting.id} pt="36px">
-            <PostingCard
-              key={posting.id}
-              id={posting.id}
-              skills={posting.skills}
-              title={posting.title}
-              startDate={posting.startDate}
-              endDate={posting.endDate}
-              autoClosingDate={posting.autoClosingDate}
-              description={posting.description}
-              branchName={posting.branch.name}
-              type="EVENT"
-            />
-          </Box>
-        ))}
+        {events?.length > 0 ? (
+          events.map((posting) => (
+            <Box key={posting.id} pt="36px">
+              <PostingCard
+                key={posting.id}
+                id={posting.id}
+                skills={posting.skills}
+                title={posting.title}
+                startDate={posting.startDate}
+                endDate={posting.endDate}
+                autoClosingDate={posting.autoClosingDate}
+                description={posting.description}
+                branchName={posting.branch.name}
+                type="EVENT"
+              />
+            </Box>
+          ))
+        ) : (
+          <EmptyPostingCard type="event" />
+        )}
         <Text textStyle="display-small-semibold" pb="36px">
           Volunteer Opportunities
         </Text>
-        {volunteerOpportunities?.map((posting) => (
-           <Box key={posting.id} pb="36px">
+        {volunteerOpportunities?.length > 0 ? (
+          volunteerOpportunities.map((posting) => (
+            <Box key={posting.id} pb="36px">
               <PostingCard
                 key={posting.id}
                 id={posting.id}
@@ -180,8 +179,11 @@ const VolunteerPostingsPage = (): React.ReactElement => {
                 branchName={posting.branch.name}
                 type="OPPORTUNITY"
               />
-          </Box>
-        ))}
+            </Box>
+          ))
+        ) : (
+          <EmptyPostingCard type="volunteer" />
+        )}
       </Box>
     </Box>
   );
