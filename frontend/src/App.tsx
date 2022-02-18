@@ -4,7 +4,6 @@ import "@fontsource/inter/700.css";
 import "@fontsource/raleway/400.css";
 import "@fontsource/raleway/600.css";
 import "@fontsource/raleway/700.css";
-import "@fontsource/open-sans/700.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 import React, { useState, useReducer } from "react";
