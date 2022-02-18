@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button } from "@chakra-ui/react";
+import { Button, useBoolean } from "@chakra-ui/react";
 import { gql, useMutation } from "@apollo/client";
 
 import CreatePostingReview from "../../../admin/posting/CreatePostingReview";
@@ -20,10 +20,11 @@ const CreatePostingReviewPage = (): React.ReactElement => {
   const { status, times, recurrenceInterval, ...postingToCreate } = useContext(
     PostingContext,
   );
-  const [createPosting, { data, loading, error }] = useMutation(CREATE_POSTING);
+  const [createPosting, { loading, error }] = useMutation(CREATE_POSTING);
+  const [isDraftClicked, setIsDraftClicked] = useBoolean();
 
-  if (loading) console.log("Submitting...");
-  if (error) console.log(`Submission error! ${error}`);
+  // eslint-disable-next-line no-alert
+  if (error) window.alert(error);
 
   return (
     <div>
@@ -31,10 +32,12 @@ const CreatePostingReviewPage = (): React.ReactElement => {
       <MainPageButton />
       <Button
         variant="outline"
+        isLoading={loading && isDraftClicked}
         onClick={() => {
+          setIsDraftClicked.on();
           createPosting({
             variables: {
-              posting: { ...postingToCreate, ...{ status: "DRAFT" } },
+              posting: { ...postingToCreate, status: "DRAFT" },
             },
           });
         }}
@@ -42,10 +45,12 @@ const CreatePostingReviewPage = (): React.ReactElement => {
         Save as Draft
       </Button>
       <Button
+        isLoading={loading && !isDraftClicked}
         onClick={() => {
+          setIsDraftClicked.off();
           createPosting({
             variables: {
-              posting: { ...postingToCreate, ...{ status: "PUBLISHED" } },
+              posting: { ...postingToCreate, status: "PUBLISHED" },
             },
           });
         }}
