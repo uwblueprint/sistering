@@ -33,10 +33,10 @@ const users = [
 
 const branches = [
   {
-    name: "Olive Branch",
+    name: "Kitchen",
   },
   {
-    name: "Government Branch",
+    name: "Arts",
   },
   {
     name: "Git Branch",
@@ -92,10 +92,10 @@ const postings = [
     },
   },
   {
-    title: "Weaving Class",
+    title: "Criossant Making",
     type: PostingType.INDIVIDUAL,
     status: PostingStatus.DRAFT,
-    description: "Help with a basket weaving class.",
+    description: "Help with a criossant making class.",
     startDate: addDays(today, 20),
     endDate: addDays(today, 30),
     autoClosingDate: addDays(today, 15),
@@ -207,7 +207,9 @@ const main = async () => {
             employees: {
               connect: [{ id: seedEmployee?.employee?.id }],
             },
-            skills: { connect: [{ id: seedSkills[1].id }] },
+            skills: {
+              connect: [{ id: seedSkills[0].id }, { id: seedSkills[1].id }],
+            },
           },
         }),
       ),
