@@ -7,6 +7,22 @@ export type PostingType = "INDIVIDUAL" | "GROUP";
 
 export type PostingStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
 
+export type PostingResponseDTOFull = {
+  id: string;
+  branch: BranchResponseDTO;
+  shifts: [ShiftResponseDTO];
+  skills: [SkillResponseDTO];
+  employees: [EmployeeResponseDTO];
+  title: string;
+  type: PostingType;
+  status: PostingStatus;
+  description: string;
+  startDate: Date;
+  endDate: Date;
+  autoClosingDate: Date;
+  numVolunteers: number;
+};
+
 export type PostingDTO = {
   id: string;
   branchId: string;
@@ -21,7 +37,6 @@ export type PostingDTO = {
   autoClosingDate: Date;
   numVolunteers: number;
 };
-
 
 export type PostingRequestDTO = Omit<PostingDTO, "id">;
 
