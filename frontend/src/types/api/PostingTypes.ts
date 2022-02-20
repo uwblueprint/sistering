@@ -12,6 +12,14 @@ export type PostingDTO = {
   branchId: string;
   skills: string[];
   employees: string[];
+}
+
+export type PostingResponseDTO = {
+  id: string;
+  branch: BranchResponseDTO;
+  shifts: [ShiftResponseDTO];
+  skills: [SkillResponseDTO];
+  employees: [EmployeeResponseDTO];
   title: string;
   type: PostingType;
   status: PostingStatus;
@@ -24,12 +32,12 @@ export type PostingDTO = {
 
 export type PostingRequestDTO = Omit<PostingDTO, "id">;
 
-export type PostingResponseDTO = Omit<
-  PostingDTO,
-  "branchId" | "skills" | "employees"
-> & {
-  branch: BranchResponseDTO;
-  shifts: ShiftResponseDTO[];
-  skills: SkillResponseDTO[];
-  employees: EmployeeResponseDTO[];
-};
+// export type PostingResponseDTO = Omit<
+//   PostingDTO,
+//   "branchId" | "skills" | "employees"
+// > & {
+//   branch: BranchResponseDTO;
+//   shifts: ShiftResponseDTO[];
+//   skills: SkillResponseDTO[];
+//   employees: EmployeeResponseDTO[];
+// };

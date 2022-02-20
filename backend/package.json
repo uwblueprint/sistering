@@ -14,12 +14,12 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@chakra-ui/icons": "^1.1.1",
     "@prisma/client": "^3.3.0",
     "apollo-server": "^2.22.2",
     "apollo-server-express": "^2.22.2",
     "axios": "^0.25.0",
     "bluebird": "^3.7.2",
+    "chakra-ui-steps": "^1.6.1",
     "cookie-parser": "^1.4.5",
     "cors": "^2.8.5",
     "dotenv": "^8.2.0",
