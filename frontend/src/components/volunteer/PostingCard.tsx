@@ -27,7 +27,6 @@ type PostingCardProps = {
 };
 
 
-
 const PostingCard = ({
   id,
   title,
