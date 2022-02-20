@@ -5,14 +5,14 @@ const prisma = new PrismaClient();
 
 const users = [
   {
-    firstName: "admin",
-    lastName: "sistering",
+    firstName: "Anastasia",
+    lastName: "Admin",
     authId: process.env.ADMIN_UID,
     role: Role.ADMIN,
   },
   {
-    firstName: "volunteer",
-    lastName: "sistering",
+    firstName: "Valorie",
+    lastName: "Volunteer",
     authId: process.env.VOLUNTEER_UID,
     role: Role.VOLUNTEER,
     volunteer: {
@@ -24,8 +24,8 @@ const users = [
     },
   },
   {
-    firstName: "employee",
-    lastName: "sistering",
+    firstName: "Edna",
+    lastName: "Employee",
     authId: process.env.EMPLOYEE_UID,
     role: Role.EMPLOYEE,
   },
