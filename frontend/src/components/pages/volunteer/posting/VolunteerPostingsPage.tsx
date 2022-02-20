@@ -109,8 +109,8 @@ const VolunteerPostingsPage = (): React.ReactElement => {
 
   const [postings, setPostings] = useState<PostingResponseDTO[] | null>(null);
   const [unfilteredPostings, setUnfilteredPostings] = useState<PostingResponseDTO[] | null>(null);
-
   const [filter, setFilter] = useState<string>('week')
+
   useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
@@ -118,7 +118,6 @@ const VolunteerPostingsPage = (): React.ReactElement => {
       setUnfilteredPostings(data.postings)
   }}
   );
-
 
   useEffect(() => {
     let filteredPostings;
