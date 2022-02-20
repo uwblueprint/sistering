@@ -1,4 +1,5 @@
 import { PrismaClient, Signup, SignupStatus } from "@prisma/client";
+import { Prisma } from ".prisma/client";
 
 import IShiftSignupService from "../interfaces/shiftSignupService";
 import {
@@ -25,10 +26,23 @@ class ShiftSignupService implements IShiftSignupService {
 
   async getShiftSignupsForUser(
     userId: string,
+    signupStatus: SignupStatus | null,
   ): Promise<ShiftSignupResponseDTO[]> {
     try {
+      const filter: Prisma.SignupWhereInput = {
+        AND: [
+          {
+            userId: Number(userId),
+          },
+          signupStatus
+            ? {
+                status: signupStatus,
+              }
+            : {},
+        ],
+      };
       const shiftSignups = await prisma.signup.findMany({
-        where: { userId: Number(userId) },
+        where: filter,
       });
       return shiftSignups.map((signup) => this.convertSignupToDTO(signup));
     } catch (error: unknown) {

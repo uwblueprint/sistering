@@ -1,3 +1,4 @@
+import { SignupStatus } from "@prisma/client";
 import ShiftSignupService from "../../services/implementations/shiftSignupService";
 import IShiftSignupService from "../../services/interfaces/shiftSignupService";
 import {
@@ -12,9 +13,12 @@ const shiftSignupResolvers = {
   Query: {
     getShiftSignupsForUser: async (
       _parent: undefined,
-      { userId }: { userId: string },
+      {
+        userId,
+        signupStatus,
+      }: { userId: string; signupStatus: SignupStatus | null },
     ): Promise<ShiftSignupResponseDTO[]> => {
-      return shiftSignupService.getShiftSignupsForUser(userId);
+      return shiftSignupService.getShiftSignupsForUser(userId, signupStatus);
     },
   },
   Mutation: {
