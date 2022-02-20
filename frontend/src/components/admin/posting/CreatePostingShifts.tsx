@@ -25,10 +25,7 @@ const CreatePostingShifts = (): React.ReactElement => {
 
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  const [
-    recurrenceInterval,
-    setRecurrenceInterval,
-  ] = useState<RecurrenceInterval>("NONE");
+  const [recurrenceInterval, setRecurrenceInterval] = useState<string>("");
 
   const [startDateError, setStartDateError] = useState(false);
   const [endDateError, setEndDateError] = useState(false);
@@ -61,13 +58,16 @@ const CreatePostingShifts = (): React.ReactElement => {
     setEndDateError(!endDate);
     setRecurrenceIntervalError(!recurrenceInterval);
 
+    if (startDate > endDate) {
+      setStartDateError(true);
+      setEndDateError(true);
+    }
+
     if (startDate && endDate && recurrenceInterval) {
       addStartDate(startDate);
       addEndDate(endDate);
       addRecurrenceInterval(recurrenceInterval);
     }
-
-    // TODO: navigate to next section of form
   };
 
   const recurrenceOptions = [
@@ -92,7 +92,7 @@ const CreatePostingShifts = (): React.ReactElement => {
               2
             </Text>
           </Circle>
-          <Text textStyle="heading">Scheduling time slots</Text>
+          <Text textStyle="heading">Scheduling Time Slots</Text>
         </HStack>
         <VStack spacing={30} alignItems="flex-start" px={2}>
           <Text textStyle="caption">
@@ -100,39 +100,40 @@ const CreatePostingShifts = (): React.ReactElement => {
           </Text>
           <FormControl isRequired isInvalid={recurrenceIntervalError}>
             <FormLabel textStyle="heading">Reoccurance Frequency</FormLabel>
-
-            <Select
-              // placeholder="How often will this occur?"
-              size="sm"
-              maxWidth="425px"
-              isRequired
-              value=""
-              // onChange={(e) => setRecurrenceInterval(e.target.value)}
-            >
-              {recurrenceOptions.map(({ value, label }) => (
-                <option value={value} key={value}>
-                  {label}
-                </option>
-              ))}
-            </Select>
-            <FormErrorMessage>Please select a frequency.</FormErrorMessage>
+            <Flex alignItems="flex-start">
+              <VStack spacing={2} alignItems="flex-end">
+                <Select
+                  placeholder="How often will this occur?"
+                  size="sm"
+                  width="425px"
+                  isRequired
+                  onChange={(e) =>
+                    setRecurrenceInterval(e.target.value as RecurrenceInterval)
+                  }
+                >
+                  {recurrenceOptions.map(({ value, label }) => (
+                    <option value={value} key={value}>
+                      {label}
+                    </option>
+                  ))}
+                </Select>
+                <FormErrorMessage>Please select a frequency.</FormErrorMessage>
+              </VStack>
+            </Flex>
           </FormControl>
-
           <VStack spacing={2} alignItems="flex-start">
             <Text textStyle="heading" fontSize="18px" fontWeight="normal">
               Select Start and End Dates
             </Text>
-
             <Flex>
-              <FormControl isRequired isInvalid={startDateError}>
-                <Flex>
-                  <HStack spacing={5.5}>
+              <HStack spacing={5} alignItems="flex-start">
+                <FormControl isRequired isInvalid={startDateError}>
+                  <Flex>
                     <FormLabel textStyle="heading" fontSize="18px">
                       From
                     </FormLabel>
-                    <VStack spacing={2}>
+                    <VStack spacing={2} alignItems="flex-end">
                       <Input
-                        placeholder="DD-MM-YYYY"
                         type="date"
                         value={startDate}
                         onChange={(e) => setStartDate(e.target.value)}
@@ -141,39 +142,40 @@ const CreatePostingShifts = (): React.ReactElement => {
                           maxWidth: "278px",
                         }}
                       />
-                      <FormErrorMessage>Please enter a date.</FormErrorMessage>
+                      <FormErrorMessage>
+                        Please enter a valid date.
+                      </FormErrorMessage>
                     </VStack>
-                  </HStack>
-                </Flex>
-              </FormControl>
-              <FormControl isRequired isInvalid={endDateError}>
-                <Flex>
-                  <FormLabel textStyle="heading" fontSize="18px">
-                    To
-                  </FormLabel>
-                  <VStack spacing={2}>
-                    <Input
-                      placeholder="DD-MM-YYYY"
-                      type="date"
-                      value={endDate}
-                      onChange={(e) => setEndDate(e.target.value)}
-                      size="sm"
-                      style={{
-                        maxWidth: "278px",
-                      }}
-                    />
-                    <FormErrorMessage>Please enter a date.</FormErrorMessage>
-                  </VStack>
-                </Flex>
-              </FormControl>
+                  </Flex>
+                </FormControl>
+                <FormControl isRequired isInvalid={endDateError}>
+                  <Flex>
+                    <FormLabel textStyle="heading" fontSize="18px">
+                      To
+                    </FormLabel>
+                    <VStack spacing={2} alignItems="flex-end">
+                      <Input
+                        type="date"
+                        value={endDate}
+                        onChange={(e) => setEndDate(e.target.value)}
+                        size="sm"
+                        style={{
+                          maxWidth: "278px",
+                        }}
+                      />
+                      <FormErrorMessage>
+                        Please enter a valid date.
+                      </FormErrorMessage>
+                    </VStack>
+                  </Flex>
+                </FormControl>
+              </HStack>
             </Flex>
           </VStack>
-
           <VStack spacing={2}>
             <FormControl isRequired>
               <FormLabel textStyle="heading">Select Shift times</FormLabel>
             </FormControl>
-
             <Text fontSize="16px">{ADMIN_POSTING_CREATE_SHIFTS_TIME}</Text>
           </VStack>
         </VStack>

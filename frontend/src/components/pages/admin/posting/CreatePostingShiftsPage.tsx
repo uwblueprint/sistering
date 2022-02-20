@@ -5,6 +5,7 @@ import ShiftCalendar, {
   Event,
 } from "../../../admin/ShiftCalendar/ShiftCalendar";
 import CreatePostingShifts from "../../../admin/posting/CreatePostingShifts";
+import MainPageButton from "../../../common/MainPageButton";
 
 const CreatePostingShiftsPage = (): React.ReactElement => {
   const [events, setEvents] = useState<Event[]>([]);
@@ -58,6 +59,7 @@ const CreatePostingShiftsPage = (): React.ReactElement => {
         deleteEvent={deleteEvent}
       />
       <Divider my={4} />
+      <MainPageButton />
     </Container>
   );
 };
