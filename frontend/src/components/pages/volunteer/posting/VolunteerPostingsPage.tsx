@@ -6,65 +6,65 @@ import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
 
 // delete before merging to main
-// const postings = [
-//   {
-//     id: "1",
-//     skills: [
-//       { id: "1", name: "CPR" },
-//       { id: "2", name: "WHMIS" },
-//       { id: "3", name: "Photocopying" },
-//     ],
-//     branch: {
-//       id: "1",
-//       name: "branch name",
-//     },
-//     title: "Medical Reception Volunteer",
-//     startDate: new Date("Feb 28, 2022"),
-//     endDate: new Date("March 20, 2022"),
-//     autoClosingDate: new Date("Monday, November 30"),
-//     isSignedUp: false,
-//     description:
-//       "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis.",
-//   },
-//   {
-//     id: "2",
-//     skills: [
-//       { id: "1", name: "CPR" },
-//       { id: "2", name: "WHMIS" },
-//       { id: "3", name: "Photocopying" },
-//     ],
-//     branch: {
-//       id: "1",
-//       name: "sample text",
-//     },
-//     title: "Medical Reception Volunteer",
-//     startDate: new Date("February 14, 2022"),
-//     endDate: new Date("March 20, 2022"),
-//     autoClosingDate: new Date("Monday, November 30"),
-//     isSignedUp: false,
-//     description:
-//       "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis.",
-//   },
-//   {
-//     id: "3",
-//     skills: [
-//       { id: "1", name: "CPR" },
-//       { id: "2", name: "WHMIS" },
-//       { id: "3", name: "Photocopying" },
-//     ],
-//     branch: {
-//       id: "1",
-//       name: "sample text",
-//     },
-//     title: "Medical Reception Volunteer",
-//     startDate: new Date("March 18, 2022"),
-//     endDate: new Date("March 20, 2022"),
-//     autoClosingDate: new Date("Monday, November 30"),
-//     isSignedUp: false,
-//     description:
-//       "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis.",
-//   },
-// ];
+const postingsArr = [
+  {
+    id: "1",
+    skills: [
+      { id: "1", name: "CPR" },
+      { id: "2", name: "WHMIS" },
+      { id: "3", name: "Photocopying" },
+    ],
+    branch: {
+      id: "1",
+      name: "branch name",
+    },
+    title: "Medical Reception Volunteer",
+    startDate: new Date("Feb 28, 2022"),
+    endDate: new Date("March 20, 2022"),
+    autoClosingDate: new Date("Monday, November 30"),
+    isSignedUp: false,
+    description:
+      "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis.",
+  },
+  {
+    id: "2",
+    skills: [
+      { id: "1", name: "CPR" },
+      { id: "2", name: "WHMIS" },
+      { id: "3", name: "Photocopying" },
+    ],
+    branch: {
+      id: "1",
+      name: "sample text",
+    },
+    title: "Medical Reception Volunteer",
+    startDate: new Date("February 14, 2022"),
+    endDate: new Date("March 20, 2022"),
+    autoClosingDate: new Date("Monday, November 30"),
+    isSignedUp: false,
+    description:
+      "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis.",
+  },
+  {
+    id: "3",
+    skills: [
+      { id: "1", name: "CPR" },
+      { id: "2", name: "WHMIS" },
+      { id: "3", name: "Photocopying" },
+    ],
+    branch: {
+      id: "1",
+      name: "sample text",
+    },
+    title: "Medical Reception Volunteer",
+    startDate: new Date("March 18, 2022"),
+    endDate: new Date("March 20, 2022"),
+    autoClosingDate: new Date("Monday, November 30"),
+    isSignedUp: false,
+    description:
+      "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis.",
+  },
+];
 
 // can refactor this query in the future to be more specific (depending on the data this page needs)
 const POSTINGS = gql`
@@ -111,13 +111,13 @@ const VolunteerPostingsPage = (): React.ReactElement => {
   const [unfilteredPostings, setUnfilteredPostings] = useState<PostingResponseDTO[] | null>(null);
   const [filter, setFilter] = useState<string>('week')
 
-  useQuery(POSTINGS, {
-    fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      setPostings(data.postings)
-      setUnfilteredPostings(data.postings)
-  }}
-  );
+  // useQuery(POSTINGS, {
+  //   fetchPolicy: "cache-and-network",
+  //   onCompleted: (data) => {
+  //     setPostings(data.postings)
+  //     setUnfilteredPostings(data.postings)
+  // }}
+  // );
 
   useEffect(() => {
     let filteredPostings;
