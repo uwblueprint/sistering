@@ -13,7 +13,6 @@ import { TimeIcon, CalendarIcon } from "@chakra-ui/icons";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
 import { formatDateString } from "../../utils/DateUtils";
 
-
 type PostingCardProps = {
   id: string;
   title: string;
@@ -25,8 +24,6 @@ type PostingCardProps = {
   branchName: string;
   type: "EVENT" | "OPPORTUNITY";
 };
-
-
 
 const PostingCard = ({
   id,
@@ -75,8 +72,7 @@ const PostingCard = ({
         <Divider mb={1} />
         <HStack justifyContent="space-between" w="100%">
           <Text textStyle="caption" color="text.gray">
-            Deadline:{" "}
-            {formatDateString(autoClosingDate)}
+            Deadline: {formatDateString(autoClosingDate)}
           </Text>
           <ButtonGroup spacing="4" size="md">
             <Button variant="ghost">View Details</Button>

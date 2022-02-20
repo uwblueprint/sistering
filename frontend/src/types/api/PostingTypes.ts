@@ -12,7 +12,7 @@ export type PostingDTO = {
   branchId: string;
   skills: string[];
   employees: string[];
-}
+};
 
 export type PostingResponseDTO = {
   id: string;

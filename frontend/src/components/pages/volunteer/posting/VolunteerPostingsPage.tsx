@@ -1,75 +1,76 @@
 import React, { useState } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Text, Box, HStack, Select,} from "@chakra-ui/react";
+import { Text, Box, HStack, Select } from "@chakra-ui/react";
 import PostingCard from "../../../volunteer/PostingCard";
-import { PostingResponseDTO} from "../../../../types/api/PostingTypes";
+import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 
 // delete before merging to main
 // const postingArr = [{
 //   id: "1",
-//   skills: [{id: '1', name:"CPR"}, {id: '2', name: "WHMIS"}, {id: '3', name: "Photocopying"}], 
+//   skills: [{id: '1', name:"CPR"}, {id: '2', name: "WHMIS"}, {id: '3', name: "Photocopying"}],
 //   branch: {
-//     id: '1', 
+//     id: '1',
 //     name: 'sample text'
 //   },
 //   title: "Medical Reception Volunteer",
 //   startDate: new Date('December 17, 2021'),
 //   endDate: new Date("January 20, 2022"),
-//   autoClosingDate: new Date("Monday, November 30"), 
+//   autoClosingDate: new Date("Monday, November 30"),
 //   isSignedUp: false,
 //   description: "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis."
-// }, 
+// },
 // {
 //   id: '2',
-//   skills: [{id: '1', name:"CPR"}, {id: '2', name: "WHMIS"}, {id: '3', name: "Photocopying"}], 
+//   skills: [{id: '1', name:"CPR"}, {id: '2', name: "WHMIS"}, {id: '3', name: "Photocopying"}],
 //   branch: {
-//     id: '1', 
+//     id: '1',
 //     name: 'sample text'
 //   },
 //   title: "Medical Reception Volunteer",
 //   startDate: new Date('December 17, 2021'),
 //   endDate: new Date("January 20, 2022"),
-//   autoClosingDate: new Date("Monday, November 30"), 
+//   autoClosingDate: new Date("Monday, November 30"),
 //   isSignedUp: false,
 //   description: "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis."
-// }, 
+// },
 // {
 //   id: '3',
-//   skills: [{id: '1', name:"CPR"}, {id: '2', name: "WHMIS"}, {id: '3', name: "Photocopying"}], 
+//   skills: [{id: '1', name:"CPR"}, {id: '2', name: "WHMIS"}, {id: '3', name: "Photocopying"}],
 //   branch: {
-//     id: '1', 
+//     id: '1',
 //     name: 'sample text'
 //   },
 //   title: "Medical Reception Volunteer",
 //   startDate: new Date('December 17, 2021'),
 //   endDate: new Date("January 20, 2022"),
-//   autoClosingDate: new Date("Monday, November 30"), 
+//   autoClosingDate: new Date("Monday, November 30"),
 //   isSignedUp: false,
 //   description: "Volunteers will be responsible for updating the inventory monthly, updating the manuals and guidelines on an ongoing basis, uploading the COVID-19 screenings on a weekly basis."
-// }, 
+// },
 // ]
 
 const POSTINGS = gql`
-query VolunteerPostingsPage_postings {
-  postings {
-    id
-    skills {
+  query VolunteerPostingsPage_postings {
+    postings {
       id
-      name
+      skills {
+        id
+        name
+      }
+      employees {
+        userId
+      }
+      title
+      type
+      status
+      description
+      startDate
+      endDate
+      autoClosingDate
+      numVolunteers
     }
-    employees {
-      userId
-    }
-    title
-    type
-    status
-    description
-    startDate
-    endDate
-    autoClosingDate
-    numVolunteers
   }
-}`;
+`;
 
 const VolunteerPostingsPage = (): React.ReactElement => {
   const [postings, setPostings] = useState<PostingResponseDTO[] | null>(null);
@@ -80,11 +81,15 @@ const VolunteerPostingsPage = (): React.ReactElement => {
   });
 
   const isVolunteerOpportunity = (start: Date, end: Date): boolean => {
-    console.log(end, start)
-    return (end.getTime() - start.getTime()) > 1000 * 60 * 60 * 24;
-  }
-  const volunteerOpportunities = postingArr?.filter((posting) => isVolunteerOpportunity(posting.startDate, posting.endDate))
-  const events = postingArr?.filter((posting) => !isVolunteerOpportunity(posting.startDate, posting.endDate))
+    console.log(end, start);
+    return end.getTime() - start.getTime() > 1000 * 60 * 60 * 24;
+  };
+  const volunteerOpportunities = postingArr?.filter((posting) =>
+    isVolunteerOpportunity(posting.startDate, posting.endDate),
+  );
+  const events = postingArr?.filter(
+    (posting) => !isVolunteerOpportunity(posting.startDate, posting.endDate),
+  );
 
   return (
     <Box bg="#D8AEFF" pt={8} minHeight="100vh">
