@@ -1,5 +1,9 @@
 import React, { useContext, useState } from "react";
 import {
+  Container,
+  Flex,
+  HStack,
+  VStack,
   Text,
   Select,
   Input,
@@ -7,9 +11,14 @@ import {
   FormLabel,
   FormErrorMessage,
   Button,
+  Circle,
 } from "@chakra-ui/react";
 import PostingContextDispatcherContext from "../../../contexts/admin/PostingContextDispatcherContext";
 import { RecurrenceInterval } from "../../../types/PostingTypes";
+import {
+  ADMIN_POSTING_CREATE_SCHEDULING_TIME_SLOTS,
+  ADMIN_POSTING_CREATE_SHIFTS_TIME,
+} from "../../../constants/Copy";
 
 const CreatePostingShifts = (): React.ReactElement => {
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
@@ -69,149 +78,108 @@ const CreatePostingShifts = (): React.ReactElement => {
   ];
 
   return (
-    <div
-      style={{
-        padding: "65px 62px",
-      }}
-    >
-      <div
-        style={{
-          display: "flex",
-          paddingBottom: "24px",
-        }}
-      >
-        <div
-          style={{
-            border: "3px solid #7600E3",
-            borderRadius: "50%",
-            width: "46px",
-            height: "46px",
-            display: "flex",
-            alignContent: "center",
-            justifyContent: "center",
-            marginRight: "24px",
-          }}
-        >
-          <Text
-            textStyle="display-large"
-            fontSize="20px"
-            style={{
-              color: "#7600E3",
-              alignSelf: "center",
-            }}
+    <Container maxW="container.xl">
+      <VStack w="full" spacing={5} alignItems="flex-start" p={10}>
+        <HStack spacing={5}>
+          <Circle
+            size="46px"
+            bg="transparent"
+            borderWidth="3px"
+            borderColor="violet"
+            pb={1}
           >
-            2
+            <Text textStyle="heading" fontWeight="bold" color="violet">
+              2
+            </Text>
+          </Circle>
+          <Text textStyle="heading">Scheduling time slots</Text>
+        </HStack>
+        <VStack spacing={30} alignItems="flex-start" px={2}>
+          <Text textStyle="caption">
+            {ADMIN_POSTING_CREATE_SCHEDULING_TIME_SLOTS}
           </Text>
-        </div>
-        <Text
-          textStyle="display-large"
-          fontSize="20px"
-          style={{
-            alignSelf: "center",
-          }}
-        >
-          Scheduling time slots
-        </Text>
-      </div>
+          <FormControl isRequired isInvalid={recurrenceIntervalError}>
+            <FormLabel textStyle="heading">Reoccurance Frequency</FormLabel>
 
-      <Text textStyle="body-regular" fontSize="16px">
-        Enter all the details of your volunteer posting. Please take advantage
-        of the Role Description section and add any information that will help.
-        Once you have completed filling it out, press next.
-      </Text>
-
-      <FormControl isRequired isInvalid={recurrenceIntervalError}>
-        <FormLabel fontSize="16px" style={{ margin: "56px 0 8px" }}>
-          Recurrence Frequency
-        </FormLabel>
-
-        <Select
-          // placeholder="How often will this occur?"
-          size="sm"
-          maxWidth="425px"
-          isRequired
-        >
-          {recurrenceOptions.map(({ value, label }) => (
-            <option value={value} key={value}>
-              {label}
-            </option>
-          ))}
-        </Select>
-        <FormErrorMessage>Please select a frequency.</FormErrorMessage>
-      </FormControl>
-
-      <Text fontSize="16px" style={{ margin: "60px 0 0" }}>
-        Select Start and End Dates
-      </Text>
-
-      <div style={{ display: "flex", padding: "26px 0 0" }}>
-        <FormControl isRequired isInvalid={startDateError}>
-          <div style={{ display: "flex", alignItems: "flex-start" }}>
-            <FormLabel
-              textStyle="body-regular"
-              fontSize="16px"
-              style={{
-                alignSelf: "center",
-                marginRight: "22px",
-              }}
+            <Select
+              // placeholder="How often will this occur?"
+              size="sm"
+              maxWidth="425px"
+              isRequired
+              value=""
+              // onChange={(e) => setRecurrenceInterval(e.target.value)}
             >
-              From
-            </FormLabel>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Input
-                placeholder="DD-MM-YYYY"
-                type="date"
-                value={startDate}
-                onChange={(e) => setStartDate(e.target.value)}
-                size="sm"
-                style={{
-                  maxWidth: "278px",
-                }}
-              />
-              <FormErrorMessage>Please enter a date.</FormErrorMessage>
-            </div>
-          </div>
-        </FormControl>
-        <FormControl isRequired isInvalid={endDateError}>
-          <div style={{ display: "flex" }}>
-            <FormLabel
-              textStyle="body-regular"
-              fontSize="16px"
-              style={{
-                alignSelf: "center",
-              }}
-            >
-              To
-            </FormLabel>
-            <div style={{ display: "flex", flexDirection: "column" }}>
-              <Input
-                placeholder="DD-MM-YYYY"
-                type="date"
-                value={endDate}
-                onChange={(e) => setEndDate(e.target.value)}
-                size="sm"
-                style={{
-                  maxWidth: "278px",
-                }}
-              />
-              <FormErrorMessage>Please enter a date.</FormErrorMessage>
-            </div>
-          </div>
-        </FormControl>
-      </div>
+              {recurrenceOptions.map(({ value, label }) => (
+                <option value={value} key={value}>
+                  {label}
+                </option>
+              ))}
+            </Select>
+            <FormErrorMessage>Please select a frequency.</FormErrorMessage>
+          </FormControl>
 
-      <FormControl isRequired>
-        <FormLabel fontSize="16px" style={{ margin: "60px 0 17px" }}>
-          Select Shift times
-        </FormLabel>
-      </FormControl>
+          <VStack spacing={2} alignItems="flex-start">
+            <Text textStyle="heading" fontSize="18px" fontWeight="normal">
+              Select Start and End Dates
+            </Text>
 
-      <Text fontSize="16px">
-        Please select all the times volunteers are required. Every purple block
-        is one bookable shift.
-      </Text>
-      <Button onClick={handleNext}>Next</Button>
-    </div>
+            <Flex>
+              <FormControl isRequired isInvalid={startDateError}>
+                <Flex>
+                  <HStack spacing={5.5}>
+                    <FormLabel textStyle="heading" fontSize="18px">
+                      From
+                    </FormLabel>
+                    <VStack spacing={2}>
+                      <Input
+                        placeholder="DD-MM-YYYY"
+                        type="date"
+                        value={startDate}
+                        onChange={(e) => setStartDate(e.target.value)}
+                        size="sm"
+                        style={{
+                          maxWidth: "278px",
+                        }}
+                      />
+                      <FormErrorMessage>Please enter a date.</FormErrorMessage>
+                    </VStack>
+                  </HStack>
+                </Flex>
+              </FormControl>
+              <FormControl isRequired isInvalid={endDateError}>
+                <Flex>
+                  <FormLabel textStyle="heading" fontSize="18px">
+                    To
+                  </FormLabel>
+                  <VStack spacing={2}>
+                    <Input
+                      placeholder="DD-MM-YYYY"
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      size="sm"
+                      style={{
+                        maxWidth: "278px",
+                      }}
+                    />
+                    <FormErrorMessage>Please enter a date.</FormErrorMessage>
+                  </VStack>
+                </Flex>
+              </FormControl>
+            </Flex>
+          </VStack>
+
+          <VStack spacing={2}>
+            <FormControl isRequired>
+              <FormLabel textStyle="heading">Select Shift times</FormLabel>
+            </FormControl>
+
+            <Text fontSize="16px">{ADMIN_POSTING_CREATE_SHIFTS_TIME}</Text>
+          </VStack>
+        </VStack>
+        <Button onClick={handleNext}>Next</Button>
+      </VStack>
+    </Container>
   );
 };
 
