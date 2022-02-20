@@ -1,3 +1,4 @@
+import { SignupStatus } from "@prisma/client";
 import {
   CreateShiftSignupDTO,
   ShiftSignupResponseDTO,
@@ -35,7 +36,10 @@ interface IShiftSignupService {
    * @returns an array of ShiftSignupResponseDTOs for each shift the user signed up for
    * @throws Error if the shift signup retrieval fails
    */
-  getShiftSignupsForUser(userId: string): Promise<ShiftSignupResponseDTO[]>;
+  getShiftSignupsForUser(
+    userId: string,
+    signupStatus: SignupStatus | null,
+  ): Promise<ShiftSignupResponseDTO[]>;
 }
 
 export default IShiftSignupService;
