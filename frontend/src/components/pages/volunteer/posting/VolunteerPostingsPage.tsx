@@ -88,6 +88,7 @@ const POSTINGS = gql`
   }
 `;
 
+// delete before merging to main
 const postingArr = [{
   id: "1",
   skills: [{id: '1', name:"CPR"}, {id: '2', name: "WHMIS"}, {id: '3', name: "Photocopying"}], 
@@ -136,8 +137,13 @@ const POSTINGS = gql`
 query VolunteerPostingsPage_postings {
   postings {
     id
-    skills
-    employees
+    skills {
+      id
+      name
+    }
+    employees {
+      userId
+    }
     title
     type
     status
@@ -154,21 +160,15 @@ const VolunteerPostingsPage = (): React.ReactElement => {
 
   useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
-    onCompleted: (data) => setPostings(data.postings),
-  });
+    onCompleted: (data) => setPostings(data.postings)
+    });
 
-
+  
   const isVolunteerOpportunity = (start: Date, end: Date): boolean => {
-    return end.getTime() - start.getTime() > 1000 * 60 * 60 * 24;
-  };
-  const volunteerOpportunities = postingArr?.filter((posting) =>
-    isVolunteerOpportunity(posting.startDate, posting.endDate),
-  );
-  const events = postingArr?.filter(
-    (posting) => !isVolunteerOpportunity(posting.startDate, posting.endDate),
-  );
-
-    console.log(postings)
+    return (end.getTime() - start.getTime()) > 1000 * 60 * 60 * 24;
+  }
+  const volunteerOpportunities = postingArr?.filter((posting) => isVolunteerOpportunity(posting.startDate, posting.endDate))
+  const events = postingArr?.filter((posting) => !isVolunteerOpportunity(posting.startDate, posting.endDate))
 
   // const {loading, error, postings} = useQuery(GET_POSTINGS)
   return (
