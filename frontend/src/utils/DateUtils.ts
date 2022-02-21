@@ -10,12 +10,12 @@ export const formatDateString = (dateStringInput: Date): string => {
 };
 
 export const formatDateStringWithYear = (dateStringInput: Date): string => {
-  const date = new Date(dateStringInput); 
-  return date.toLocaleDateString('en-US', {
+  const date = new Date(dateStringInput);
+  return date.toLocaleDateString("en-US", {
     weekday: "long",
     month: "short",
     day: "2-digit",
-    year: 'numeric',
+    year: "numeric",
     timeZone: "UTC",
-  })
-}
+  });
+};

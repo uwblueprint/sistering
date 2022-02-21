@@ -10,8 +10,7 @@ import {
   ButtonGroup,
   Tag,
 } from "@chakra-ui/react";
-import {formatDateStringWithYear} from '../../utils/DateUtils';
-
+import { formatDateStringWithYear } from "../../utils/DateUtils";
 
 type PostingCardProps = {
   id: string;
@@ -58,7 +57,9 @@ const PostingCard = ({
           </Text>
           <Text textStyle="caption">
             <CalendarIcon w={4} pr={1} />
-            {`${formatDateStringWithYear(startDate)} - ${formatDateStringWithYear(endDate)}`}
+            {`${formatDateStringWithYear(
+              startDate,
+            )} - ${formatDateStringWithYear(endDate)}`}
           </Text>
         </HStack>
         <Text textStyle="body-regular" noOfLines={2}>
@@ -72,13 +73,12 @@ const PostingCard = ({
             </Tag>
           ))}
         </HStack>
-        <Box w="100%" h='100%' mt='16px !important' mb='4px !important'>
-        <Divider/>
+        <Box w="100%" h="100%" mt="16px !important" mb="4px !important">
+          <Divider />
         </Box>
         <HStack justifyContent="space-between" w="100%">
           <Text textStyle="caption" color="text.gray">
-            Deadline:{" "}
-            {formatDateStringWithYear(autoClosingDate)}
+            Deadline: {formatDateStringWithYear(autoClosingDate)}
           </Text>
           <ButtonGroup spacing="10px" size="md">
             <Button variant="ghost">View Details</Button>

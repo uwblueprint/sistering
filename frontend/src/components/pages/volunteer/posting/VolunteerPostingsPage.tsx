@@ -103,53 +103,59 @@ const POSTINGS = gql`
 
 const MS_PER_WEEK = 604800000;
 
-
 const VolunteerPostingsPage = (): React.ReactElement => {
-
   const [postings, setPostings] = useState<PostingResponseDTO[] | null>(null);
-  const [unfilteredPostings, setUnfilteredPostings] = useState<PostingResponseDTO[] | null>(null);
-  const [filter, setFilter] = useState<string>('week')
+  const [unfilteredPostings, setUnfilteredPostings] = useState<
+    PostingResponseDTO[] | null
+  >(null);
+  const [filter, setFilter] = useState<string>("week");
 
   useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      setPostings(data.postings)
-      setUnfilteredPostings(data.postings)
-  }}
-  );
-
+      setPostings(data.postings);
+      setUnfilteredPostings(data.postings);
+    },
+  });
 
   // should posting.startDate type be declared as string instead on frontend?
-  const dateCompareUtil = (start: Date, filterType: string):boolean => {
+  const dateCompareUtil = (start: Date, filterType: string): boolean => {
     const startDate = new Date(start);
-    return startDate.getTime() - Date.now() > 0 && startDate.getTime() - Date.now() < (filterType === 'week' ? MS_PER_WEEK : MS_PER_WEEK * 4)
-  }
+    return (
+      startDate.getTime() - Date.now() > 0 &&
+      startDate.getTime() - Date.now() <
+        (filterType === "week" ? MS_PER_WEEK : MS_PER_WEEK * 4)
+    );
+  };
 
   useEffect(() => {
     let filteredPostings;
-      switch (filter) {
-        case 'month': 
-          filteredPostings = unfilteredPostings?.filter(posting => dateCompareUtil(posting.startDate, 'month'))
-          setPostings(filteredPostings ?? null)
-          break;
-        case 'all':
-          setPostings(unfilteredPostings);
-          break;
-        default:
-          filteredPostings = unfilteredPostings?.filter(posting => dateCompareUtil(posting.startDate, 'week'))
-          setPostings(filteredPostings ?? null)
-          break;
-      }
-      console.log(filteredPostings)
-  }, [filter, unfilteredPostings])
-
-  const changeFilter = (e:React.ChangeEvent<HTMLSelectElement>) => {
-    if (e.target.value) {
-      setFilter(e.target.value)
-    } else {
-      setFilter('week')
+    switch (filter) {
+      case "month":
+        filteredPostings = unfilteredPostings?.filter((posting) =>
+          dateCompareUtil(posting.startDate, "month"),
+        );
+        setPostings(filteredPostings ?? null);
+        break;
+      case "all":
+        setPostings(unfilteredPostings);
+        break;
+      default:
+        filteredPostings = unfilteredPostings?.filter((posting) =>
+          dateCompareUtil(posting.startDate, "week"),
+        );
+        setPostings(filteredPostings ?? null);
+        break;
     }
-  }
+  }, [filter, unfilteredPostings]);
+
+  const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value) {
+      setFilter(e.target.value);
+    } else {
+      setFilter("week");
+    }
+  };
 
   // need to refactor this function based on definition of what is an opportunity / event
   const isVolunteerOpportunity = (start: Date, end: Date): boolean => {

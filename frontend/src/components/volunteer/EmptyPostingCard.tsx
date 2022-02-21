@@ -5,7 +5,9 @@ type EmptyPostingCardProps = {
   type: string;
 };
 
-const EmptyPostingCard = ({ type }: EmptyPostingCardProps): React.ReactElement => {
+const EmptyPostingCard = ({
+  type,
+}: EmptyPostingCardProps): React.ReactElement => {
   return (
     <Box
       borderRadius="8px"
@@ -16,7 +18,12 @@ const EmptyPostingCard = ({ type }: EmptyPostingCardProps): React.ReactElement =
     >
       <VStack justify="center" align="center" height="121px">
         <Box>
-          <Text textStyle="body-regular" textAlign="center" my="auto" color="text.gray">
+          <Text
+            textStyle="body-regular"
+            textAlign="center"
+            my="auto"
+            color="text.gray"
+          >
             There are no{" "}
             {type === "event" ? "events" : "regular volunteer opportunities"} at
             this time. Please check back soon.
