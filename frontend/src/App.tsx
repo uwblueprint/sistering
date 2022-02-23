@@ -41,6 +41,7 @@ import VolunteerPostingsPage from "./components/pages/volunteer/posting/Voluntee
 import CreatePostingShiftsPage from "./components/pages/admin/posting/CreatePostingShiftsPage";
 import CreatePostingReviewPage from "./components/pages/admin/posting/CreatePostingReviewPage";
 import VolunteerPostingDetails from "./components/pages/volunteer/posting/VolunteerPostingDetails";
+import AdminPostingDetails from "./components/pages/admin/posting/AdminPostingDetails";
 import SideNavbarDemo from "./components/pages/SideNavbarDemo";
 
 import customTheme from "./theme";
@@ -154,6 +155,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.VOLUNTEER_POSTING_DETAILS}
                       component={VolunteerPostingDetails}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_POSTING_DETAILS}
+                      component={AdminPostingDetails}
                     />
                     <Route exact path="*" component={NotFound} />
                   </Switch>
