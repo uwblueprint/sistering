@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import {
-  Text,
   VStack,
   HStack,
   Box,
   Container,
-  Divider,
   Button,
 } from "@chakra-ui/react";
 
@@ -13,7 +11,6 @@ import { gql, useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
-import { formatDateString } from "../../../../utils/DateUtils";
 import PostingDetails from "../../../common/PostingDetails";
 
 const POSTING = gql`
@@ -69,23 +66,9 @@ const VolunteerPostingDetails = (): React.ReactElement => {
           centerContent
           borderRadius={10}
         >
-          <VStack w="full">
-            {postingDetails ? (
-              <Box p={6} w="full">
-                <VStack alignItems="start" w="full">
-                  <PostingDetails postingDetails={postingDetails} />
-                  <Divider />
-                  <HStack justifyContent="space-between" pt={4} w="full">
-                    <Text textStyle="caption" color="text.gray">
-                      Deadline:{" "}
-                      {formatDateString(postingDetails.autoClosingDate)}
-                    </Text>
-                    <Button>Submit availability</Button>
-                  </HStack>
-                </VStack>
-              </Box>
-            ) : null}
-          </VStack>
+          {postingDetails ? (
+            <PostingDetails postingDetails={postingDetails} showFooterButton />
+          ) : null}
         </Container>
       </VStack>
     </Box>

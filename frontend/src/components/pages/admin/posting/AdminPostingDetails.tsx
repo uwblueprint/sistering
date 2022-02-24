@@ -60,9 +60,7 @@ const AdminPostingDetails = (): React.ReactElement => {
           borderRadius={10}
         >
           {postingDetails ? (
-            <Box p={6} w="full">
-              <PostingDetails postingDetails={postingDetails} />
-            </Box>
+            <PostingDetails postingDetails={postingDetails} showFooterButton={false} />
           ) : null}
         </Container>
       </VStack>
