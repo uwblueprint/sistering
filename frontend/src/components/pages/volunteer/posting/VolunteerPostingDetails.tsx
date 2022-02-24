@@ -1,11 +1,5 @@
 import React, { useState } from "react";
-import {
-  VStack,
-  HStack,
-  Box,
-  Container,
-  Button,
-} from "@chakra-ui/react";
+import { VStack, HStack, Box, Container, Button } from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";

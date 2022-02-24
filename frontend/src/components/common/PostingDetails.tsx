@@ -1,14 +1,26 @@
 import React from "react";
-import { Text, VStack, HStack, Box, Tag, Divider, Button } from "@chakra-ui/react";
+import {
+  Text,
+  VStack,
+  HStack,
+  Box,
+  Tag,
+  Divider,
+  Button,
+} from "@chakra-ui/react";
 import { CalendarIcon, TimeIcon } from "@chakra-ui/icons";
 import PocCard from "./PocCard";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 import { formatDateString } from "../../utils/DateUtils";
 
-type PostingDetailsProps = { postingDetails: PostingResponseDTO, showFooterButton: boolean };
+type PostingDetailsProps = {
+  postingDetails: PostingResponseDTO;
+  showFooterButton: boolean;
+};
 
 const PostingDetails = ({
-  postingDetails, showFooterButton
+  postingDetails,
+  showFooterButton,
 }: PostingDetailsProps): React.ReactElement => {
   return (
     <Box p={6} w="full">
@@ -65,12 +77,10 @@ const PostingDetails = ({
         <Divider />
         <HStack justifyContent="space-between" pt={4} w="full">
           <Text textStyle="caption" color="text.gray">
-            Deadline:{" "}
-            {formatDateString(postingDetails.autoClosingDate)}
+            Deadline: {formatDateString(postingDetails.autoClosingDate)}
           </Text>
-          {showFooterButton ? (<Button>Submit availability</Button>) : null}
+          {showFooterButton ? <Button>Submit availability</Button> : null}
         </HStack>
-
       </VStack>
     </Box>
   );
