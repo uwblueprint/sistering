@@ -1,4 +1,11 @@
-import { PrismaClient, Role, PostingType, PostingStatus } from "@prisma/client";
+import {
+  PrismaClient,
+  Role,
+  PostingType,
+  PostingStatus,
+  SignupStatus,
+} from "@prisma/client";
+import { random, sample } from "lodash";
 import { addDays, setTime } from "../utilities/dateUtils";
 
 const prisma = new PrismaClient();
@@ -9,6 +16,13 @@ const users = [
     lastName: "Admin",
     authId: process.env.ADMIN_UID,
     role: Role.ADMIN,
+    volunteer: {
+      create: {
+        pronouns: "they/them",
+        hireDate: new Date(),
+        dateOfBirth: new Date("August 19, 2000 23:15:30"),
+      },
+    },
   },
   {
     firstName: "Valorie",
@@ -56,76 +70,39 @@ const skills = [
 ];
 
 const today = new Date();
-const postings = [
-  {
+
+const numPostings = 15;
+const numShiftsPerPosting = 30;
+const postingStartOffset = 20;
+const postingEndOffset = 50;
+const postingClosingOffset = 10;
+const postings: any[] = [];
+for (let i = 0; i < numPostings; i += 1) {
+  const shifts = [];
+  // generate shifts on random days between the posting start and end date
+  for (let j = 0; j < numShiftsPerPosting; j += 1) {
+    const shiftDay = random(postingStartOffset, postingEndOffset);
+    shifts.push({
+      startTime: setTime(addDays(today, postingStartOffset + shiftDay), 18, 0),
+      endTime: setTime(addDays(today, postingEndOffset + shiftDay), 19, 0),
+    });
+  }
+
+  const posting = {
     title: "Danish Instructor",
     type: PostingType.INDIVIDUAL,
     status: PostingStatus.PUBLISHED,
     description: "Lead a Danish making class in Danish",
-    startDate: addDays(today, 30),
-    endDate: addDays(today, 50),
-    autoClosingDate: addDays(today, 20),
-    numVolunteers: 3,
+    startDate: addDays(today, postingStartOffset),
+    endDate: addDays(today, postingEndOffset),
+    autoClosingDate: addDays(today, postingClosingOffset),
+    numVolunteers: 1,
     shifts: {
-      create: [
-        {
-          startTime: setTime(addDays(today, 31), 13, 30),
-          endTime: setTime(addDays(today, 31), 14, 30),
-        },
-        {
-          startTime: setTime(addDays(today, 33), 13, 30),
-          endTime: setTime(addDays(today, 33), 14, 30),
-        },
-        {
-          startTime: setTime(addDays(today, 35), 13, 30),
-          endTime: setTime(addDays(today, 35), 14, 30),
-        },
-        {
-          startTime: setTime(addDays(today, 35), 13, 30),
-          endTime: setTime(addDays(today, 35), 14, 30),
-        },
-        {
-          startTime: setTime(addDays(today, 37), 13, 30),
-          endTime: setTime(addDays(today, 37), 14, 30),
-        },
-      ],
+      create: shifts,
     },
-  },
-  {
-    title: "Criossant Making",
-    type: PostingType.INDIVIDUAL,
-    status: PostingStatus.DRAFT,
-    description: "Help with a criossant making class.",
-    startDate: addDays(today, 20),
-    endDate: addDays(today, 30),
-    autoClosingDate: addDays(today, 15),
-    numVolunteers: 2,
-    shifts: {
-      create: [
-        {
-          startTime: setTime(addDays(today, 21), 18, 0),
-          endTime: setTime(addDays(today, 21), 19, 0),
-        },
-        {
-          startTime: setTime(addDays(today, 23), 18, 0),
-          endTime: setTime(addDays(today, 23), 19, 0),
-        },
-        {
-          startTime: setTime(addDays(today, 25), 18, 0),
-          endTime: setTime(addDays(today, 25), 19, 0),
-        },
-        {
-          startTime: setTime(addDays(today, 27), 18, 0),
-          endTime: setTime(addDays(today, 27), 19, 0),
-        },
-        {
-          startTime: setTime(addDays(today, 29), 18, 0),
-          endTime: setTime(addDays(today, 29), 19, 0),
-        },
-      ],
-    },
-  },
-];
+  };
+  postings.push(posting);
+}
 
 const main = async () => {
   const seedBranches = await prisma.$transaction(
@@ -215,6 +192,27 @@ const main = async () => {
       ),
     );
   }
+
+  const seedVolunteers = seedUsers.filter((user) => user.role !== "EMPLOYEE");
+  const shifts = await prisma.shift.findMany();
+  const shiftSignups: any[] = [];
+
+  shifts.forEach((shift) => {
+    seedVolunteers.forEach((user) => {
+      shiftSignups.push({
+        shiftId: shift.id,
+        userId: user.id,
+        numVolunteers: 1,
+        // randomly assign a status
+        status: sample(SignupStatus),
+        note: "",
+      });
+    });
+  });
+
+  await prisma.signup.createMany({
+    data: shiftSignups,
+  });
 };
 
 main()
