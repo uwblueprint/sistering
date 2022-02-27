@@ -6,7 +6,6 @@ import FullCalendar, {
 } from "@fullcalendar/react";
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
-import moment from "moment";
 import React, { useState } from "react";
 import {
   Box,
@@ -21,6 +20,7 @@ import {
 } from "@chakra-ui/react";
 import colors from "../../../theme/colors";
 import "./ShiftCalendar.css";
+import { getTime, getWeekday } from "../../../utils/DateTimeUtils";
 
 type Event = {
   id: string;
@@ -96,18 +96,21 @@ const ShiftCalendar = ({ shifts }: ShiftCalendarProps): React.ReactElement => {
           <ModalCloseButton />
           <ModalBody>
             {selectedEvent
-              ? `Are you sure you want to delete the event on ${moment(
+              ? `Are you sure you want to delete the event on ${getWeekday(
                   selectedEvent.start,
-                ).format("dddd")} from ${moment(selectedEvent.start).format(
-                  "hh:mm A",
-                )} to ${moment(selectedEvent.end).format("hh:mm A")}?`
+                )} from ${getTime(selectedEvent.start)} to ${getTime(
+                  selectedEvent.end,
+                )}?`
               : ""}
           </ModalBody>
           <ModalFooter>
             <Button colorScheme="gray" mr={3} onClick={closeModal}>
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={() => deleteEvent(events)}>
+            <Button
+              colorScheme="red"
+              onClick={() => deleteEvent(events.slice())}
+            >
               Delete
             </Button>
           </ModalFooter>
@@ -118,7 +121,7 @@ const ShiftCalendar = ({ shifts }: ShiftCalendarProps): React.ReactElement => {
         dayHeaderFormat={{ weekday: "short" }}
         editable
         eventChange={(arg: EventChangeArg) =>
-          changeEvent(arg.event as Event, arg.oldEvent as Event, events)
+          changeEvent(arg.event as Event, arg.oldEvent as Event, events.slice())
         }
         eventClick={(arg: EventClickArg) => deleteDialog(arg.event as Event)}
         eventColor={colors.violet}

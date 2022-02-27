@@ -1,3 +1,4 @@
+import moment from "moment";
 import { FilterType } from "../types/DateFilterTypes";
 
 // eslint-disable-next-line import/prefer-default-export
@@ -31,4 +32,12 @@ export const dateInRange = (start: string, filterType: FilterType): boolean => {
     startDate.getTime() - Date.now() <
       (filterType === "week" ? MS_PER_WEEK : MS_PER_WEEK * 4)
   );
+};
+
+export const getWeekday = (dateStringInput: Date): string => {
+  return moment(dateStringInput).format("dddd");
+};
+
+export const getTime = (dateStringInput: Date): string => {
+  return moment(dateStringInput).format("hh:mm A");
 };

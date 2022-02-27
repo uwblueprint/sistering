@@ -5,7 +5,7 @@ import ShiftCalendar from "../../../admin/ShiftCalendar/ShiftCalendar";
 const CreatePostingShiftsPage = (): React.ReactElement => {
   return (
     <Container maxW="container.lg">
-      <ShiftCalendar />
+      <ShiftCalendar shifts={[]} />
       <Divider my={4} />
     </Container>
   );

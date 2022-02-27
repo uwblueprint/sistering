@@ -8,8 +8,6 @@ import {
   TabList,
   Tabs,
   Tab,
-  Container,
-  Divider,
 } from "@chakra-ui/react";
 
 import * as Routes from "../../constants/Routes";
@@ -18,7 +16,6 @@ import SampleContext from "../../contexts/SampleContext";
 
 import Logout from "../auth/Logout";
 import RefreshCredentials from "../auth/RefreshCredentials";
-import ShiftCalendar from "../admin/ShiftCalendar/ShiftCalendar";
 
 type ButtonProps = { text: string; path: string };
 
@@ -215,10 +212,6 @@ const DesignSystemDisplay = () => {
 const Default = (): React.ReactElement => {
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
-      <Container maxW="container.lg">
-        <ShiftCalendar shifts={[]} />
-        <Divider my={4} />
-      </Container>
       <Text textStyle="display-large">Default Page</Text>
       <div className="btn-group" style={{ paddingRight: "10px" }}>
         <Logout />
