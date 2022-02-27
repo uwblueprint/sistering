@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 /**
  * Time in minutes is minutes from 0:00, convert to something like "1:23 am"
  * @param timeInMinutes the minutes to convert

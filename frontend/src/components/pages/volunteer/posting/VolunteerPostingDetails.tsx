@@ -15,7 +15,7 @@ import { useParams } from "react-router-dom";
 import { CalendarIcon, TimeIcon, ChevronLeftIcon } from "@chakra-ui/icons";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PocCard from "../../../common/PocCard";
-import { formatDateString } from "../../../../utils/DateUtils";
+import { formatDateString } from "../../../../utils/DateTimeUtils";
 
 const POSTING = gql`
   query Posting($id: ID!) {
