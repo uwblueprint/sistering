@@ -67,8 +67,11 @@ import { dateInRange } from "../../../../utils/DateUtils";
 //   },
 // ];
 
-type Posting = Omit<PostingResponseDTO, "shifts" | "employees" | "type" | "numVolunteers" | "status" >;
-type FilterType = "week" | "month" | "all" | ''; 
+type Posting = Omit<
+  PostingResponseDTO,
+  "shifts" | "employees" | "type" | "numVolunteers" | "status"
+>;
+type FilterType = "week" | "month" | "all" | "";
 
 // can refactor this query in the future to be more specific (depending on the data this page needs)
 const POSTINGS = gql`
@@ -91,7 +94,6 @@ const POSTINGS = gql`
     }
   }
 `;
-
 
 const VolunteerPostingsPage = (): React.ReactElement => {
   const [postings, setPostings] = useState<Posting[] | null>(null);
@@ -122,7 +124,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
         break;
       default:
         filteredPostings = unfilteredPostings?.filter((posting) =>
-        dateInRange(posting.startDate, "week"),
+          dateInRange(posting.startDate, "week"),
         );
         setPostings(filteredPostings ?? null);
         break;
@@ -130,8 +132,6 @@ const VolunteerPostingsPage = (): React.ReactElement => {
   }, [filter, unfilteredPostings]);
 
   const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    console.log(e.target.value)
-    console.log(typeof e.target.value)
     if (e.target.value) {
       setFilter(e.target.value);
     } else {
@@ -155,7 +155,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
   );
 
   return (
-    <Box bg="background.light" pt="48px"  px="101px" pb="64px" minHeight="100vh">
+    <Box bg="background.light" pt="48px" px="101px" pb="64px" minHeight="100vh">
       <Box maxW="1280px" mx="auto">
         <HStack justify="space-between" pb="24px">
           <Text textStyle="display-small-semibold">Events</Text>

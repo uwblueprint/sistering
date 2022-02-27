@@ -17,16 +17,16 @@ const EmptyPostingCard = ({
       height="121px"
     >
       <VStack justify="center" align="center" h="full">
-          <Text
-            textStyle="body-regular"
-            textAlign="center"
-            my="auto"
-            color="text.gray"
-          >
-            There are no{" "}
-            {type === "event" ? "events" : "regular volunteer opportunities"} at
-            this time. Please check back soon.
-          </Text>
+        <Text
+          textStyle="body-regular"
+          textAlign="center"
+          my="auto"
+          color="text.gray"
+        >
+          There are no{" "}
+          {type === "event" ? "events" : "regular volunteer opportunities"} at
+          this time. Please check back soon.
+        </Text>
       </VStack>
     </Box>
   );
