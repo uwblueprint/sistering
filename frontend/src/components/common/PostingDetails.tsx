@@ -11,7 +11,7 @@ import {
 import { CalendarIcon, TimeIcon } from "@chakra-ui/icons";
 import PocCard from "./PocCard";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
-import { formatDateString } from "../../utils/DateUtils";
+import { formatDateStringYear } from "../../utils/DateTimeUtils";
 
 type PostingDetailsProps = {
   postingDetails: PostingResponseDTO;
@@ -29,15 +29,15 @@ const PostingDetails = ({
           <HStack justifyContent="space-between" w="full">
             <Tag>{postingDetails.branch.name}</Tag>
             <Text textStyle="caption" color="text.gray">
-              Deadline: {formatDateString(postingDetails.autoClosingDate)}
+              Deadline: {formatDateStringYear(postingDetails.autoClosingDate)}
             </Text>
           </HStack>
           <Text textStyle="display-large">{postingDetails.title}</Text>
           <HStack>
             <CalendarIcon />
             <Text textStyle="caption">
-              {formatDateString(postingDetails.startDate)} -{" "}
-              {formatDateString(postingDetails.endDate)}
+              {formatDateStringYear(postingDetails.startDate)} -{" "}
+              {formatDateStringYear(postingDetails.endDate)}
             </Text>
           </HStack>
           <HStack>
@@ -77,7 +77,7 @@ const PostingDetails = ({
         <Divider />
         <HStack justifyContent="space-between" pt={4} w="full">
           <Text textStyle="caption" color="text.gray">
-            Deadline: {formatDateString(postingDetails.autoClosingDate)}
+            Deadline: {formatDateStringYear(postingDetails.autoClosingDate)}
           </Text>
           {showFooterButton ? <Button>Submit availability</Button> : null}
         </HStack>

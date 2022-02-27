@@ -1,3 +1,5 @@
+// these helper functions are now unused, should this file be deleted?
+
 /**
  * Time in minutes is minutes from 0:00, convert to something like "1:23 am"
  * @param timeInMinutes the minutes to convert
