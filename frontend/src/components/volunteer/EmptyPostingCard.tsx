@@ -2,7 +2,7 @@ import React from "react";
 import { Text, Box, VStack } from "@chakra-ui/react";
 
 type EmptyPostingCardProps = {
-  type: string;
+  type: "event" | "opportunity";
 };
 
 const EmptyPostingCard = ({
@@ -14,10 +14,9 @@ const EmptyPostingCard = ({
       borderWidth="2px"
       borderColor="background.dark"
       bg="background.white"
-      mb="36px"
+      height="121px"
     >
-      <VStack justify="center" align="center" height="121px">
-        <Box>
+      <VStack justify="center" align="center" h="full">
           <Text
             textStyle="body-regular"
             textAlign="center"
@@ -28,7 +27,6 @@ const EmptyPostingCard = ({
             {type === "event" ? "events" : "regular volunteer opportunities"} at
             this time. Please check back soon.
           </Text>
-        </Box>
       </VStack>
     </Box>
   );

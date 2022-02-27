@@ -11,21 +11,17 @@ import {
   Tag,
 } from "@chakra-ui/react";
 import { formatDateStringWithYear } from "../../utils/DateUtils";
+import {SkillResponseDTO} from '../../types/api/SkillTypes';
 
 type PostingCardProps = {
   id: string;
   title: string;
   skills: SkillResponseDTO[];
   description: string;
-  startDate: Date;
-  endDate: Date;
-  autoClosingDate: Date;
+  startDate: string;
+  endDate: string;
+  autoClosingDate: string;
   branchName: string;
-};
-
-type SkillResponseDTO = {
-  id: string;
-  name: string;
 };
 
 const PostingCard = ({
@@ -46,7 +42,7 @@ const PostingCard = ({
       borderColor="background.dark"
       id={id}
     >
-      <VStack px="36px" py="40px" align="start" spacing="12px">
+      <VStack px="40px" py="36px" align="start" spacing="12px">
         <Tag>{branchName}</Tag>
         <Text textStyle="heading">{title}</Text>
         <HStack spacing={4}>

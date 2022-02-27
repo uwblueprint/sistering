@@ -1,5 +1,5 @@
 // eslint-disable-next-line import/prefer-default-export
-export const formatDateString = (dateStringInput: Date): string => {
+export const formatDateString = (dateStringInput: string): string => {
   const date = new Date(dateStringInput);
   return date.toLocaleDateString([], {
     weekday: "long",
@@ -9,7 +9,7 @@ export const formatDateString = (dateStringInput: Date): string => {
   });
 };
 
-export const formatDateStringWithYear = (dateStringInput: Date): string => {
+export const formatDateStringWithYear = (dateStringInput: string): string => {
   const date = new Date(dateStringInput);
   return date.toLocaleDateString("en-US", {
     weekday: "long",
@@ -18,4 +18,15 @@ export const formatDateStringWithYear = (dateStringInput: Date): string => {
     year: "numeric",
     timeZone: "UTC",
   });
+};
+
+// currently only supports filter by week and month
+export const dateInRange = (start: string, filterType: string): boolean => {
+  const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
+  const startDate = new Date(start);
+  return (
+    startDate.getTime() - Date.now() >= 0 &&
+    startDate.getTime() - Date.now() <
+      (filterType === "week" ? MS_PER_WEEK : MS_PER_WEEK * 4)
+  );
 };

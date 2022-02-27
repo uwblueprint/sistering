@@ -16,9 +16,9 @@ export type PostingDTO = {
   type: PostingType;
   status: PostingStatus;
   description: string;
-  startDate: Date;
-  endDate: Date;
-  autoClosingDate: Date;
+  startDate: string;
+  endDate: string;
+  autoClosingDate: string;
   numVolunteers: number;
 };
 
