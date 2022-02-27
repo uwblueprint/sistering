@@ -7,7 +7,7 @@ import FullCalendar, {
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import moment from "moment";
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Button,
@@ -28,11 +28,17 @@ type Event = {
   end: Date;
 };
 
-const ShiftCalendar = (): React.ReactElement => {
-  const [events, setEvents] = React.useState<Event[]>([]);
-  const [eventCount, setEventCount] = React.useState<number>(0);
-  const [isModalOpen, setIsModalOpen] = React.useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = React.useState<Event | null>(null);
+type ShiftCalendarProps = {
+  eventsProp: Event[];
+};
+
+const ShiftCalendar = ({
+  eventsProp,
+}: ShiftCalendarProps): React.ReactElement => {
+  const [events, setEvents] = useState<Event[]>(eventsProp);
+  const [eventCount, setEventCount] = useState<number>(0);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const openModal = (): void => {
     setIsModalOpen(true);
@@ -54,30 +60,26 @@ const ShiftCalendar = (): React.ReactElement => {
     setEventCount(eventCount + 1);
   };
 
-  const changeEvent = (event: Event, oldEvent: Event) => {
-    // Slice changes the ref of the event so that events is not mutated.
-    const newEvents = events.slice();
-    for (let i = 0; i < newEvents.length; i += 1) {
-      if (newEvents[i].id === oldEvent.id) {
-        newEvents[i].start = event.start;
-        newEvents[i].end = event.end;
-        break;
-      }
+  const changeEvent = (event: Event, oldEvent: Event, currEvents: Event[]) => {
+    const newEvent = currEvents.find(
+      (currEvent) => currEvent.id === oldEvent.id,
+    );
+    if (newEvent) {
+      newEvent.start = event.start;
+      newEvent.end = event.end;
+      setEvents([...currEvents]);
     }
-    setEvents(newEvents);
   };
 
-  const deleteEvent = () => {
+  const deleteEvent = (currEvents: Event[]) => {
     if (selectedEvent) {
-      // Slice changes the ref of the event so that events is not mutated.
-      const newEvents = events.slice();
-      for (let i = 0; i < newEvents.length; i += 1) {
-        if (newEvents[i].id === selectedEvent.id) {
-          newEvents.splice(i, 1);
+      for (let i = 0; i < currEvents.length; i += 1) {
+        if (currEvents[i].id === selectedEvent.id) {
+          currEvents.splice(i, 1);
           break;
         }
       }
-      setEvents(newEvents);
+      setEvents(currEvents);
       closeModal();
     }
   };
@@ -107,7 +109,7 @@ const ShiftCalendar = (): React.ReactElement => {
             <Button colorScheme="gray" mr={3} onClick={closeModal}>
               Cancel
             </Button>
-            <Button colorScheme="red" onClick={deleteEvent}>
+            <Button colorScheme="red" onClick={() => deleteEvent(events)}>
               Delete
             </Button>
           </ModalFooter>
@@ -118,7 +120,7 @@ const ShiftCalendar = (): React.ReactElement => {
         dayHeaderFormat={{ weekday: "short" }}
         editable
         eventChange={(arg: EventChangeArg) =>
-          changeEvent(arg.event as Event, arg.oldEvent as Event)
+          changeEvent(arg.event as Event, arg.oldEvent as Event, events)
         }
         eventClick={(arg: EventClickArg) => deleteDialog(arg.event as Event)}
         eventColor={colors.violet}
@@ -134,6 +136,7 @@ const ShiftCalendar = (): React.ReactElement => {
         select={(selectInfo: DateSelectArg) => addEvent(selectInfo)}
         selectMirror
         selectable
+        scrollTime="09:00:00"
         slotDuration="00:15:00"
         slotLabelInterval="01:00"
       />
