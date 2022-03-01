@@ -8,7 +8,7 @@ import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PostingDetails from "../../../common/PostingDetails";
 
 const POSTING = gql`
-  query Posting($id: ID!) {
+  query AdminPostingDetails_Posting($id: ID!) {
     posting(id: $id) {
       title
       description
