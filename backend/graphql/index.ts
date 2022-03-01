@@ -51,7 +51,7 @@ const isValidDateTime = (dateTimeString: string) => {
   return (
     !Number.isNaN(Date.parse(`${dateTimeString}:00`)) && // cover cases of DD > 31
     new Date(`${dateTimeString}:00+00:00`).toISOString().slice(0, 16) ===
-      dateTimeString
+    dateTimeString
   );
 };
 
@@ -175,7 +175,7 @@ const graphQLMiddlewares = {
     updateEmployeeUserById: authorizedByAdminAndEmployee(),
     deleteEmployeeUserById: authorizedByAdmin(),
     deleteEmployeeUserByEmail: authorizedByAdmin(),
-    logout: isAuthorizedByUserId("userId"),
+    logout: isAuthorizedByUserId(["userId"]),
     createShifts: authorizedByAdmin(),
     updateShift: authorizedByAdmin(),
     updateShifts: authorizedByAdmin(),
@@ -190,8 +190,8 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
-    createShiftSignups: authorizedByVolunteer(),
-    updateShiftSignup: authorizedByAdmin(),
+    createShiftSignups: authorizedByVolunteer() && isAuthorizedByUserId(["shifts", "0", "userId"]),
+    updateShiftSignup: authorizedByAdminAndVolunteer() && isAuthorizedByUserId(["userId"]),
   },
 };
 
