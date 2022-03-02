@@ -22,8 +22,8 @@ const VolunteerNavbar = ({
   defaultIndex: number;
 }): React.ReactElement => {
   return (
-    <Box px={14}>
-      <Flex h={14} alignItems="center" justifyContent="space-between">
+    <Box px="110px">
+      <Flex h="80px" alignItems="center" justifyContent="space-between">
         <Image src={Sistering_Screen_RGB} alt="Sistering logo" h={14} />
         <Route
           render={({ history }) => (
@@ -45,7 +45,7 @@ const VolunteerNavbar = ({
                     color: "teal",
                     borderColor: "currentColor",
                   }}
-                  py="16px"
+                  py="26px"
                 >
                   My Shifts
                 </Tab>
@@ -58,7 +58,7 @@ const VolunteerNavbar = ({
                     color: "teal",
                     borderColor: "currentColor",
                   }}
-                  py="16px"
+                  py="26px"
                 >
                   Browse Volunteer Postings
                 </Tab>
