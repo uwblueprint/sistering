@@ -3,7 +3,11 @@ import { GraphQLScalarType, Kind } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { merge } from "lodash";
 
-import { isAuthorizedByRole, isAuthorizedByUserId } from "../middlewares/auth";
+import {
+  isAuthorizedByRole,
+  isAuthorizedByUserId,
+  isAuthorizedByUserIdCreateShiftSignups,
+} from "../middlewares/auth";
 import authResolvers from "./resolvers/authResolvers";
 import authType from "./types/authType";
 import entityResolvers from "./resolvers/entityResolvers";
@@ -175,7 +179,7 @@ const graphQLMiddlewares = {
     updateEmployeeUserById: authorizedByAdminAndEmployee(),
     deleteEmployeeUserById: authorizedByAdmin(),
     deleteEmployeeUserByEmail: authorizedByAdmin(),
-    logout: isAuthorizedByUserId(["userId"]),
+    logout: isAuthorizedByUserId("userId"),
     createShifts: authorizedByAdmin(),
     updateShift: authorizedByAdmin(),
     updateShifts: authorizedByAdmin(),
@@ -192,9 +196,9 @@ const graphQLMiddlewares = {
     deleteBranch: authorizedByAdmin(),
     createShiftSignups:
       authorizedByVolunteer() &&
-      isAuthorizedByUserId(["shifts", "0", "userId"]),
+      isAuthorizedByUserIdCreateShiftSignups("userId"),
     updateShiftSignup:
-      authorizedByAdminAndVolunteer() && isAuthorizedByUserId(["userId"]),
+      authorizedByAdminAndVolunteer() && isAuthorizedByUserId("userId"),
   },
 };
 

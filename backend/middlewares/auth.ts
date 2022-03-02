@@ -52,12 +52,8 @@ export const isAuthorizedByRole = (roles: Set<Role>) => {
 
 /* Determine if request for a user-specific resource is authorized based on accessToken
  * validity and if the userId that the token was issued to matches the requested userId
- * Note: userIdPath is a list of keys to traverse through the args object to get to
- * access the requested userId
- * For example, if args is { shifts: [ { userId: <ID> } ] }, then a userIdPath of
- * ["shifts", "0", "userId"] would retrieve the <ID> from the args object
- *  */
-export const isAuthorizedByUserId = (userIdPath: string[]) => {
+ * Note: userIdField is the name of the request parameter containing the requested userId */
+export const isAuthorizedByUserId = (userIdField: string) => {
   return async (
     resolve: (
       parent: any,
@@ -71,16 +67,52 @@ export const isAuthorizedByUserId = (userIdPath: string[]) => {
     info: GraphQLResolveInfo,
   ): Promise<any> => {
     const accessToken = getAccessToken(context.req);
-    const userId: any = userIdPath.reduce((acc, curr) => acc[curr], args);
     const authorized =
       accessToken &&
-      (await authService.isAuthorizedByUserId(accessToken, userId));
+      (await authService.isAuthorizedByUserId(accessToken, args[userIdField]));
 
     if (!authorized) {
       throw new AuthenticationError(
         "Failed authentication and/or authorization by userId",
       );
     }
+
+    return resolve(parent, args, context, info);
+  };
+};
+
+/* Determine if request for a user-specific resource is authorized based on accessToken
+ * validity and if the userId that the token was issued to matches the requested userId
+ * under all shifts for the createShiftSignups mutation
+ * Note: userIdField is the name of the request parameter containing the requested userId */
+export const isAuthorizedByUserIdCreateShiftSignups = (userIdField: string) => {
+  return async (
+    resolve: (
+      parent: any,
+      args: { [key: string]: any },
+      context: ExpressContext,
+      info: GraphQLResolveInfo,
+    ) => any,
+    parent: any,
+    args: { [key: string]: any },
+    context: ExpressContext,
+    info: GraphQLResolveInfo,
+  ): Promise<any> => {
+    const accessToken = getAccessToken(context.req);
+    args.shifts.forEach(async (shift: any) => {
+      const authorized =
+        accessToken &&
+        (await authService.isAuthorizedByUserId(
+          accessToken,
+          shift[userIdField],
+        ));
+
+      if (!authorized) {
+        throw new AuthenticationError(
+          "Failed authentication and/or authorization by userId",
+        );
+      }
+    });
 
     return resolve(parent, args, context, info);
   };
