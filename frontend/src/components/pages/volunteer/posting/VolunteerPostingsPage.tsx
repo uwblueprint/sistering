@@ -7,8 +7,6 @@ import { dateInRange } from "../../../../utils/DateUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import PostingCard from "../../../volunteer/PostingCard";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
-import NoShiftsAvailableTableRow from "../../../volunteer/shifts/NoShiftsAvailableTableRow";
-import VolunteerAvailabilityTableRow from "../../../volunteer/shifts/VolunteerAvailabilityTableRow";
 
 type Posting = Omit<
   PostingResponseDTO,
