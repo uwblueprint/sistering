@@ -22,21 +22,30 @@ import colors from "../../../theme/colors";
 import "./ShiftCalendar.css";
 import { getTime, getWeekday } from "../../../utils/DateTimeUtils";
 
-type Event = {
+export type Event = {
   id: string;
   start: Date;
   end: Date;
 };
 
 type ShiftCalendarProps = {
-  shifts: Event[];
+  events: Event[];
+  selectedEvent: Event | null;
+  setSelectedEvent: (event: Event | null) => void;
+  addEvent: (newEvent: DateSelectArg) => void;
+  changeEvent: (event: Event, oldEvent: Event, currEvents: Event[]) => void;
+  deleteEvent: (currEvents: Event[]) => void;
 };
 
-const ShiftCalendar = ({ shifts }: ShiftCalendarProps): React.ReactElement => {
-  const [events, setEvents] = useState<Event[]>(shifts);
-  const [eventCount, setEventCount] = useState<number>(0);
+const ShiftCalendar = ({
+  events,
+  selectedEvent,
+  setSelectedEvent,
+  addEvent,
+  changeEvent,
+  deleteEvent,
+}: ShiftCalendarProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const openModal = (): void => {
     setIsModalOpen(true);
@@ -46,45 +55,14 @@ const ShiftCalendar = ({ shifts }: ShiftCalendarProps): React.ReactElement => {
     setIsModalOpen(false);
   };
 
-  const addEvent = (newEvent: DateSelectArg) => {
-    setEvents([
-      ...events,
-      {
-        start: newEvent.start,
-        end: newEvent.end,
-        id: `event-${eventCount}`,
-      },
-    ]);
-    setEventCount(eventCount + 1);
-  };
-
-  const changeEvent = (event: Event, oldEvent: Event, currEvents: Event[]) => {
-    const newEvent = currEvents.find(
-      (currEvent) => currEvent.id === oldEvent.id,
-    );
-    if (newEvent) {
-      newEvent.start = event.start;
-      newEvent.end = event.end;
-      setEvents([...currEvents]);
-    }
-  };
-
-  const deleteEvent = (currEvents: Event[]) => {
-    if (selectedEvent) {
-      for (let i = 0; i < currEvents.length; i += 1) {
-        if (currEvents[i].id === selectedEvent.id) {
-          currEvents.splice(i, 1);
-          break;
-        }
-      }
-      setEvents(currEvents);
-      closeModal();
-    }
-  };
-
   const deleteDialog = (event: Event) => {
     openModal();
     setSelectedEvent(event);
+  };
+
+  const onDeleteEvent = (currEvents: Event[]) => {
+    deleteEvent(currEvents);
+    closeModal();
   };
 
   return (
@@ -109,7 +87,7 @@ const ShiftCalendar = ({ shifts }: ShiftCalendarProps): React.ReactElement => {
             </Button>
             <Button
               colorScheme="red"
-              onClick={() => deleteEvent(events.slice())}
+              onClick={() => onDeleteEvent(events.slice())}
             >
               Delete
             </Button>
