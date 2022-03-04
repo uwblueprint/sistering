@@ -56,7 +56,7 @@ const isValidDateTime = (dateTimeString: string) => {
   return (
     !Number.isNaN(Date.parse(`${dateTimeString}:00`)) && // cover cases of DD > 31
     new Date(`${dateTimeString}:00+00:00`).toISOString().slice(0, 16) ===
-    dateTimeString
+      dateTimeString
   );
 };
 
