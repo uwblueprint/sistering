@@ -11,7 +11,7 @@ import {
 import { CalendarIcon, TimeIcon } from "@chakra-ui/icons";
 import PocCard from "./PocCard";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
-import { formatDateString } from "../../utils/DateUtils";
+import { formatDateString } from "../../utils/DateTimeUtils";
 
 type PostingDetailsProps = {
   postingDetails: PostingResponseDTO;
