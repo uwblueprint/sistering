@@ -41,10 +41,12 @@ import VolunteerPostingsPage from "./components/pages/volunteer/posting/Voluntee
 import CreatePostingShiftsPage from "./components/pages/admin/posting/CreatePostingShiftsPage";
 import CreatePostingReviewPage from "./components/pages/admin/posting/CreatePostingReviewPage";
 import VolunteerPostingDetails from "./components/pages/volunteer/posting/VolunteerPostingDetails";
+import AdminPostingDetails from "./components/pages/admin/posting/AdminPostingDetails";
 import SideNavbarDemo from "./components/pages/SideNavbarDemo";
 
 import customTheme from "./theme";
 import { AuthenticatedUser } from "./types/AuthTypes";
+import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
@@ -142,6 +144,11 @@ const App = (): React.ReactElement => {
                     />
                     <PrivateRoute
                       exact
+                      path={Routes.VOLUNTEER_SHIFTS_PAGE}
+                      component={VolunteerShiftsPage}
+                    />
+                    <PrivateRoute
+                      exact
                       path={Routes.ADMIN_POSTING_CREATE_SHIFTS_PAGE}
                       component={CreatePostingShiftsPage}
                     />
@@ -154,6 +161,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.VOLUNTEER_POSTING_DETAILS}
                       component={VolunteerPostingDetails}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_POSTING_DETAILS}
+                      component={AdminPostingDetails}
                     />
                     <Route exact path="*" component={NotFound} />
                   </Switch>

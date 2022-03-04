@@ -29,7 +29,10 @@ const shiftSignupType = gql`
   }
 
   extend type Query {
-    getShiftSignupsForUser(userId: ID!): [ShiftSignupResponseDTO!]!
+    getShiftSignupsForUser(
+      userId: ID!
+      signupStatus: SignupStatus
+    ): [ShiftSignupResponseDTO!]!
   }
 
   extend type Mutation {

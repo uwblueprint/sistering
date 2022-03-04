@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { VStack, HStack, Box, Container, Button } from "@chakra-ui/react";
+import { VStack, Box, Container, Button, Flex } from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
@@ -8,7 +8,7 @@ import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PostingDetails from "../../../common/PostingDetails";
 
 const POSTING = gql`
-  query VolunteerPostingDetails_Posting($id: ID!) {
+  query AdminPostingDetails_Posting($id: ID!) {
     posting(id: $id) {
       title
       description
@@ -29,7 +29,7 @@ const POSTING = gql`
   }
 `;
 
-const VolunteerPostingDetails = (): React.ReactElement => {
+const AdminPostingDetails = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const [
     postingDetails,
@@ -45,13 +45,12 @@ const VolunteerPostingDetails = (): React.ReactElement => {
   return (
     <Box bg="background.light" py={7} px={10} minH="100vh">
       <VStack>
-        <Container pt={0} pb={4} px={0} maxW="container.xl">
-          <HStack justifyContent="space-between">
+        <Container pt={3} pb={6} px={0} maxW="container.xl">
+          <Flex justifyContent="flex-start">
             <Button leftIcon={<ChevronLeftIcon />} variant="link">
-              Back to volunteer postings
+              Back to editing
             </Button>
-            <Button>Submit availability</Button>
-          </HStack>
+          </Flex>
         </Container>
 
         <Container
@@ -61,7 +60,10 @@ const VolunteerPostingDetails = (): React.ReactElement => {
           borderRadius={10}
         >
           {postingDetails ? (
-            <PostingDetails postingDetails={postingDetails} showFooterButton />
+            <PostingDetails
+              postingDetails={postingDetails}
+              showFooterButton={false}
+            />
           ) : null}
         </Container>
       </VStack>
@@ -69,4 +71,4 @@ const VolunteerPostingDetails = (): React.ReactElement => {
   );
 };
 
-export default VolunteerPostingDetails;
+export default AdminPostingDetails;

@@ -24,9 +24,12 @@ export const SIDE_NAVBAR_DEMO_PAGE = "/sidebar-demo";
 
 export const VOLUNTEER_POSTINGS_PAGE = "/volunteer/postings";
 
+export const VOLUNTEER_SHIFTS_PAGE = "/volunteer/shifts";
+
 export const ADMIN_POSTING_CREATE_SHIFTS_PAGE = "/admin/posting/create/shifts";
 
 export const ADMIN_POSTING_CREATE_REVIEW_PAGE = "/admin/posting/create/review";
 
-// Temporary route for testing
 export const VOLUNTEER_POSTING_DETAILS = "/volunteer/posting/:id";
+
+export const ADMIN_POSTING_DETAILS = "/admin/posting/:id";

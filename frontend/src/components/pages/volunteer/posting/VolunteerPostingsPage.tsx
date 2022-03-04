@@ -2,11 +2,14 @@ import React, { useState, useLayoutEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
 import { Text, Box, HStack, Select } from "@chakra-ui/react";
 
-import PostingCard from "../../../volunteer/PostingCard";
+
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
-import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
 import { dateInRange } from "../../../../utils/DateUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
+import PostingCard from "../../../volunteer/PostingCard";
+import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
+import NoShiftsAvailableTableRow from "../../../volunteer/shifts/NoShiftsAvailableTableRow";
+import VolunteerAvailabilityTableRow from "../../../volunteer/shifts/VolunteerAvailabilityTableRow";
 
 type Posting = Omit<
   PostingResponseDTO,
@@ -33,6 +36,7 @@ const POSTINGS = gql`
     }
   }
 `;
+
 
 const VolunteerPostingsPage = (): React.ReactElement => {
   const [postings, setPostings] = useState<Posting[] | null>(null);
@@ -154,6 +158,15 @@ const VolunteerPostingsPage = (): React.ReactElement => {
         )}
       </Box>
     </Box>
+//    <div>
+//       <Text textStyle="display-large">Volunteer Postings</Text>
+//       {/* Temp */}
+//       <NoShiftsAvailableTableRow />
+//       <VolunteerAvailabilityTableRow
+//         start={new Date()}
+//         end={new Date(Date.now() + 2 * 1000 * 60 * 60)}
+//       />
+//     </div>
   );
 };
 
