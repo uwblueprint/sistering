@@ -6,7 +6,8 @@ import { merge } from "lodash";
 import {
   isAuthorizedByRole,
   isAuthorizedByUserId,
-  isAuthorizedByUserIdCreateShiftSignups,
+  isAuthorizedForCreateShiftSignups,
+  isAuthorizedForUpdateShiftSignups,
 } from "../middlewares/auth";
 import authResolvers from "./resolvers/authResolvers";
 import authType from "./types/authType";
@@ -55,7 +56,7 @@ const isValidDateTime = (dateTimeString: string) => {
   return (
     !Number.isNaN(Date.parse(`${dateTimeString}:00`)) && // cover cases of DD > 31
     new Date(`${dateTimeString}:00+00:00`).toISOString().slice(0, 16) ===
-      dateTimeString
+    dateTimeString
   );
 };
 
@@ -136,7 +137,6 @@ const authorizedByAllRoles = () =>
 const authorizedByAdmin = () => isAuthorizedByRole(new Set(["ADMIN"]));
 const authorizedByAdminAndVolunteer = () =>
   isAuthorizedByRole(new Set(["ADMIN", "VOLUNTEER"]));
-const authorizedByVolunteer = () => isAuthorizedByRole(new Set(["VOLUNTEER"]));
 const authorizedByAdminAndEmployee = () =>
   isAuthorizedByRole(new Set(["ADMIN", "EMPLOYEE"]));
 
@@ -194,11 +194,8 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
-    createShiftSignups:
-      authorizedByVolunteer() &&
-      isAuthorizedByUserIdCreateShiftSignups("userId"),
-    updateShiftSignup:
-      authorizedByAdminAndVolunteer() && isAuthorizedByUserId("userId"),
+    createShiftSignups: isAuthorizedForCreateShiftSignups("userId"),
+    updateShiftSignup: isAuthorizedForUpdateShiftSignups("userId"),
   },
 };
 

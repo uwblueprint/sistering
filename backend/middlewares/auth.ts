@@ -83,9 +83,9 @@ export const isAuthorizedByUserId = (userIdField: string) => {
 
 /* Determine if request for a user-specific resource is authorized based on accessToken
  * validity and if the userId that the token was issued to matches the requested userId
- * under all shifts for the createShiftSignups mutation
+ * under all shifts for the createShiftSignups mutation and the user is a volunteer
  * Note: userIdField is the name of the request parameter containing the requested userId */
-export const isAuthorizedByUserIdCreateShiftSignups = (userIdField: string) => {
+export const isAuthorizedForCreateShiftSignups = (userIdField: string) => {
   return async (
     resolve: (
       parent: any,
@@ -99,20 +99,70 @@ export const isAuthorizedByUserIdCreateShiftSignups = (userIdField: string) => {
     info: GraphQLResolveInfo,
   ): Promise<any> => {
     const accessToken = getAccessToken(context.req);
-    args.shifts.forEach(async (shift: any) => {
-      const authorized =
-        accessToken &&
-        (await authService.isAuthorizedByUserId(
-          accessToken,
-          shift[userIdField],
-        ));
+    const authorizedArray = await Promise.all(
+      args.shifts.map(async (shift: any) => {
+        if (accessToken) {
+          return (
+            (await authService.isAuthorizedByUserId(
+              accessToken,
+              shift[userIdField],
+            )) &&
+            (await authService.isAuthorizedByRole(
+              accessToken,
+              new Set(["VOLUNTEER"]),
+            ))
+          );
+        }
+        return false;
+      }),
+    );
 
-      if (!authorized) {
-        throw new AuthenticationError(
-          "Failed authentication and/or authorization by userId",
-        );
-      }
-    });
+    if (authorizedArray.includes(false)) {
+      throw new AuthenticationError(
+        "Failed authentication and/or authorization by userId",
+      );
+    }
+    return resolve(parent, args, context, info);
+  };
+};
+
+/* Determine if request for a user-specific resource is authorized based on accessToken
+ * validity and if the user is an admin or (the userId that the token was issued to matches
+ * the requested userId and the user is a volunteer)
+ * Note: userIdField is the name of the request parameter containing the requested userId */
+export const isAuthorizedForUpdateShiftSignups = (userIdField: string) => {
+  return async (
+    resolve: (
+      parent: any,
+      args: { [key: string]: any },
+      context: ExpressContext,
+      info: GraphQLResolveInfo,
+    ) => any,
+    parent: any,
+    args: { [key: string]: any },
+    context: ExpressContext,
+    info: GraphQLResolveInfo,
+  ): Promise<any> => {
+    const accessToken = getAccessToken(context.req);
+    const authorized =
+      accessToken &&
+      ((await authService.isAuthorizedByRole(
+        accessToken,
+        new Set(["ADMIN"]),
+      )) ||
+        ((await authService.isAuthorizedByRole(
+          accessToken,
+          new Set(["VOLUNTEER"]),
+        )) &&
+          (await authService.isAuthorizedByUserId(
+            accessToken,
+            args[userIdField],
+          ))));
+    if (!authorized) {
+      throw new AuthenticationError(
+        "Failed authentication and/or authorization by userId",
+      );
+    }
 
     return resolve(parent, args, context, info);
   };
