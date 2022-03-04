@@ -7,6 +7,7 @@ import { dateInRange } from "../../../../utils/DateUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import PostingCard from "../../../volunteer/PostingCard";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
+import VolunteerNavbar from "../../../volunteer/VolunteerNavbar";
 
 type Posting = Omit<
   PostingResponseDTO,
@@ -91,69 +92,78 @@ const VolunteerPostingsPage = (): React.ReactElement => {
   );
 
   return (
-    <Box bg="background.light" pt="48px" px="101px" pb="64px" minHeight="100vh">
-      <Box maxW="1280px" mx="auto">
-        <HStack justify="space-between" pb="24px">
-          <Text textStyle="display-small-semibold">Events</Text>
-          <HStack>
-            <Text>Showing: </Text>
-            <Select
-              width="194px"
-              defaultValue="week"
-              size="sm"
-              bg="white"
-              borderRadius="4px"
-              onChange={changeFilter}
-            >
-              <option value="week">This week</option>
-              <option value="month">This month</option>
-              <option value="all">All shifts</option>
-            </Select>
+    <div>
+      <VolunteerNavbar defaultIndex={1} />
+      <Box
+        bg="background.light"
+        pt="48px"
+        px="101px"
+        pb="64px"
+        minHeight="100vh"
+      >
+        <Box maxW="1280px" mx="auto">
+          <HStack justify="space-between" pb="24px">
+            <Text textStyle="display-small-semibold">Events</Text>
+            <HStack>
+              <Text>Showing: </Text>
+              <Select
+                width="194px"
+                defaultValue="week"
+                size="sm"
+                bg="white"
+                borderRadius="4px"
+                onChange={changeFilter}
+              >
+                <option value="week">This week</option>
+                <option value="month">This month</option>
+                <option value="all">All shifts</option>
+              </Select>
+            </HStack>
           </HStack>
-        </HStack>
-        {events && events.length > 0 ? (
-          events.map((posting) => (
-            <Box key={posting.id} pb="24px">
-              <PostingCard
-                key={posting.id}
-                id={posting.id}
-                skills={posting.skills}
-                title={posting.title}
-                startDate={posting.startDate}
-                endDate={posting.endDate}
-                autoClosingDate={posting.autoClosingDate}
-                description={posting.description}
-                branchName={posting.branch.name}
-              />
-            </Box>
-          ))
-        ) : (
-          <EmptyPostingCard type="event" />
-        )}
-        <Text textStyle="display-small-semibold" pb="24px" pt="24px">
-          Volunteer Opportunities
-        </Text>
-        {volunteerOpportunities && volunteerOpportunities.length > 0 ? (
-          volunteerOpportunities.map((posting) => (
-            <Box key={posting.id} pb="24px">
-              <PostingCard
-                key={posting.id}
-                id={posting.id}
-                skills={posting.skills}
-                title={posting.title}
-                startDate={posting.startDate}
-                endDate={posting.endDate}
-                autoClosingDate={posting.autoClosingDate}
-                description={posting.description}
-                branchName={posting.branch.name}
-              />
-            </Box>
-          ))
-        ) : (
-          <EmptyPostingCard type="opportunity" />
-        )}
+          {events && events.length > 0 ? (
+            events.map((posting) => (
+              <Box key={posting.id} pb="24px">
+                <PostingCard
+                  key={posting.id}
+                  id={posting.id}
+                  skills={posting.skills}
+                  title={posting.title}
+                  startDate={posting.startDate}
+                  endDate={posting.endDate}
+                  autoClosingDate={posting.autoClosingDate}
+                  description={posting.description}
+                  branchName={posting.branch.name}
+                />
+              </Box>
+            ))
+          ) : (
+            <EmptyPostingCard type="event" />
+          )}
+          <Text textStyle="display-small-semibold" pb="24px" pt="24px">
+            Volunteer Opportunities
+          </Text>
+          {volunteerOpportunities && volunteerOpportunities.length > 0 ? (
+            volunteerOpportunities.map((posting) => (
+              <Box key={posting.id} pb="24px">
+                <PostingCard
+                  key={posting.id}
+                  id={posting.id}
+                  skills={posting.skills}
+                  title={posting.title}
+                  startDate={posting.startDate}
+                  endDate={posting.endDate}
+                  autoClosingDate={posting.autoClosingDate}
+                  description={posting.description}
+                  branchName={posting.branch.name}
+                />
+              </Box>
+            ))
+          ) : (
+            <EmptyPostingCard type="opportunity" />
+          )}
+        </Box>
       </Box>
-    </Box>
+    </div>
   );
 };
 

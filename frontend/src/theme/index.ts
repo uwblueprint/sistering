@@ -75,7 +75,7 @@ const customTheme = extendTheme(
       },
       Button: {
         baseStyle: {
-          textStyle: "button-regular",
+          textStyle: "button-semibold",
         },
         variants: {
           outline: {

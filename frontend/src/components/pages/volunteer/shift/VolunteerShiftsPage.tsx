@@ -1,10 +1,15 @@
 import React from "react";
-import { Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
+import VolunteerNavbar from "../../../volunteer/VolunteerNavbar";
+import { VolunteerPages } from "../../../../constants/Volunteer";
 
 const VolunteerShiftsPage = (): React.ReactElement => {
   return (
     <div>
-      <Text textStyle="display-large">Volunteer Shifts</Text>
+      <VolunteerNavbar defaultIndex={VolunteerPages.VolunteerShiftsPage} />
+      <Box bg="background.light">
+        <Text textStyle="display-large">Volunteer Shifts</Text>
+      </Box>
     </div>
   );
 };
