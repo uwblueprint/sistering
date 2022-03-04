@@ -1,3 +1,5 @@
+import { FilterType } from "../types/DateFilterTypes";
+
 // eslint-disable-next-line import/prefer-default-export
 export const formatDateString = (dateStringInput: string): string => {
   const date = new Date(dateStringInput);
@@ -21,7 +23,7 @@ export const formatDateStringWithYear = (dateStringInput: string): string => {
 };
 
 // currently only supports filter by week and month
-export const dateInRange = (start: string, filterType: string): boolean => {
+export const dateInRange = (start: string, filterType: FilterType): boolean => {
   const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
   const startDate = new Date(start);
   return (

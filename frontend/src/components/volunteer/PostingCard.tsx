@@ -10,6 +10,7 @@ import {
   ButtonGroup,
   Tag,
 } from "@chakra-ui/react";
+
 import { formatDateStringWithYear } from "../../utils/DateUtils";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
 
@@ -46,7 +47,7 @@ const PostingCard = ({
         <Tag>{branchName}</Tag>
         <Text textStyle="heading">{title}</Text>
         <HStack spacing={4}>
-          {/* toAdd: conditionally displaying time for event listings */}
+          {/* TODO: conditionally displaying time for event listings */}
           <Text textStyle="caption" noOfLines={2}>
             <TimeIcon w={4} pr={1} />
             See Posting Details
