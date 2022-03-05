@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Button as ChakraButton,
+  Container,
   HStack,
   Tab,
   TabList,
@@ -12,6 +13,7 @@ import {
 
 import Logout from "../auth/Logout";
 import RefreshCredentials from "../auth/RefreshCredentials";
+import AdminScheduleTable from "../admin/schedule/AdminScheduleTable";
 
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
@@ -182,6 +184,9 @@ const Default = (): React.ReactElement => {
         />
       </div>
       <div style={{ height: "2rem" }} />
+      <Container maxW="container.xl">
+        <AdminScheduleTable />
+      </Container>
       <TeamInfoDisplay />
       <DesignSystemDisplay />
     </div>
