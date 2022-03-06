@@ -25,7 +25,10 @@ const CreatePostingShifts = (): React.ReactElement => {
 
   const [startDate, setStartDate] = useState<string>("");
   const [endDate, setEndDate] = useState<string>("");
-  const [recurrenceInterval, setRecurrenceInterval] = useState<string>("");
+  const [
+    recurrenceInterval,
+    setRecurrenceInterval,
+  ] = useState<RecurrenceInterval>("" as RecurrenceInterval);
 
   const [startDateError, setStartDateError] = useState(false);
   const [endDateError, setEndDateError] = useState(false);
@@ -99,14 +102,13 @@ const CreatePostingShifts = (): React.ReactElement => {
             {ADMIN_POSTING_CREATE_SCHEDULING_TIME_SLOTS}
           </Text>
           <FormControl isRequired isInvalid={recurrenceIntervalError}>
-            <FormLabel textStyle="heading">Reoccurance Frequency</FormLabel>
+            <FormLabel textStyle="body-regular">Recurrence Frequency</FormLabel>
             <Flex alignItems="flex-start">
               <VStack spacing={2} alignItems="flex-end">
                 <Select
                   placeholder="How often will this occur?"
                   size="sm"
                   width="425px"
-                  isRequired
                   onChange={(e) =>
                     setRecurrenceInterval(e.target.value as RecurrenceInterval)
                   }
@@ -122,61 +124,55 @@ const CreatePostingShifts = (): React.ReactElement => {
             </Flex>
           </FormControl>
           <VStack spacing={2} alignItems="flex-start">
-            <Text textStyle="heading" fontSize="18px" fontWeight="normal">
+            <Text textStyle="body-regular" fontWeight="medium">
               Select Start and End Dates
             </Text>
-            <Flex>
-              <HStack spacing={5} alignItems="flex-start">
-                <FormControl isRequired isInvalid={startDateError}>
-                  <Flex>
-                    <FormLabel textStyle="heading" fontSize="18px">
-                      From
-                    </FormLabel>
-                    <VStack spacing={2} alignItems="flex-end">
-                      <Input
-                        type="date"
-                        value={startDate}
-                        onChange={(e) => setStartDate(e.target.value)}
-                        size="sm"
-                        style={{
-                          maxWidth: "278px",
-                        }}
-                      />
-                      <FormErrorMessage>
-                        Please enter a valid date.
-                      </FormErrorMessage>
-                    </VStack>
-                  </Flex>
-                </FormControl>
-                <FormControl isRequired isInvalid={endDateError}>
-                  <Flex>
-                    <FormLabel textStyle="heading" fontSize="18px">
-                      To
-                    </FormLabel>
-                    <VStack spacing={2} alignItems="flex-end">
-                      <Input
-                        type="date"
-                        value={endDate}
-                        onChange={(e) => setEndDate(e.target.value)}
-                        size="sm"
-                        style={{
-                          maxWidth: "278px",
-                        }}
-                      />
-                      <FormErrorMessage>
-                        Please enter a valid date.
-                      </FormErrorMessage>
-                    </VStack>
-                  </Flex>
-                </FormControl>
-              </HStack>
-            </Flex>
+            <HStack spacing={5} alignItems="flex-start">
+              <FormControl isRequired isInvalid={startDateError}>
+                <Flex>
+                  <FormLabel textStyle="caption">From</FormLabel>
+                  <VStack spacing={2} alignItems="flex-end">
+                    <Input
+                      type="date"
+                      value={startDate}
+                      onChange={(e) => setStartDate(e.target.value)}
+                      size="sm"
+                      style={{
+                        maxWidth: "278px",
+                      }}
+                    />
+                    <FormErrorMessage>
+                      Please enter a valid date.
+                    </FormErrorMessage>
+                  </VStack>
+                </Flex>
+              </FormControl>
+              <FormControl isRequired isInvalid={endDateError}>
+                <Flex>
+                  <FormLabel textStyle="caption">To</FormLabel>
+                  <VStack spacing={2} alignItems="flex-end">
+                    <Input
+                      type="date"
+                      value={endDate}
+                      onChange={(e) => setEndDate(e.target.value)}
+                      size="sm"
+                      style={{
+                        maxWidth: "278px",
+                      }}
+                    />
+                    <FormErrorMessage>
+                      Please enter a valid date.
+                    </FormErrorMessage>
+                  </VStack>
+                </Flex>
+              </FormControl>
+            </HStack>
           </VStack>
           <VStack spacing={2}>
             <FormControl isRequired>
-              <FormLabel textStyle="heading">Select Shift times</FormLabel>
+              <FormLabel textStyle="body-regular">Select Shift Times</FormLabel>
             </FormControl>
-            <Text fontSize="16px">{ADMIN_POSTING_CREATE_SHIFTS_TIME}</Text>
+            <Text textStyle="caption">{ADMIN_POSTING_CREATE_SHIFTS_TIME}</Text>
           </VStack>
         </VStack>
         <Button onClick={handleNext}>Next</Button>
