@@ -118,6 +118,7 @@ const ShiftCalendar = ({
         scrollTime="09:00:00"
         slotDuration="00:15:00"
         slotLabelInterval="01:00"
+        timeZone="UTC"
       />
     </Box>
   );
