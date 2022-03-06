@@ -34,7 +34,6 @@ import postingContextReducer from "./reducers/PostingContextReducer";
 import sampleContextReducer from "./reducers/SampleContextReducer";
 import PostingContextDispatcherContext from "./contexts/admin/PostingContextDispatcherContext";
 import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherContext";
-import EditPostingPage from "./components/pages/EditPostingPage";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import VolunteerPostingsPage from "./components/pages/volunteer/posting/VolunteerPostingsPage";
@@ -122,11 +121,6 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.EDIT_TEAM_PAGE}
                       component={EditTeamInfoPage}
-                    />
-                    <PrivateRoute
-                      exact
-                      path={Routes.EDIT_POSTING_PAGE}
-                      component={EditPostingPage}
                     />
                     <PrivateRoute
                       exact

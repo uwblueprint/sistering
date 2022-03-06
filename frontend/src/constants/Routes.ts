@@ -12,8 +12,6 @@ export const NOT_FOUND_PAGE = "/not-found";
 
 export const EDIT_TEAM_PAGE = "/edit-team";
 
-export const EDIT_POSTING_PAGE = "/edit-posting";
-
 export const DISPLAY_ENTITY_PAGE = "/entity";
 
 export const CREATE_ENTITY_PAGE = "/entity/create";
