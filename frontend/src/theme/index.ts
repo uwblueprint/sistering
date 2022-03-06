@@ -126,6 +126,15 @@ const customTheme = extendTheme(
           },
         },
       },
+      Link: {
+        baseStyle: {
+          textStyle: "button-semibold",
+          _hover: {
+            textDecoration: "none",
+          },
+          color: "violet",
+        },
+      },
     },
   },
   withDefaultColorScheme({ colorScheme: "brand" }),
