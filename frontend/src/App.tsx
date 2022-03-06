@@ -167,6 +167,11 @@ const App = (): React.ReactElement => {
                       path={Routes.ADMIN_POSTING_DETAILS}
                       component={AdminPostingDetails}
                     />
+                    <PrivateRoute
+                      exact
+                      path={Routes.NOT_FOUND_PAGE}
+                      component={NotFound}
+                    />
                     <Route exact path="*" component={NotFound} />
                   </Switch>
                 </Router>

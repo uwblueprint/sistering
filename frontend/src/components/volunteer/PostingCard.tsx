@@ -11,8 +11,8 @@ import {
   Tag,
 } from "@chakra-ui/react";
 
+import { formatDateStringWithYear } from "../../utils/DateTimeUtils";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
-import { formatDateStringYear } from "../../utils/DateTimeUtils";
 
 type PostingCardProps = {
   id: string;

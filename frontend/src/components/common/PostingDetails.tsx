@@ -13,6 +13,7 @@ import PocCard from "./PocCard";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 import { formatDateStringYear } from "../../utils/DateTimeUtils";
 
+
 type PostingDetailsProps = {
   postingDetails: PostingResponseDTO;
   showFooterButton: boolean;
