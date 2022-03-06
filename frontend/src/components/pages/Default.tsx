@@ -1,21 +1,20 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import {
-  HStack,
-  Tag,
-  Text,
   Button as ChakraButton,
+  HStack,
+  Tab,
   TabList,
   Tabs,
-  Tab,
+  Tag,
+  Text,
 } from "@chakra-ui/react";
-
-import * as Routes from "../../constants/Routes";
-import PostingContext from "../../contexts/admin/PostingContext";
-import SampleContext from "../../contexts/SampleContext";
 
 import Logout from "../auth/Logout";
 import RefreshCredentials from "../auth/RefreshCredentials";
+
+import * as Routes from "../../constants/Routes";
+import SampleContext from "../../contexts/SampleContext";
 
 type ButtonProps = { text: string; path: string };
 
@@ -26,34 +25,6 @@ const Button = ({ text, path }: ButtonProps) => {
     <button className="btn btn-primary" onClick={navigateTo} type="button">
       {text}
     </button>
-  );
-};
-
-const PostingInfoDisplay = () => {
-  const {
-    title,
-    type,
-    status,
-    description,
-    startDate,
-    endDate,
-    autoClosingDate,
-    numVolunteers,
-    recurrenceInterval,
-  } = useContext(PostingContext);
-  return (
-    <div>
-      <Text textStyle="display-large">Posting Info</Text>
-      <div>Title: {title}</div>
-      <div>Type: {type}</div>
-      <div>Status: {status}</div>
-      <div>Description: {description}</div>
-      <div>Start Date: {startDate}</div>
-      <div>End Date: {endDate}</div>
-      <div>Auto-Closing Date: {autoClosingDate}</div>
-      <div># Volunteers: {numVolunteers}</div>
-      <div>Recurrence Interval: {recurrenceInterval}</div>
-    </div>
   );
 };
 
@@ -221,7 +192,6 @@ const Default = (): React.ReactElement => {
       </div>
       <div style={{ height: "2rem" }} />
       <TeamInfoDisplay />
-      <PostingInfoDisplay />
       <DesignSystemDisplay />
     </div>
   );
