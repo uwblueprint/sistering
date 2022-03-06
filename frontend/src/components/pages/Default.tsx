@@ -13,7 +13,9 @@ import {
 
 import Logout from "../auth/Logout";
 import RefreshCredentials from "../auth/RefreshCredentials";
-import AdminScheduleTable from "../admin/schedule/AdminScheduleTable";
+import AdminScheduleTable, {
+  TableTestData,
+} from "../admin/schedule/AdminScheduleTable";
 
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
@@ -185,7 +187,7 @@ const Default = (): React.ReactElement => {
       </div>
       <div style={{ height: "2rem" }} />
       <Container maxW="container.xl">
-        <AdminScheduleTable />
+        <AdminScheduleTable schedule={TableTestData} />
       </Container>
       <TeamInfoDisplay />
       <DesignSystemDisplay />

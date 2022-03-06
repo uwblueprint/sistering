@@ -1,33 +1,49 @@
-import { Td, Text, Tr } from "@chakra-ui/react";
+import { Button, Td, Text, Tr } from "@chakra-ui/react";
 import React from "react";
 
 type AdminScheduleTableRowProps = {
   volunteer?: string;
+  userId?: string;
   postingStart?: Date;
   postingEnd?: Date;
 };
 
 const AdminScheduleTableRow = ({
   volunteer,
+  userId,
   postingStart,
   postingEnd,
 }: AdminScheduleTableRowProps): React.ReactElement => {
-  // Case 1: No shifts available
+  // No shifts available
   if (!postingStart || !postingEnd) {
     return (
       <Tr>
-        <Td>
+        <Td colSpan={3}>
           <Text color="text.gray">No shifts available</Text>
         </Td>
       </Tr>
     );
   }
-  // Case 2: Shift is available but no volunteer is assigned
-  if (!volunteer) {
-    return <></>;
-  }
-  // Case 3: Shift is available and volunteer is assigned
-  return <></>;
+  // Shift is available
+  return (
+    <Tr>
+      <Td>
+        <Text>5:00pm - 7:00pm (2 hrs)</Text>
+      </Td>
+      <Td>
+        {volunteer && userId ? (
+          <Text color="text.gray">No volunteers</Text>
+        ) : (
+          <Text>{volunteer}</Text>
+        )}
+      </Td>
+      <Td textAlign="right">
+        <Button color="text.critical" variant="none">
+          Remove
+        </Button>
+      </Td>
+    </Tr>
+  );
 };
 
 export default AdminScheduleTableRow;

@@ -10,8 +10,8 @@ const AdminScheduleTableDate = ({
 }: AdminScheduleTableDateProps): React.ReactElement => {
   return (
     <Tr>
-      <Th>
-        <Text>{date.toDateString()}</Text>
+      <Th colSpan={3}>
+        <Text>{date.toUTCString()}</Text>
       </Th>
     </Tr>
   );
