@@ -1,19 +1,14 @@
 import { Table, Tbody, Td, Text, Tr } from "@chakra-ui/react";
 import React from "react";
 import moment from "moment";
+import { ShiftResponseDTO, TimeBlock } from "../../../types/api/ShiftTypes";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
 
-type VolunteerAvailabilityTableProps = { postingId: number };
-
-// Temp type
-type Shift = {
-  startTime: Date;
-  endTime: Date;
-};
+type VolunteerAvailabilityTableProps = { postingShifts: ShiftResponseDTO[] };
 
 const VolunteerAvailabilityTable = ({
-  postingId,
+  postingShifts,
 }: VolunteerAvailabilityTableProps): React.ReactElement => {
   // Side note: I think we should try to avoid doing queries in table components when avbailable03
   // Query to get some posting
@@ -23,28 +18,6 @@ const VolunteerAvailabilityTable = ({
   const postingStartWeek = new Date(
     current.setDate(current.getDate() - current.getDay()),
   );
-  const postingShifts: Shift[] = [
-    {
-      startTime: new Date(),
-      endTime: new Date(Date.now() + 2.25 * 1000 * 60 * 60),
-    },
-    {
-      startTime: new Date(Date.now() + 3 * 1000 * 60 * 60),
-      endTime: new Date(Date.now() + 4 * 1000 * 60 * 60),
-    },
-    {
-      startTime: new Date(
-        new Date(Date.now() + 2 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-      endTime: new Date(
-        new Date(Date.now() + 2.5 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-    },
-  ];
 
   const [currentWeek, setWeek] = React.useState(postingStartWeek);
   const [shifts, setShifts] = React.useState(postingShifts);
