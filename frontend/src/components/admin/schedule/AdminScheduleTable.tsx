@@ -1,13 +1,9 @@
-import React, { useEffect } from "react";
+import React, { Fragment } from "react";
 import { Table, Tbody } from "@chakra-ui/react";
 import AdminScheduleTableDate from "./AdminScheduleTableDate";
 import AdminScheduleTableRow from "./AdminScheduleTableRow";
 
 export const TableTestData = [
-  {
-    date: new Date("2022-03-07"),
-    signups: [],
-  },
   {
     date: new Date("2022-03-06"),
     signups: [
@@ -24,6 +20,10 @@ export const TableTestData = [
     ],
   },
   {
+    date: new Date("2022-03-07"),
+    signups: [],
+  },
+  {
     date: new Date("2022-03-08"),
     signups: [
       {
@@ -33,6 +33,10 @@ export const TableTestData = [
         userId: "1",
       },
     ],
+  },
+  {
+    date: new Date("2022-03-09"),
+    signups: [],
   },
   {
     date: new Date("2022-03-10"),
@@ -50,10 +54,6 @@ export const TableTestData = [
         userId: "420",
       },
     ],
-  },
-  {
-    date: new Date("2022-03-09"),
-    signups: [],
   },
   {
     date: new Date("2022-03-11"),
@@ -91,43 +91,35 @@ type AdminScheduleTableProps = {
 const AdminScheduleTable = ({
   schedule,
 }: AdminScheduleTableProps): React.ReactElement => {
-  // Keep track of the schedule as a state to sort the schedule on useEffect.
-  const [adminSchedule, setAdminSchedule] = React.useState<AdminScheduleDay[]>(
-    schedule,
-  );
-
-  useEffect(() => {
-    // Sort the schedule by date
-    const sortedSchedule = adminSchedule.sort((a, b) => {
-      return a.date.getTime() - b.date.getTime();
-    });
-    setAdminSchedule(sortedSchedule);
-  }, [adminSchedule]);
-
-  console.log(adminSchedule);
-
   return (
     <Table variant="brand">
-      <col style={{ width: "30%" }} />
-      <col style={{ width: "40%" }} />
-      <col style={{ width: "30%" }} />
+      <colgroup>
+        <col style={{ width: "30%" }} />
+        <col style={{ width: "40%" }} />
+        <col style={{ width: "30%" }} />
+      </colgroup>
       <Tbody>
-        {adminSchedule.map((day) => {
+        {schedule.map((day) => {
           return (
-            <>
+            <Fragment key={day.date.toDateString()}>
               <AdminScheduleTableDate
                 key={day.date.toDateString()}
                 date={day.date}
               />
-              {day.signups.map((signup: AdminScheduleSignup, i) => (
-                <AdminScheduleTableRow
-                  key={`${signup.userId}-${i}`}
-                  volunteer={signup.volunteer}
-                  postingStart={signup.startTime}
-                  postingEnd={signup.endTime}
-                />
-              ))}
-            </>
+              {day.signups.length > 0 ? (
+                day.signups.map((signup: AdminScheduleSignup, i) => (
+                  <AdminScheduleTableRow
+                    key={`${signup.userId}-${i}`}
+                    volunteer={signup.volunteer}
+                    userId={signup.userId}
+                    postingStart={signup.startTime}
+                    postingEnd={signup.endTime}
+                  />
+                ))
+              ) : (
+                <AdminScheduleTableRow />
+              )}
+            </Fragment>
           );
         })}
       </Tbody>

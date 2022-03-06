@@ -31,16 +31,18 @@ const AdminScheduleTableRow = ({
         <Text>5:00pm - 7:00pm (2 hrs)</Text>
       </Td>
       <Td>
-        {volunteer && userId ? (
+        {!volunteer && !userId ? (
           <Text color="text.gray">No volunteers</Text>
         ) : (
           <Text>{volunteer}</Text>
         )}
       </Td>
       <Td textAlign="right">
-        <Button color="text.critical" variant="none">
-          Remove
-        </Button>
+        {volunteer && userId && (
+          <Button color="text.critical" variant="none">
+            Remove
+          </Button>
+        )}
       </Td>
     </Tr>
   );
