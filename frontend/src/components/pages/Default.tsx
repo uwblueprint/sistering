@@ -31,9 +31,6 @@ const Button = ({ text, path }: ButtonProps) => {
 
 const PostingInfoDisplay = () => {
   const {
-    branchId,
-    skills,
-    employees,
     title,
     type,
     status,
@@ -47,7 +44,6 @@ const PostingInfoDisplay = () => {
   return (
     <div>
       <Text textStyle="display-large">Posting Info</Text>
-      <div>Branch ID: {branchId}</div>
       <div>Title: {title}</div>
       <div>Type: {type}</div>
       <div>Status: {status}</div>
@@ -57,18 +53,6 @@ const PostingInfoDisplay = () => {
       <div>Auto-Closing Date: {autoClosingDate}</div>
       <div># Volunteers: {numVolunteers}</div>
       <div>Recurrence Interval: {recurrenceInterval}</div>
-      <div>
-        Skills:{" "}
-        {skills.map(
-          (name, i) => ` ${name}${i === skills.length - 1 ? "" : ","}`,
-        )}
-      </div>
-      <div>
-        Employees:{" "}
-        {employees.map(
-          (name, i) => ` ${name}${i === skills.length - 1 ? "" : ","}`,
-        )}
-      </div>
     </div>
   );
 };
@@ -220,7 +204,10 @@ const Default = (): React.ReactElement => {
         <Button text="Update Entity" path={Routes.UPDATE_ENTITY_PAGE} />
         <Button text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />
         <Button text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
-        <Button text="Edit Posting" path={Routes.EDIT_POSTING_PAGE} />
+        <Button
+          text="Edit Posting"
+          path={Routes.ADMIN_POSTING_CREATE_BASIC_INFO_PAGE}
+        />
         <Button
           text="Create Shifts"
           path={Routes.ADMIN_POSTING_CREATE_SHIFTS_PAGE}

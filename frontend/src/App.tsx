@@ -38,6 +38,7 @@ import EditPostingPage from "./components/pages/EditPostingPage";
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import VolunteerPostingsPage from "./components/pages/volunteer/posting/VolunteerPostingsPage";
+import CreatePostingBasicInfoPage from "./components/pages/admin/posting/CreatePostingBasicInfoPage";
 import CreatePostingShiftsPage from "./components/pages/admin/posting/CreatePostingShiftsPage";
 import CreatePostingReviewPage from "./components/pages/admin/posting/CreatePostingReviewPage";
 import VolunteerPostingDetails from "./components/pages/volunteer/posting/VolunteerPostingDetails";
@@ -146,6 +147,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.VOLUNTEER_SHIFTS_PAGE}
                       component={VolunteerShiftsPage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_POSTING_CREATE_BASIC_INFO_PAGE}
+                      component={CreatePostingBasicInfoPage}
                     />
                     <PrivateRoute
                       exact

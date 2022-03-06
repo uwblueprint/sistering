@@ -9,20 +9,20 @@ export default (
   action: PostingContextAction,
 ): PostingContextType => {
   switch (action.type) {
-    case "ADMIN_POSTING_EDIT_BRANCH_ID":
+    case "ADMIN_POSTING_EDIT_BRANCH":
       return {
         ...state,
-        branchId: action.value,
+        branch: { ...action.value },
       };
     case "ADMIN_POSTING_EDIT_SKILLS":
       return {
         ...state,
-        skills: action.value,
+        skills: action.value.map((v) => ({ ...v })),
       };
     case "ADMIN_POSTING_EDIT_EMPLOYEES":
       return {
         ...state,
-        employees: action.value,
+        employees: action.value.map((v) => ({ ...v })),
       };
     case "ADMIN_POSTING_EDIT_TITLE":
       return {

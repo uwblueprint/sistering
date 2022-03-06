@@ -10,10 +10,10 @@ import {
   Table,
   Tbody,
   Text,
-  Circle,
   Tag,
 } from "@chakra-ui/react";
 
+import FormHeader from "../../common/FormHeader";
 import LabelledText from "../../common/LabelledText";
 import PocCard from "../../common/PocCard";
 import ScheduledShiftsTr from "./ScheduledShiftsTr";
@@ -23,7 +23,7 @@ import { ADMIN_POSTING_CREATE_REVIEW_ENTER_ALL_DETAILS } from "../../../constant
 
 const CreatePostingReview = (): React.ReactElement => {
   const {
-    branchId,
+    branch,
     skills,
     employees,
     title,
@@ -36,20 +36,7 @@ const CreatePostingReview = (): React.ReactElement => {
     <Container maxW="container.xl" p={0}>
       <Flex p={10}>
         <VStack w="full" spacing={5} alignItems="flex-start">
-          <HStack spacing={5}>
-            <Circle
-              size="46px"
-              bg="transparent"
-              borderWidth="3px"
-              borderColor="violet"
-              pb={1}
-            >
-              <Text textStyle="heading" color="violet" fontWeight="bold">
-                3
-              </Text>
-            </Circle>
-            <Text textStyle="heading">Review and Post</Text>
-          </HStack>
+          <FormHeader symbol="3" title="Review and Post" />
           <VStack w="full" spacing={9} alignItems="flex-start" px={2}>
             <Text textStyle="caption">
               {ADMIN_POSTING_CREATE_REVIEW_ENTER_ALL_DETAILS}
@@ -58,7 +45,7 @@ const CreatePostingReview = (): React.ReactElement => {
               <Text textStyle="heading">Basic Information</Text>
               <SimpleGrid columns={3} w="full">
                 <GridItem colSpan={1}>
-                  <LabelledText label="Branch" text={branchId} />
+                  <LabelledText label="Branch" text={branch.name} />
                 </GridItem>
                 <GridItem colSpan={1}>
                   <LabelledText label="Title" text={title} />
@@ -81,15 +68,17 @@ const CreatePostingReview = (): React.ReactElement => {
                   Point(s) of Contact
                 </Text>
                 <HStack spacing={6}>
-                  {employees.map((name, i) => (
-                    <PocCard
-                      name={name}
-                      title="hard code"
-                      email="hard code"
-                      phoneNumber="hard code"
-                      key={i}
-                    />
-                  ))}
+                  {employees.map(
+                    ({ firstName, lastName, email, phoneNumber }, i) => (
+                      <PocCard
+                        name={`${firstName} ${lastName}`}
+                        title="REPLACE WITH TITLE"
+                        email={email}
+                        phoneNumber={phoneNumber ?? "Not available"}
+                        key={i}
+                      />
+                    ),
+                  )}
                 </HStack>
               </Stack>
               <Stack>
@@ -97,7 +86,7 @@ const CreatePostingReview = (): React.ReactElement => {
                   Skills
                 </Text>
                 <HStack>
-                  {skills.map((name, i) => (
+                  {skills.map(({ name }, i) => (
                     <Tag variant="brand" key={i}>
                       {name}
                     </Tag>

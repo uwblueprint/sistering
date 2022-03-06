@@ -28,6 +28,9 @@ export const VOLUNTEER_POSTINGS_PAGE = "/volunteer/postings";
 
 export const VOLUNTEER_SHIFTS_PAGE = "/volunteer/shifts";
 
+export const ADMIN_POSTING_CREATE_BASIC_INFO_PAGE =
+  "/admin/posting/create/basic-info";
+
 export const ADMIN_POSTING_CREATE_SHIFTS_PAGE = "/admin/posting/create/shifts";
 
 export const ADMIN_POSTING_CREATE_REVIEW_PAGE = "/admin/posting/create/review";

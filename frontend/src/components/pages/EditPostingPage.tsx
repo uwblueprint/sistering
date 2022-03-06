@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { Text } from "@chakra-ui/react";
 
 import MainPageButton from "../common/MainPageButton";
@@ -10,30 +10,8 @@ import {
   RecurrenceInterval,
 } from "../../types/PostingTypes";
 
-type DeleteButtonProps = { index: number; onClick: (index: number) => void };
-
-const DeleteButton: React.FC<DeleteButtonProps> = ({
-  index,
-  onClick,
-}: DeleteButtonProps) => {
-  return (
-    <button
-      type="button"
-      className="btn btn-link"
-      onClick={() => {
-        onClick(index);
-      }}
-    >
-      Delete
-    </button>
-  );
-};
-
 const EditPostingPage = (): React.ReactElement => {
   const {
-    branchId,
-    skills,
-    employees,
     title,
     type,
     status,
@@ -45,43 +23,6 @@ const EditPostingPage = (): React.ReactElement => {
     recurrenceInterval,
   } = useContext(PostingContext);
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
-  const [newSkill, setNewSkill] = useState<string>("");
-  const [newEmployee, setNewEmployee] = useState<string>("");
-
-  const setBranchId = (e: React.FormEvent<HTMLInputElement>) => {
-    dispatchPostingUpdate({
-      type: "ADMIN_POSTING_EDIT_BRANCH_ID",
-      value: e.currentTarget.value,
-    });
-  };
-
-  const onSkillDelete = (index: number) => {
-    dispatchPostingUpdate({
-      type: "ADMIN_POSTING_EDIT_SKILLS",
-      value: [...skills.slice(0, index), ...skills.slice(index + 1)],
-    });
-  };
-
-  const onSkillAdd = () => {
-    dispatchPostingUpdate({
-      type: "ADMIN_POSTING_EDIT_SKILLS",
-      value: [...skills, newSkill],
-    });
-  };
-
-  const onEmployeeDelete = (index: number) => {
-    dispatchPostingUpdate({
-      type: "ADMIN_POSTING_EDIT_EMPLOYEES",
-      value: [...employees.slice(0, index), ...employees.slice(index + 1)],
-    });
-  };
-
-  const onEmployeeAdd = () => {
-    dispatchPostingUpdate({
-      type: "ADMIN_POSTING_EDIT_EMPLOYEES",
-      value: [...employees, newEmployee],
-    });
-  };
 
   const setTitle = (e: React.FormEvent<HTMLInputElement>) => {
     dispatchPostingUpdate({
@@ -149,15 +90,6 @@ const EditPostingPage = (): React.ReactElement => {
   return (
     <div style={{ maxWidth: "300px", margin: "0 auto", paddingTop: "20px" }}>
       <Text textStyle="display-large">Edit Posting</Text>
-      <div>
-        Branch ID:{" "}
-        <input
-          type="text"
-          value={branchId}
-          onChange={setBranchId}
-          style={{ border: "1px solid" }}
-        />
-      </div>
       <div>
         Title:{" "}
         <input
@@ -239,56 +171,6 @@ const EditPostingPage = (): React.ReactElement => {
           onChange={setRecurrenceInterval}
           style={{ border: "1px solid" }}
         />
-      </div>
-      <div style={{ marginTop: "1rem" }}>
-        Skills:
-        {skills.map((_name, i) => (
-          <div
-            key={_name}
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            {_name}
-            <DeleteButton index={i} onClick={onSkillDelete} />
-          </div>
-        ))}
-      </div>
-      <div style={{ margin: "1rem 0" }}>
-        <input
-          type="text"
-          value={newSkill}
-          onChange={(e) => {
-            setNewSkill(e.target.value);
-          }}
-          style={{ border: "1px solid" }}
-        />
-        <button type="button" onClick={onSkillAdd} className="btn btn-link">
-          Add
-        </button>
-      </div>
-      <div style={{ marginTop: "1rem" }}>
-        Employees:
-        {employees.map((_name, i) => (
-          <div
-            key={_name}
-            style={{ display: "flex", justifyContent: "space-between" }}
-          >
-            {_name}
-            <DeleteButton index={i} onClick={onEmployeeDelete} />
-          </div>
-        ))}
-      </div>
-      <div style={{ margin: "1rem 0" }}>
-        <input
-          type="text"
-          value={newEmployee}
-          onChange={(e) => {
-            setNewEmployee(e.target.value);
-          }}
-          style={{ border: "1px solid" }}
-        />
-        <button type="button" onClick={onEmployeeAdd} className="btn btn-link">
-          Add
-        </button>
       </div>
       <MainPageButton />
     </div>
