@@ -8,6 +8,8 @@ export const RESET_PASSWORD_PAGE = "/reset-password";
 
 export const DONE_RESET_PASSWORD_PAGE = "/done-reset-password";
 
+export const NOT_FOUND_PAGE = "/not-found";
+
 export const EDIT_TEAM_PAGE = "/edit-team";
 
 export const EDIT_POSTING_PAGE = "/edit-posting";

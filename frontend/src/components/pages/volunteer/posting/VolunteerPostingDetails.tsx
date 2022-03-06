@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React from "react";
 import { VStack, HStack, Box, Container, Button } from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
-import { useParams } from "react-router-dom";
+import { useParams, Redirect } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PostingDetails from "../../../common/PostingDetails";
 
 const POSTING = gql`
@@ -31,18 +30,17 @@ const POSTING = gql`
 
 const VolunteerPostingDetails = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
-  const [
-    postingDetails,
-    setPostingDetails,
-  ] = useState<PostingResponseDTO | null>(null);
-  useQuery(POSTING, {
-    variables: { id },
-    fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      setPostingDetails(data.posting);
+  const { loading, data: { posting: postingDetails } = {} } = useQuery(
+    POSTING,
+    {
+      variables: { id },
+      fetchPolicy: "cache-and-network",
     },
-  });
-  return (
+  );
+
+  return !loading && !postingDetails ? (
+    <Redirect to="/not-found" />
+  ) : (
     <Box bg="background.light" py={7} px={10} minH="100vh">
       <VStack>
         <Container pt={0} pb={4} px={0} maxW="container.xl">

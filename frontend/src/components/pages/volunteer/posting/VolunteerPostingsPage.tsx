@@ -3,7 +3,7 @@ import { gql, useQuery } from "@apollo/client";
 import { Text, Box, HStack, Select } from "@chakra-ui/react";
 
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
-import { dateInRange,} from "../../../../utils/DateTimeUtils";
+import { dateInRange } from "../../../../utils/DateTimeUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import PostingCard from "../../../volunteer/PostingCard";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
