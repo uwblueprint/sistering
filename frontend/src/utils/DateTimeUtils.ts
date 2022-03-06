@@ -18,10 +18,10 @@ export const formatTimeHourMinutes = (date: Date): string => {
  * @param {Date} end
  * @returns the difference in hours between the end and start date
  */
-export const getElapsedHours = (start: Date, end: Date): number => {
+export const getElapsedHours = (start: Date, end: Date): string => {
   const duration = moment.duration(moment(end).diff(moment(start)));
-  // what should be the decimal precision?
-  return duration.asHours();
+  const durationAsHours = (Math.round(duration.asHours() * 4) / 4).toFixed(2);
+  return (durationAsHours.split('.')[1] === '00' ? durationAsHours.split('.')[0] : durationAsHours)
 };
 
 /**
