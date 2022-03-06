@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import { VolunteerPages } from "../../constants/Volunteer";
-import Sistering_Screen_RGB from "../../assets/Sistering_Screen_RGB.png";
+import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 
 const VolunteerNavbar = ({
   defaultIndex,
@@ -24,7 +24,7 @@ const VolunteerNavbar = ({
   return (
     <Box px="110px">
       <Flex h="80px" alignItems="center" justifyContent="space-between">
-        <Image src={Sistering_Screen_RGB} alt="Sistering logo" h={14} />
+        <Image src={Sistering_Logo} alt="Sistering logo" h={14} />
         <Tabs defaultIndex={defaultIndex} alignSelf="flex-end">
           <TabList>
             <Link to="/volunteer/shifts" style={{ textDecoration: "none" }}>
