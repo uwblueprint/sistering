@@ -176,7 +176,7 @@ const Default = (): React.ReactElement => {
         <Button text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />
         <Button text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
         <Button
-          text="Edit Posting"
+          text="Create Posting"
           path={Routes.ADMIN_POSTING_CREATE_BASIC_INFO_PAGE}
         />
         <Button
