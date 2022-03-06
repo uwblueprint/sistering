@@ -2,24 +2,24 @@ import React, { useContext } from "react";
 import {
   Container,
   Flex,
-  Stack,
-  VStack,
+  GridItem,
   HStack,
   SimpleGrid,
-  GridItem,
+  Stack,
   Table,
+  Tag,
   Tbody,
   Text,
-  Tag,
+  VStack,
 } from "@chakra-ui/react";
 
 import FormHeader from "../../common/FormHeader";
 import LabelledText from "../../common/LabelledText";
 import PocCard from "../../common/PocCard";
-import ScheduledShiftsTr from "./ScheduledShiftsTr";
 
 import PostingContext from "../../../contexts/admin/PostingContext";
 import { ADMIN_POSTING_CREATE_REVIEW_ENTER_ALL_DETAILS } from "../../../constants/Copy";
+import ScheduledShiftsTr from "./ScheduledShiftsTr";
 
 const CreatePostingReview = (): React.ReactElement => {
   const {
