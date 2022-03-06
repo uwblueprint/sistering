@@ -16,12 +16,15 @@ export const formatTimeHourMinutes = (date: Date): string => {
  *
  * @param {Date} start
  * @param {Date} end
- * @returns the difference in hours between the end and start date
+ * @returns the difference in hours between the end and start date to the nearest quarter hour (ex: 2, 2.25, 2.50, 2.75)
  */
-export const getElapsedHours = (start: Date, end: Date): string => {
+export const getElapsedHours = (start: Date, end: Date): number => {
   const duration = moment.duration(moment(end).diff(moment(start)));
+  // duration.asHours returns the hour difference with infinite decimal precision
+  // however, we want 2 decimal quarter precision
+  // ex. if duration.asHours() = 1.71333333 -> durationAsHours = 1.75
   const durationAsHours = (Math.round(duration.asHours() * 4) / 4).toFixed(2);
-  return (durationAsHours.split('.')[1] === '00' ? durationAsHours.split('.')[0] : durationAsHours)
+  return parseFloat(durationAsHours);
 };
 
 /**
