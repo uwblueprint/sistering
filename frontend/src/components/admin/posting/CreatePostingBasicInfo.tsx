@@ -351,10 +351,13 @@ const CreatePostingBasicInfo = (): React.ReactElement => {
                       }
                       fontSize="sm"
                       placement="right-end"
+                      color="text.default"
+                      bg="background.light"
                     >
                       <QuestionOutlineIcon
                         boxSize="15px"
                         mb="0.5rem !important"
+                        color="#ADADAD"
                       />
                     </Tooltip>
                   </HStack>
@@ -401,10 +404,13 @@ const CreatePostingBasicInfo = (): React.ReactElement => {
                       label={ADMIN_POSTING_CREATE_BASIC_INFO_SKILLS_TOOLTIP}
                       fontSize="sm"
                       placement="right-end"
+                      color="text.default"
+                      bg="background.light"
                     >
                       <QuestionOutlineIcon
                         boxSize="15px"
                         mb="0.5rem !important"
+                        color="#ADADAD"
                       />
                     </Tooltip>
                   </HStack>
