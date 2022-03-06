@@ -22,7 +22,7 @@ const VolunteerNavbar = ({
   defaultIndex: VolunteerPages;
 }): React.ReactElement => {
   return (
-    <Box px="110px">
+    <Box px="90px">
       <Flex h="80px" alignItems="center" justifyContent="space-between">
         <Image src={Sistering_Logo} alt="Sistering logo" h={14} />
         <Tabs defaultIndex={defaultIndex} alignSelf="flex-end">
@@ -67,6 +67,7 @@ const VolunteerNavbar = ({
             color="text.gray"
             _hover={{ color: "teal" }}
             _active={{ color: "teal" }}
+            mr="20px"
           >
             Sistering Volunteer <ChevronDownIcon />
           </MenuButton>
