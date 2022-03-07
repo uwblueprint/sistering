@@ -4,6 +4,7 @@ import {
   Avatar,
   Button,
   Container,
+  Divider,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -27,7 +28,6 @@ import {
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
 
 import FormHeader from "../../common/FormHeader";
-import MainPageButton from "../../common/MainPageButton";
 import {
   ADMIN_POSTING_CREATE_BASIC_INFO_CLOSING_DATE_TOOLTIP,
   ADMIN_POSTING_CREATE_BASIC_INFO_ENTER_ALL_DETAILS,
@@ -509,8 +509,8 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                 </FormControl>
               </HStack>
             </VStack>
+            <Divider mt="104px !important" mb="18px" />
             <Button onClick={handleNext}>Next</Button>
-            <MainPageButton />
           </VStack>
         </VStack>
       </Flex>
