@@ -13,9 +13,9 @@ import {
   FormLabel,
   FormErrorMessage,
   Button,
-  Circle,
 } from "@chakra-ui/react";
 
+import FormHeader from "../../common/FormHeader";
 import {
   ADMIN_POSTING_CREATE_SCHEDULING_TIME_SLOTS,
   ADMIN_POSTING_CREATE_SHIFTS_TIME,
@@ -142,20 +142,7 @@ const CreatePostingShifts = (): React.ReactElement => {
   return (
     <Container maxW="container.xl">
       <VStack w="full" spacing={5} alignItems="flex-start" p={10}>
-        <HStack spacing={5}>
-          <Circle
-            size="46px"
-            bg="transparent"
-            borderWidth="3px"
-            borderColor="violet"
-            pb={1}
-          >
-            <Text textStyle="heading" fontWeight="bold" color="violet">
-              2
-            </Text>
-          </Circle>
-          <Text textStyle="heading">Scheduling Time Slots</Text>
-        </HStack>
+        <FormHeader symbol="2" title="Scheduling Time Slots" />
         <VStack spacing={30} alignItems="flex-start" px={2}>
           <Text textStyle="caption">
             {ADMIN_POSTING_CREATE_SCHEDULING_TIME_SLOTS}
