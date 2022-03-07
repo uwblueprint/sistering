@@ -8,10 +8,9 @@ import {
 import { CheckIcon } from "@chakra-ui/icons";
 import React from "react";
 import {
-  convertToAmPm,
-  elapsedHours,
-  totalMinutes,
-} from "../../../utils/TimeUtil";
+  formatTimeHourMinutes,
+  getElapsedHours,
+} from "../../../utils/DateTimeUtils";
 
 type VolunteerAvailabilityTableRowProps = { start: Date; end: Date };
 
@@ -24,8 +23,9 @@ const VolunteerAvailabilityTableRow = ({
   return (
     <Flex>
       <Checkbox minWidth={300} mr={170}>
-        {convertToAmPm(totalMinutes(start))} -{" "}
-        {convertToAmPm(totalMinutes(end))} ({elapsedHours(start, end)} hrs)
+        {`${formatTimeHourMinutes(start)} -  ${formatTimeHourMinutes(
+          end,
+        )} (${getElapsedHours(start, end)} hrs)`}
       </Checkbox>
       <InputGroup>
         <Input
