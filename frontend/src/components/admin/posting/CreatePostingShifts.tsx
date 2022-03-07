@@ -26,7 +26,11 @@ import { Shift } from "../../../types/PostingContextTypes";
 import { RecurrenceInterval } from "../../../types/PostingTypes";
 import { getISOStringDateTime } from "../../../utils/DateTimeUtils";
 
-const CreatePostingShifts = (): React.ReactElement => {
+type CreatePostingShiftsProps = { navigateToNext: () => void };
+
+const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
+  navigateToNext,
+}: CreatePostingShiftsProps): React.ReactElement => {
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
 
   const [startDate, setStartDate] = useState<string>("");
@@ -129,6 +133,7 @@ const CreatePostingShifts = (): React.ReactElement => {
           endTime: getISOStringDateTime(event.end),
         })),
       );
+      navigateToNext();
     }
   };
 
