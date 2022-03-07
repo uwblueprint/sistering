@@ -7,7 +7,7 @@ import {
 } from "../../types/PostingTypes";
 
 export const DEFAULT_POSTING_CONTEXT = {
-  branchId: "",
+  branch: { id: "", name: "" },
   skills: [],
   employees: [],
   title: "",

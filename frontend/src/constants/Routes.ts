@@ -12,8 +12,6 @@ export const NOT_FOUND_PAGE = "/not-found";
 
 export const EDIT_TEAM_PAGE = "/edit-team";
 
-export const EDIT_POSTING_PAGE = "/edit-posting";
-
 export const DISPLAY_ENTITY_PAGE = "/entity";
 
 export const CREATE_ENTITY_PAGE = "/entity/create";
@@ -27,6 +25,9 @@ export const SIDE_NAVBAR_DEMO_PAGE = "/sidebar-demo";
 export const VOLUNTEER_POSTINGS_PAGE = "/volunteer/postings";
 
 export const VOLUNTEER_SHIFTS_PAGE = "/volunteer/shifts";
+
+export const ADMIN_POSTING_CREATE_BASIC_INFO_PAGE =
+  "/admin/posting/create/basic-info";
 
 export const ADMIN_POSTING_CREATE_SHIFTS_PAGE = "/admin/posting/create/shifts";
 

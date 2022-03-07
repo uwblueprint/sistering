@@ -1,3 +1,6 @@
+import { BranchDTO } from "./api/BranchTypes";
+import { EmployeeUserDTO } from "./api/EmployeeTypes";
+import { SkillDTO } from "./api/SkillTypes";
 import { PostingStatus, PostingType, RecurrenceInterval } from "./PostingTypes";
 
 type Shift = {
@@ -6,9 +9,9 @@ type Shift = {
 };
 
 export type PostingContextType = {
-  branchId: string;
-  skills: string[];
-  employees: string[];
+  branch: BranchDTO;
+  skills: SkillDTO[];
+  employees: EmployeeUserDTO[];
   title: string;
   type: PostingType;
   status: PostingStatus;
@@ -23,16 +26,16 @@ export type PostingContextType = {
 
 export type PostingContextAction =
   | {
-      type: "ADMIN_POSTING_EDIT_BRANCH_ID";
-      value: string;
+      type: "ADMIN_POSTING_EDIT_BRANCH";
+      value: BranchDTO;
     }
   | {
       type: "ADMIN_POSTING_EDIT_SKILLS";
-      value: string[];
+      value: SkillDTO[];
     }
   | {
       type: "ADMIN_POSTING_EDIT_EMPLOYEES";
-      value: string[];
+      value: EmployeeUserDTO[];
     }
   | {
       type: "ADMIN_POSTING_EDIT_TITLE";
