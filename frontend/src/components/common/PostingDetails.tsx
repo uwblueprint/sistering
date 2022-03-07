@@ -10,9 +10,9 @@ import {
 } from "@chakra-ui/react";
 import { CalendarIcon, TimeIcon } from "@chakra-ui/icons";
 import PocCard from "./PocCard";
+
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 import { formatDateStringYear } from "../../utils/DateTimeUtils";
-
 
 type PostingDetailsProps = {
   postingDetails: PostingResponseDTO;
