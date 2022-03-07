@@ -1,6 +1,8 @@
+import { DateSelectArg } from "@fullcalendar/react";
 import React, { useContext, useState } from "react";
 import {
   Container,
+  Divider,
   Flex,
   HStack,
   VStack,
@@ -13,12 +15,16 @@ import {
   Button,
   Circle,
 } from "@chakra-ui/react";
-import PostingContextDispatcherContext from "../../../contexts/admin/PostingContextDispatcherContext";
-import { RecurrenceInterval } from "../../../types/PostingTypes";
+
 import {
   ADMIN_POSTING_CREATE_SCHEDULING_TIME_SLOTS,
   ADMIN_POSTING_CREATE_SHIFTS_TIME,
 } from "../../../constants/Copy";
+import PostingContextDispatcherContext from "../../../contexts/admin/PostingContextDispatcherContext";
+import ShiftCalendar, { Event } from "../ShiftCalendar/ShiftCalendar";
+import { Shift } from "../../../types/PostingContextTypes";
+import { RecurrenceInterval } from "../../../types/PostingTypes";
+import { getISOStringDateTime } from "../../../utils/DateTimeUtils";
 
 const CreatePostingShifts = (): React.ReactElement => {
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
@@ -29,10 +35,49 @@ const CreatePostingShifts = (): React.ReactElement => {
     recurrenceInterval,
     setRecurrenceInterval,
   ] = useState<RecurrenceInterval>("" as RecurrenceInterval);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [eventCount, setEventCount] = useState<number>(0);
+  const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
   const [startDateError, setStartDateError] = useState(false);
   const [endDateError, setEndDateError] = useState(false);
   const [recurrenceIntervalError, setRecurrenceIntervalError] = useState(false);
+  const [eventsError, setEventsError] = useState(false);
+
+  const addEvent = (newEvent: DateSelectArg) => {
+    setEvents([
+      ...events,
+      {
+        start: newEvent.start,
+        end: newEvent.end,
+        id: `event-${eventCount}`,
+      },
+    ]);
+    setEventCount(eventCount + 1);
+  };
+
+  const changeEvent = (event: Event, oldEvent: Event, currEvents: Event[]) => {
+    const newEvent = currEvents.find(
+      (currEvent) => currEvent.id === oldEvent.id,
+    );
+    if (newEvent) {
+      newEvent.start = event.start;
+      newEvent.end = event.end;
+      setEvents([...currEvents]);
+    }
+  };
+
+  const deleteEvent = (currEvents: Event[]) => {
+    if (selectedEvent) {
+      for (let i = 0; i < currEvents.length; i += 1) {
+        if (currEvents[i].id === selectedEvent.id) {
+          currEvents.splice(i, 1);
+          break;
+        }
+      }
+      setEvents(currEvents);
+    }
+  };
 
   const addStartDate = (date: string) => {
     dispatchPostingUpdate({
@@ -55,21 +100,35 @@ const CreatePostingShifts = (): React.ReactElement => {
     });
   };
 
+  const addTimes = (times: Shift[]) => {
+    dispatchPostingUpdate({
+      type: "ADMIN_POSTING_EDIT_TIMES",
+      value: times,
+    });
+  };
+
   const handleNext = () => {
     // field validations
     setStartDateError(!startDate);
     setEndDateError(!endDate);
     setRecurrenceIntervalError(!recurrenceInterval);
+    setEventsError(events.length < 1);
 
     if (startDate > endDate) {
       setStartDateError(true);
       setEndDateError(true);
     }
 
-    if (startDate && endDate && recurrenceInterval) {
+    if (startDate && endDate && recurrenceInterval && events.length >= 1) {
       addStartDate(startDate);
       addEndDate(endDate);
       addRecurrenceInterval(recurrenceInterval);
+      addTimes(
+        events.map((event) => ({
+          startTime: getISOStringDateTime(event.start),
+          endTime: getISOStringDateTime(event.end),
+        })),
+      );
     }
   };
 
@@ -169,12 +228,28 @@ const CreatePostingShifts = (): React.ReactElement => {
             </HStack>
           </VStack>
           <VStack spacing={2}>
-            <FormControl isRequired>
+            <FormControl isRequired isInvalid={eventsError}>
               <FormLabel textStyle="body-regular">Select Shift Times</FormLabel>
+              <Text textStyle="caption">
+                {ADMIN_POSTING_CREATE_SHIFTS_TIME}
+              </Text>
+              <FormErrorMessage>
+                Please select at least one shift time.
+              </FormErrorMessage>
             </FormControl>
-            <Text textStyle="caption">{ADMIN_POSTING_CREATE_SHIFTS_TIME}</Text>
           </VStack>
         </VStack>
+      </VStack>
+      <ShiftCalendar
+        events={events}
+        selectedEvent={selectedEvent}
+        setSelectedEvent={setSelectedEvent}
+        addEvent={addEvent}
+        changeEvent={changeEvent}
+        deleteEvent={deleteEvent}
+      />
+      <Divider mt="104px" mb="18px" />
+      <VStack alignItems="flex-end">
         <Button onClick={handleNext}>Next</Button>
       </VStack>
     </Container>
