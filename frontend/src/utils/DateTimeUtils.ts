@@ -50,10 +50,19 @@ export const dateInRange = (start: string, filterType: FilterType): boolean => {
       (filterType === "week" ? MS_PER_WEEK : MS_PER_WEEK * 4)
   );
 };
+
 export const getWeekday = (dateStringInput: Date): string => {
   return moment(dateStringInput).format("dddd");
 };
 
 export const getTime = (dateStringInput: Date): string => {
   return moment(dateStringInput).format("hh:mm A");
+};
+
+/**
+ * @param date a date object
+ * @returns a string representation of the date in YYYY-MM-DDTHH:mm format
+ */
+export const getISOStringDateTime = (date: Date): string => {
+  return date.toISOString().substring(0, 16);
 };

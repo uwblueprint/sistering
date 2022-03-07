@@ -3,7 +3,7 @@ import { EmployeeUserDTO } from "./api/EmployeeTypes";
 import { SkillDTO } from "./api/SkillTypes";
 import { PostingStatus, PostingType, RecurrenceInterval } from "./PostingTypes";
 
-type Shift = {
+export type Shift = {
   startTime: string;
   endTime: string;
 };
