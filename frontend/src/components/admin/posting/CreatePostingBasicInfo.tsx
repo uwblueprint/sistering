@@ -43,6 +43,7 @@ import {
 } from "../../../types/api/EmployeeTypes";
 import { SkillDTO, SkillResponseDTO } from "../../../types/api/SkillTypes";
 
+type CreatePostingBasicInfoProps = { navigateToNext: () => void };
 type GraphQLTypeName = { __typename: string };
 type Option = { id: string; name: string };
 
@@ -69,7 +70,9 @@ const BRANCHES_SKILLS_EMPLOYEES = gql`
 
 const ERROR_MESSAGE_HEIGHT = "35px";
 
-const CreatePostingBasicInfo = (): React.ReactElement => {
+const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
+  navigateToNext,
+}: CreatePostingBasicInfoProps): React.ReactElement => {
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
 
   // #region state variables
@@ -267,6 +270,7 @@ const CreatePostingBasicInfo = (): React.ReactElement => {
       addDescription(description);
       addSkills(selectedSkills);
       addEmployees(selectedEmployees);
+      navigateToNext();
     }
   };
   // #endregion
