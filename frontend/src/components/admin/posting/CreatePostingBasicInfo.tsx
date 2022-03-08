@@ -3,7 +3,6 @@ import { gql, useQuery } from "@apollo/client";
 import {
   Avatar,
   Button,
-  Container,
   Divider,
   Flex,
   FormControl,
@@ -277,244 +276,236 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
 
   // #region element
   return (
-    <Container maxW="container.xl" p={0}>
-      <Flex p={10}>
-        <VStack spacing={5} alignItems="flex-start">
-          <FormHeader symbol="1" title="Basic Info" />
-          <VStack w="full" spacing={5} alignItems="flex-end">
-            <VStack w="full" spacing={9} alignItems="flex-start" px={2}>
-              <Text textStyle="caption">
-                {ADMIN_POSTING_CREATE_BASIC_INFO_ENTER_ALL_DETAILS}
-              </Text>
-              <HStack spacing={7} w="full">
-                <FormControl isRequired isInvalid={branchError}>
-                  <FormLabel textStyle="body-regular">Branch</FormLabel>
-                  <Select
-                    placeholder="Select option"
-                    size="sm"
-                    value={selectedBranch}
-                    onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-                      setSelectedBranch(e.target.value)
-                    }
-                  >
-                    {branchOptions.map(({ id, name }) => (
-                      <option value={id} key={id}>
-                        {name}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>Please select a branch.</FormErrorMessage>
-                </FormControl>
-                <FormControl isRequired>
-                  <FormLabel textStyle="body-regular">
-                    Total Number of Volunteers
-                  </FormLabel>
-                  <NumberInput
-                    size="sm"
-                    mb={branchError ? ERROR_MESSAGE_HEIGHT : "0px"}
-                    value={numVolunteers}
-                    min={1}
-                    onChange={(_valueAsString, valueAsNumber) =>
-                      setNumVolunteers(valueAsNumber)
-                    }
-                  >
-                    <NumberInputField />
-                    <NumberInputStepper>
-                      <NumberIncrementStepper />
-                      <NumberDecrementStepper />
-                    </NumberInputStepper>
-                  </NumberInput>
-                </FormControl>
-              </HStack>
-              <HStack spacing={7} w="full">
-                <FormControl isRequired isInvalid={titleError}>
-                  <FormLabel textStyle="body-regular">Role Title</FormLabel>
-                  <Input
-                    placeholder="e.g. Yoga Instructor"
-                    size="sm"
-                    mb={
-                      !titleError && autoClosingDateError
-                        ? ERROR_MESSAGE_HEIGHT
-                        : "0px"
-                    }
-                    value={title}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setTitle(e.target.value)
-                    }
-                  />
-                  <FormErrorMessage>Please enter role title.</FormErrorMessage>
-                </FormControl>
-                <FormControl isRequired isInvalid={autoClosingDateError}>
-                  <HStack>
-                    <FormLabel textStyle="body-regular" mr={0}>
-                      Posting Closing Date
-                    </FormLabel>
-                    <Tooltip
-                      label={
-                        ADMIN_POSTING_CREATE_BASIC_INFO_CLOSING_DATE_TOOLTIP
-                      }
-                      fontSize="sm"
-                      placement="right-end"
-                      color="text.default"
-                      bg="background.light"
-                    >
-                      <QuestionOutlineIcon
-                        boxSize="15px"
-                        mb="0.5rem !important"
-                        color="#ADADAD"
-                      />
-                    </Tooltip>
-                  </HStack>
-                  <Input
-                    size="sm"
-                    type="date"
-                    mb={
-                      !autoClosingDateError && titleError
-                        ? ERROR_MESSAGE_HEIGHT
-                        : "0px"
-                    }
-                    value={autoClosingDate}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                      setAutoClosingDate(e.target.value)
-                    }
-                  />
-                  <FormErrorMessage>Please enter a date.</FormErrorMessage>
-                </FormControl>
-              </HStack>
-              <FormControl isRequired isInvalid={descriptionError}>
-                <FormLabel textStyle="body-regular">Role Description</FormLabel>
-                {/* TODO: replace with RichTextField from Draft.js */}
-                <Textarea
-                  placeholder={
-                    ADMIN_POSTING_CREATE_BASIC_INFO_ROLE_DESCRIPTION_PLACEHOLDER
-                  }
+    <Flex p={10}>
+      <VStack spacing={5} alignItems="flex-start">
+        <FormHeader symbol="1" title="Basic Info" />
+        <VStack w="full" spacing={5} alignItems="flex-end">
+          <VStack w="full" spacing={9} alignItems="flex-start" px={2}>
+            <Text textStyle="caption">
+              {ADMIN_POSTING_CREATE_BASIC_INFO_ENTER_ALL_DETAILS}
+            </Text>
+            <HStack spacing={7} w="full">
+              <FormControl isRequired isInvalid={branchError}>
+                <FormLabel textStyle="body-regular">Branch</FormLabel>
+                <Select
+                  placeholder="Select option"
                   size="sm"
-                  value={description}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                    setDescription(e.target.value)
+                  value={selectedBranch}
+                  onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
+                    setSelectedBranch(e.target.value)
+                  }
+                >
+                  {branchOptions.map(({ id, name }) => (
+                    <option value={id} key={id}>
+                      {name}
+                    </option>
+                  ))}
+                </Select>
+                <FormErrorMessage>Please select a branch.</FormErrorMessage>
+              </FormControl>
+              <FormControl isRequired>
+                <FormLabel textStyle="body-regular">
+                  Total Number of Volunteers
+                </FormLabel>
+                <NumberInput
+                  size="sm"
+                  mb={branchError ? ERROR_MESSAGE_HEIGHT : "0px"}
+                  value={numVolunteers}
+                  min={1}
+                  onChange={(_valueAsString, valueAsNumber) =>
+                    setNumVolunteers(valueAsNumber)
+                  }
+                >
+                  <NumberInputField />
+                  <NumberInputStepper>
+                    <NumberIncrementStepper />
+                    <NumberDecrementStepper />
+                  </NumberInputStepper>
+                </NumberInput>
+              </FormControl>
+            </HStack>
+            <HStack spacing={7} w="full">
+              <FormControl isRequired isInvalid={titleError}>
+                <FormLabel textStyle="body-regular">Role Title</FormLabel>
+                <Input
+                  placeholder="e.g. Yoga Instructor"
+                  size="sm"
+                  mb={
+                    !titleError && autoClosingDateError
+                      ? ERROR_MESSAGE_HEIGHT
+                      : "0px"
+                  }
+                  value={title}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setTitle(e.target.value)
                   }
                 />
+                <FormErrorMessage>Please enter role title.</FormErrorMessage>
+              </FormControl>
+              <FormControl isRequired isInvalid={autoClosingDateError}>
+                <HStack>
+                  <FormLabel textStyle="body-regular" mr={0}>
+                    Posting Closing Date
+                  </FormLabel>
+                  <Tooltip
+                    label={ADMIN_POSTING_CREATE_BASIC_INFO_CLOSING_DATE_TOOLTIP}
+                    fontSize="sm"
+                    placement="right-end"
+                    color="text.default"
+                    bg="background.light"
+                  >
+                    <QuestionOutlineIcon
+                      boxSize="15px"
+                      mb="0.5rem !important"
+                      color="#ADADAD"
+                    />
+                  </Tooltip>
+                </HStack>
+                <Input
+                  size="sm"
+                  type="date"
+                  mb={
+                    !autoClosingDateError && titleError
+                      ? ERROR_MESSAGE_HEIGHT
+                      : "0px"
+                  }
+                  value={autoClosingDate}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    setAutoClosingDate(e.target.value)
+                  }
+                />
+                <FormErrorMessage>Please enter a date.</FormErrorMessage>
+              </FormControl>
+            </HStack>
+            <FormControl isRequired isInvalid={descriptionError}>
+              <FormLabel textStyle="body-regular">Role Description</FormLabel>
+              {/* TODO: replace with RichTextField from Draft.js */}
+              <Textarea
+                placeholder={
+                  ADMIN_POSTING_CREATE_BASIC_INFO_ROLE_DESCRIPTION_PLACEHOLDER
+                }
+                size="sm"
+                value={description}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+                  setDescription(e.target.value)
+                }
+              />
+              <FormErrorMessage>
+                Please enter role description.
+              </FormErrorMessage>
+            </FormControl>
+            <HStack spacing={7} w="full">
+              <FormControl isRequired isInvalid={skillsError}>
+                <HStack>
+                  <FormLabel textStyle="body-regular" mr={0}>
+                    Relevant Skills
+                  </FormLabel>
+                  <Tooltip
+                    label={ADMIN_POSTING_CREATE_BASIC_INFO_SKILLS_TOOLTIP}
+                    fontSize="sm"
+                    placement="right-end"
+                    color="text.default"
+                    bg="background.light"
+                  >
+                    <QuestionOutlineIcon
+                      boxSize="15px"
+                      mb="0.5rem !important"
+                      color="#ADADAD"
+                    />
+                  </Tooltip>
+                </HStack>
+                <Select
+                  placeholder="Select option"
+                  size="sm"
+                  onChange={handleSkillAddition}
+                >
+                  {skillOptions.map(({ id, name }) => (
+                    <option value={id} key={id}>
+                      {name}
+                    </option>
+                  ))}
+                </Select>
                 <FormErrorMessage>
-                  Please enter role description.
+                  Please select at least one skill.
                 </FormErrorMessage>
               </FormControl>
-              <HStack spacing={7} w="full">
-                <FormControl isRequired isInvalid={skillsError}>
-                  <HStack>
-                    <FormLabel textStyle="body-regular" mr={0}>
-                      Relevant Skills
-                    </FormLabel>
-                    <Tooltip
-                      label={ADMIN_POSTING_CREATE_BASIC_INFO_SKILLS_TOOLTIP}
-                      fontSize="sm"
-                      placement="right-end"
-                      color="text.default"
-                      bg="background.light"
-                    >
-                      <QuestionOutlineIcon
-                        boxSize="15px"
-                        mb="0.5rem !important"
-                        color="#ADADAD"
+              <FormControl>
+                <FormLabel textStyle="body-regular">Selected Skills</FormLabel>
+                <HStack
+                  spacing={4}
+                  minHeight="32px"
+                  wrap="wrap"
+                  mb={skillsError ? ERROR_MESSAGE_HEIGHT : "0px"}
+                >
+                  {selectedSkills.map((skillId) => (
+                    <Tag variant="brand" height="32px" key={skillId}>
+                      <TagLabel>
+                        {getOptionNameFromId(skillOptions, skillId)}
+                      </TagLabel>
+                      <TagCloseButton
+                        onClick={() => handleSkillRemoval(skillId)}
                       />
-                    </Tooltip>
-                  </HStack>
-                  <Select
-                    placeholder="Select option"
-                    size="sm"
-                    onChange={handleSkillAddition}
-                  >
-                    {skillOptions.map(({ id, name }) => (
-                      <option value={id} key={id}>
-                        {name}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>
-                    Please select at least one skill.
-                  </FormErrorMessage>
-                </FormControl>
-                <FormControl>
-                  <FormLabel textStyle="body-regular">
-                    Selected Skills
-                  </FormLabel>
-                  <HStack
-                    spacing={4}
-                    minHeight="32px"
-                    wrap="wrap"
-                    mb={skillsError ? ERROR_MESSAGE_HEIGHT : "0px"}
-                  >
-                    {selectedSkills.map((skillId) => (
-                      <Tag variant="brand" height="32px" key={skillId}>
-                        <TagLabel>
-                          {getOptionNameFromId(skillOptions, skillId)}
-                        </TagLabel>
-                        <TagCloseButton
-                          onClick={() => handleSkillRemoval(skillId)}
-                        />
-                      </Tag>
-                    ))}
-                  </HStack>
-                </FormControl>
-              </HStack>
-              <HStack spacing={7} w="full">
-                <FormControl isRequired isInvalid={employeesError}>
-                  <FormLabel textStyle="body-regular">
-                    Point of Contact
-                  </FormLabel>
-                  <Select
-                    placeholder="Select option"
-                    size="sm"
-                    onChange={handleEmployeeAddition}
-                  >
-                    {employeeOptions.map(({ id, firstName, lastName }) => (
-                      <option value={id} key={id}>
-                        {`${firstName} ${lastName}`}
-                      </option>
-                    ))}
-                  </Select>
-                  <FormErrorMessage>
-                    Please select at least one contact.
-                  </FormErrorMessage>
-                </FormControl>
-                <FormControl>
-                  <FormLabel textStyle="body-regular">
-                    Appointed Contacts
-                  </FormLabel>
-                  <HStack
-                    spacing={4}
-                    minHeight="32px"
-                    wrap="wrap"
-                    mb={employeesError ? ERROR_MESSAGE_HEIGHT : "0px"}
-                  >
-                    {selectedEmployees.map((employeeId) => (
-                      <Tag variant="brand" height="32px" key={employeeId}>
-                        <Avatar size="xs" mr={1} bg="violet" />
-                        <TagLabel>
-                          {getOptionNameFromId(
-                            employeeOptions.map(
-                              ({ id, firstName, lastName }) => ({
-                                id,
-                                name: `${firstName} ${lastName}`,
-                              }),
-                            ),
-                            employeeId,
-                          )}
-                        </TagLabel>
-                        <TagCloseButton
-                          onClick={() => handleEmployeeRemoval(employeeId)}
-                        />
-                      </Tag>
-                    ))}
-                  </HStack>
-                </FormControl>
-              </HStack>
-            </VStack>
-            <Divider mt="104px !important" mb="18px" />
-            <Button onClick={handleNext}>Next</Button>
+                    </Tag>
+                  ))}
+                </HStack>
+              </FormControl>
+            </HStack>
+            <HStack spacing={7} w="full">
+              <FormControl isRequired isInvalid={employeesError}>
+                <FormLabel textStyle="body-regular">Point of Contact</FormLabel>
+                <Select
+                  placeholder="Select option"
+                  size="sm"
+                  onChange={handleEmployeeAddition}
+                >
+                  {employeeOptions.map(({ id, firstName, lastName }) => (
+                    <option value={id} key={id}>
+                      {`${firstName} ${lastName}`}
+                    </option>
+                  ))}
+                </Select>
+                <FormErrorMessage>
+                  Please select at least one contact.
+                </FormErrorMessage>
+              </FormControl>
+              <FormControl>
+                <FormLabel textStyle="body-regular">
+                  Appointed Contacts
+                </FormLabel>
+                <HStack
+                  spacing={4}
+                  minHeight="32px"
+                  wrap="wrap"
+                  mb={employeesError ? ERROR_MESSAGE_HEIGHT : "0px"}
+                >
+                  {selectedEmployees.map((employeeId) => (
+                    <Tag variant="brand" height="32px" key={employeeId}>
+                      <Avatar size="xs" mr={1} bg="violet" />
+                      <TagLabel>
+                        {getOptionNameFromId(
+                          employeeOptions.map(
+                            ({ id, firstName, lastName }) => ({
+                              id,
+                              name: `${firstName} ${lastName}`,
+                            }),
+                          ),
+                          employeeId,
+                        )}
+                      </TagLabel>
+                      <TagCloseButton
+                        onClick={() => handleEmployeeRemoval(employeeId)}
+                      />
+                    </Tag>
+                  ))}
+                </HStack>
+              </FormControl>
+            </HStack>
           </VStack>
+          <Divider mt="104px !important" mb="18px" />
+          <Button onClick={handleNext}>Next</Button>
         </VStack>
-      </Flex>
-    </Container>
+      </VStack>
+    </Flex>
   );
   // #endregion
 };

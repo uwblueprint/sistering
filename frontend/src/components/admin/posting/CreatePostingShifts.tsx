@@ -1,7 +1,6 @@
 import { DateSelectArg } from "@fullcalendar/react";
 import React, { useContext, useState } from "react";
 import {
-  Container,
   Divider,
   Flex,
   HStack,
@@ -145,7 +144,7 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
   ];
 
   return (
-    <Container maxW="container.xl">
+    <div>
       <VStack w="full" spacing={5} alignItems="flex-start" p={10}>
         <FormHeader symbol="2" title="Scheduling Time Slots" />
         <VStack spacing={30} alignItems="flex-start" px={2}>
@@ -244,7 +243,7 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
       <VStack alignItems="flex-end">
         <Button onClick={handleNext}>Next</Button>
       </VStack>
-    </Container>
+    </div>
   );
 };
 
