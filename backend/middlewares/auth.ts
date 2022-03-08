@@ -99,25 +99,26 @@ export const isAuthorizedForCreateShiftSignups = (userIdField: string) => {
     info: GraphQLResolveInfo,
   ): Promise<any> => {
     const accessToken = getAccessToken(context.req);
-    const authorizedArray = await Promise.all(
-      args.shifts.map(async (shift: any) => {
-        if (accessToken) {
-          return (
-            (await authService.isAuthorizedByUserId(
+    let authorized = false;
+    if (accessToken) {
+      const authorizedByVolunteer = await authService.isAuthorizedByRole(
+        accessToken,
+        new Set(["VOLUNTEER"]),
+      );
+      if (authorizedByVolunteer) {
+        const authorizedArray = await Promise.all(
+          args.shifts.map(async (shift: any) => {
+            return authService.isAuthorizedByUserId(
               accessToken,
               shift[userIdField],
-            )) &&
-            (await authService.isAuthorizedByRole(
-              accessToken,
-              new Set(["VOLUNTEER"]),
-            ))
-          );
-        }
-        return false;
-      }),
-    );
+            );
+          }),
+        );
+        authorized = !authorizedArray.includes(false);
+      }
+    }
 
-    if (authorizedArray.includes(false)) {
+    if (!authorized) {
       throw new AuthenticationError(
         "Failed authentication and/or authorization by userId",
       );
@@ -144,20 +145,24 @@ export const isAuthorizedForUpdateShiftSignups = (userIdField: string) => {
     info: GraphQLResolveInfo,
   ): Promise<any> => {
     const accessToken = getAccessToken(context.req);
-    const authorized =
-      accessToken &&
-      ((await authService.isAuthorizedByRole(
-        accessToken,
-        new Set(["ADMIN"]),
-      )) ||
-        ((await authService.isAuthorizedByRole(
+    let authorized = false;
+    if (accessToken) {
+      const authorizedByVolunteer =
+        (await authService.isAuthorizedByRole(
           accessToken,
           new Set(["VOLUNTEER"]),
         )) &&
-          (await authService.isAuthorizedByUserId(
-            accessToken,
-            args[userIdField],
-          ))));
+        (await authService.isAuthorizedByUserId(
+          accessToken,
+          args[userIdField],
+        ));
+      authorized =
+        (await authService.isAuthorizedByRole(
+          accessToken,
+          new Set(["ADMIN"]),
+        )) || authorizedByVolunteer;
+    }
+
     if (!authorized) {
       throw new AuthenticationError(
         "Failed authentication and/or authorization by userId",
