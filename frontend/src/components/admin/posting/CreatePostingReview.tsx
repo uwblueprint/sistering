@@ -16,9 +16,14 @@ import FormHeader from "../../common/FormHeader";
 import LabelledText from "../../common/LabelledText";
 import PocCard from "../../common/PocCard";
 
-import PostingContext from "../../../contexts/admin/PostingContext";
 import { ADMIN_POSTING_CREATE_REVIEW_ENTER_ALL_DETAILS } from "../../../constants/Copy";
+import PostingContext from "../../../contexts/admin/PostingContext";
 import ScheduledShiftsTr from "./ScheduledShiftsTr";
+import {
+  formatTimeHourMinutes,
+  getElapsedHours,
+  getWeekday,
+} from "../../../utils/DateTimeUtils";
 
 const CreatePostingReview = (): React.ReactElement => {
   const {
@@ -101,22 +106,23 @@ const CreatePostingReview = (): React.ReactElement => {
                 {times.map((t, i) => {
                   const startDT = new Date(t.startTime);
                   const endDT = new Date(t.endTime);
-                  const date = startDT.toLocaleDateString("en-US", {
-                    weekday: "long",
-                    month: "long",
-                    day: "numeric",
-                  });
-                  const startTime = startDT.toLocaleTimeString([], {
-                    hour: "numeric",
-                    minute: "numeric",
-                  });
-                  const endTime = endDT.toLocaleTimeString([], {
-                    hour: "numeric",
-                    minute: "numeric",
-                  });
-                  const hours = (endDT.valueOf() - startDT.valueOf()) / 36e5;
-                  const time = `${startTime} - ${endTime} (${hours} hours)`;
-                  return <ScheduledShiftsTr date={date} time={time} key={i} />;
+                  const weekDay = getWeekday(startDT);
+                  const startTime = formatTimeHourMinutes(
+                    startDT,
+                  ).toUpperCase();
+                  const endTime = formatTimeHourMinutes(endDT).toUpperCase();
+                  const elapsedHours = getElapsedHours(startDT, endDT);
+                  const elapsedHoursString = `${elapsedHours} hour${
+                    elapsedHours <= 1 ? "" : "s"
+                  }`;
+                  const time = `${startTime} - ${endTime} (${elapsedHoursString})`;
+                  return (
+                    <ScheduledShiftsTr
+                      date={`${weekDay}s`}
+                      time={time}
+                      key={i}
+                    />
+                  );
                 })}
               </Tbody>
             </Table>
