@@ -44,7 +44,7 @@ const SideNavbar = (steps: SideNavbarStepsType): React.ReactElement => {
   const { activeStep, labels } = steps;
   return (
     // TODO: remove hardcoded width, investigate text wrapping behaviour
-    <Steps activeStep={activeStep} orientation="vertical" width="240px">
+    <Steps activeStep={activeStep} orientation="vertical" width="250px">
       {labels.map((label, idx) => (
         <Step label={createStepLabel(idx, activeStep, label)} key={idx} />
       ))}
