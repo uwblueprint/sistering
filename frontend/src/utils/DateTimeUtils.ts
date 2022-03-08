@@ -8,7 +8,7 @@ import { FilterType } from "../types/DateFilterTypes";
  * @returns corresponding time string string in format hh:mm:(a/p)m
  */
 export const formatTimeHourMinutes = (date: Date): string => {
-  return moment(date).format("h:mm a");
+  return moment(date).utc().format("h:mm a");
 };
 
 /**
@@ -32,7 +32,7 @@ export const getElapsedHours = (start: Date, end: Date): number => {
  */
 export const formatDateStringYear = (dateStringInput: string): string => {
   const inputAsDate = new Date(dateStringInput);
-  return moment(inputAsDate).format("dddd, ll");
+  return moment(inputAsDate).utc().format("dddd, ll");
 };
 
 /**
@@ -52,11 +52,11 @@ export const dateInRange = (start: string, filterType: FilterType): boolean => {
 };
 
 export const getWeekday = (dateStringInput: Date): string => {
-  return moment(dateStringInput).format("dddd");
+  return moment(dateStringInput).utc().format("dddd");
 };
 
 export const getTime = (dateStringInput: Date): string => {
-  return moment(dateStringInput).format("hh:mm A");
+  return moment(dateStringInput).utc().format("hh:mm A");
 };
 
 /**
