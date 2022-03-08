@@ -33,6 +33,7 @@ const createStepLabel = (
       fontFamily="Raleway"
       fontSize="20px"
       fontWeight={activeStep === idx ? "bold" : "normal"}
+      textAlign="left"
     >
       {label}
     </Text>
@@ -42,7 +43,8 @@ const createStepLabel = (
 const SideNavbar = (steps: SideNavbarStepsType): React.ReactElement => {
   const { activeStep, labels } = steps;
   return (
-    <Steps activeStep={activeStep} orientation="vertical">
+    // TODO: remove hardcoded width, investigate text wrapping behaviour
+    <Steps activeStep={activeStep} orientation="vertical" width="240px">
       {labels.map((label, idx) => (
         <Step label={createStepLabel(idx, activeStep, label)} key={idx} />
       ))}
