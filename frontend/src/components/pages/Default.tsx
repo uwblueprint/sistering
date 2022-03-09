@@ -15,6 +15,7 @@ import RefreshCredentials from "../auth/RefreshCredentials";
 
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
+import VolunteerProfileShiftRow from "../admin/schedule/VolunteerProfileShiftRow";
 
 type ButtonProps = { text: string; path: string };
 
@@ -191,6 +192,12 @@ const Default = (): React.ReactElement => {
         <Button text="Side Navbar Demo" path={Routes.SIDE_NAVBAR_DEMO_PAGE} />
       </div>
       <div style={{ height: "2rem" }} />
+      <VolunteerProfileShiftRow
+        roleTitle="Yoga Instructor"
+        startDateTime={new Date("2022-04-06T13:30")}
+        endDateTime={new Date("2022-04-06T15:30")}
+        notes="I am not available after 2pm"
+      />
       <TeamInfoDisplay />
       <DesignSystemDisplay />
     </div>
