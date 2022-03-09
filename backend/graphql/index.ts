@@ -3,7 +3,12 @@ import { GraphQLScalarType, Kind } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { merge } from "lodash";
 
-import { isAuthorizedByRole, isAuthorizedByUserId } from "../middlewares/auth";
+import {
+  isAuthorizedByRole,
+  isAuthorizedByUserId,
+  isAuthorizedForCreateShiftSignups,
+  isAuthorizedForUpdateShiftSignups,
+} from "../middlewares/auth";
 import authResolvers from "./resolvers/authResolvers";
 import authType from "./types/authType";
 import entityResolvers from "./resolvers/entityResolvers";
@@ -132,7 +137,6 @@ const authorizedByAllRoles = () =>
 const authorizedByAdmin = () => isAuthorizedByRole(new Set(["ADMIN"]));
 const authorizedByAdminAndVolunteer = () =>
   isAuthorizedByRole(new Set(["ADMIN", "VOLUNTEER"]));
-const authorizedByVolunteer = () => isAuthorizedByRole(new Set(["VOLUNTEER"]));
 const authorizedByAdminAndEmployee = () =>
   isAuthorizedByRole(new Set(["ADMIN", "EMPLOYEE"]));
 
@@ -190,8 +194,8 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
-    createShiftSignups: authorizedByVolunteer(),
-    updateShiftSignup: authorizedByAdmin(),
+    createShiftSignups: isAuthorizedForCreateShiftSignups("userId"),
+    updateShiftSignup: isAuthorizedForUpdateShiftSignups("userId"),
   },
 };
 
