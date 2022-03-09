@@ -66,3 +66,26 @@ export const getTime = (dateStringInput: Date): string => {
 export const getISOStringDateTime = (date: Date): string => {
   return date.toISOString().substring(0, 16);
 };
+
+/**
+ * Gets the date of the previous Sunday in YYYY-MM-DD.
+ * If {@link date} is a Sunday, the same date is returned.
+ * @param date a date object
+ * @returns the date of the previous Sunday in YYYY-MM-DD format
+ */
+export const getPreviousSunday = (date: Date): string => {
+  const previousSunday = moment(date).utc().startOf("week");
+  return previousSunday.toDate().toISOString().substring(0, 10);
+};
+
+/**
+ * Returns a Date object representation of the {@link dateTimeString} in UTC.
+ * Context: We use a custom datetime format in our backend (YYYY-MM-DDTHH:mm)
+ * which does not automatically parse to UTC.
+ * @param dateTimeString a datetime string in YYYY-MM-DDTHH:mm format
+ * @returns the Date object representation of the {@link dateTimeString} in UTC
+ */
+export const getUTCDateForDateTimeString = (dateTimeString: string): Date => {
+  // using ISO 8601 date-time form with timezone specifier
+  return new Date(`${dateTimeString}:00+00:00`);
+};

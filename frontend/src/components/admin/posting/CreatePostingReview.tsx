@@ -22,6 +22,7 @@ import ScheduledShiftsTr from "./ScheduledShiftsTr";
 import {
   formatTimeHourMinutes,
   getElapsedHours,
+  getUTCDateForDateTimeString,
   getWeekday,
 } from "../../../utils/DateTimeUtils";
 
@@ -104,8 +105,8 @@ const CreatePostingReview = (): React.ReactElement => {
             <Table maxW="1000px" colorScheme="gray">
               <Tbody>
                 {times.map((t, i) => {
-                  const startDT = new Date(t.startTime);
-                  const endDT = new Date(t.endTime);
+                  const startDT = getUTCDateForDateTimeString(t.startTime);
+                  const endDT = getUTCDateForDateTimeString(t.endTime);
                   const weekDay = getWeekday(startDT);
                   const startTime = formatTimeHourMinutes(
                     startDT,
