@@ -35,6 +35,7 @@ type ShiftCalendarProps = {
   addEvent: (newEvent: DateSelectArg) => void;
   changeEvent: (event: Event, oldEvent: Event, currEvents: Event[]) => void;
   deleteEvent: (currEvents: Event[]) => void;
+  initialDate?: string;
 };
 
 const ShiftCalendar = ({
@@ -44,6 +45,7 @@ const ShiftCalendar = ({
   addEvent,
   changeEvent,
   deleteEvent,
+  initialDate,
 }: ShiftCalendarProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -119,6 +121,7 @@ const ShiftCalendar = ({
         slotDuration="00:15:00"
         slotLabelInterval="01:00"
         timeZone="UTC"
+        initialDate={initialDate}
       />
     </Box>
   );
