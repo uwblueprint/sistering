@@ -68,14 +68,27 @@ export const getISOStringDateTime = (date: Date): string => {
 };
 
 /**
- * Gets the date of the previous Sunday in YYYY-MM-DD.
+ * Gets the date of the previous Sunday in YYYY-MM-DD format.
  * If {@link date} is a Sunday, the same date is returned.
- * @param date a date object
+ * @param date a date string in YYYY-MM-DD format
  * @returns the date of the previous Sunday in YYYY-MM-DD format
  */
-export const getPreviousSunday = (date: Date): string => {
+export const getPreviousSunday = (dateString: string): string => {
+  const date = new Date(dateString);
   const previousSunday = moment(date).utc().startOf("week");
   return previousSunday.toDate().toISOString().substring(0, 10);
+};
+
+/**
+ * Gets the date of the next Sunday in YYYY-MM-DD format.
+ * If {@link date} is a Sunday, the date of the next Sunday is returned.
+ * @param date a date string in YYYY-MM-DD format
+ * @returns the date of the next Saturday in YYYY-MM-DD format
+ */
+export const getNextSunday = (dateString: string): string => {
+  const date = new Date(dateString);
+  const nextSunday = moment(date).utc().startOf("week").add(1, "weeks");
+  return nextSunday.toDate().toISOString().substring(0, 10);
 };
 
 /**

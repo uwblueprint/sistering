@@ -1,5 +1,5 @@
 import { DateSelectArg } from "@fullcalendar/react";
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Divider,
   Flex,
@@ -23,7 +23,11 @@ import PostingContextDispatcherContext from "../../../contexts/admin/PostingCont
 import ShiftCalendar, { Event } from "../ShiftCalendar/ShiftCalendar";
 import { Shift } from "../../../types/PostingContextTypes";
 import { RecurrenceInterval } from "../../../types/PostingTypes";
-import { getISOStringDateTime } from "../../../utils/DateTimeUtils";
+import {
+  getISOStringDateTime,
+  getNextSunday,
+  getPreviousSunday,
+} from "../../../utils/DateTimeUtils";
 
 type CreatePostingShiftsProps = { navigateToNext: () => void };
 
@@ -46,6 +50,24 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
   const [endDateError, setEndDateError] = useState(false);
   const [recurrenceIntervalError, setRecurrenceIntervalError] = useState(false);
   const [eventsError, setEventsError] = useState(false);
+
+  const initialDateProps = startDate
+    ? { initialDate: getPreviousSunday(startDate) }
+    : {};
+
+  useEffect(() => {
+    if (startDate) {
+      const previousSundayStr = getPreviousSunday(startDate);
+      const nextSundayStr = getNextSunday(startDate);
+      setEvents((prevEvents) =>
+        prevEvents.filter(
+          (event) =>
+            event.start >= new Date(previousSundayStr) &&
+            event.start < new Date(nextSundayStr),
+        ),
+      );
+    }
+  }, [startDate, setEvents]);
 
   const addEvent = (newEvent: DateSelectArg) => {
     setEvents([
@@ -231,14 +253,22 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
           </VStack>
         </VStack>
       </VStack>
-      <ShiftCalendar
-        events={events}
-        selectedEvent={selectedEvent}
-        setSelectedEvent={setSelectedEvent}
-        addEvent={addEvent}
-        changeEvent={changeEvent}
-        deleteEvent={deleteEvent}
-      />
+      {/* Temp hacky fix to get the calendar to re-render when startDate changes
+       * TODO: implement better solution described here
+       * https://github.com/fullcalendar/fullcalendar/issues/4684#issuecomment-620787260
+       */}
+      <div key={startDate}>
+        <ShiftCalendar
+          events={events}
+          selectedEvent={selectedEvent}
+          setSelectedEvent={setSelectedEvent}
+          addEvent={addEvent}
+          changeEvent={changeEvent}
+          deleteEvent={deleteEvent}
+          /* eslint-disable-next-line react/jsx-props-no-spreading */
+          {...initialDateProps}
+        />
+      </div>
       <Divider mt="104px" mb="18px" />
       <VStack alignItems="flex-end">
         <Button onClick={handleNext}>Next</Button>
