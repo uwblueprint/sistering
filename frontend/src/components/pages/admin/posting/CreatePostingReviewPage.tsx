@@ -12,7 +12,10 @@ import { gql, useMutation } from "@apollo/client";
 
 import CreatePostingReview from "../../../admin/posting/CreatePostingReview";
 import SideNavBar from "../../../common/SideNavbar";
-import { HOME_PAGE } from "../../../../constants/Routes";
+import {
+  ADMIN_POSTING_CREATE_SHIFTS_PAGE,
+  HOME_PAGE,
+} from "../../../../constants/Routes";
 import PostingContext from "../../../../contexts/admin/PostingContext";
 
 const CREATE_POSTING = gql`
@@ -59,6 +62,7 @@ const CreatePostingReviewPage = (): React.ReactElement => {
 
   const history = useHistory();
   const navigateToHome = () => history.push(HOME_PAGE);
+  const navigateBack = () => history.push(ADMIN_POSTING_CREATE_SHIFTS_PAGE);
 
   const error = createPostingError || createShiftsError;
   /* eslint-disable-next-line no-alert */
@@ -79,6 +83,9 @@ const CreatePostingReviewPage = (): React.ReactElement => {
         <VStack alignItems="flex-end">
           <CreatePostingReview />
           <HStack spacing="16px">
+            <Button variant="link" onClick={navigateBack}>
+              Back
+            </Button>
             <Button
               variant="outline"
               isLoading={
