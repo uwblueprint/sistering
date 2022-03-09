@@ -4,10 +4,14 @@ import { Container, HStack, Text, VStack } from "@chakra-ui/react";
 
 import CreatePostingShifts from "../../../admin/posting/CreatePostingShifts";
 import SideNavBar from "../../../common/SideNavbar";
-import { ADMIN_POSTING_CREATE_REVIEW_PAGE } from "../../../../constants/Routes";
+import {
+  ADMIN_POSTING_CREATE_BASIC_INFO_PAGE,
+  ADMIN_POSTING_CREATE_REVIEW_PAGE,
+} from "../../../../constants/Routes";
 
 const CreatePostingShiftsPage = (): React.ReactElement => {
   const history = useHistory();
+  const navigateBack = () => history.push(ADMIN_POSTING_CREATE_BASIC_INFO_PAGE);
   const navigateToNext = () => history.push(ADMIN_POSTING_CREATE_REVIEW_PAGE);
   return (
     <Container maxW="container.xl" p={0}>
@@ -21,7 +25,10 @@ const CreatePostingShiftsPage = (): React.ReactElement => {
             labels={["Basic Information", "Time Slots", "Review and Post"]}
           />
         </VStack>
-        <CreatePostingShifts navigateToNext={navigateToNext} />
+        <CreatePostingShifts
+          navigateBack={navigateBack}
+          navigateToNext={navigateToNext}
+        />
       </HStack>
     </Container>
   );

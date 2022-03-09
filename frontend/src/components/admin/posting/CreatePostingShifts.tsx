@@ -29,9 +29,13 @@ import {
   getPreviousSunday,
 } from "../../../utils/DateTimeUtils";
 
-type CreatePostingShiftsProps = { navigateToNext: () => void };
+type CreatePostingShiftsProps = {
+  navigateBack: () => void;
+  navigateToNext: () => void;
+};
 
 const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
+  navigateBack,
   navigateToNext,
 }: CreatePostingShiftsProps): React.ReactElement => {
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
@@ -271,7 +275,12 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
       </div>
       <Divider mt="104px" mb="18px" />
       <VStack alignItems="flex-end">
-        <Button onClick={handleNext}>Next</Button>
+        <HStack spacing="16px">
+          <Button variant="link" onClick={navigateBack}>
+            Back
+          </Button>
+          <Button onClick={handleNext}>Next</Button>
+        </HStack>
       </VStack>
     </div>
   );
