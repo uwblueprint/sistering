@@ -16,10 +16,18 @@ import { HOME_PAGE } from "../../../../constants/Routes";
 import PostingContext from "../../../../contexts/admin/PostingContext";
 
 const CREATE_POSTING = gql`
-  mutation CreatePosting($posting: PostingRequestDTO!) {
+  mutation CreatePostingReviewPage_CreatePosting($posting: PostingRequestDTO!) {
     createPosting(posting: $posting) {
       id
       title
+    }
+  }
+`;
+
+const CREATE_SHIFTS = gql`
+  mutation CreatePostingReviewPage_CreateShifts($shifts: ShiftBulkRequestDTO!) {
+    createShifts(shifts: $shifts) {
+      id
     }
   }
 `;
@@ -31,7 +39,14 @@ const CreatePostingReviewPage = (): React.ReactElement => {
     recurrenceInterval,
     ...postingToCreateFromContext
   } = useContext(PostingContext);
-  const [createPosting, { loading, error }] = useMutation(CREATE_POSTING);
+  const [
+    createPosting,
+    { loading: createPostingLoading, error: createPostingError },
+  ] = useMutation(CREATE_POSTING);
+  const [
+    createShifts,
+    { loading: createShiftsLoading, error: createShiftsError },
+  ] = useMutation(CREATE_SHIFTS);
   const [isDraftClicked, setIsDraftClicked] = useBoolean();
 
   const { branch, skills, employees, ...rest } = postingToCreateFromContext;
@@ -45,7 +60,8 @@ const CreatePostingReviewPage = (): React.ReactElement => {
   const history = useHistory();
   const navigateToHome = () => history.push(HOME_PAGE);
 
-  // eslint-disable-next-line no-alert
+  const error = createPostingError || createShiftsError;
+  /* eslint-disable-next-line no-alert */
   if (error) window.alert(error);
 
   return (
@@ -65,12 +81,25 @@ const CreatePostingReviewPage = (): React.ReactElement => {
           <HStack spacing="16px">
             <Button
               variant="outline"
-              isLoading={loading && isDraftClicked}
-              onClick={() => {
+              isLoading={
+                (createPostingLoading || createShiftsLoading) && isDraftClicked
+              }
+              onClick={async () => {
                 setIsDraftClicked.on();
-                createPosting({
+                const createPostingResponse = await createPosting({
                   variables: {
                     posting: { ...postingToCreate, status: "DRAFT" },
+                  },
+                });
+                const postingId = createPostingResponse.data.createPosting.id;
+                await createShifts({
+                  variables: {
+                    shifts: {
+                      postingId,
+                      times,
+                      endDate: postingToCreate.endDate,
+                      recurrenceInterval,
+                    },
                   },
                 });
                 navigateToHome();
@@ -79,12 +108,25 @@ const CreatePostingReviewPage = (): React.ReactElement => {
               Save as Draft
             </Button>
             <Button
-              isLoading={loading && !isDraftClicked}
-              onClick={() => {
+              isLoading={
+                (createPostingLoading || createShiftsLoading) && !isDraftClicked
+              }
+              onClick={async () => {
                 setIsDraftClicked.off();
-                createPosting({
+                const createPostingResponse = await createPosting({
                   variables: {
                     posting: { ...postingToCreate, status: "PUBLISHED" },
+                  },
+                });
+                const postingId = createPostingResponse.data.createPosting.id;
+                await createShifts({
+                  variables: {
+                    shifts: {
+                      postingId,
+                      times,
+                      endDate: postingToCreate.endDate,
+                      recurrenceInterval,
+                    },
                   },
                 });
                 navigateToHome();
