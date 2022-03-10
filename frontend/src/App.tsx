@@ -42,7 +42,6 @@ import CreatePostingShiftsPage from "./components/pages/admin/posting/CreatePost
 import CreatePostingReviewPage from "./components/pages/admin/posting/CreatePostingReviewPage";
 import VolunteerPostingDetails from "./components/pages/volunteer/posting/VolunteerPostingDetails";
 import AdminPostingDetails from "./components/pages/admin/posting/AdminPostingDetails";
-import SideNavbarDemo from "./components/pages/SideNavbarDemo";
 
 import customTheme from "./theme";
 import { AuthenticatedUser } from "./types/AuthTypes";
@@ -126,11 +125,6 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.HOOKS_PAGE}
                       component={HooksDemo}
-                    />
-                    <PrivateRoute
-                      exact
-                      path={Routes.SIDE_NAVBAR_DEMO_PAGE}
-                      component={SideNavbarDemo}
                     />
                     <PrivateRoute
                       exact
