@@ -189,7 +189,6 @@ const Default = (): React.ReactElement => {
           path={Routes.ADMIN_POSTING_CREATE_REVIEW_PAGE}
         />
         <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
-        <Button text="Side Navbar Demo" path={Routes.SIDE_NAVBAR_DEMO_PAGE} />
       </div>
       <div style={{ height: "2rem" }} />
       <TeamInfoDisplay />
