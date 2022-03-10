@@ -58,10 +58,13 @@ const skills = [
 const today = new Date();
 const postings = [
   {
-    title: "Danish Instructor",
+    title: "Yoga Instructor",
     type: PostingType.INDIVIDUAL,
     status: PostingStatus.PUBLISHED,
-    description: "Lead a Danish making class in Danish",
+    description:
+      '{"blocks":[{"key":"bv0s8","text":"' +
+      "We are looking for a yoga instructor who can speak to our Danish community." +
+      '","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
     startDate: addDays(today, 30),
     endDate: addDays(today, 50),
     autoClosingDate: addDays(today, 20),
@@ -95,7 +98,10 @@ const postings = [
     title: "Criossant Making",
     type: PostingType.INDIVIDUAL,
     status: PostingStatus.DRAFT,
-    description: "Help with a criossant making class.",
+    description:
+      '{"blocks":[{"key":"bv0s8","text":"' +
+      "We are looking for some volunteers to help lead a croissant making class." +
+      '","type":"unstyled","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}}],"entityMap":{}}',
     startDate: addDays(today, 20),
     endDate: addDays(today, 30),
     autoClosingDate: addDays(today, 15),
