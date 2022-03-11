@@ -22,7 +22,7 @@ const VolunteerAvailabilityTableRow = ({
   const [checked, setChecked] = React.useState(false);
 
   return (
-    <Flex>
+    <Flex bgColor={checked ? "purple.50" : undefined} px={25} py={3}>
       <Checkbox
         minWidth={300}
         mr={170}
