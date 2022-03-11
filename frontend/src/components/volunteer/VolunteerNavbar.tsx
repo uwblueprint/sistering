@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import {
   Flex,
@@ -13,6 +13,9 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+
+import { AuthenticatedUser } from "../../types/AuthTypes";
+import AuthContext from "../../contexts/AuthContext";
 import { VolunteerPages } from "../../constants/Volunteer";
 import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 
@@ -21,6 +24,13 @@ const VolunteerNavbar = ({
 }: {
   defaultIndex: VolunteerPages;
 }): React.ReactElement => {
+  const {
+    authenticatedUser,
+  }: { authenticatedUser: AuthenticatedUser } = useContext(AuthContext);
+  const userName = !authenticatedUser
+    ? "Sistering Volunteer"
+    : `${authenticatedUser.firstName} ${authenticatedUser.lastName}`;
+
   return (
     <Box px="90px">
       <Flex h="80px" alignItems="center" justifyContent="space-between">
@@ -69,7 +79,7 @@ const VolunteerNavbar = ({
             _active={{ color: "teal" }}
             mr="20px"
           >
-            Sistering Volunteer <ChevronDownIcon />
+            {userName} <ChevronDownIcon />
           </MenuButton>
           <MenuList textStyle="caption" color="black">
             <MenuItem>Profile</MenuItem>
