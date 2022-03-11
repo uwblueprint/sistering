@@ -1,7 +1,9 @@
 import {
+  Box,
   Button,
   Flex,
   Select,
+  Spacer,
   Table,
   Tbody,
   Td,
@@ -10,6 +12,7 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import moment from "moment";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
@@ -75,18 +78,27 @@ const VolunteerAvailabilityTable = ({
   const [shifts, setShifts] = React.useState(postingShifts);
 
   return (
-    <>
-      <Flex>
+    <Box
+      bgColor="white"
+      borderRadius="12px"
+      border="1px"
+      borderColor="background.dark"
+    >
+      <Flex alignContent="center" px={25} py={25}>
         <Button
           disabled={getWeekDiff(postingStartDate, currentWeek) === 0}
           onClick={() =>
             setWeek(moment(currentWeek).subtract(1, "weeks").toDate())
           }
+          variant="link"
+          leftIcon={<ChevronLeftIcon />}
         >
           Previous week
         </Button>
+        <Spacer />
         <Select
-          defaultValue={0}
+          width="33%"
+          value={getWeekDiff(postingStartDate, currentWeek) + 1}
           onChange={(e) =>
             setWeek(
               moment(postingStartDate)
@@ -125,15 +137,17 @@ const VolunteerAvailabilityTable = ({
               );
             })}
         </Select>
-
+        <Spacer />
         <Button
           disabled={getWeekDiff(currentWeek, postingEndDate) === 0}
           onClick={() => setWeek(moment(currentWeek).add(1, "weeks").toDate())}
+          variant="link"
+          rightIcon={<ChevronRightIcon />}
         >
           Next week
         </Button>
       </Flex>
-      <Table variant="striped" colorScheme="teal" w="100%">
+      <Table variant="stripe" w="100%">
         {Array.from(Array(7).keys()).map((day) => {
           const date = moment(currentWeek).add(day, "days").toDate();
 
@@ -183,7 +197,7 @@ const VolunteerAvailabilityTable = ({
           );
         })}
       </Table>
-    </>
+    </Box>
   );
 };
 

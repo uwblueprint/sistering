@@ -1,6 +1,6 @@
 import React, { useState, useLayoutEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Text } from "@chakra-ui/react";
+import { Box, Text } from "@chakra-ui/react";
 
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import { dateInRange } from "../../../../utils/DateTimeUtils";
@@ -164,13 +164,9 @@ const VolunteerPostingsPage = (): React.ReactElement => {
         </Box>
       </Box> */}
       {/* Temp */}
-      <Text textStyle="display-large">Volunteer Postings</Text>
-      <NoShiftsAvailableTableRow />
-      <VolunteerAvailabilityTableRow
-        start={new Date()}
-        end={new Date(Date.now() + 2 * 1000 * 60 * 60)}
-      />
-      <VolunteerAvailabilityTable postingId={1} />
+      <Box p={25}>
+        <VolunteerAvailabilityTable postingId={1} />
+      </Box>
     </div>
   );
 };
