@@ -12,6 +12,7 @@ import React from "react";
 import moment from "moment";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
+import { getWeekDiff } from "../../../utils/DateTimeUtils";
 
 type VolunteerAvailabilityTableProps = { postingId: number };
 
@@ -68,25 +69,18 @@ const VolunteerAvailabilityTable = ({
   ];
   // End of sample data
 
-  const [currentWeek, setWeek] = React.useState(postingStartWeek);
-  const [shifts, setShifts] = React.useState(postingShifts);
-
-  console.log(postingStartDate);
-  console.log(postingEndDate);
-  console.log(
-    Math.ceil(
-      Math.abs(postingEndDate.getTime() - postingStartWeek.getTime()) /
-        (1000 * 3600 * 24),
-    ),
+  const [currentWeek, setWeek] = React.useState(
+    moment(postingStartWeek).startOf("week").toDate(),
   );
+  const [shifts, setShifts] = React.useState(postingShifts);
 
   return (
     <>
       <Flex>
         <Button
-          disabled={currentWeek === postingStartWeek}
+          disabled={getWeekDiff(postingStartDate, currentWeek) === 0}
           onClick={() =>
-            setWeek(new Date(new Date().setDate(currentWeek.getDate() - 7)))
+            setWeek(moment(currentWeek).subtract(1, "weeks").toDate())
           }
         >
           Previous week
@@ -95,79 +89,53 @@ const VolunteerAvailabilityTable = ({
           defaultValue={0}
           onChange={(e) =>
             setWeek(
-              new Date(
-                new Date().setDate(
-                  postingStartWeek.getDate() -
-                    postingStartWeek.getDay() +
-                    7 * Number(e.target.value),
-                ),
-              ),
+              moment(postingStartDate)
+                .startOf("week")
+                .add(Number(e.target.value), "weeks")
+                .toDate(),
             )
           }
         >
-          {Array(
-            Math.ceil(
-              Math.ceil(
-                Math.abs(
-                  postingEndDate.getTime() - postingStartWeek.getTime(),
-                ) /
-                  (1000 * 3600 * 24),
-              ) / 7,
-            ),
-          )
+          {Array(getWeekDiff(postingStartDate, postingEndDate) + 1)
             .fill(0)
             .map((_, i) => i)
             .map((week) => {
-              const startWeek = new Date(
-                new Date().setDate(
-                  postingStartDate.getDate() -
-                    postingStartDate.getDay() +
-                    7 * week,
-                ),
-              );
+              const startWeek = moment(postingStartDate)
+                .startOf("week")
+                .add(week, "weeks")
+                .toDate();
+
               return (
                 <option key={week} value={week}>
                   {startWeek.toLocaleDateString("en-US", {
                     year: "numeric",
-                    month: "long",
+                    month: "short",
                     day: "numeric",
                   })}{" "}
                   -{" "}
-                  {new Date(
-                    new Date(startWeek).setDate(startWeek.getDate() + 6),
-                  ).toLocaleDateString("en-US", {
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                  })}
+                  {moment(startWeek)
+                    .endOf("week")
+                    .toDate()
+                    .toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
                 </option>
               );
             })}
         </Select>
 
         <Button
-          disabled={
-            new Date(
-              new Date().setDate(currentWeek.getDate() - currentWeek.getDay()),
-            ) ===
-            new Date(
-              new Date().setDate(
-                postingEndDate.getDate() - postingEndDate.getDay(),
-              ),
-            )
-          }
-          onClick={() =>
-            setWeek(new Date(new Date().setDate(currentWeek.getDate() + 7)))
-          }
+          disabled={getWeekDiff(currentWeek, postingEndDate) === 0}
+          onClick={() => setWeek(moment(currentWeek).add(1, "weeks").toDate())}
         >
           Next week
         </Button>
       </Flex>
       <Table variant="striped" colorScheme="teal" w="100%">
         {Array.from(Array(7).keys()).map((day) => {
-          const date = new Date(
-            new Date(currentWeek).setDate(currentWeek.getDate() + day),
-          );
+          const date = moment(currentWeek).add(day, "days").toDate();
 
           return (
             <Tbody key={day}>

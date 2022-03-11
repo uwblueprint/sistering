@@ -57,3 +57,23 @@ export const getWeekday = (dateStringInput: Date): string => {
 export const getTime = (dateStringInput: Date): string => {
   return moment(dateStringInput).format("hh:mm A");
 };
+
+/**
+ * get integer difference of days between 2 dates (end - start)
+ * @param  {Date} start
+ * @param  {Date} end
+ * @returns number
+ */
+export const getDayDiff = (start: Date, end: Date): number => {
+  return moment(end).diff(start, "days", false);
+};
+
+/**
+ * get integer difference of weeks between 2 dates (end - start)
+ * @param  {Date} start
+ * @param  {Date} end
+ * @returns number
+ */
+export const getWeekDiff = (start: Date, end: Date): number => {
+  return moment(end).diff(start, "week", false);
+};
