@@ -76,7 +76,6 @@ const VolunteerAvailabilityTable = ({
     moment(postingStartWeek).startOf("week").toDate(),
   );
   const [shifts, setShifts] = React.useState(postingShifts);
-
   return (
     <Box
       bgColor="white"
@@ -98,7 +97,8 @@ const VolunteerAvailabilityTable = ({
         <Spacer />
         <Select
           width="33%"
-          value={getWeekDiff(postingStartDate, currentWeek) + 1}
+          _hover={{ bgColor: "gray.100" }}
+          value={getWeekDiff(postingStartDate, currentWeek)}
           onChange={(e) =>
             setWeek(
               moment(postingStartDate)
@@ -112,19 +112,20 @@ const VolunteerAvailabilityTable = ({
             .fill(0)
             .map((_, i) => i)
             .map((week) => {
+              console.log(`week: ${week}`);
               const startWeek = moment(postingStartDate)
                 .startOf("week")
                 .add(week, "weeks")
                 .toDate();
 
               return (
-                <option key={week} value={week}>
+                <option key={week} value={week} color="gray.100">
                   {startWeek.toLocaleDateString("en-US", {
                     year: "numeric",
                     month: "short",
                     day: "numeric",
                   })}{" "}
-                  -{" "}
+                  to{" "}
                   {moment(startWeek)
                     .endOf("week")
                     .toDate()
@@ -149,7 +150,13 @@ const VolunteerAvailabilityTable = ({
       </Flex>
       <Table variant="stripe" w="100%">
         {Array.from(Array(7).keys()).map((day) => {
-          const date = moment(currentWeek).add(day, "days").toDate();
+          const date = moment(currentWeek)
+            .startOf("week")
+            .add(day, "days")
+            .toDate();
+          const weeklyShifts = shifts.filter(
+            (shift) => moment(shift.startTime).diff(date, "days", false) === 0,
+          );
 
           return (
             <Tbody key={day}>
@@ -165,33 +172,25 @@ const VolunteerAvailabilityTable = ({
                   </Text>
                 </Td>
               </Tr>
-              {shifts.filter(
-                (shift) =>
-                  moment(shift.startTime).diff(date, "days", false) === 0,
-              ).length < 1 ? (
+              {weeklyShifts.length < 1 ? (
                 <Tr>
                   <Td>
                     <NoShiftsAvailableTableRow />
                   </Td>
                 </Tr>
               ) : (
-                shifts
-                  .filter(
-                    (shift) =>
-                      moment(shift.startTime).diff(date, "days", false) === 0,
-                  )
-                  .map((shift, index) => {
-                    return (
-                      <Tr key={`${day}-${index}`}>
-                        <Td p={0}>
-                          <VolunteerAvailabilityTableRow
-                            start={shift.startTime}
-                            end={shift.endTime}
-                          />
-                        </Td>
-                      </Tr>
-                    );
-                  })
+                weeklyShifts.map((shift, index) => {
+                  return (
+                    <Tr key={`${day}-${index}`}>
+                      <Td p={0}>
+                        <VolunteerAvailabilityTableRow
+                          start={shift.startTime}
+                          end={shift.endTime}
+                        />
+                      </Td>
+                    </Tr>
+                  );
+                })
               )}
             </Tbody>
           );

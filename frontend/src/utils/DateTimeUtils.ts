@@ -75,5 +75,7 @@ export const getDayDiff = (start: Date, end: Date): number => {
  * @returns number
  */
 export const getWeekDiff = (start: Date, end: Date): number => {
-  return moment(end).diff(start, "week", false);
+  return moment(end)
+    .startOf("week")
+    .diff(moment(start).startOf("week").toDate(), "week", false);
 };
