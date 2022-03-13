@@ -18,11 +18,17 @@ import {
   Select,
   Tag,
   TagCloseButton,
-  TagLabel,
   Text,
   Textarea,
   Tooltip,
   VStack,
+  Popover,
+  PopoverTrigger,
+  PopoverContent,
+  PopoverHeader,
+  PopoverBody,
+  PopoverArrow,
+  PopoverCloseButton,
 } from "@chakra-ui/react";
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
 
