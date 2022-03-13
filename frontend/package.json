@@ -32,6 +32,7 @@
     "axios": "^0.21.2",
     "bootstrap": "^4.6.0",
     "chakra-ui-steps": "^1.6.1",
+    "draft-js": "^0.11.7",
     "framer-motion": "^4",
     "graphql": "^15.5.0",
     "humps": "^2.0.1",
