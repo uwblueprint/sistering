@@ -3,6 +3,7 @@ import { Table, Tbody } from "@chakra-ui/react";
 import AdminScheduleTableDate from "./AdminScheduleTableDate";
 import AdminScheduleTableRow from "./AdminScheduleTableRow";
 
+// Example test data for the AdminScheduleTable component.
 export const TableTestData = [
   {
     date: new Date("2022-03-06"),
@@ -48,8 +49,12 @@ export const TableTestData = [
         userId: "69",
       },
       {
-        startTime: new Date("2022-03-10 15:00:00"),
-        endTime: new Date("2022-03-10 17:00:00"),
+        startTime: new Date("2022-03-10 16:00:00"),
+        endTime: new Date("2022-03-10 16:30:00"),
+      },
+      {
+        startTime: new Date("2022-03-10 19:00:00"),
+        endTime: new Date("2022-03-10 21:30:00"),
         volunteer: "Albert Lai",
         userId: "420",
       },

@@ -1,5 +1,6 @@
 import { Text, Th, Tr } from "@chakra-ui/react";
 import React from "react";
+import { formatDateStringYear } from "../../../utils/DateTimeUtils";
 
 type AdminScheduleTableDateProps = {
   date: Date;
@@ -11,7 +12,7 @@ const AdminScheduleTableDate = ({
   return (
     <Tr>
       <Th colSpan={3}>
-        <Text>{date.toUTCString()}</Text>
+        <Text>{formatDateStringYear(date.toUTCString())}</Text>
       </Th>
     </Tr>
   );

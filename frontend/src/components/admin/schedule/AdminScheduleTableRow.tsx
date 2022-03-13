@@ -1,5 +1,6 @@
 import { Button, Td, Text, Tr } from "@chakra-ui/react";
 import React from "react";
+import { getElapsedHours, getTime } from "../../../utils/DateTimeUtils";
 
 type AdminScheduleTableRowProps = {
   volunteer?: string;
@@ -14,21 +15,17 @@ const AdminScheduleTableRow = ({
   postingStart,
   postingEnd,
 }: AdminScheduleTableRowProps): React.ReactElement => {
+  const elapsedHours =
+    postingStart && postingEnd ? getElapsedHours(postingStart, postingEnd) : 0;
+
   // No shifts available
-  if (!postingStart || !postingEnd) {
-    return (
-      <Tr>
-        <Td colSpan={3}>
-          <Text color="text.gray">No shifts available</Text>
-        </Td>
-      </Tr>
-    );
-  }
-  // Shift is available
-  return (
+  return postingStart && postingEnd ? (
     <Tr>
       <Td>
-        <Text>5:00pm - 7:00pm (2 hrs)</Text>
+        <Text>
+          {getTime(postingStart)} - {getTime(postingEnd)} ({elapsedHours}{" "}
+          {elapsedHours > 1 ? "hrs" : "hr"})
+        </Text>
       </Td>
       <Td>
         {!volunteer && !userId ? (
@@ -43,6 +40,12 @@ const AdminScheduleTableRow = ({
             Remove
           </Button>
         )}
+      </Td>
+    </Tr>
+  ) : (
+    <Tr>
+      <Td colSpan={3}>
+        <Text color="text.gray">No shifts available</Text>
       </Td>
     </Tr>
   );
