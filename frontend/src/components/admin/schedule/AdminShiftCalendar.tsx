@@ -1,5 +1,9 @@
 import React from "react";
-import FullCalendar, { EventContentArg, EventInput } from "@fullcalendar/react";
+import FullCalendar, {
+  DayCellContentArg,
+  EventContentArg,
+  EventInput,
+} from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { Box } from "@chakra-ui/react";
 
@@ -68,8 +72,9 @@ export type MonthEvent = Event & {
   groupId: string;
 };
 
+// Events can be passed in any order (does not have to be sorted).
+// AdminShiftCalendar assumes that all events are in the same month.
 type AdminShiftCalendarProps = {
-  // Events can be passed in any order (does not have to be sorted).
   events: Event[];
 };
 
@@ -90,13 +95,25 @@ const AdminShiftCalendar = ({
     );
   };
 
+  // applyCellClasses is used to compute the day cell background color.
+  const applyCellClasses = (day: DayCellContentArg) => {
+    // FullCalendar doesn't support retrieving events of a day, so we have to
+    // iterate through all events to find the ones that match the day.
+    const dayEvents = events.filter((event) => {
+      return event.start?.getUTCDate() === day.date.getUTCDate();
+    });
+
+    return dayEvents.length > 0 ? "fc-day-has-event" : "fc-day-no-events";
+  };
+
   return (
     <Box id="admin-calendar">
       <FullCalendar
         dayMaxEvents={3}
         displayEventEnd
+        dayCellClassNames={(day: DayCellContentArg) => applyCellClasses(day)}
         editable
-        // TODO: eventClick --> show sidebar
+        // eventClick --> Show side panel, TODO in ticket #176
         eventColor={colors.violet}
         eventContent={displayCustomEvent}
         events={events as EventInput[]}
@@ -105,6 +122,7 @@ const AdminShiftCalendar = ({
           minute: "2-digit",
           meridiem: "short",
         }}
+        fixedWeekCount={false}
         headerToolbar={false}
         initialDate={events.length > 0 ? events[0].start : new Date()}
         initialView="dayGridMonth"
