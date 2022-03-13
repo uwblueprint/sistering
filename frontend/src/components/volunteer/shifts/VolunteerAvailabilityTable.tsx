@@ -13,67 +13,29 @@ import {
 import React from "react";
 import moment from "moment";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { ShiftResponseDTO } from "../../../types/api/ShiftTypes";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
 
-type VolunteerAvailabilityTableProps = { postingId: number };
-
-// Temp type
-type Shift = {
-  startTime: Date;
-  endTime: Date;
+type VolunteerAvailabilityTableProps = {
+  postingShifts: ShiftResponseDTO[];
+  postingStartDate: Date;
+  postingEndDate: Date;
 };
 
 const VolunteerAvailabilityTable = ({
-  postingId,
+  postingShifts,
+  postingStartDate,
+  postingEndDate,
 }: VolunteerAvailabilityTableProps): React.ReactElement => {
   // Side note: I think we should try to avoid doing queries in table components when avbailable03
   // Query to get some posting
-
   // We assume that we have some posting
   // we generate an item in the the headers menu for each week between start and end state
 
-  // Sample data
-  const postingStartDate = new Date(
-    new Date().setDate(new Date().getDate() - 14),
-  );
-
-  const postingEndDate = new Date(
-    new Date().setDate(new Date().getDate() + 14),
-  );
-
-  // Maybe put under use effect
-  const postingStartWeek = new Date(
-    new Date().setDate(postingStartDate.getDate() - postingStartDate.getDay()),
-  );
-
-  const postingShifts: Shift[] = [
-    {
-      startTime: new Date(),
-      endTime: new Date(Date.now() + 2.25 * 1000 * 60 * 60),
-    },
-    {
-      startTime: new Date(Date.now() + 3 * 1000 * 60 * 60),
-      endTime: new Date(Date.now() + 4 * 1000 * 60 * 60),
-    },
-    {
-      startTime: new Date(
-        new Date(Date.now() + 2 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-      endTime: new Date(
-        new Date(Date.now() + 2.5 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-    },
-  ];
-  // End of sample data
-
   const [currentWeek, setWeek] = React.useState(
-    moment(postingStartWeek).startOf("week").toDate(),
+    moment(postingStartDate).startOf("week").toDate(),
   );
   const [shifts, setShifts] = React.useState(postingShifts);
   return (

@@ -36,3 +36,6 @@ export const ADMIN_POSTING_CREATE_REVIEW_PAGE = "/admin/posting/create/review";
 export const VOLUNTEER_POSTING_DETAILS = "/volunteer/posting/:id";
 
 export const ADMIN_POSTING_DETAILS = "/admin/posting/:id";
+
+export const VOLUNTEER_POSTING_AVAILABILITIES =
+  "/volunteer/posting/:id/availabilities";
