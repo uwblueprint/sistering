@@ -27,9 +27,7 @@ const VolunteerNavbar = ({
   const {
     authenticatedUser,
   }: { authenticatedUser: AuthenticatedUser } = useContext(AuthContext);
-  const userName = !authenticatedUser
-    ? "Sistering Volunteer"
-    : `${authenticatedUser.firstName} ${authenticatedUser.lastName}`;
+  const userName = `${authenticatedUser?.firstName} ${authenticatedUser?.lastName}`;
 
   return (
     <Box px="90px">
