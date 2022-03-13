@@ -5,6 +5,7 @@ import { gql, useQuery } from "@apollo/client";
 import { useParams } from "react-router-dom";
 import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
 import { ShiftResponseDTO } from "../../../../types/api/ShiftTypes";
+import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 
 // TODO: A filter should be added to the backend, currently, no filter is supported
 const SHIFTS = gql`
@@ -18,6 +19,29 @@ const SHIFTS = gql`
   }
 `;
 
+// TODO: Remove redundancy from other pages
+const POSTING = gql`
+  query VolunteerPostingDetails_Posting($id: ID!) {
+    posting(id: $id) {
+      title
+      description
+      branch {
+        name
+      }
+      startDate
+      endDate
+      numVolunteers
+      skills {
+        name
+      }
+      employees {
+        id
+      }
+      autoClosingDate
+    }
+  }
+`;
+
 // TODO: Get posting for posting start and end time
 
 const VolunteerPostingAvailabilities = (): React.ReactElement => {
@@ -25,9 +49,17 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   // eslint-disable-next-line no-console
   console.log(id);
-  const { loading, data: { shifts } = {} } = useQuery(SHIFTS, {
+  const { loading: isShiftsLoading, data: { shifts } = {} } = useQuery(SHIFTS, {
     fetchPolicy: "cache-and-network",
   });
+  const {
+    loading: isPostingLoading,
+    data: { posting: postingDetails } = {},
+  } = useQuery(POSTING, {
+    variables: { id },
+    fetchPolicy: "cache-and-network",
+  });
+
   console.log(shifts);
 
   // Sample data
@@ -69,17 +101,28 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
   );
   // End of sample data
 
-  if (loading) {
+  if (isPostingLoading || isShiftsLoading) {
     return <Spinner />;
   }
 
   return (
     <div>
       <Text textStyle="display-large">Volunteer Postings</Text>
-      <VolunteerAvailabilityTable
+      {/* <VolunteerAvailabilityTable
         postingShifts={postingShifts}
         postingStartDate={postingStartDate}
         postingEndDate={postingEndDate}
+      /> */}
+      <VolunteerAvailabilityTable
+        postingShifts={(shifts as ShiftResponseDTO[]).filter(
+          (shift) => shift.postingId === id,
+        )}
+        postingStartDate={
+          new Date(Date.parse((postingDetails as PostingResponseDTO).startDate))
+        }
+        postingEndDate={
+          new Date(Date.parse((postingDetails as PostingResponseDTO).endDate))
+        }
       />
     </div>
   );
