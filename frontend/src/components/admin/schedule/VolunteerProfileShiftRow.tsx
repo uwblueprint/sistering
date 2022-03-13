@@ -18,7 +18,7 @@ const VolunteerProfileShiftRow = ({
   notes,
 }: VolunteerProfileShiftRowProps): React.ReactElement => {
   return (
-    <Box borderWidth="1px" borderColor="#e5e5e5">
+    <Box borderWidth="1px" borderColor="background.dark">
       <VStack
         justifyContent="start"
         align="start"
