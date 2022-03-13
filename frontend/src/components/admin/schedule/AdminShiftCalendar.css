@@ -10,6 +10,11 @@
   right: 3px;
 }
 
+.fc-daygrid-day.fc-day-other,
+.fc-daygrid-day.fc-day-no-events {
+  background-color: #f4f4f4;
+}
+
 .fc-daygrid-event-dot.fc-event-saved {
   border-color: #38a169;
 }
