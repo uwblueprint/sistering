@@ -176,19 +176,11 @@ const Default = (): React.ReactElement => {
         <Button text="Update Entity" path={Routes.UPDATE_ENTITY_PAGE} />
         <Button text="Display Entities" path={Routes.DISPLAY_ENTITY_PAGE} />
         <Button text="Edit Team" path={Routes.EDIT_TEAM_PAGE} />
+        <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
         <Button
           text="Create Posting"
           path={Routes.ADMIN_POSTING_CREATE_BASIC_INFO_PAGE}
         />
-        <Button
-          text="Create Shifts"
-          path={Routes.ADMIN_POSTING_CREATE_SHIFTS_PAGE}
-        />
-        <Button
-          text="Review Posting"
-          path={Routes.ADMIN_POSTING_CREATE_REVIEW_PAGE}
-        />
-        <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
       </div>
       <div style={{ height: "2rem" }} />
       <TeamInfoDisplay />
