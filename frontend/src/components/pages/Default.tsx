@@ -15,6 +15,7 @@ import RefreshCredentials from "../auth/RefreshCredentials";
 
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
+import VolunteerProfileShiftRow from "../admin/schedule/VolunteerProfileShiftRow";
 
 type ButtonProps = { text: string; path: string };
 
