@@ -1,10 +1,11 @@
-import React from "react";
-import { Spinner, Text } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
-import { useParams } from "react-router-dom";
+import { Redirect, useHistory, useParams } from "react-router-dom";
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
-import { ShiftResponseDTO } from "../../../../types/api/ShiftTypes";
+import { ShiftDTO, ShiftResponseDTO } from "../../../../types/api/ShiftTypes";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 
 // TODO: A filter should be added to the backend, currently, no filter is supported
@@ -42,13 +43,8 @@ const POSTING = gql`
   }
 `;
 
-// TODO: Get posting for posting start and end time
-
 const VolunteerPostingAvailabilities = (): React.ReactElement => {
-  // posting id
   const { id } = useParams<{ id: string }>();
-  // eslint-disable-next-line no-console
-  console.log(id);
   const { loading: isShiftsLoading, data: { shifts } = {} } = useQuery(SHIFTS, {
     fetchPolicy: "cache-and-network",
   });
@@ -59,60 +55,38 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     variables: { id },
     fetchPolicy: "cache-and-network",
   });
-
-  console.log(shifts);
-
-  // Sample data
-  const postingShifts: ShiftResponseDTO[] = [
-    {
-      id: "1",
-      postingId: "1",
-      startTime: new Date(),
-      endTime: new Date(Date.now() + 2.25 * 1000 * 60 * 60),
-    },
-    {
-      id: "1",
-      postingId: "1",
-      startTime: new Date(Date.now() + 3 * 1000 * 60 * 60),
-      endTime: new Date(Date.now() + 4 * 1000 * 60 * 60),
-    },
-    {
-      id: "1",
-      postingId: "1",
-      startTime: new Date(
-        new Date(Date.now() + 2 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-      endTime: new Date(
-        new Date(Date.now() + 2.5 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-    },
-  ];
-
-  const postingStartDate = new Date(
-    new Date().setDate(new Date().getDate() - 14),
-  );
-
-  const postingEndDate = new Date(
-    new Date().setDate(new Date().getDate() + 14),
-  );
-  // End of sample data
+  const history = useHistory();
+  // TODO: Use this state of selected shifts for submission
+  const [selectedShifts, setSelectedShifts] = useState<ShiftDTO[]>([]);
 
   if (isPostingLoading || isShiftsLoading) {
     return <Spinner />;
   }
 
-  return (
-    <div>
-      <Text textStyle="display-large">Volunteer Postings</Text>
-      {/* <VolunteerAvailabilityTable
-        postingShifts={postingShifts}
-        postingStartDate={postingStartDate}
-        postingEndDate={postingEndDate}
-      /> */}
+  return !(isShiftsLoading || isPostingLoading) && !shifts ? (
+    <Redirect to="/not-found" />
+  ) : (
+    <Box bg="background.light" pt={14} px={100} minH="100vh">
+      <Button
+        onClick={() => history.push(`/volunteer/posting/${id}`)}
+        variant="link"
+        mb={4}
+        leftIcon={<ChevronLeftIcon />}
+      >
+        Back to posting details
+      </Button>
+      <Flex pb={7}>
+        <Text textStyle="display-large">Select your Availability</Text>
+        <Spacer />
+        <Button
+          onClick={() => {
+            // Submit the selected shifts
+            console.log(selectedShifts);
+          }}
+        >
+          Submit
+        </Button>
+      </Flex>
       <VolunteerAvailabilityTable
         postingShifts={(shifts as ShiftResponseDTO[]).filter(
           (shift) => shift.postingId === id,
@@ -123,17 +97,11 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
         postingEndDate={
           new Date(Date.parse((postingDetails as PostingResponseDTO).endDate))
         }
+        selectedShifts={selectedShifts}
+        setSelectedShifts={setSelectedShifts}
       />
-    </div>
+    </Box>
   );
-  //   return !loading && !shifts ? (
-  //     <Redirect to="/not-found" />
-  //   ) : (
-  //     <div>
-  //       <Text textStyle="display-large">Volunteer Postings</Text>
-  //       <VolunteerAvailabilityTable postingShifts={postingShifts} />
-  //     </div>
-  //   );
 };
 
 export default VolunteerPostingAvailabilities;

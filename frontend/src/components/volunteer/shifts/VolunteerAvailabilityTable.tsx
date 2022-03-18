@@ -13,7 +13,7 @@ import {
 import React from "react";
 import moment from "moment";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { ShiftResponseDTO } from "../../../types/api/ShiftTypes";
+import { ShiftDTO, ShiftResponseDTO } from "../../../types/api/ShiftTypes";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
@@ -22,12 +22,16 @@ type VolunteerAvailabilityTableProps = {
   postingShifts: ShiftResponseDTO[];
   postingStartDate: Date;
   postingEndDate: Date;
+  selectedShifts: ShiftDTO[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftDTO[]>>;
 };
 
 const VolunteerAvailabilityTable = ({
   postingShifts,
   postingStartDate,
   postingEndDate,
+  selectedShifts,
+  setSelectedShifts,
 }: VolunteerAvailabilityTableProps): React.ReactElement => {
   // Side note: I think we should try to avoid doing queries in table components when avbailable03
   // Query to get some posting
@@ -37,7 +41,6 @@ const VolunteerAvailabilityTable = ({
   const [currentWeek, setWeek] = React.useState(
     moment(postingStartDate).startOf("week").toDate(),
   );
-  const [shifts, setShifts] = React.useState(postingShifts);
   return (
     <Box
       bgColor="white"
@@ -74,7 +77,6 @@ const VolunteerAvailabilityTable = ({
             .fill(0)
             .map((_, i) => i)
             .map((week) => {
-              console.log(`week: ${week}`);
               const startWeek = moment(postingStartDate)
                 .startOf("week")
                 .add(week, "weeks")
@@ -115,9 +117,13 @@ const VolunteerAvailabilityTable = ({
           const date = moment(currentWeek)
             .startOf("week")
             .add(day, "days")
+            .startOf("day")
             .toDate();
-          const weeklyShifts = shifts.filter(
-            (shift) => moment(shift.startTime).diff(date, "days", false) === 0,
+          const shiftsOfDate = postingShifts.filter(
+            (shift) =>
+              moment(shift.startTime)
+                .startOf("day")
+                .diff(date, "days", false) === 0,
           );
 
           return (
@@ -134,18 +140,21 @@ const VolunteerAvailabilityTable = ({
                   </Text>
                 </Td>
               </Tr>
-              {weeklyShifts.length < 1 ? (
+              {shiftsOfDate.length < 1 ? (
                 <Tr>
                   <Td>
                     <NoShiftsAvailableTableRow />
                   </Td>
                 </Tr>
               ) : (
-                weeklyShifts.map((shift, index) => {
+                shiftsOfDate.map((shift, index) => {
                   return (
                     <Tr key={`${day}-${index}`}>
                       <Td p={0}>
                         <VolunteerAvailabilityTableRow
+                          shift={shift}
+                          selectedShifts={selectedShifts}
+                          setSelectedShifts={setSelectedShifts}
                           start={shift.startTime}
                           end={shift.endTime}
                         />

@@ -11,23 +11,41 @@ import {
   formatTimeHourMinutes,
   getElapsedHours,
 } from "../../../utils/DateTimeUtils";
+import { ShiftDTO } from "../../../types/api/ShiftTypes";
 
-type VolunteerAvailabilityTableRowProps = { start: Date; end: Date };
+type VolunteerAvailabilityTableRowProps = {
+  shift: ShiftDTO;
+  selectedShifts: ShiftDTO[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftDTO[]>>;
+  start: Date;
+  end: Date;
+};
 
 const VolunteerAvailabilityTableRow = ({
+  shift,
+  selectedShifts,
+  setSelectedShifts,
   start,
   end,
 }: VolunteerAvailabilityTableRowProps): React.ReactElement => {
   const [note, setNote] = React.useState("");
-  const [checked, setChecked] = React.useState(false);
+  const [checked, setChecked] = React.useState(selectedShifts.includes(shift));
 
   return (
     <Flex bgColor={checked ? "purple.50" : undefined} px={25} py={3}>
       <Checkbox
         minWidth={300}
         mr={170}
-        checked={checked}
-        onChange={(event) => setChecked(event.target.checked)}
+        isChecked={checked}
+        onChange={(event) => {
+          if (!checked) {
+            setSelectedShifts([...selectedShifts, shift]);
+          } else {
+            const selected = selectedShifts.filter((s) => s !== shift);
+            setSelectedShifts(selected);
+          }
+          setChecked(event.target.checked);
+        }}
       >
         {`${formatTimeHourMinutes(start)} -  ${formatTimeHourMinutes(
           end,
