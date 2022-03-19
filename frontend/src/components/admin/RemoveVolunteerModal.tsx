@@ -8,7 +8,7 @@ import {
   ModalHeader,
   ModalOverlay,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useRef } from "react";
 
 type RemoveVolunteerModalProps = {
   name: string;
@@ -21,14 +21,21 @@ const RemoveVolunteerModal = ({
   isOpen = false,
   onClose = () => {},
 }: RemoveVolunteerModalProps): React.ReactElement => {
+  const initialRef = React.useRef(null);
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose} isCentered>
+    <Modal
+      isOpen={isOpen}
+      onClose={onClose}
+      isCentered
+      initialFocusRef={initialRef}
+    >
       <ModalOverlay />
-      <ModalContent borderRadius={0} padding="10px">
-        <ModalHeader fontWeight={700} fontStyle="heading">
+      <ModalContent borderRadius={8} pt={3} pl={3} pr={3} pb={2}>
+        <ModalHeader textStyle="body-bold" marginBottom={0} pb={2}>
           Remove volunteer?
         </ModalHeader>
-        <ModalBody textStyle="caption">
+        <ModalBody textStyle="body-regular" mt={0}>
           Are you sure you want to remove {name}?
         </ModalBody>
         <ModalFooter>
@@ -36,8 +43,7 @@ const RemoveVolunteerModal = ({
             <Button
               onClick={onClose}
               borderRadius="4px"
-              bgColor="gray.100"
-              color="gray.900"
+              colorScheme="gray"
               textStyle="button-semibold"
             >
               Cancel
@@ -47,8 +53,9 @@ const RemoveVolunteerModal = ({
                 /* This is where we would add logic to call API endpoint to remove the volunteer */
                 onClose();
               }}
+              ref={initialRef}
               borderRadius="4px"
-              bgColor="red.500"
+              colorScheme="red"
               textStyle="button-semibold"
             >
               Remove
