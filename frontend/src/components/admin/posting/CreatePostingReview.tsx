@@ -68,7 +68,7 @@ const CreatePostingReview = (): React.ReactElement => {
                   Description
                 </Text>
                 <Text textStyle="caption">
-                  <RichTextDisplay>{richTextSample4}</RichTextDisplay>
+                  <RichTextDisplay>{description}</RichTextDisplay>
                 </Text>
               </Stack>
               <Stack spacing={4}>
