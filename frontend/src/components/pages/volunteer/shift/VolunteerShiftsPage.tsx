@@ -57,7 +57,7 @@ const VolunteerShiftsPage = (): React.ReactElement => {
           backgroundColor="background.white"
           px={0}
         >
-          <VolunteerShiftsTable shifts={[]} />
+          <VolunteerShiftsTable shifts={mockData} />
         </Container>
       </Box>
     </Flex>
