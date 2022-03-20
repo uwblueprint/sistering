@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import 'draft-js/dist/Draft.css'
 import { Box } from "@chakra-ui/react";
 import { convertFromRaw, Editor, EditorState } from "draft-js";
 
