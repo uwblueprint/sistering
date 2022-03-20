@@ -7,8 +7,8 @@ import VolunteerShiftsTable from "../../../volunteer/shifts/VolunteerShiftsTable
 const upcomingShift = {
   postingName: "Posting Name",
   postingLink: "URL",
-  startTime: "2022-01-21T00:00:00+00:00",
-  endTime: "2022-01-24T00:00:00+00:00",
+  startTime: "2022-01-21T11:00:00+00:00",
+  endTime: "2022-01-21T12:00:00+00:00",
   deadline: "",
 };
 
@@ -45,7 +45,7 @@ const VolunteerShiftsPage = (): React.ReactElement => {
           backgroundColor="background.white"
           px={0}
         >
-          <VolunteerShiftsTable shifts={[]} />
+          <VolunteerShiftsTable shifts={mockData} />
         </Container>
       </Box>
     </Flex>
