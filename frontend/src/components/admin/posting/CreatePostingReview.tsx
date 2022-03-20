@@ -12,7 +12,6 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useQuery, gql } from "@apollo/client";
 
 import FormHeader from "../../common/FormHeader";
 import LabelledText from "../../common/LabelledText";
@@ -33,19 +32,10 @@ const CreatePostingReview = (): React.ReactElement => {
     times,
   } = useContext(PostingContext);
 
-  // for testing:
-  // const [richTextDescription, setRichTextDescription] = useState('');
-
-  // const descriptionsQuery = gql`
-  // {
-  //   postings {
-  //     description
-  //   }
-  // }`
-  // useQuery(descriptionsQuery, {
-  //   onCompleted: data => setRichTextDescription(data.postings[0].description),
-  // })
-  // console.log(richTextDescription)
+  // richText test cases provided by Albert
+  // const richTextSample1  = '{"blocks":[{"key":"2ggjh","text":"ajsfiosdjfioaweiofewofjaoij ","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":10,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"8annk","text":"asdfasdfasdfasdfasdf jasodifjioasdjf asjdifojasoidfoajsd","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":21,"style":"ITALIC"},{"offset":37,"length":19,"style":"ITALIC"},{"offset":21,"length":35,"style":"UNDERLINE"},{"offset":37,"length":19,"style":"BOLD"}],"entityRanges":[],"data":{}}],"entityMap":{}}'
+  // const richTextSample2 = '{"blocks":[{"key":"2ggjh","text":"hi","type":"ordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"2nlb2","text":"aewf","type":"ordered-list-item","depth":0,"inlineStyleRanges":[{"offset":0,"length":4,"style":"BOLD"}],"entityRanges":[],"data":{}},{"key":"6a81d","text":"asf","type":"ordered-list-item","depth":0,"inlineStyleRanges":[{"offset":0,"length":3,"style":"BOLD"},{"offset":0,"length":3,"style":"UNDERLINE"}],"entityRanges":[],"data":{}}],"entityMap":{}}'
+  // const richTextSample3 = '{"blocks":[{"key":"2ggjh","text":"ajwefiojeio","type":"unordered-list-item","depth":0,"inlineStyleRanges":[],"entityRanges":[],"data":{}},{"key":"80c8b","text":"jasidf","type":"unordered-list-item","depth":0,"inlineStyleRanges":[{"offset":0,"length":6,"style":"BOLD"},{"offset":0,"length":6,"style":"UNDERLINE"},{"offset":0,"length":6,"style":"ITALIC"}],"entityRanges":[],"data":{}},{"key":"4qepd","text":"ajewoifjwejo","type":"unstyled","depth":0,"inlineStyleRanges":[{"offset":0,"length":12,"style":"BOLD"},{"offset":0,"length":12,"style":"UNDERLINE"},{"offset":0,"length":12,"style":"ITALIC"}],"entityRanges":[],"data":{}}],"entityMap":{}}'
 
   return (
     <Container maxW="container.xl" p={0}>
