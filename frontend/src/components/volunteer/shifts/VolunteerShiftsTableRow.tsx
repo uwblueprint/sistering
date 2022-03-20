@@ -1,7 +1,11 @@
 import React from "react";
+<<<<<<< HEAD
 import { Tr, Td, Text, Button } from "@chakra-ui/react";
 import { useHistory } from "react-router-dom";
 
+=======
+import { Tr, Td, Text, Link } from "@chakra-ui/react";
+>>>>>>> Update UI and date formatting to use momentJS
 import {
   getElapsedHours,
   formatTimeHourMinutes,
