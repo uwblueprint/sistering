@@ -2,22 +2,23 @@ import React, {useEffect, useState} from "react";
 import {Box} from '@chakra-ui/react';
 import {convertFromRaw, Editor, EditorState} from 'draft-js';
 
-interface Props {
-  description: string
+
+interface RichTextDisplayProps {
+  children: string
 }
 
-const RichTextDisplay = (props: Props): React.ReactElement => {
+const RichTextDisplay = ( {children}: RichTextDisplayProps): React.ReactElement  => {
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
 
   useEffect(() => {
-    if (props.description) {
-      setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(props.description))))
+    if (children) {
+      setEditorState(EditorState.createWithContent(convertFromRaw(JSON.parse(children))))
     }
-  }, [props.description])
+  }, [children])
 
 return (
 <Box>
-<Editor editorState={editorState} readOnly={true} onChange={() => {}}/>
+<Editor editorState={editorState} readOnly onChange={() => {}}/>
 </Box>)
 }
 
