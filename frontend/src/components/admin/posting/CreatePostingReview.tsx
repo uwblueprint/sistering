@@ -12,7 +12,7 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useQuery, gql } from '@apollo/client';
+import { useQuery, gql } from "@apollo/client";
 
 import FormHeader from "../../common/FormHeader";
 import LabelledText from "../../common/LabelledText";
@@ -21,9 +21,6 @@ import PostingContext from "../../../contexts/admin/PostingContext";
 import { ADMIN_POSTING_CREATE_REVIEW_ENTER_ALL_DETAILS } from "../../../constants/Copy";
 import ScheduledShiftsTr from "./ScheduledShiftsTr";
 import RichTextDisplay from "./RichTextDisplay";
-
-
-
 
 const CreatePostingReview = (): React.ReactElement => {
   const {
@@ -36,10 +33,9 @@ const CreatePostingReview = (): React.ReactElement => {
     times,
   } = useContext(PostingContext);
 
-
   // for testing:
   // const [richTextDescription, setRichTextDescription] = useState('');
-  
+
   // const descriptionsQuery = gql`
   // {
   //   postings {
@@ -49,6 +45,7 @@ const CreatePostingReview = (): React.ReactElement => {
   // useQuery(descriptionsQuery, {
   //   onCompleted: data => setRichTextDescription(data.postings[0].description),
   // })
+  // console.log(richTextDescription)
 
   return (
     <Container maxW="container.xl" p={0}>
@@ -79,7 +76,9 @@ const CreatePostingReview = (): React.ReactElement => {
                 <Text textStyle="subheading" color="text.gray" mt={3}>
                   Description
                 </Text>
-                <Text textStyle="caption"><RichTextDisplay>{description}</RichTextDisplay></Text>
+                <Text textStyle="caption">
+                  <RichTextDisplay>{description}</RichTextDisplay>
+                </Text>
               </Stack>
               <Stack spacing={4}>
                 <Text textStyle="subheading" color="text.gray" mt={5}>
