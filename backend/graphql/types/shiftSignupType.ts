@@ -5,6 +5,7 @@ const shiftSignupType = gql`
     PENDING
     CONFIRMED
     CANCELED
+    PUBLISHED
   }
 
   input CreateShiftSignupRequestDTO {
