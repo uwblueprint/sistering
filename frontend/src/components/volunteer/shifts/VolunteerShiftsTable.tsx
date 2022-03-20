@@ -36,7 +36,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   if (!shifts.length) {
     return (
       <Container maxW="container.xl" minH="90vh">
-        <VStack pt="35%">
+        <VStack pt="25%">
           <Text color="text.gray">No shifts to show</Text>
           <ChakraButton variant="outline">
             Browse volunteer postings
