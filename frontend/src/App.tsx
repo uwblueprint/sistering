@@ -193,8 +193,6 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.NOT_FOUND_PAGE}
                       component={NotFound}
-                      path={Routes.VOLUNTEER_SHIFTS_PAGE}
-                      component={VolunteerShiftsPage}
                     />
                     <Route exact path="*" component={NotFound} />
                   </Switch>
