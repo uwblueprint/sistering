@@ -1,90 +1,71 @@
-import React from "react";
+import React, { Fragment } from "react";
 import {
   Container,
   Table,
   Text,
-  Flex,
-  Stack,
+  VStack,
   Button as ChakraButton,
 } from "@chakra-ui/react";
 import VolunteerShiftsTableRow from "./VolunteerShiftsTableRow";
-
-const mockTableData = [
-  {
-    name: "Posting Name",
-    link: "/",
-    startTime: "2022-01-21T03:00:00+00:00",
-    endTime: "2022-01-21T05:00:00+00:00",
-  },
-  {
-    name: "Posting Name",
-    link: "/",
-    deadline: "Friday, February 17",
-  },
-];
-
-const upcomingShift = {
-  name: "Posting Name",
-  link: "/",
-  startTime: "2022-01-21T03:00:00+00:00",
-  endTime: "2022-01-21T05:00:00+00:00",
-};
-
-const pendingShift = {
-  name: "Posting Name",
-  link: "/",
-  deadline: "Friday, February 17",
-};
+import VolunteerShiftsTableDate from "./VolunteerShiftsTableDate";
 
 type Shift = {
-  startTime: string;
-  endTime: string;
-  postingName?: string;
-  postingLink?: string;
+  startTime?: string;
+  endTime?: string;
+  postingName: string;
+  postingLink: string;
   deadline?: string;
 };
-type VolunteerShiftsTableProps = {
+
+type VolunteerDateShifts = {
+  date: Date;
   shifts: Shift[];
+};
+
+type VolunteerShiftsTableProps = {
+  shifts: VolunteerDateShifts[];
 };
 
 const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   shifts,
 }: VolunteerShiftsTableProps) => {
-  shifts.sort((a: Shift, b: Shift) => (a.startTime <= b.startTime ? -1 : 1));
+  shifts.sort((a: VolunteerDateShifts, b: VolunteerDateShifts) =>
+    a.date <= b.date ? -1 : 1,
+  );
 
-  // if (!shifts.length) {
-  //   return (
-  //     <Container maxW="container.xl" minH="90vh">
-  //       <Flex p={10} justifyContent="center">
-  //         <Stack p={10}>
-  //           <Text textStyle="body-regular" color="text.gray" align="center">
-  //             No shifts to show
-  //           </Text>
-  //           <ChakraButton variant="outline">
-  //             Browse volunteer postings
-  //           </ChakraButton>
-  //         </Stack>
-  //       </Flex>
-  //     </Container>
-  //   );
-  // }
+  if (!shifts.length) {
+    return (
+      <Container maxW="container.xl" minH="90vh">
+        <VStack pt="35%">
+          <Text color="text.gray">No shifts to show</Text>
+          <ChakraButton variant="outline">
+            Browse volunteer postings
+          </ChakraButton>
+        </VStack>
+      </Container>
+    );
+  }
 
   return (
-    <Container maxW="container.xl" minH="90vh">
-      <Table maxW="1238px" colorScheme="gray">
-        <VolunteerShiftsTableRow
-          postingName={upcomingShift.name}
-          postingLink={upcomingShift.link}
-          startTime={upcomingShift.startTime}
-          endTime={upcomingShift.endTime}
-        />
-        <VolunteerShiftsTableRow
-          postingName={pendingShift.name}
-          postingLink={pendingShift.link}
-          deadline={pendingShift.deadline}
-        />
-      </Table>
-    </Container>
+    <Table variant="brand">
+      {shifts.map((day) => (
+        <Fragment key={day.date.toDateString()}>
+          <VolunteerShiftsTableDate date={day.date} />
+          {day.shifts.length > 0
+            ? day.shifts.map((shift: Shift, idx) => (
+                <VolunteerShiftsTableRow
+                  key={idx}
+                  postingName={shift.postingName}
+                  postingLink={shift.postingLink}
+                  startTime={shift.startTime}
+                  endTime={shift.endTime}
+                  deadline={shift.deadline}
+                />
+              ))
+            : null}
+        </Fragment>
+      ))}
+    </Table>
   );
 };
 
