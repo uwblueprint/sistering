@@ -1,10 +1,9 @@
 import { PrismaClient, Signup, SignupStatus } from "@prisma/client";
-import { Prisma } from ".prisma/client";
+import { Prisma, Shift } from ".prisma/client";
 
 import IShiftSignupService from "../interfaces/shiftSignupService";
 import {
   CreateShiftSignupDTO,
-  ShiftSignupDTO,
   ShiftSignupResponseDTO,
   UpdateShiftSignupRequestDTO,
 } from "../../types";
@@ -16,11 +15,16 @@ const prisma = new PrismaClient();
 const Logger = logger(__filename);
 
 class ShiftSignupService implements IShiftSignupService {
-  convertSignupToDTO = (signup: Signup): ShiftSignupDTO => {
+  convertSignupResponseToDTO = (
+    signup: Signup,
+    shift: Shift,
+  ): ShiftSignupResponseDTO => {
     return {
       ...signup,
       shiftId: String(signup.shiftId),
       userId: String(signup.userId),
+      shiftStartTime: shift.startTime,
+      shiftEndTime: shift.endTime,
     };
   };
 
@@ -43,8 +47,13 @@ class ShiftSignupService implements IShiftSignupService {
       };
       const shiftSignups = await prisma.signup.findMany({
         where: filter,
+        include: {
+          shift: true,
+        },
       });
-      return shiftSignups.map((signup) => this.convertSignupToDTO(signup));
+      return shiftSignups.map((signup) =>
+        this.convertSignupResponseToDTO(signup, signup.shift),
+      );
     } catch (error: unknown) {
       Logger.error(
         `Failed to shift signups. Reason = ${getErrorMessage(error)}`,
@@ -66,11 +75,14 @@ class ShiftSignupService implements IShiftSignupService {
               userId: Number(shiftSignup.userId),
               status: SignupStatus.PENDING,
             },
+            include: {
+              shift: true,
+            },
           }),
         ),
       );
       return newShiftSignups.map((newShiftSignup) =>
-        this.convertSignupToDTO(newShiftSignup),
+        this.convertSignupResponseToDTO(newShiftSignup, newShiftSignup.shift),
       );
     } catch (error: unknown) {
       Logger.error(
@@ -94,8 +106,11 @@ class ShiftSignupService implements IShiftSignupService {
           },
         },
         data: shiftSignup,
+        include: {
+          shift: true,
+        },
       });
-      return this.convertSignupToDTO(updateResult);
+      return this.convertSignupResponseToDTO(updateResult, updateResult.shift);
     } catch (error: unknown) {
       Logger.error(
         `Failed to update shift signup. Reason = ${getErrorMessage(error)}`,
