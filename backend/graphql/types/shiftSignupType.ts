@@ -35,6 +35,12 @@ const shiftSignupType = gql`
       userId: ID!
       signupStatus: SignupStatus
     ): [ShiftSignupResponseDTO!]!
+    getShiftSignupsForPostingInDateRange(
+      postingId: ID!
+      startDate: DateTime!
+      endDate: DateTime!
+      signupStatus: SignupStatus
+    ): [ShiftSignupResponseDTO!]!
   }
 
   extend type Mutation {

@@ -20,6 +20,28 @@ const shiftSignupResolvers = {
     ): Promise<ShiftSignupResponseDTO[]> => {
       return shiftSignupService.getShiftSignupsForUser(userId, signupStatus);
     },
+
+    getShiftSignupsForPostingInDateRange: async (
+      _parent: undefined,
+      {
+        postingId,
+        startDate,
+        endDate,
+        signupStatus,
+      }: {
+        postingId: string;
+        startDate: Date;
+        endDate: Date;
+        signupStatus: SignupStatus | null;
+      },
+    ): Promise<ShiftSignupResponseDTO[]> => {
+      return shiftSignupService.getShiftSignupsForPostingInDateRange(
+        postingId,
+        startDate,
+        endDate,
+        signupStatus,
+      );
+    },
   },
   Mutation: {
     createShiftSignups: async (
