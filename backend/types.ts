@@ -115,7 +115,11 @@ export type ShiftBulkRequestDTO = {
 
 export type ShiftResponseDTO = ShiftDTO;
 
-export type ShiftSignupStatus = "PENDING" | "CONFIRMED" | "CANCELED";
+export type ShiftSignupStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "CANCELED"
+  | "PUBLISHED";
 
 export type ShiftSignupDTO = {
   shiftId: string;

@@ -45,6 +45,7 @@ enum SignupStatus {
   PENDING
   CONFIRMED
   CANCELED
+  PUBLISHED
 }
 
 enum PostingType {
