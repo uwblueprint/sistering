@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Button as ChakraButton,
+  Container,
   HStack,
   Tab,
   TabList,
