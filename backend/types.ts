@@ -109,6 +109,7 @@ export type ShiftRequestDTO = Omit<ShiftDTO, "id" | "postingId">;
 export type ShiftBulkRequestDTO = {
   postingId: string;
   times: TimeBlock[];
+  startDate: Date;
   endDate: Date;
   recurrenceInterval: RecurrenceInterval;
 };
