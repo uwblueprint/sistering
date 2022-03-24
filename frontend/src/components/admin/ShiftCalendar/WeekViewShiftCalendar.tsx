@@ -20,7 +20,7 @@ import {
 } from "@chakra-ui/react";
 import colors from "../../../theme/colors";
 import { Event } from "../../../types/CalendarTypes";
-import "./ShiftCalendar.css";
+import "./Calendar.css";
 import { getTime, getWeekday } from "../../../utils/DateTimeUtils";
 
 type ShiftCalendarProps = {

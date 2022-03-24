@@ -3,3 +3,7 @@ export type Event = {
   start: Date;
   end: Date;
 };
+
+export type MonthEvent = Event & {
+  groupId: string;
+};

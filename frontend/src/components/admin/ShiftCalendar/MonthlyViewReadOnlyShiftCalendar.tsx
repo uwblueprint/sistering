@@ -7,7 +7,7 @@ import FullCalendar, {
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { Box } from "@chakra-ui/react";
 
-import { Event } from "../../../types/CalendarTypes";
+import { Event, MonthEvent } from "../../../types/CalendarTypes";
 import colors from "../../../theme/colors";
 import "./Calendar.css";
 
@@ -68,17 +68,13 @@ export const ADMIN_SHIFT_CALENDAR_TEST_EVENTS: MonthEvent[] = [
   },
 ];
 
-export type MonthEvent = Event & {
-  groupId: string;
-};
-
 // Events can be passed in any order (does not have to be sorted).
 // AdminShiftCalendar assumes that all events are in the same month.
 type AdminShiftCalendarProps = {
   events: Event[];
 };
 
-const MonthlyViewReadOnlyShiftCalendar = ({
+const MonthlyViewShiftCalendar = ({
   events,
 }: AdminShiftCalendarProps): React.ReactElement => {
   const displayCustomEvent = (content: EventContentArg) => {
@@ -135,4 +131,4 @@ const MonthlyViewReadOnlyShiftCalendar = ({
   );
 };
 
-export default MonthlyViewReadOnlyShiftCalendar;
+export default MonthlyViewShiftCalendar;
