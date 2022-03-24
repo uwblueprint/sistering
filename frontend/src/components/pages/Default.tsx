@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
 import {
   Button as ChakraButton,
+  Container,
   HStack,
   Tab,
   TabList,
@@ -15,6 +16,9 @@ import RefreshCredentials from "../auth/RefreshCredentials";
 
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
+import AdminShiftCalendar, {
+  ADMIN_SHIFT_CALENDAR_TEST_EVENTS,
+} from "../admin/schedule/AdminShiftCalendar";
 
 type ButtonProps = { text: string; path: string };
 
@@ -182,6 +186,9 @@ const Default = (): React.ReactElement => {
         />
       </div>
       <div style={{ height: "2rem" }} />
+      <Container maxW="container.xl">
+        <AdminShiftCalendar events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS} />
+      </Container>
       <TeamInfoDisplay />
       <DesignSystemDisplay />
     </div>

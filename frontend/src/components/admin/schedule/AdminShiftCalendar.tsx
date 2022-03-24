@@ -7,7 +7,7 @@ import FullCalendar, {
 import dayGridPlugin from "@fullcalendar/daygrid";
 import { Box } from "@chakra-ui/react";
 
-import { Event } from "../ShiftCalendar/ShiftCalendar";
+import { Event } from "../../../types/CalendarTypes";
 import colors from "../../../theme/colors";
 import "./AdminShiftCalendar.css";
 
