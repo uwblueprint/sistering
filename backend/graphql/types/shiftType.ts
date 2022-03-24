@@ -12,6 +12,7 @@ const shiftType = gql`
     postingId: String!
     times: [ShiftRequestDTO!]!
     endDate: Date!
+    startDate: Date!
     recurrenceInterval: RecurrenceInterval!
   }
 
