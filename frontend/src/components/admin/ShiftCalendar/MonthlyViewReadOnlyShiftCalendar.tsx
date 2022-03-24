@@ -9,7 +9,7 @@ import { Box } from "@chakra-ui/react";
 
 import { Event } from "../../../types/CalendarTypes";
 import colors from "../../../theme/colors";
-import "./AdminShiftCalendar.css";
+import "./Calendar.css";
 
 export const ADMIN_SHIFT_CALENDAR_TEST_EVENTS: MonthEvent[] = [
   {
@@ -78,7 +78,7 @@ type AdminShiftCalendarProps = {
   events: Event[];
 };
 
-const AdminShiftCalendar = ({
+const MonthlyViewReadOnlyShiftCalendar = ({
   events,
 }: AdminShiftCalendarProps): React.ReactElement => {
   const displayCustomEvent = (content: EventContentArg) => {
@@ -135,4 +135,4 @@ const AdminShiftCalendar = ({
   );
 };
 
-export default AdminShiftCalendar;
+export default MonthlyViewReadOnlyShiftCalendar;

@@ -33,7 +33,7 @@ type ShiftCalendarProps = {
   initialDate?: string;
 };
 
-const ShiftCalendar = ({
+const WeekViewShiftCalendar = ({
   events,
   selectedEvent,
   setSelectedEvent,
@@ -122,4 +122,4 @@ const ShiftCalendar = ({
   );
 };
 
-export default ShiftCalendar;
+export default WeekViewShiftCalendar;
