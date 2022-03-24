@@ -1,16 +1,18 @@
 import React, { useEffect, useState } from "react";
-import 'draft-js/dist/Draft.css'
 import { Box } from "@chakra-ui/react";
 import { convertFromRaw, Editor, EditorState } from "draft-js";
+import "draft-js/dist/Draft.css";
 
-interface RichTextDisplayProps {
+type RichTextDisplayProps = {
   children: string;
-}
+};
 
 const RichTextDisplay = ({
   children,
 }: RichTextDisplayProps): React.ReactElement => {
-  const [editorState, setEditorState] = useState(EditorState.createEmpty());
+  const [editorState, setEditorState] = useState<EditorState>(
+    EditorState.createEmpty(),
+  );
 
   useEffect(() => {
     if (children) {
