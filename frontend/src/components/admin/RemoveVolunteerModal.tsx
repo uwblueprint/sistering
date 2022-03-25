@@ -1,14 +1,14 @@
 import {
   Button,
-  HStack,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Text,
 } from "@chakra-ui/react";
-import React, { useRef } from "react";
+import React from "react";
 
 type RemoveVolunteerModalProps = {
   name: string;
@@ -31,36 +31,38 @@ const RemoveVolunteerModal = ({
       initialFocusRef={initialRef}
     >
       <ModalOverlay />
-      <ModalContent borderRadius={8} pt={3} pl={3} pr={3} pb={2}>
-        <ModalHeader textStyle="body-bold" marginBottom={0} pb={2}>
-          Remove volunteer?
+      <ModalContent borderRadius={0} p="10px">
+        <ModalHeader mt="10px" ml="10px" py="11px" px="15px">
+          <Text textStyle="body-bold">Remove volunteer?</Text>
         </ModalHeader>
-        <ModalBody textStyle="body-regular" mt={0}>
-          Are you sure you want to remove {name}?
+        <ModalBody>
+          <Text textStyle="body-regular">
+            Are you sure you want to remove {name}?
+          </Text>
         </ModalBody>
-        <ModalFooter>
-          <HStack spacing={3}>
-            <Button
-              onClick={onClose}
-              borderRadius="4px"
-              colorScheme="gray"
-              textStyle="button-semibold"
-            >
-              Cancel
-            </Button>
-            <Button
-              onClick={() => {
-                /* This is where we would add logic to call API endpoint to remove the volunteer */
-                onClose();
-              }}
-              ref={initialRef}
-              borderRadius="4px"
-              colorScheme="red"
-              textStyle="button-semibold"
-            >
-              Remove
-            </Button>
-          </HStack>
+        <ModalFooter mt="10px" py="6px" px="12px">
+          <Button
+            mr="17px"
+            borderRadius="4px"
+            onClick={onClose}
+            colorScheme="gray"
+            textStyle="button-semibold"
+          >
+            Cancel
+          </Button>
+          <Button
+            borderRadius="4px"
+            onClick={() => {
+              /* This is where we would add logic to call API endpoint to remove the volunteer */
+              onClose();
+            }}
+            ref={initialRef}
+            colorScheme="red"
+            textStyle="button-semibold"
+            fontWeight={700}
+          >
+            Remove
+          </Button>
         </ModalFooter>
       </ModalContent>
     </Modal>
