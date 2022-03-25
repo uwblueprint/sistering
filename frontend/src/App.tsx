@@ -42,11 +42,11 @@ import CreatePostingShiftsPage from "./components/pages/admin/posting/CreatePost
 import CreatePostingReviewPage from "./components/pages/admin/posting/CreatePostingReviewPage";
 import VolunteerPostingDetails from "./components/pages/volunteer/posting/VolunteerPostingDetails";
 import AdminPostingDetails from "./components/pages/admin/posting/AdminPostingDetails";
-import SideNavbarDemo from "./components/pages/SideNavbarDemo";
 
 import customTheme from "./theme";
 import { AuthenticatedUser } from "./types/AuthTypes";
 import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
+import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSchedulePostingPage";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
@@ -129,11 +129,6 @@ const App = (): React.ReactElement => {
                     />
                     <PrivateRoute
                       exact
-                      path={Routes.SIDE_NAVBAR_DEMO_PAGE}
-                      component={SideNavbarDemo}
-                    />
-                    <PrivateRoute
-                      exact
                       path={Routes.VOLUNTEER_POSTINGS_PAGE}
                       component={VolunteerPostingsPage}
                     />
@@ -166,6 +161,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.ADMIN_POSTING_DETAILS}
                       component={AdminPostingDetails}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
+                      component={AdminSchedulePostingPage}
                     />
                     <PrivateRoute
                       exact
