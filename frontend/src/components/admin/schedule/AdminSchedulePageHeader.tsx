@@ -10,7 +10,12 @@ const AdminSchedulePageHeader = ({
   branchName: string;
 }): React.ReactElement => {
   return (
-    <Box px="40px">
+    <Box
+      px="40px"
+      borderBottom="2px"
+      borderRight="2px"
+      borderColor="background.dark"
+    >
       <Flex h="50px" alignItems="center" justifyContent="space-between">
         <Link to="/" style={{ textDecoration: "none" }}>
           <Button leftIcon={<ChevronLeftIcon w={8} h={8} />} variant="link">
