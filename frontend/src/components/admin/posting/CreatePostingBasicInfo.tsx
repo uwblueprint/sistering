@@ -26,6 +26,7 @@ import {
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
 
 import FormHeader from "../../common/FormHeader";
+import TagsPopover from "../../common/TagsPopover";
 import {
   ADMIN_POSTING_CREATE_BASIC_INFO_CLOSING_DATE_TOOLTIP,
   ADMIN_POSTING_CREATE_BASIC_INFO_ENTER_ALL_DETAILS,
@@ -436,16 +437,33 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                   wrap="wrap"
                   mb={skillsError ? ERROR_MESSAGE_HEIGHT : "0px"}
                 >
-                  {selectedSkills.map((skillId) => (
+                  {selectedSkills.slice(0, 2).map((skillId) => (
                     <Tag variant="brand" height="32px" key={skillId}>
-                      <TagLabel>
-                        {getOptionNameFromId(skillOptions, skillId)}
-                      </TagLabel>
+                      {getOptionNameFromId(skillOptions, skillId)}
                       <TagCloseButton
                         onClick={() => handleSkillRemoval(skillId)}
                       />
                     </Tag>
                   ))}
+                  {selectedSkills.length > 2 && (
+                    <TagsPopover
+                      header="Selected Skills"
+                      tags={selectedSkills.map((skillId) => (
+                        <Tag
+                          variant="brand"
+                          height="32px"
+                          key={skillId}
+                          mr={2}
+                          mb={2}
+                        >
+                          {getOptionNameFromId(skillOptions, skillId)}
+                          <TagCloseButton
+                            onClick={() => handleSkillRemoval(skillId)}
+                          />
+                        </Tag>
+                      ))}
+                    />
+                  )}
                 </HStack>
               </FormControl>
             </HStack>
@@ -477,25 +495,49 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                   wrap="wrap"
                   mb={employeesError ? ERROR_MESSAGE_HEIGHT : "0px"}
                 >
-                  {selectedEmployees.map((employeeId) => (
+                  {selectedEmployees.slice(0, 2).map((employeeId) => (
                     <Tag variant="brand" height="32px" key={employeeId}>
                       <Avatar size="xs" mr={1} bg="violet" />
-                      <TagLabel>
-                        {getOptionNameFromId(
-                          employeeOptions.map(
-                            ({ id, firstName, lastName }) => ({
-                              id,
-                              name: `${firstName} ${lastName}`,
-                            }),
-                          ),
-                          employeeId,
-                        )}
-                      </TagLabel>
+                      {getOptionNameFromId(
+                        employeeOptions.map(({ id, firstName, lastName }) => ({
+                          id,
+                          name: `${firstName} ${lastName}`,
+                        })),
+                        employeeId,
+                      )}
                       <TagCloseButton
                         onClick={() => handleEmployeeRemoval(employeeId)}
                       />
                     </Tag>
                   ))}
+                  {selectedEmployees.length > 2 && (
+                    <TagsPopover
+                      header="Appointed Contacts"
+                      tags={selectedEmployees.map((employeeId) => (
+                        <Tag
+                          variant="brand"
+                          height="32px"
+                          key={employeeId}
+                          mr={2}
+                          mb={2}
+                        >
+                          <Avatar size="xs" mr={1} bg="violet" />
+                          {getOptionNameFromId(
+                            employeeOptions.map(
+                              ({ id, firstName, lastName }) => ({
+                                id,
+                                name: `${firstName} ${lastName}`,
+                              }),
+                            ),
+                            employeeId,
+                          )}
+                          <TagCloseButton
+                            onClick={() => handleEmployeeRemoval(employeeId)}
+                          />
+                        </Tag>
+                      ))}
+                    />
+                  )}
                 </HStack>
               </FormControl>
             </HStack>
