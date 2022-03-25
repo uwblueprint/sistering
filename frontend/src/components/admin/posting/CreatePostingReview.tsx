@@ -1,4 +1,4 @@
-import React, { useContext} from "react";
+import React, { useContext } from "react";
 import {
   Container,
   Flex,
@@ -31,7 +31,6 @@ const CreatePostingReview = (): React.ReactElement => {
     autoClosingDate,
     times,
   } = useContext(PostingContext);
-
 
   return (
     <Container maxW="container.xl" p={0}>

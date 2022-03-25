@@ -1,6 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Box } from "@chakra-ui/react";
-import { convertFromRaw, Editor, EditorState } from "draft-js";
+import {
+  convertFromRaw,
+  Editor,
+  EditorState,
+  RawDraftContentState,
+} from "draft-js";
 import "draft-js/dist/Draft.css";
 
 type RichTextDisplayProps = {
@@ -16,9 +21,18 @@ const RichTextDisplay = ({
 
   useEffect(() => {
     if (children) {
-      setEditorState(
-        EditorState.createWithContent(convertFromRaw(JSON.parse(children))),
-      );
+      try {
+        const contentState: RawDraftContentState = JSON.parse(children);
+        setEditorState(
+          EditorState.createWithContent(convertFromRaw(contentState)),
+        );
+      } catch (e: unknown) {
+        /* eslint-disable-next-line no-console */
+        console.log(
+          `Invalid content state ${children} passed to RichTextDisplay`,
+        );
+        setEditorState(EditorState.createEmpty());
+      }
     }
   }, [children]);
 
