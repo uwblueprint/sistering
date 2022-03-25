@@ -21,24 +21,18 @@ const shiftSignupResolvers = {
       return shiftSignupService.getShiftSignupsForUser(userId, signupStatus);
     },
 
-    getShiftSignupsForPostingInDateRange: async (
+    getShiftSignupsForPosting: async (
       _parent: undefined,
       {
         postingId,
-        startDate,
-        endDate,
         signupStatus,
       }: {
         postingId: string;
-        startDate: Date;
-        endDate: Date;
         signupStatus: SignupStatus | null;
       },
     ): Promise<ShiftSignupResponseDTO[]> => {
-      return shiftSignupService.getShiftSignupsForPostingInDateRange(
+      return shiftSignupService.getShiftSignupsForPosting(
         postingId,
-        startDate,
-        endDate,
         signupStatus,
       );
     },

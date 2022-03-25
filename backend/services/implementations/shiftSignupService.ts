@@ -62,10 +62,8 @@ class ShiftSignupService implements IShiftSignupService {
     }
   }
 
-  async getShiftSignupsForPostingInDateRange(
+  async getShiftSignupsForPosting(
     postingId: string,
-    startDate: Date,
-    endDate: Date,
     signupStatus: SignupStatus | null,
   ): Promise<ShiftSignupResponseDTO[]> {
     try {
@@ -74,10 +72,6 @@ class ShiftSignupService implements IShiftSignupService {
           {
             shift: {
               postingId: Number(postingId),
-              startTime: {
-                gte: startDate,
-                lte: endDate,
-              },
             },
           },
           signupStatus

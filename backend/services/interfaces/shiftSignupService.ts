@@ -42,17 +42,13 @@ interface IShiftSignupService {
   ): Promise<ShiftSignupResponseDTO[]>;
 
   /**
-   * Gets all shifts for a posting within a date range
+   * Gets all shifts for a posting
    * @param postingId the target posting's id
-   * @param startDate the start range to filter
-   * @param endDate the end range to filter
-   * @returns an array of ShiftSignupResponseDTOs for each shift within the date range
+   * @returns an array of ShiftSignupResponseDTOs for each shift for posting
    * @throws Error if the shift signup retrieval fails
    */
-  getShiftSignupsForPostingInDateRange(
+  getShiftSignupsForPosting(
     postingId: string,
-    startDate: Date,
-    endDate: Date,
     signupStatus: SignupStatus | null,
   ): Promise<ShiftSignupResponseDTO[]>;
 }

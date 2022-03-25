@@ -35,10 +35,8 @@ const shiftSignupType = gql`
       userId: ID!
       signupStatus: SignupStatus
     ): [ShiftSignupResponseDTO!]!
-    getShiftSignupsForPostingInDateRange(
+    getShiftSignupsForPosting(
       postingId: ID!
-      startDate: DateTime!
-      endDate: DateTime!
       signupStatus: SignupStatus
     ): [ShiftSignupResponseDTO!]!
   }
