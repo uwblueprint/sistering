@@ -446,9 +446,9 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                       mb={2}
                     >
                       {getOptionNameFromId(skillOptions, skillId)}
-                      {/* <TagCloseButton
+                      <TagCloseButton
                         onClick={() => handleSkillRemoval(skillId)}
-                      /> */}
+                      />
                     </Tag>
                   ))}
                   {selectedSkills.length > 2 && (
