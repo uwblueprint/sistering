@@ -20,19 +20,17 @@ const RichTextDisplay = ({
   );
 
   useEffect(() => {
-    if (children) {
-      try {
-        const contentState: RawDraftContentState = JSON.parse(children);
-        setEditorState(
-          EditorState.createWithContent(convertFromRaw(contentState)),
-        );
-      } catch (e: unknown) {
-        /* eslint-disable-next-line no-console */
-        console.log(
-          `Invalid content state ${children} passed to RichTextDisplay`,
-        );
-        setEditorState(EditorState.createEmpty());
-      }
+    try {
+      const contentState: RawDraftContentState = JSON.parse(children);
+      setEditorState(
+        EditorState.createWithContent(convertFromRaw(contentState)),
+      );
+    } catch (e: unknown) {
+      /* eslint-disable-next-line no-console */
+      console.log(
+        `Invalid content state ${children} passed to RichTextDisplay`,
+      );
+      setEditorState(EditorState.createEmpty());
     }
   }, [children]);
 
