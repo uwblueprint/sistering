@@ -13,17 +13,20 @@ import {
 import React from "react";
 import moment from "moment";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { ShiftDTO, ShiftResponseDTO } from "../../../types/api/ShiftTypes";
+import { ShiftResponseDTO } from "../../../types/api/ShiftTypes";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
+import { SignupRequestDTO } from "../../../types/api/SignupTypes";
 
 type VolunteerAvailabilityTableProps = {
   postingShifts: ShiftResponseDTO[];
   postingStartDate: Date;
   postingEndDate: Date;
-  selectedShifts: ShiftDTO[];
-  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftDTO[]>>;
+  selectedShifts: ShiftResponseDTO[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftResponseDTO[]>>;
+  signupNotes: SignupRequestDTO[];
+  setSignupNotes: React.Dispatch<React.SetStateAction<SignupRequestDTO[]>>;
 };
 
 const VolunteerAvailabilityTable = ({
@@ -32,12 +35,9 @@ const VolunteerAvailabilityTable = ({
   postingEndDate,
   selectedShifts,
   setSelectedShifts,
+  signupNotes,
+  setSignupNotes,
 }: VolunteerAvailabilityTableProps): React.ReactElement => {
-  // Side note: I think we should try to avoid doing queries in table components when avbailable03
-  // Query to get some posting
-  // We assume that we have some posting
-  // we generate an item in the the headers menu for each week between start and end state
-
   const [currentWeek, setWeek] = React.useState(
     moment(postingStartDate).startOf("week").toDate(),
   );
@@ -155,6 +155,8 @@ const VolunteerAvailabilityTable = ({
                           shift={shift}
                           selectedShifts={selectedShifts}
                           setSelectedShifts={setSelectedShifts}
+                          signupNotes={signupNotes}
+                          setSignupNotes={setSignupNotes}
                           start={shift.startTime}
                           end={shift.endTime}
                         />

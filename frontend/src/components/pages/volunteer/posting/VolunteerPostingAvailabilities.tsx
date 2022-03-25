@@ -5,13 +5,14 @@ import { gql, useQuery } from "@apollo/client";
 import { Redirect, useHistory, useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
-import { ShiftDTO, ShiftResponseDTO } from "../../../../types/api/ShiftTypes";
+import { ShiftResponseDTO } from "../../../../types/api/ShiftTypes";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
+import { SignupRequestDTO } from "../../../../types/api/SignupTypes";
 
 // TODO: A filter should be added to the backend, currently, no filter is supported
-const SHIFTS = gql`
-  query VolunteerPostingAvailabilities_Shifts {
-    shifts {
+const SHIFTS_BY_POSTING = gql`
+  query VolunteerPostingAvailabilities_ShiftsByPosting($postingId: ID!) {
+    shiftsByPosting(postingId: $postingId) {
       id
       postingId
       startTime
@@ -45,9 +46,13 @@ const POSTING = gql`
 
 const VolunteerPostingAvailabilities = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
-  const { loading: isShiftsLoading, data: { shifts } = {} } = useQuery(SHIFTS, {
-    fetchPolicy: "cache-and-network",
-  });
+  const { loading: isShiftsLoading, data: { shiftsByPosting } = {} } = useQuery(
+    SHIFTS_BY_POSTING,
+    {
+      variables: { postingId: id },
+      fetchPolicy: "cache-and-network",
+    },
+  );
   const {
     loading: isPostingLoading,
     data: { posting: postingDetails } = {},
@@ -56,14 +61,15 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     fetchPolicy: "cache-and-network",
   });
   const history = useHistory();
-  // TODO: Use this state of selected shifts for submission
-  const [selectedShifts, setSelectedShifts] = useState<ShiftDTO[]>([]);
+  // TODO: Use these state of selected shifts + notes for submission
+  const [shiftSignups, setShiftSignups] = useState<ShiftResponseDTO[]>([]);
+  const [signupNotes, setSignupNotes] = useState<SignupRequestDTO[]>([]);
 
   if (isPostingLoading || isShiftsLoading) {
     return <Spinner />;
   }
 
-  return !(isShiftsLoading || isPostingLoading) && !shifts ? (
+  return !(isShiftsLoading || isPostingLoading) && !shiftsByPosting ? (
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" pt={14} px={100} minH="100vh">
@@ -81,24 +87,25 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
         <Button
           onClick={() => {
             // Submit the selected shifts
-            console.log(selectedShifts);
+            console.log(shiftSignups);
+            console.log(signupNotes);
           }}
         >
           Submit
         </Button>
       </Flex>
       <VolunteerAvailabilityTable
-        postingShifts={(shifts as ShiftResponseDTO[]).filter(
-          (shift) => shift.postingId === id,
-        )}
+        postingShifts={shiftsByPosting as ShiftResponseDTO[]}
         postingStartDate={
           new Date(Date.parse((postingDetails as PostingResponseDTO).startDate))
         }
         postingEndDate={
           new Date(Date.parse((postingDetails as PostingResponseDTO).endDate))
         }
-        selectedShifts={selectedShifts}
-        setSelectedShifts={setSelectedShifts}
+        selectedShifts={shiftSignups}
+        setSelectedShifts={setShiftSignups}
+        signupNotes={signupNotes}
+        setSignupNotes={setSignupNotes}
       />
     </Box>
   );

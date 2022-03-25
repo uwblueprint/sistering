@@ -30,6 +30,7 @@ const shiftType = gql`
   extend type Query {
     shift(id: ID!): ShiftResponseDTO!
     shifts: [ShiftResponseDTO!]!
+    shiftsByPosting(postingId: ID!): [ShiftResponseDTO!]!
   }
 
   extend type Mutation {
