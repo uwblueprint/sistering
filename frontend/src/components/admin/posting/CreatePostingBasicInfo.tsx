@@ -431,18 +431,24 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
               </FormControl>
               <FormControl>
                 <FormLabel textStyle="body-regular">Selected Skills</FormLabel>
-                <HStack
-                  spacing={4}
+                <Flex
+                  spacing={0}
                   minHeight="32px"
                   wrap="wrap"
                   mb={skillsError ? ERROR_MESSAGE_HEIGHT : "0px"}
                 >
                   {selectedSkills.slice(0, 2).map((skillId) => (
-                    <Tag variant="brand" height="32px" key={skillId}>
+                    <Tag
+                      variant="brand"
+                      height="32px"
+                      key={skillId}
+                      mr={4}
+                      mb={2}
+                    >
                       {getOptionNameFromId(skillOptions, skillId)}
-                      <TagCloseButton
+                      {/* <TagCloseButton
                         onClick={() => handleSkillRemoval(skillId)}
-                      />
+                      /> */}
                     </Tag>
                   ))}
                   {selectedSkills.length > 2 && (
@@ -464,7 +470,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                       ))}
                     />
                   )}
-                </HStack>
+                </Flex>
               </FormControl>
             </HStack>
             <HStack spacing={7} w="full">
@@ -489,14 +495,20 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                 <FormLabel textStyle="body-regular">
                   Appointed Contacts
                 </FormLabel>
-                <HStack
-                  spacing={4}
+                <Flex
+                  spacing={0}
                   minHeight="32px"
                   wrap="wrap"
                   mb={employeesError ? ERROR_MESSAGE_HEIGHT : "0px"}
                 >
                   {selectedEmployees.slice(0, 2).map((employeeId) => (
-                    <Tag variant="brand" height="32px" key={employeeId}>
+                    <Tag
+                      variant="brand"
+                      height="32px"
+                      key={employeeId}
+                      mr={4}
+                      mb={2}
+                    >
                       <Avatar size="xs" mr={1} bg="violet" />
                       {getOptionNameFromId(
                         employeeOptions.map(({ id, firstName, lastName }) => ({
@@ -538,7 +550,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                       ))}
                     />
                   )}
-                </HStack>
+                </Flex>
               </FormControl>
             </HStack>
           </VStack>

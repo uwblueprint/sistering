@@ -22,7 +22,7 @@ const TagsPopover: React.FC<TagsPopoverProps> = ({
   return (
     <Popover placement="top">
       <PopoverTrigger>
-        <Tag variant="brand" height="32px">
+        <Tag variant="brand" height="32px" mr={4}>
           +{tags.length - 2}
         </Tag>
       </PopoverTrigger>
