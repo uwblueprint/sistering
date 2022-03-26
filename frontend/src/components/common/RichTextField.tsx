@@ -37,10 +37,17 @@ interface RichTextFieldProps {
 }
 
 const textSizes: { [id: string]: string } = {
-  "14": "header-three",
-  "16": "unstyled",
-  "20": "header-two",
-  "22": "header-one",
+  "Heading 1": "22",
+  "Heading 2": "20",
+  Body: "16",
+  Caption: "14",
+};
+
+const textSizeMapping: { [id: string]: string } = {
+  "Heading 1": "header-one",
+  "Heading 2": "header-two",
+  Body: "unstyled",
+  Caption: "header-three",
 };
 
 const RichTextField: FunctionComponent<RichTextFieldProps> = (
@@ -68,8 +75,8 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
     .getBlockForKey(editorState.getSelection().getStartKey())
     .getType();
   // text size associated with current block
-  const textSize = Object.keys(textSizes).filter(
-    (size) => blockType === textSizes[size],
+  const textSize = Object.keys(textSizeMapping).filter(
+    (size) => blockType === textSizeMapping[size],
   )[0];
 
   const { hasCommandModifier } = KeyBindingUtil; // utility
@@ -82,7 +89,7 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
     // check whether to display placeholder
     if (!contentState.hasText()) {
       if (
-        Object.values(textSizes).includes(
+        Object.values(textSizeMapping).includes(
           contentState.getBlockMap().first().getType(),
         )
       ) {
@@ -278,7 +285,7 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
   const handleTextSizeChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     e.preventDefault();
     const newValue = e.target.value;
-    onChange(RichUtils.toggleBlockType(editorState, textSizes[newValue]));
+    onChange(RichUtils.toggleBlockType(editorState, textSizeMapping[newValue]));
   };
 
   return (
@@ -292,9 +299,9 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
           onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
             handleTextSizeChange(e)
           }
-          w="60px"
+          w="120px"
         >
-          {Object.keys(textSizes).map((size) => (
+          {Object.keys(textSizeMapping).map((size) => (
             <option value={size} key={size}>
               {size}
             </option>
@@ -365,7 +372,7 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
             h3: { fontSize: "14px" },
             ".public-DraftEditorPlaceholder-root": {
               display: showPlaceHolder,
-              fontSize: `${textSize}px`,
+              fontSize: `${textSizes[textSize]}px`,
             },
           }}
         >
