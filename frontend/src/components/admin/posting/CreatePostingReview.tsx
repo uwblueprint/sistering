@@ -15,10 +15,10 @@ import {
 import FormHeader from "../../common/FormHeader";
 import LabelledText from "../../common/LabelledText";
 import PocCard from "../../common/PocCard";
-
 import { ADMIN_POSTING_CREATE_REVIEW_ENTER_ALL_DETAILS } from "../../../constants/Copy";
 import PostingContext from "../../../contexts/admin/PostingContext";
 import ScheduledShiftsTr from "./ScheduledShiftsTr";
+import RichTextDisplay from "../../common/RichText/RichTextDisplay";
 import {
   formatTimeHourMinutes,
   getElapsedHours,
@@ -65,7 +65,9 @@ const CreatePostingReview = (): React.ReactElement => {
               <Text textStyle="subheading" color="text.gray" mt={3}>
                 Description
               </Text>
-              <Text textStyle="caption">{description}</Text>
+              <Text textStyle="caption">
+                <RichTextDisplay>{description}</RichTextDisplay>
+              </Text>
             </Stack>
             <Stack spacing={4}>
               <Text textStyle="subheading" color="text.gray" mt={5}>
