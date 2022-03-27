@@ -29,6 +29,9 @@ const shiftSignupType = gql`
     numVolunteers: Int!
     note: String!
     status: SignupStatus!
+    postingId: ID!
+    postingTitle: String!
+    autoClosingDate: Date!
   }
 
   extend type Query {

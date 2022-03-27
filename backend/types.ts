@@ -140,6 +140,9 @@ export type UpdateShiftSignupRequestDTO = Omit<
 export type ShiftSignupResponseDTO = {
   shiftStartTime: Date;
   shiftEndTime: Date;
+  postingId: string;
+  postingTitle: string;
+  autoClosingDate: Date;
 } & ShiftSignupDTO;
 
 export type SkillDTO = {
