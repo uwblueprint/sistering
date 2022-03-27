@@ -96,7 +96,6 @@ const customTheme = extendTheme(
         variants: {
           brand: {
             table: {
-              border: "2px",
               borderSpacing: "0",
               borderColor: "background.dark",
               overflow: "hidden",
@@ -110,6 +109,10 @@ const customTheme = extendTheme(
               borderBottom: "2px",
               borderColor: "background.dark",
               borderCollapse: "collapse",
+              _first: {
+                borderTop: "2px",
+                borderColor: "background.dark",
+              },
             },
             td: {
               borderBottom: "2px",
