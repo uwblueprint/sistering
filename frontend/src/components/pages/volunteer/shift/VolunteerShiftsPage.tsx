@@ -1,5 +1,7 @@
-import React from "react";
-import { Flex, Box, Container } from "@chakra-ui/react";
+import React, { useState, useLayoutEffect } from "react";
+import { Box, Container, Flex } from "@chakra-ui/react";
+
+import { gql, useQuery } from "@apollo/client";
 import VolunteerShiftsTable from "../../../volunteer/shifts/VolunteerShiftsTable";
 import { ShiftSignupStatus } from "../../../../types/api/ShiftSignupTypes";
 import Navbar from "../../../common/Navbar";
@@ -8,6 +10,8 @@ import {
   VolunteerPages,
 } from "../../../../constants/Tabs";
 import ErrorModal from "../../../common/ErrorModal";
+import { FilterType } from "../../../../types/DateFilterTypes";
+import { dateInRange } from "../../../../utils/DateTimeUtils";
 
 const upcomingShift = {
   postingName: "Posting Name",
@@ -42,8 +46,70 @@ const mockData = [
   },
 ];
 
+const SHIFT_SIGNUPS = gql`
+  query ShiftSignups($userId: ID!) {
+    getShiftSignupsForUser(userId: $userId) {
+      shiftId
+      shiftStartTime
+      shiftEndTime
+      status
+      postingId
+      postingTitle
+      autoClosingDate
+    }
+  }
+`;
+
 const VolunteerShiftsPage = (): React.ReactElement => {
   const error = false; // TODO: replace variable with error from GQL query or mutation
+
+  const [shiftSignups, setShiftSignups] = useState<
+    ShiftSignupPostingResponseDTO[]
+  >([]);
+
+  // const [unfilteredShiftSignups, setUnfilteredShiftSignups] = useState<
+  //   ShiftSignupPostingResponseDTO[]
+  // >([]);
+  // const [filter, setFilter] = useState<FilterType>("week");
+
+  useQuery(SHIFT_SIGNUPS, {
+    variables: { userId: 2 },
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      console.log("data", data);
+      setShiftSignups(data.getShiftSignupsForUser);
+      // setUnfilteredShiftSignups(data.getShiftSignupsForUser);
+    },
+  });
+
+  // useLayoutEffect(() => {
+  //   let filteredShiftSignups;
+  //   switch (filter) {
+  //     case "month":
+  //       filteredShiftSignups = unfilteredShiftSignups?.filter((shiftSignup) =>
+  //         dateInRange(shiftSignup.shiftStartTime, "month"),
+  //       );
+  //       setShiftSignups(filteredShiftSignups ?? []);
+  //       break;
+  //     case "all":
+  //       setShiftSignups(unfilteredShiftSignups);
+  //       break;
+  //     default:
+  //       filteredShiftSignups = unfilteredShiftSignups?.filter((shiftSignup) =>
+  //         dateInRange(shiftSignup.shiftStartTime, "week"),
+  //       );
+  //       setShiftSignups(filteredShiftSignups ?? []);
+  //       break;
+  //   }
+  // }, [filter, unfilteredShiftSignups]);
+
+  // const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  //   const value: FilterType = e.target.value as FilterType;
+  //   setFilter(value);
+  // };
+
+  // console.log("shiftSignups",  shiftSignups);
+
   return (
     <Flex h="100vh" flexFlow="column">
       {error && <ErrorModal />}
@@ -57,7 +123,7 @@ const VolunteerShiftsPage = (): React.ReactElement => {
           backgroundColor="background.white"
           px={0}
         >
-          <VolunteerShiftsTable shifts={mockData} />
+          <VolunteerShiftsTable shifts={shiftSignups} />
         </Container>
       </Box>
     </Flex>
