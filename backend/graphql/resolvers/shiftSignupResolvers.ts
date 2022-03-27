@@ -20,6 +20,22 @@ const shiftSignupResolvers = {
     ): Promise<ShiftSignupResponseDTO[]> => {
       return shiftSignupService.getShiftSignupsForUser(userId, signupStatus);
     },
+
+    getShiftSignupsForPosting: async (
+      _parent: undefined,
+      {
+        postingId,
+        signupStatus,
+      }: {
+        postingId: string;
+        signupStatus: SignupStatus | null;
+      },
+    ): Promise<ShiftSignupResponseDTO[]> => {
+      return shiftSignupService.getShiftSignupsForPosting(
+        postingId,
+        signupStatus,
+      );
+    },
   },
   Mutation: {
     createShiftSignups: async (

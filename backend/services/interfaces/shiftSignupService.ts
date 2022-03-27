@@ -40,6 +40,17 @@ interface IShiftSignupService {
     userId: string,
     signupStatus: SignupStatus | null,
   ): Promise<ShiftSignupResponseDTO[]>;
+
+  /**
+   * Gets all shifts for a posting
+   * @param postingId the target posting's id
+   * @returns an array of ShiftSignupResponseDTOs for each shift for posting
+   * @throws Error if the shift signup retrieval fails
+   */
+  getShiftSignupsForPosting(
+    postingId: string,
+    signupStatus: SignupStatus | null,
+  ): Promise<ShiftSignupResponseDTO[]>;
 }
 
 export default IShiftSignupService;

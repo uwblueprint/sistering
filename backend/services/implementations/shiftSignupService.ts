@@ -62,6 +62,42 @@ class ShiftSignupService implements IShiftSignupService {
     }
   }
 
+  async getShiftSignupsForPosting(
+    postingId: string,
+    signupStatus: SignupStatus | null,
+  ): Promise<ShiftSignupResponseDTO[]> {
+    try {
+      const filter: Prisma.SignupWhereInput = {
+        AND: [
+          {
+            shift: {
+              postingId: Number(postingId),
+            },
+          },
+          signupStatus
+            ? {
+                status: signupStatus,
+              }
+            : {},
+        ],
+      };
+      const shiftSignups = await prisma.signup.findMany({
+        where: filter,
+        include: {
+          shift: true,
+        },
+      });
+      return shiftSignups.map((signup) =>
+        this.convertSignupResponseToDTO(signup, signup.shift),
+      );
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to query shift signups. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
   async createShiftSignups(
     shiftSignups: CreateShiftSignupDTO[],
   ): Promise<ShiftSignupResponseDTO[]> {
