@@ -1,13 +1,13 @@
 import React, { useState, useLayoutEffect } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Box, Text } from "@chakra-ui/react";
+import { Box, HStack, Select, Text } from "@chakra-ui/react";
 
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import { dateInRange } from "../../../../utils/DateTimeUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
-import NoShiftsAvailableTableRow from "../../../volunteer/shifts/NoShiftsAvailableTableRow";
-import VolunteerAvailabilityTableRow from "../../../volunteer/shifts/VolunteerAvailabilityTableRow";
-import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
+import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
+import PostingCard from "../../../volunteer/PostingCard";
+import VolunteerNavbar from "../../../volunteer/VolunteerNavbar";
 
 type Posting = Omit<
   PostingResponseDTO,
@@ -93,7 +93,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
 
   return (
     <div>
-      {/* <VolunteerNavbar defaultIndex={1} />
+      <VolunteerNavbar defaultIndex={1} />
       <Box
         bg="background.light"
         pt="48px"
@@ -162,10 +162,6 @@ const VolunteerPostingsPage = (): React.ReactElement => {
             <EmptyPostingCard type="opportunity" />
           )}
         </Box>
-      </Box> */}
-      {/* Temp */}
-      <Box p={25}>
-        <VolunteerAvailabilityTable postingId={1} />
       </Box>
     </div>
   );

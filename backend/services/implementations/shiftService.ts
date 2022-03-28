@@ -197,6 +197,25 @@ class ShiftService implements IShiftService {
     }
   }
 
+  async getShiftsByPosting(postingId: string): Promise<ShiftResponseDTO[]> {
+    try {
+      const shifts: Array<Shift> = await prisma.shift.findMany({
+        where: {
+          postingId: Number(postingId),
+        },
+      });
+      return shifts.map((shift) => ({
+        id: String(shift.id),
+        postingId: String(shift.postingId),
+        startTime: shift.startTime,
+        endTime: shift.endTime,
+      }));
+    } catch (error) {
+      Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+  }
+
   async createShift(
     shift: TimeBlock,
     postingId: string,

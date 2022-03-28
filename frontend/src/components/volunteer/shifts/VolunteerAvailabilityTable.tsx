@@ -13,69 +13,34 @@ import {
 import React from "react";
 import moment from "moment";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { ShiftResponseDTO } from "../../../types/api/ShiftTypes";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
+import { SignupRequestDTO } from "../../../types/api/SignupTypes";
 
-type VolunteerAvailabilityTableProps = { postingId: number };
-
-// Temp type
-type Shift = {
-  startTime: Date;
-  endTime: Date;
+type VolunteerAvailabilityTableProps = {
+  postingShifts: ShiftResponseDTO[];
+  postingStartDate: Date;
+  postingEndDate: Date;
+  selectedShifts: ShiftResponseDTO[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftResponseDTO[]>>;
+  signupNotes: SignupRequestDTO[];
+  setSignupNotes: React.Dispatch<React.SetStateAction<SignupRequestDTO[]>>;
 };
 
 const VolunteerAvailabilityTable = ({
-  postingId,
+  postingShifts,
+  postingStartDate,
+  postingEndDate,
+  selectedShifts,
+  setSelectedShifts,
+  signupNotes,
+  setSignupNotes,
 }: VolunteerAvailabilityTableProps): React.ReactElement => {
-  // Side note: I think we should try to avoid doing queries in table components when avbailable03
-  // Query to get some posting
-
-  // We assume that we have some posting
-  // we generate an item in the the headers menu for each week between start and end state
-
-  // Sample data
-  const postingStartDate = new Date(
-    new Date().setDate(new Date().getDate() - 14),
-  );
-
-  const postingEndDate = new Date(
-    new Date().setDate(new Date().getDate() + 14),
-  );
-
-  // Maybe put under use effect
-  const postingStartWeek = new Date(
-    new Date().setDate(postingStartDate.getDate() - postingStartDate.getDay()),
-  );
-
-  const postingShifts: Shift[] = [
-    {
-      startTime: new Date(),
-      endTime: new Date(Date.now() + 2.25 * 1000 * 60 * 60),
-    },
-    {
-      startTime: new Date(Date.now() + 3 * 1000 * 60 * 60),
-      endTime: new Date(Date.now() + 4 * 1000 * 60 * 60),
-    },
-    {
-      startTime: new Date(
-        new Date(Date.now() + 2 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-      endTime: new Date(
-        new Date(Date.now() + 2.5 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-    },
-  ];
-  // End of sample data
-
   const [currentWeek, setWeek] = React.useState(
-    moment(postingStartWeek).startOf("week").toDate(),
+    moment(postingStartDate).startOf("week").toDate(),
   );
-  const [shifts, setShifts] = React.useState(postingShifts);
   return (
     <Box
       bgColor="white"
@@ -112,7 +77,6 @@ const VolunteerAvailabilityTable = ({
             .fill(0)
             .map((_, i) => i)
             .map((week) => {
-              console.log(`week: ${week}`);
               const startWeek = moment(postingStartDate)
                 .startOf("week")
                 .add(week, "weeks")
@@ -153,9 +117,13 @@ const VolunteerAvailabilityTable = ({
           const date = moment(currentWeek)
             .startOf("week")
             .add(day, "days")
+            .startOf("day")
             .toDate();
-          const weeklyShifts = shifts.filter(
-            (shift) => moment(shift.startTime).diff(date, "days", false) === 0,
+          const shiftsOfDate = postingShifts.filter(
+            (shift) =>
+              moment(shift.startTime)
+                .startOf("day")
+                .diff(date, "days", false) === 0,
           );
 
           return (
@@ -172,18 +140,23 @@ const VolunteerAvailabilityTable = ({
                   </Text>
                 </Td>
               </Tr>
-              {weeklyShifts.length < 1 ? (
+              {shiftsOfDate.length < 1 ? (
                 <Tr>
                   <Td>
                     <NoShiftsAvailableTableRow />
                   </Td>
                 </Tr>
               ) : (
-                weeklyShifts.map((shift, index) => {
+                shiftsOfDate.map((shift, index) => {
                   return (
                     <Tr key={`${day}-${index}`}>
                       <Td p={0}>
                         <VolunteerAvailabilityTableRow
+                          shift={shift}
+                          selectedShifts={selectedShifts}
+                          setSelectedShifts={setSelectedShifts}
+                          signupNotes={signupNotes}
+                          setSignupNotes={setSignupNotes}
                           start={shift.startTime}
                           end={shift.endTime}
                         />
