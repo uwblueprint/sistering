@@ -22,6 +22,14 @@ interface IShiftService {
   getShifts(): Promise<ShiftResponseDTO[]>;
 
   /**
+   * Get all shift information (possibly paginated in the future) of a posting
+   * @param postingId the id of the posting associated with the shifts
+   * @returns array of ShiftDTOs for posting
+   * @throws Error if shift retrieval fails
+   */
+  getShiftsByPosting(postingId: string): Promise<ShiftResponseDTO[]>;
+
+  /**
    * Create a shift
    * @param shift the shift to be created
    * @param postingId the id of the posting associated with the shift
