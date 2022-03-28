@@ -1,95 +1,162 @@
-import { Table, Tbody, Td, Text, Tr } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Select,
+  Spacer,
+  Table,
+  Tbody,
+  Td,
+  Text,
+  Tr,
+} from "@chakra-ui/react";
 import React from "react";
 import moment from "moment";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import { ShiftResponseDTO } from "../../../types/api/ShiftTypes";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
+import { getWeekDiff } from "../../../utils/DateTimeUtils";
+import { SignupRequestDTO } from "../../../types/api/SignupTypes";
 
-type VolunteerAvailabilityTableProps = { postingId: number };
-
-// Temp type
-type Shift = {
-  startTime: Date;
-  endTime: Date;
+type VolunteerAvailabilityTableProps = {
+  postingShifts: ShiftResponseDTO[];
+  postingStartDate: Date;
+  postingEndDate: Date;
+  selectedShifts: ShiftResponseDTO[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftResponseDTO[]>>;
+  signupNotes: SignupRequestDTO[];
+  setSignupNotes: React.Dispatch<React.SetStateAction<SignupRequestDTO[]>>;
 };
 
 const VolunteerAvailabilityTable = ({
-  postingId,
+  postingShifts,
+  postingStartDate,
+  postingEndDate,
+  selectedShifts,
+  setSelectedShifts,
+  signupNotes,
+  setSignupNotes,
 }: VolunteerAvailabilityTableProps): React.ReactElement => {
-  // Side note: I think we should try to avoid doing queries in table components when avbailable03
-  // Query to get some posting
-
-  // Sample data
-  const current = new Date();
-  const postingStartWeek = new Date(
-    current.setDate(current.getDate() - current.getDay()),
+  const [currentWeek, setWeek] = React.useState(
+    moment(postingStartDate).startOf("week").toDate(),
   );
-  const postingShifts: Shift[] = [
-    {
-      startTime: new Date(),
-      endTime: new Date(Date.now() + 2.25 * 1000 * 60 * 60),
-    },
-    {
-      startTime: new Date(Date.now() + 3 * 1000 * 60 * 60),
-      endTime: new Date(Date.now() + 4 * 1000 * 60 * 60),
-    },
-    {
-      startTime: new Date(
-        new Date(Date.now() + 2 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-      endTime: new Date(
-        new Date(Date.now() + 2.5 * 1000 * 60 * 60).setDate(
-          new Date().getDate() + 1,
-        ),
-      ),
-    },
-  ];
-
-  const [currentWeek, setWeek] = React.useState(postingStartWeek);
-  const [shifts, setShifts] = React.useState(postingShifts);
-
   return (
-    <Table variant="striped" colorScheme="teal" w="100%">
-      {Array.from(Array(7).keys()).map((day) => {
-        const date = new Date(
-          new Date(currentWeek).setDate(currentWeek.getDate() + day),
-        );
+    <Box
+      bgColor="white"
+      borderRadius="12px"
+      border="1px"
+      borderColor="background.dark"
+    >
+      <Flex alignContent="center" px={25} py={25}>
+        <Button
+          disabled={getWeekDiff(postingStartDate, currentWeek) === 0}
+          onClick={() =>
+            setWeek(moment(currentWeek).subtract(1, "weeks").toDate())
+          }
+          variant="link"
+          leftIcon={<ChevronLeftIcon />}
+        >
+          Previous week
+        </Button>
+        <Spacer />
+        <Select
+          width="33%"
+          _hover={{ bgColor: "gray.100" }}
+          value={getWeekDiff(postingStartDate, currentWeek)}
+          onChange={(e) =>
+            setWeek(
+              moment(postingStartDate)
+                .startOf("week")
+                .add(Number(e.target.value), "weeks")
+                .toDate(),
+            )
+          }
+        >
+          {Array(getWeekDiff(postingStartDate, postingEndDate) + 1)
+            .fill(0)
+            .map((_, i) => i)
+            .map((week) => {
+              const startWeek = moment(postingStartDate)
+                .startOf("week")
+                .add(week, "weeks")
+                .toDate();
 
-        return (
-          <Tbody key={day}>
-            <Tr>
-              <Td bgColor="background.light">
-                <Text textStyle="body-bold">
-                  {date.toLocaleDateString("en-US", {
-                    weekday: "long",
+              return (
+                <option key={week} value={week} color="gray.100">
+                  {startWeek.toLocaleDateString("en-US", {
                     year: "numeric",
-                    month: "long",
+                    month: "short",
                     day: "numeric",
-                  })}
-                </Text>
-              </Td>
-            </Tr>
-            {shifts.filter(
-              (shift) =>
-                moment(shift.startTime).diff(date, "days", false) === 0,
-            ).length < 1 ? (
+                  })}{" "}
+                  to{" "}
+                  {moment(startWeek)
+                    .endOf("week")
+                    .toDate()
+                    .toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                </option>
+              );
+            })}
+        </Select>
+        <Spacer />
+        <Button
+          disabled={getWeekDiff(currentWeek, postingEndDate) === 0}
+          onClick={() => setWeek(moment(currentWeek).add(1, "weeks").toDate())}
+          variant="link"
+          rightIcon={<ChevronRightIcon />}
+        >
+          Next week
+        </Button>
+      </Flex>
+      <Table variant="stripe" w="100%">
+        {Array.from(Array(7).keys()).map((day) => {
+          const date = moment(currentWeek)
+            .startOf("week")
+            .add(day, "days")
+            .startOf("day")
+            .toDate();
+          const shiftsOfDate = postingShifts.filter(
+            (shift) =>
+              moment(shift.startTime)
+                .startOf("day")
+                .diff(date, "days", false) === 0,
+          );
+
+          return (
+            <Tbody key={day}>
               <Tr>
-                <Td>
-                  <NoShiftsAvailableTableRow />
+                <Td bgColor="background.light">
+                  <Text textStyle="body-bold">
+                    {date.toLocaleDateString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </Text>
                 </Td>
               </Tr>
-            ) : (
-              shifts
-                .filter(
-                  (shift) =>
-                    moment(shift.startTime).diff(date, "days", false) === 0,
-                )
-                .map((shift, index) => {
+              {shiftsOfDate.length < 1 ? (
+                <Tr>
+                  <Td>
+                    <NoShiftsAvailableTableRow />
+                  </Td>
+                </Tr>
+              ) : (
+                shiftsOfDate.map((shift, index) => {
                   return (
                     <Tr key={`${day}-${index}`}>
                       <Td p={0}>
                         <VolunteerAvailabilityTableRow
+                          shift={shift}
+                          selectedShifts={selectedShifts}
+                          setSelectedShifts={setSelectedShifts}
+                          signupNotes={signupNotes}
+                          setSignupNotes={setSignupNotes}
                           start={shift.startTime}
                           end={shift.endTime}
                         />
@@ -97,11 +164,12 @@ const VolunteerAvailabilityTable = ({
                     </Tr>
                   );
                 })
-            )}
-          </Tbody>
-        );
-      })}
-    </Table>
+              )}
+            </Tbody>
+          );
+        })}
+      </Table>
+    </Box>
   );
 };
 

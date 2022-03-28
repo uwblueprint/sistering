@@ -47,6 +47,7 @@ import customTheme from "./theme";
 import { AuthenticatedUser } from "./types/AuthTypes";
 import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
 import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSchedulePostingPage";
+import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
@@ -156,6 +157,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.VOLUNTEER_POSTING_DETAILS}
                       component={VolunteerPostingDetails}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.VOLUNTEER_POSTING_AVAILABILITIES}
+                      component={VolunteerPostingAvailabilities}
                     />
                     <PrivateRoute
                       exact

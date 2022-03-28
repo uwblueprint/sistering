@@ -19,6 +19,12 @@ const shiftResolvers = {
     shifts: async (): Promise<ShiftResponseDTO[]> => {
       return shiftService.getShifts();
     },
+    shiftsByPosting: async (
+      _parent: undefined,
+      { postingId }: { postingId: string },
+    ): Promise<ShiftResponseDTO[]> => {
+      return shiftService.getShiftsByPosting(postingId);
+    },
   },
   Mutation: {
     createShifts: async (

@@ -102,3 +102,25 @@ export const getUTCDateForDateTimeString = (dateTimeString: string): Date => {
   // using ISO 8601 date-time form with timezone specifier
   return new Date(`${dateTimeString}:00+00:00`);
 };
+
+/**
+ * get integer difference of days between 2 dates (end - start)
+ * @param  {Date} start
+ * @param  {Date} end
+ * @returns number
+ */
+export const getDayDiff = (start: Date, end: Date): number => {
+  return moment(end).diff(start, "days", false);
+};
+
+/**
+ * get integer difference of weeks between 2 dates (end - start)
+ * @param  {Date} start
+ * @param  {Date} end
+ * @returns number
+ */
+export const getWeekDiff = (start: Date, end: Date): number => {
+  return moment(end)
+    .startOf("week")
+    .diff(moment(start).startOf("week").toDate(), "week", false);
+};
