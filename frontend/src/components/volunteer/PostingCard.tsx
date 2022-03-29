@@ -11,6 +11,7 @@ import {
   Tag,
 } from "@chakra-ui/react";
 
+import RichTextDisplay from "../common/RichText/RichTextDisplay";
 import { formatDateStringYear } from "../../utils/DateTimeUtils";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
 
@@ -60,7 +61,7 @@ const PostingCard = ({
           </Text>
         </HStack>
         <Text textStyle="body-regular" noOfLines={2}>
-          {description}
+          <RichTextDisplay>{description}</RichTextDisplay>
         </Text>
         <HStack>
           <Text textStyle="body-regular">Skills: </Text>
