@@ -132,6 +132,7 @@ const CreatePostingReviewPage = (): React.ReactElement => {
                       postingId,
                       times,
                       endDate: postingToCreate.endDate,
+                      startDate: postingToCreate.startDate,
                       recurrenceInterval,
                     },
                   },
