@@ -251,7 +251,7 @@ class ShiftService implements IShiftService {
 
       // Skip shifts that occur before start date
       filteredShifts.times = shifts.times.filter(
-        (shift) => shift.startTime.getTime() > shifts.startDate.getTime(),
+        (shift) => shift.startTime.getTime() >= shifts.startDate.getTime(),
       );
 
       // Check that input times are valid
