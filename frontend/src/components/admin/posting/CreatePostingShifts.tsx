@@ -20,7 +20,8 @@ import {
   ADMIN_POSTING_CREATE_SHIFTS_TIME,
 } from "../../../constants/Copy";
 import PostingContextDispatcherContext from "../../../contexts/admin/PostingContextDispatcherContext";
-import ShiftCalendar, { Event } from "../ShiftCalendar/ShiftCalendar";
+import WeekViewShiftCalendar from "../ShiftCalendar/WeekViewShiftCalendar";
+import { Event } from "../../../types/CalendarTypes";
 import { Shift } from "../../../types/PostingContextTypes";
 import { RecurrenceInterval } from "../../../types/PostingTypes";
 import {
@@ -262,7 +263,7 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
        * https://github.com/fullcalendar/fullcalendar/issues/4684#issuecomment-620787260
        */}
       <div key={startDate}>
-        <ShiftCalendar
+        <WeekViewShiftCalendar
           events={events}
           selectedEvent={selectedEvent}
           setSelectedEvent={setSelectedEvent}
