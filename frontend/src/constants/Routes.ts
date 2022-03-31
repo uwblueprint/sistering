@@ -39,6 +39,3 @@ export const ADMIN_SCHEDULE_POSTING_PAGE = "/admin/schedule/posting/:id";
 
 export const VOLUNTEER_POSTING_AVAILABILITIES =
   "/volunteer/posting/:id/availabilities";
-
-// Temporary route for testing
-export const REMOVE_VOLUNTEER_MODAL_DEMO = "/remove_volunteer_demo";
