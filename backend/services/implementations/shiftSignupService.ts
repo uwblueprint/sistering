@@ -97,11 +97,19 @@ class ShiftSignupService implements IShiftSignupService {
       const shiftSignups = await prisma.signup.findMany({
         where: filter,
         include: {
-          shift: true,
+          shift: {
+            include: {
+              posting: true,
+            },
+          },
         },
       });
       return shiftSignups.map((signup) =>
-        this.convertSignupResponseToDTO(signup, signup.shift),
+        this.convertSignupResponseToDTO(
+          signup,
+          signup.shift,
+          signup.shift.posting,
+        ),
       );
     } catch (error: unknown) {
       Logger.error(
