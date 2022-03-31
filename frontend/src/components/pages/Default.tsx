@@ -180,7 +180,6 @@ const Default = (): React.ReactElement => {
           text="Create Posting"
           path={Routes.ADMIN_POSTING_CREATE_BASIC_INFO_PAGE}
         />
-        <Button text="Hooks Demo" path={Routes.HOOKS_PAGE} />
       </div>
       <div style={{ height: "2rem" }} />
       <TeamInfoDisplay />
