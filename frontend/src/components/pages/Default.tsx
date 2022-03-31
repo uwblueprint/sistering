@@ -16,9 +16,6 @@ import RefreshCredentials from "../auth/RefreshCredentials";
 
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
-import MonthlyViewShiftCalendar, {
-  ADMIN_SHIFT_CALENDAR_TEST_EVENTS,
-} from "../admin/ShiftCalendar/MonthlyViewReadOnlyShiftCalendar";
 
 type ButtonProps = { text: string; path: string };
 
@@ -186,9 +183,6 @@ const Default = (): React.ReactElement => {
         />
       </div>
       <div style={{ height: "2rem" }} />
-      <Container maxW="container.xl">
-        <MonthlyViewShiftCalendar events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS} />
-      </Container>
       <TeamInfoDisplay />
       <DesignSystemDisplay />
     </div>
