@@ -11,8 +11,10 @@ export const TableTestData = [
       {
         startTime: new Date("2022-03-06 10:00:00"),
         endTime: new Date("2022-03-06 11:00:00"),
-        volunteer: "Lambert Liu",
-        userId: "1",
+        volunteer: {
+          name: "Lambert Liu",
+          userId: "1",
+        },
       },
       {
         startTime: new Date("2022-03-06 15:00:00"),
@@ -30,8 +32,10 @@ export const TableTestData = [
       {
         startTime: new Date("2022-03-08 10:00:00"),
         endTime: new Date("2022-03-08 11:00:00"),
-        volunteer: "Lambert Liu",
-        userId: "1",
+        volunteer: {
+          name: "Lambert Liu",
+          userId: "1",
+        },
       },
     ],
   },
@@ -45,8 +49,10 @@ export const TableTestData = [
       {
         startTime: new Date("2022-03-10 14:00:00"),
         endTime: new Date("2022-03-10 16:00:00"),
-        volunteer: "Brian Tu",
-        userId: "69",
+        volunteer: {
+          name: "Brian Tu",
+          userId: "69",
+        },
       },
       {
         startTime: new Date("2022-03-10 16:00:00"),
@@ -55,8 +61,10 @@ export const TableTestData = [
       {
         startTime: new Date("2022-03-10 19:00:00"),
         endTime: new Date("2022-03-10 21:30:00"),
-        volunteer: "Albert Lai",
-        userId: "420",
+        volunteer: {
+          name: "Albert Lai",
+          userId: "420",
+        },
       },
     ],
   },
@@ -66,8 +74,10 @@ export const TableTestData = [
       {
         startTime: new Date("2022-03-11 11:00:00"),
         endTime: new Date("2022-03-11 13:00:00"),
-        volunteer: "Albert Lai",
-        userId: "420",
+        volunteer: {
+          name: "Albert Lai",
+          userId: "420",
+        },
       },
     ],
   },
@@ -80,8 +90,7 @@ export const TableTestData = [
 type AdminScheduleSignup = {
   startTime: Date;
   endTime: Date;
-  volunteer?: string;
-  userId?: string;
+  volunteer?: { name: string; userId: string };
 };
 
 type AdminScheduleDay = {
@@ -90,6 +99,7 @@ type AdminScheduleDay = {
 };
 
 type AdminScheduleTableProps = {
+  // The schedule prop should be sorted by date in ascending order.
   schedule: AdminScheduleDay[];
 };
 
@@ -114,9 +124,8 @@ const AdminScheduleTable = ({
               {day.signups.length > 0 ? (
                 day.signups.map((signup: AdminScheduleSignup, i) => (
                   <AdminScheduleTableRow
-                    key={`${signup.userId}-${i}`}
+                    key={`${signup.volunteer?.userId}-${i}`}
                     volunteer={signup.volunteer}
-                    userId={signup.userId}
                     postingStart={signup.startTime}
                     postingEnd={signup.endTime}
                   />

@@ -3,15 +3,13 @@ import React from "react";
 import { getElapsedHours, getTime } from "../../../utils/DateTimeUtils";
 
 type AdminScheduleTableRowProps = {
-  volunteer?: string;
-  userId?: string;
+  volunteer?: { name: string; userId: string };
   postingStart?: Date;
   postingEnd?: Date;
 };
 
 const AdminScheduleTableRow = ({
   volunteer,
-  userId,
   postingStart,
   postingEnd,
 }: AdminScheduleTableRowProps): React.ReactElement => {
@@ -19,31 +17,34 @@ const AdminScheduleTableRow = ({
     postingStart && postingEnd ? getElapsedHours(postingStart, postingEnd) : 0;
 
   // No shifts available
-  return postingStart && postingEnd ? (
-    <Tr>
-      <Td>
-        <Text>
-          {getTime(postingStart)} - {getTime(postingEnd)} ({elapsedHours}{" "}
-          {elapsedHours > 1 ? "hrs" : "hr"})
-        </Text>
-      </Td>
-      <Td>
-        {!volunteer && !userId ? (
-          <Text color="text.gray">No volunteers</Text>
-        ) : (
-          <Text>{volunteer}</Text>
-        )}
-      </Td>
-      <Td textAlign="right">
-        {volunteer && userId && (
-          <Button color="text.critical" variant="none">
-            Remove
-          </Button>
-        )}
-      </Td>
-    </Tr>
-  ) : (
-    <Tr>
+  if (postingStart && postingEnd) {
+    return (
+      <Tr h="74px">
+        <Td>
+          <Text>
+            {getTime(postingStart)} - {getTime(postingEnd)} ({elapsedHours}{" "}
+            {elapsedHours > 1 ? "hrs" : "hr"})
+          </Text>
+        </Td>
+        <Td>
+          {!volunteer ? (
+            <Text color="text.gray">No volunteers</Text>
+          ) : (
+            <Text>{volunteer.name}</Text>
+          )}
+        </Td>
+        <Td textAlign="right">
+          {volunteer && (
+            <Button color="text.critical" variant="none" size="sm">
+              Remove
+            </Button>
+          )}
+        </Td>
+      </Tr>
+    );
+  }
+  return (
+    <Tr h="74px">
       <Td colSpan={3}>
         <Text color="text.gray">No shifts available</Text>
       </Td>
