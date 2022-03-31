@@ -18,6 +18,7 @@ import {
   Image,
   Divider,
   Box,
+  IconButton,
 } from "@chakra-ui/react";
 import "draft-js/dist/Draft.css";
 import Bold from "../../assets/RichTextField/B.svg";
@@ -27,10 +28,13 @@ import UnorderedList from "../../assets/RichTextField/unordered-list.svg";
 import OrderedList from "../../assets/RichTextField/ordered-list.svg";
 
 interface RichTextFieldProps {
-  initialContent: string; // content in the stringified form of a ContentState (i.e. derived from using RichTextField)
-  // this should not be reactive! (not updated onChange)
-  // how to use: for editing pre-existing content (e.g. on editing a requestGroup's description),
-  //             pass the previous description into initialContent
+  initialContent: string;
+  /**
+   * content in the stringified form of a ContentState (i.e. derived from using RichTextField)
+   * this should not be reactive! (not updated onChange)
+   * how to use: for editing pre-existing content (e.g. on editing a requestGroup's description),
+   *             pass the previous description into initialContent
+   */
   defaultText: string; // text to show if no content in input field
   onChangeText: (content: string) => void; // called with stringified form of current ContentState
   isErroneous: boolean; // for styling when the input is erroneous
@@ -48,6 +52,15 @@ const textSizeMapping: { [id: string]: string } = {
   "Heading 2": "header-two",
   Body: "unstyled",
   Caption: "header-three",
+};
+
+const textStyleMapping: { [id: string]: string } = {
+  "header-one": "Heading 1",
+  "header-two": "Heading 2",
+  unstyled: "Body",
+  "header-three": "Caption",
+  "unordered-list-item": "Body",
+  "ordered-list-item": "Body",
 };
 
 const RichTextField: FunctionComponent<RichTextFieldProps> = (
@@ -75,9 +88,9 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
     .getBlockForKey(editorState.getSelection().getStartKey())
     .getType();
   // text size associated with current block
-  const textSize = Object.keys(textSizeMapping).filter(
-    (size) => blockType === textSizeMapping[size],
-  )[0];
+  const textSize = textStyleMapping[blockType];
+  // current inline textstyle
+  const currentInlineStyle = editorState.getCurrentInlineStyle();
 
   const { hasCommandModifier } = KeyBindingUtil; // utility
   // for each key input, map keys to commands conditionally
@@ -314,7 +327,8 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
             { style: "ITALIC", icon: Italic },
             { style: "UNDERLINE", icon: Underline },
           ].map(({ style, icon }) => (
-            <button
+            <IconButton
+              aria-label={style}
               key={style}
               type="button"
               onMouseDown={(e) =>
@@ -326,9 +340,23 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
               onClick={(e) => {
                 e.preventDefault();
               }}
+              colorScheme="gray"
+              variant={currentInlineStyle.has(style) ? "solid" : "ghost"}
+              size="sm"
             >
-              <Image src={icon} h="28px" />
-            </button>
+              <Image
+                src={icon}
+                h="28px"
+                style={
+                  currentInlineStyle.has(style)
+                    ? {
+                        filter:
+                          "invert(11%) sepia(72%) saturate(7048%) hue-rotate(272deg) brightness(94%) contrast(128%)",
+                      }
+                    : undefined
+                }
+              />
+            </IconButton>
           ))}
         </ButtonGroup>
         <Divider orientation="vertical" />
@@ -337,7 +365,8 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
             { style: "unordered-list-item", icon: UnorderedList },
             { style: "ordered-list-item", icon: OrderedList },
           ].map(({ style, icon }) => (
-            <button
+            <IconButton
+              aria-label={style}
               key={style}
               type="button"
               onMouseDown={(e) => {
@@ -346,12 +375,26 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
                   RichUtils.toggleBlockType(editorState, style),
                 );
               }}
+              colorScheme="gray"
+              variant={blockType === style ? "solid" : "ghost"}
+              size="sm"
               onClick={(e) => {
                 e.preventDefault();
               }}
             >
-              <Image src={icon} h="28px" />
-            </button>
+              <Image
+                src={icon}
+                style={
+                  blockType === style
+                    ? {
+                        filter:
+                          "invert(11%) sepia(72%) saturate(7048%) hue-rotate(272deg) brightness(94%) contrast(128%)",
+                      }
+                    : undefined
+                }
+                h="28px"
+              />
+            </IconButton>
           ))}
         </ButtonGroup>
       </HStack>
