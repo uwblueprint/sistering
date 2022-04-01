@@ -19,13 +19,13 @@ import {
   Tag,
   TagCloseButton,
   Text,
-  Textarea,
   Tooltip,
   VStack,
 } from "@chakra-ui/react";
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
 
 import FormHeader from "../../common/FormHeader";
+import RichTextField from "../../common/RichTextField";
 import TagsPopover from "../../common/TagsPopover";
 import {
   ADMIN_POSTING_CREATE_BASIC_INFO_CLOSING_DATE_TOOLTIP,
@@ -249,7 +249,9 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
     setBranchError(!selectedBranch);
     setTitleError(!title);
     setAutoClosingDateError(!autoClosingDate);
-    setDescriptionError(!description);
+    setDescriptionError(
+      !description || JSON.parse(description).blocks[0].text.length === 0,
+    );
     setSkillsError(selectedSkills.length < 1);
     setEmployeesError(selectedEmployees.length < 1);
 
@@ -380,15 +382,13 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
             <FormControl isRequired isInvalid={descriptionError}>
               <FormLabel textStyle="body-regular">Role Description</FormLabel>
               {/* TODO: replace with RichTextField from Draft.js */}
-              <Textarea
-                placeholder={
+              <RichTextField
+                initialContent={description}
+                defaultText={
                   ADMIN_POSTING_CREATE_BASIC_INFO_ROLE_DESCRIPTION_PLACEHOLDER
                 }
-                size="sm"
-                value={description}
-                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-                  setDescription(e.target.value)
-                }
+                onChangeText={(content: string) => setDescription(content)}
+                isErroneous={descriptionError}
               />
               <FormErrorMessage>
                 Please enter role description.
