@@ -13,6 +13,7 @@ import PocCard from "./PocCard";
 
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 import { formatDateStringYear } from "../../utils/DateTimeUtils";
+import RichTextDisplay from "./RichText/RichTextDisplay";
 
 type PostingDetailsProps = {
   postingDetails: PostingResponseDTO;
@@ -56,7 +57,7 @@ const PostingDetails = ({
           ))}
         </HStack>
         <Text textStyle="body-regular" py={4}>
-          {postingDetails.description}
+          <RichTextDisplay>{postingDetails.description}</RichTextDisplay>
         </Text>
         <Text textStyle="body-regular">Point(s) of contact:</Text>
         <HStack pb={4}>

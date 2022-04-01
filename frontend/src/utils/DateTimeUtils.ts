@@ -8,7 +8,7 @@ import { FilterType } from "../types/DateFilterTypes";
  * @returns corresponding time string string in format hh:mm:(a/p)m
  */
 export const formatTimeHourMinutes = (date: Date): string => {
-  return moment(date).format("h:mm a");
+  return moment(date).utc().format("h:mm a");
 };
 
 /**
@@ -32,7 +32,7 @@ export const getElapsedHours = (start: Date, end: Date): number => {
  */
 export const formatDateStringYear = (dateStringInput: string): string => {
   const inputAsDate = new Date(dateStringInput);
-  return moment(inputAsDate).format("dddd, ll");
+  return moment(inputAsDate).utc().format("dddd, ll");
 };
 
 /**
@@ -50,10 +50,77 @@ export const dateInRange = (start: string, filterType: FilterType): boolean => {
       (filterType === "week" ? MS_PER_WEEK : MS_PER_WEEK * 4)
   );
 };
+
 export const getWeekday = (dateStringInput: Date): string => {
-  return moment(dateStringInput).format("dddd");
+  return moment(dateStringInput).utc().format("dddd");
 };
 
 export const getTime = (dateStringInput: Date): string => {
-  return moment(dateStringInput).format("hh:mm A");
+  return moment(dateStringInput).utc().format("hh:mm A");
+};
+
+/**
+ * @param date a date object
+ * @returns a string representation of the date in YYYY-MM-DDTHH:mm format
+ */
+export const getISOStringDateTime = (date: Date): string => {
+  return date.toISOString().substring(0, 16);
+};
+
+/**
+ * Gets the date of the previous Sunday in YYYY-MM-DD format.
+ * If {@link date} is a Sunday, the same date is returned.
+ * @param date a date string in YYYY-MM-DD format
+ * @returns the date of the previous Sunday in YYYY-MM-DD format
+ */
+export const getPreviousSunday = (dateString: string): string => {
+  const date = new Date(dateString);
+  const previousSunday = moment(date).utc().startOf("week");
+  return previousSunday.toDate().toISOString().substring(0, 10);
+};
+
+/**
+ * Gets the date of the next Sunday in YYYY-MM-DD format.
+ * If {@link date} is a Sunday, the date of the next Sunday is returned.
+ * @param date a date string in YYYY-MM-DD format
+ * @returns the date of the next Saturday in YYYY-MM-DD format
+ */
+export const getNextSunday = (dateString: string): string => {
+  const date = new Date(dateString);
+  const nextSunday = moment(date).utc().startOf("week").add(1, "weeks");
+  return nextSunday.toDate().toISOString().substring(0, 10);
+};
+
+/**
+ * Returns a Date object representation of the {@link dateTimeString} in UTC.
+ * Context: We use a custom datetime format in our backend (YYYY-MM-DDTHH:mm)
+ * which does not automatically parse to UTC.
+ * @param dateTimeString a datetime string in YYYY-MM-DDTHH:mm format
+ * @returns the Date object representation of the {@link dateTimeString} in UTC
+ */
+export const getUTCDateForDateTimeString = (dateTimeString: string): Date => {
+  // using ISO 8601 date-time form with timezone specifier
+  return new Date(`${dateTimeString}:00+00:00`);
+};
+
+/**
+ * get integer difference of days between 2 dates (end - start)
+ * @param  {Date} start
+ * @param  {Date} end
+ * @returns number
+ */
+export const getDayDiff = (start: Date, end: Date): number => {
+  return moment(end).diff(start, "days", false);
+};
+
+/**
+ * get integer difference of weeks between 2 dates (end - start)
+ * @param  {Date} start
+ * @param  {Date} end
+ * @returns number
+ */
+export const getWeekDiff = (start: Date, end: Date): number => {
+  return moment(end)
+    .startOf("week")
+    .diff(moment(start).startOf("week").toDate(), "week", false);
 };

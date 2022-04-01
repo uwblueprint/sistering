@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
-import { Text } from "@chakra-ui/react";
+import { Box, Button, Image, Input, Text, VStack } from "@chakra-ui/react";
+import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 
 import { DONE_RESET_PASSWORD_PAGE } from "../../constants/Routes";
 
@@ -30,27 +31,29 @@ const ResetPassword = (): React.ReactElement => {
   };
 
   return (
-    <div style={{ textAlign: "center" }}>
+    <VStack>
+      <Image src={Sistering_Logo} alt="Sistering logo" h={32} />
       <Text textStyle="display-large">Reset Password</Text>
-      <div>
-        <input
+      <Text w={300} align="center">
+        Enter the email address associated with your account to reset your
+        password. You may need to check your spam folder.
+      </Text>
+      <Box pt={4}>
+        <Input
           type="email"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          placeholder="username@domain.com"
-          style={{ border: "1px solid" }}
+          placeholder="Email"
+          w={400}
+          bg="gray.50"
         />
-      </div>
-      <div>
-        <button
-          type="button"
-          className="btn btn-primary"
-          onClick={onResetPasswordClick}
-        >
-          Reset Password
-        </button>
-      </div>
-    </div>
+      </Box>
+      <Box pt={14}>
+        <Button px={10} onClick={onResetPasswordClick}>
+          Send Email
+        </Button>
+      </Box>
+    </VStack>
   );
 };
 

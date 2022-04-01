@@ -5,6 +5,7 @@ const shiftSignupType = gql`
     PENDING
     CONFIRMED
     CANCELED
+    PUBLISHED
   }
 
   input CreateShiftSignupRequestDTO {
@@ -22,15 +23,34 @@ const shiftSignupType = gql`
 
   type ShiftSignupResponseDTO {
     shiftId: ID!
+    shiftStartTime: DateTime!
+    shiftEndTime: DateTime!
     userId: ID!
     numVolunteers: Int!
     note: String!
     status: SignupStatus!
   }
 
+  type ShiftSignupPostingResponseDTO {
+    shiftId: ID!
+    shiftStartTime: DateTime!
+    shiftEndTime: DateTime!
+    userId: ID!
+    numVolunteers: Int!
+    note: String!
+    status: SignupStatus!
+    postingId: ID!
+    postingTitle: String!
+    autoClosingDate: Date!
+  }
+
   extend type Query {
     getShiftSignupsForUser(
       userId: ID!
+      signupStatus: SignupStatus
+    ): [ShiftSignupPostingResponseDTO!]!
+    getShiftSignupsForPosting(
+      postingId: ID!
       signupStatus: SignupStatus
     ): [ShiftSignupResponseDTO!]!
   }

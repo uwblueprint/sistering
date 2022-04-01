@@ -92,6 +92,40 @@ const customTheme = extendTheme(
           },
         },
       },
+      Table: {
+        variants: {
+          brand: {
+            table: {
+              border: "2px",
+              borderSpacing: "0",
+              borderColor: "background.dark",
+              overflow: "hidden",
+            },
+            th: {
+              ...textStyles["body-regular"],
+              fontWeight: "bold",
+              textTransform: "inherit",
+              letterSpacing: "inherit",
+              backgroundColor: "background.light",
+              borderBottom: "2px",
+              borderColor: "background.dark",
+              borderCollapse: "collapse",
+            },
+            td: {
+              borderBottom: "2px",
+              borderColor: "background.dark",
+              borderCollapse: "collapse",
+            },
+            tr: {
+              _last: {
+                td: {
+                  borderBottom: "none",
+                },
+              },
+            },
+          },
+        },
+      },
     },
   },
   withDefaultColorScheme({ colorScheme: "brand" }),

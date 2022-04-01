@@ -111,27 +111,30 @@ class ShiftService implements IShiftService {
 
     const interval = this.getInterval(shifts.recurrenceInterval);
 
-    const shiftTimes: TimeBlock[] = shifts.times.flatMap((time) => {
-      const recurringShifts = [];
-      if (interval > 0) {
-        for (
-          let start = time.startTime.getTime(), end = time.endTime.getTime();
-          start < endDate.getTime();
-          start += interval, end += interval
-        ) {
+    const shiftTimes: TimeBlock[] = shifts.times.flatMap(
+      ({ startTime, endTime }) => {
+        const recurringShifts = [];
+        if (interval > 0) {
+          for (
+            let start = startTime.getTime(), end = endTime.getTime();
+            start < endDate.getTime();
+            start += interval, end += interval
+          ) {
+            recurringShifts.push({
+              startTime: new Date(start),
+              endTime: new Date(end),
+            });
+          }
+        } else {
           recurringShifts.push({
-            startTime: new Date(start),
-            endTime: new Date(end),
+            startTime,
+            endTime,
           });
         }
-      } else {
-        recurringShifts.push({
-          startTime: time.startTime,
-          endTime: time.endTime,
-        });
-      }
-      return recurringShifts;
-    });
+        return recurringShifts;
+      },
+    );
+
     return shiftTimes;
   }
 
@@ -197,6 +200,25 @@ class ShiftService implements IShiftService {
     }
   }
 
+  async getShiftsByPosting(postingId: string): Promise<ShiftResponseDTO[]> {
+    try {
+      const shifts: Array<Shift> = await prisma.shift.findMany({
+        where: {
+          postingId: Number(postingId),
+        },
+      });
+      return shifts.map((shift) => ({
+        id: String(shift.id),
+        postingId: String(shift.postingId),
+        startTime: shift.startTime,
+        endTime: shift.endTime,
+      }));
+    } catch (error) {
+      Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+  }
+
   async createShift(
     shift: TimeBlock,
     postingId: string,
@@ -225,12 +247,21 @@ class ShiftService implements IShiftService {
 
   async createShifts(shifts: ShiftBulkRequestDTO): Promise<ShiftResponseDTO[]> {
     try {
+      const filteredShifts = shifts;
+
+      // Skip shifts that occur before start date
+      filteredShifts.times = shifts.times.filter(
+        (shift) => shift.startTime.getTime() >= shifts.startDate.getTime(),
+      );
+
       // Check that input times are valid
-      const [valid, errorMessage] = this.validateTimeBlocks(shifts.times);
+      const [valid, errorMessage] = this.validateTimeBlocks(
+        filteredShifts.times,
+      );
       if (!valid) throw new Error(errorMessage);
 
       // Build shiftTimes object
-      const shiftTimes: TimeBlock[] = this.buildTimeBlocks(shifts);
+      const shiftTimes: TimeBlock[] = this.buildTimeBlocks(filteredShifts);
 
       const newShifts = await BluebirdPromise.mapSeries(
         shiftTimes,

@@ -149,6 +149,7 @@ const graphQLMiddlewares = {
     users: authorizedByAdmin(),
     shift: authorizedByAdmin(),
     shifts: authorizedByAdmin(),
+    shiftsByPosting: authorizedByAdmin(),
     posting: authorizedByAdmin(),
     postings: authorizedByAdmin(),
     volunteerUserById: authorizedByAdminAndVolunteer(),
@@ -161,7 +162,8 @@ const graphQLMiddlewares = {
     skills: authorizedByAdmin(),
     branch: authorizedByAdmin(),
     branches: authorizedByAdmin(),
-    getShiftSignupsForUser: authorizedByAdmin(),
+    getShiftSignupsForUser: authorizedByAdminAndVolunteer(),
+    getShiftSignupsForPosting: authorizedByAdmin(),
   },
   Mutation: {
     createEntity: authorizedByAllRoles(),

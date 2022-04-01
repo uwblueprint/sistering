@@ -109,13 +109,18 @@ export type ShiftRequestDTO = Omit<ShiftDTO, "id" | "postingId">;
 export type ShiftBulkRequestDTO = {
   postingId: string;
   times: TimeBlock[];
+  startDate: Date;
   endDate: Date;
   recurrenceInterval: RecurrenceInterval;
 };
 
 export type ShiftResponseDTO = ShiftDTO;
 
-export type ShiftSignupStatus = "PENDING" | "CONFIRMED" | "CANCELED";
+export type ShiftSignupStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "CANCELED"
+  | "PUBLISHED";
 
 export type ShiftSignupDTO = {
   shiftId: string;
@@ -132,7 +137,16 @@ export type UpdateShiftSignupRequestDTO = Omit<
   "shiftId" | "userId"
 >;
 
-export type ShiftSignupResponseDTO = ShiftSignupDTO;
+export type ShiftSignupResponseDTO = {
+  shiftStartTime: Date;
+  shiftEndTime: Date;
+} & ShiftSignupDTO;
+
+export type ShiftSignupPostingResponseDTO = {
+  postingId: string;
+  postingTitle: string;
+  autoClosingDate: Date;
+} & ShiftSignupResponseDTO;
 
 export type SkillDTO = {
   id: string;

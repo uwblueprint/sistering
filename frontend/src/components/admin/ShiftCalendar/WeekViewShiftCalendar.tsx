@@ -19,14 +19,9 @@ import {
   ModalOverlay,
 } from "@chakra-ui/react";
 import colors from "../../../theme/colors";
-import "./ShiftCalendar.css";
+import { Event } from "../../../types/CalendarTypes";
+import "./Calendar.css";
 import { getTime, getWeekday } from "../../../utils/DateTimeUtils";
-
-export type Event = {
-  id: string;
-  start: Date;
-  end: Date;
-};
 
 type ShiftCalendarProps = {
   events: Event[];
@@ -35,15 +30,17 @@ type ShiftCalendarProps = {
   addEvent: (newEvent: DateSelectArg) => void;
   changeEvent: (event: Event, oldEvent: Event, currEvents: Event[]) => void;
   deleteEvent: (currEvents: Event[]) => void;
+  initialDate?: string;
 };
 
-const ShiftCalendar = ({
+const WeekViewShiftCalendar = ({
   events,
   selectedEvent,
   setSelectedEvent,
   addEvent,
   changeEvent,
   deleteEvent,
+  initialDate,
 }: ShiftCalendarProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -119,9 +116,10 @@ const ShiftCalendar = ({
         slotDuration="00:15:00"
         slotLabelInterval="01:00"
         timeZone="UTC"
+        initialDate={initialDate}
       />
     </Box>
   );
 };
 
-export default ShiftCalendar;
+export default WeekViewShiftCalendar;

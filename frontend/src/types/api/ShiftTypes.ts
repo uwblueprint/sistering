@@ -16,6 +16,7 @@ export type ShiftBulkRequestDTO = {
   postingId: string;
   times: TimeBlock[];
   endDate: Date;
+  startDate: Date;
   recurrenceInterval: RecurrenceInterval;
 };
 
