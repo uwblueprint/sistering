@@ -26,6 +26,7 @@ const colors = {
     default: "#333333",
     white: "#FFFFFF",
     gray: "#868686",
+    critical: "#E53E3E",
   },
 };
 
