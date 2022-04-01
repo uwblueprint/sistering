@@ -162,7 +162,7 @@ const graphQLMiddlewares = {
     skills: authorizedByAdmin(),
     branch: authorizedByAdmin(),
     branches: authorizedByAdmin(),
-    getShiftSignupsForUser: authorizedByAdmin(),
+    getShiftSignupsForUser: authorizedByAdminAndVolunteer(),
     getShiftSignupsForPosting: authorizedByAdmin(),
   },
   Mutation: {

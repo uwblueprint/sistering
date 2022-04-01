@@ -18,7 +18,6 @@ class ShiftSignupService implements IShiftSignupService {
   convertSignupResponseToDTO = (
     signup: Signup,
     shift: Shift,
-    posting: Posting,
   ): ShiftSignupResponseDTO => {
     return {
       ...signup,
@@ -26,9 +25,6 @@ class ShiftSignupService implements IShiftSignupService {
       userId: String(signup.userId),
       shiftStartTime: shift.startTime,
       shiftEndTime: shift.endTime,
-      postingId: String(posting.id),
-      postingTitle: posting.title,
-      autoClosingDate: posting.autoClosingDate,
     };
   };
 
@@ -60,13 +56,22 @@ class ShiftSignupService implements IShiftSignupService {
         },
       });
 
-      return shiftSignups.map((signup) =>
-        this.convertSignupResponseToDTO(
-          signup,
-          signup.shift,
-          signup.shift.posting,
-        ),
-      );
+      let shift, posting;
+      return shiftSignups.map((signup) => {
+        shift = signup.shift;
+        posting = signup.shift.posting;
+
+        return {
+          ...signup,
+          shiftId: String(signup.shiftId),
+          userId: String(signup.userId),
+          shiftStartTime: shift.startTime,
+          shiftEndTime: shift.endTime,
+          postingId: String(posting.id),
+          postingTitle: posting.title,
+          autoClosingDate: posting.autoClosingDate,
+        };
+      });
     } catch (error: unknown) {
       Logger.error(
         `Failed to shift signups. Reason = ${getErrorMessage(error)}`,
@@ -97,19 +102,11 @@ class ShiftSignupService implements IShiftSignupService {
       const shiftSignups = await prisma.signup.findMany({
         where: filter,
         include: {
-          shift: {
-            include: {
-              posting: true,
-            },
-          },
+          shift: true,
         },
       });
       return shiftSignups.map((signup) =>
-        this.convertSignupResponseToDTO(
-          signup,
-          signup.shift,
-          signup.shift.posting,
-        ),
+        this.convertSignupResponseToDTO(signup, signup.shift),
       );
     } catch (error: unknown) {
       Logger.error(
@@ -133,21 +130,13 @@ class ShiftSignupService implements IShiftSignupService {
               status: SignupStatus.PENDING,
             },
             include: {
-              shift: {
-                include: {
-                  posting: true,
-                },
-              },
+              shift: true,
             },
           }),
         ),
       );
       return newShiftSignups.map((newShiftSignup) =>
-        this.convertSignupResponseToDTO(
-          newShiftSignup,
-          newShiftSignup.shift,
-          newShiftSignup.shift.posting,
-        ),
+        this.convertSignupResponseToDTO(newShiftSignup, newShiftSignup.shift),
       );
     } catch (error: unknown) {
       Logger.error(
@@ -172,18 +161,10 @@ class ShiftSignupService implements IShiftSignupService {
         },
         data: shiftSignup,
         include: {
-          shift: {
-            include: {
-              posting: true,
-            },
-          },
+          shift: true,
         },
       });
-      return this.convertSignupResponseToDTO(
-        updateResult,
-        updateResult.shift,
-        updateResult.shift.posting,
-      );
+      return this.convertSignupResponseToDTO(updateResult, updateResult.shift);
     } catch (error: unknown) {
       Logger.error(
         `Failed to update shift signup. Reason = ${getErrorMessage(error)}`,
