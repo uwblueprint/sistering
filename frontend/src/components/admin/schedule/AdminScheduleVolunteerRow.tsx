@@ -27,7 +27,7 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
 
   return (
     <Box
-      w="400px"
+      w="full"
       pl="32px"
       pr="20px"
       pb={note === "" ? "4px" : "12px"}
