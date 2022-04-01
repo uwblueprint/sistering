@@ -15,6 +15,7 @@ const prisma = new PrismaClient();
 const Logger = logger(__filename);
 
 class ShiftSignupService implements IShiftSignupService {
+  /* eslint-disable class-methods-use-this */
   convertSignupResponseToDTO = (
     signup: Signup,
     shift: Shift,
@@ -48,12 +49,31 @@ class ShiftSignupService implements IShiftSignupService {
       const shiftSignups = await prisma.signup.findMany({
         where: filter,
         include: {
-          shift: true,
+          shift: {
+            include: {
+              posting: true,
+            },
+          },
         },
       });
-      return shiftSignups.map((signup) =>
-        this.convertSignupResponseToDTO(signup, signup.shift),
-      );
+
+      let shift;
+      let posting;
+      return shiftSignups.map((signup) => {
+        shift = signup.shift;
+        posting = signup.shift.posting;
+
+        return {
+          ...signup,
+          shiftId: String(signup.shiftId),
+          userId: String(signup.userId),
+          shiftStartTime: shift.startTime,
+          shiftEndTime: shift.endTime,
+          postingId: String(posting.id),
+          postingTitle: posting.title,
+          autoClosingDate: posting.autoClosingDate,
+        };
+      });
     } catch (error: unknown) {
       Logger.error(
         `Failed to shift signups. Reason = ${getErrorMessage(error)}`,

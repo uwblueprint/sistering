@@ -142,6 +142,12 @@ export type ShiftSignupResponseDTO = {
   shiftEndTime: Date;
 } & ShiftSignupDTO;
 
+export type ShiftSignupPostingResponseDTO = {
+  postingId: string;
+  postingTitle: string;
+  autoClosingDate: Date;
+} & ShiftSignupResponseDTO;
+
 export type SkillDTO = {
   id: string;
   name: string;

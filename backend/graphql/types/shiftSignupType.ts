@@ -31,11 +31,24 @@ const shiftSignupType = gql`
     status: SignupStatus!
   }
 
+  type ShiftSignupPostingResponseDTO {
+    shiftId: ID!
+    shiftStartTime: DateTime!
+    shiftEndTime: DateTime!
+    userId: ID!
+    numVolunteers: Int!
+    note: String!
+    status: SignupStatus!
+    postingId: ID!
+    postingTitle: String!
+    autoClosingDate: Date!
+  }
+
   extend type Query {
     getShiftSignupsForUser(
       userId: ID!
       signupStatus: SignupStatus
-    ): [ShiftSignupResponseDTO!]!
+    ): [ShiftSignupPostingResponseDTO!]!
     getShiftSignupsForPosting(
       postingId: ID!
       signupStatus: SignupStatus
