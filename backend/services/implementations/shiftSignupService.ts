@@ -1,4 +1,4 @@
-import { PrismaClient, Signup, SignupStatus, Posting } from "@prisma/client";
+import { PrismaClient, Signup, SignupStatus } from "@prisma/client";
 import { Prisma, Shift } from ".prisma/client";
 
 import IShiftSignupService from "../interfaces/shiftSignupService";
@@ -15,6 +15,7 @@ const prisma = new PrismaClient();
 const Logger = logger(__filename);
 
 class ShiftSignupService implements IShiftSignupService {
+  /* eslint-disable class-methods-use-this */
   convertSignupResponseToDTO = (
     signup: Signup,
     shift: Shift,
@@ -56,7 +57,8 @@ class ShiftSignupService implements IShiftSignupService {
         },
       });
 
-      let shift, posting;
+      let shift;
+      let posting;
       return shiftSignups.map((signup) => {
         shift = signup.shift;
         posting = signup.shift.posting;
