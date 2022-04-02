@@ -1,8 +1,10 @@
+import { SignupStatus } from "@prisma/client";
 import {
   ShiftBulkRequestDTO,
   ShiftDataWithoutPostingId,
   ShiftRequestDTO,
   ShiftResponseDTO,
+  ShiftWithSignupAndVolunteerResponseDTO,
   TimeBlock,
 } from "../../types";
 
@@ -36,6 +38,22 @@ interface IShiftService {
    * @throws Error if shift retrieval fails
    */
   getShiftsByPosting(postingId: string): Promise<ShiftResponseDTO[]>;
+
+  /**
+   * Gets all shift, signup and volunteer info for a given posting id, user
+   * id, and signup status
+   * @param postingId the target posting's id
+   * @param userId the target userids for the posting
+   * @param signupStatus the target signup status
+   * @returns an array of ShiftSignupWithVolunteerResponseDTO for each signup in the posting
+   * @throws Error if the shift retrieval fails
+   * TODO: Make sure the throws is correct
+   */
+  getShiftsWithSignupAndVolunteerForPosting(
+    postingId: string,
+    userId: string | null,
+    signupStatus: SignupStatus | null,
+  ): Promise<ShiftWithSignupAndVolunteerResponseDTO[]>;
 
   /**
    * Create a shift

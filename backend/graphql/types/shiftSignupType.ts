@@ -31,6 +31,17 @@ const shiftSignupType = gql`
     status: SignupStatus!
   }
 
+  type ShiftSignupResponseWithVolunteersDTO {
+    shiftId: ID!
+    shiftStartTime: DateTime!
+    shiftEndTime: DateTime!
+    userId: ID!
+    numVolunteers: Int!
+    note: String!
+    status: SignupStatus!
+    volunteer: VolunteerUserResponseDTO!
+  }
+
   type ShiftSignupPostingResponseDTO {
     shiftId: ID!
     shiftStartTime: DateTime!

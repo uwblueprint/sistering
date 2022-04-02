@@ -23,7 +23,7 @@ const prisma = new PrismaClient();
 const Logger = logger(__filename);
 
 // Helper Functions
-const convertToBranchResponseDTO = (
+export const convertToBranchResponseDTO = (
   branches: Branch[],
 ): BranchResponseDTO[] => {
   return branches.map((branch: Branch) => {
@@ -34,7 +34,9 @@ const convertToBranchResponseDTO = (
   });
 };
 
-const convertToSkillResponseDTO = (skills: Skill[]): SkillResponseDTO[] => {
+export const convertToSkillResponseDTO = (
+  skills: Skill[],
+): SkillResponseDTO[] => {
   return skills.map((skill: Skill) => {
     return {
       id: String(skill.id),

@@ -1,5 +1,16 @@
-import { Prisma, PrismaClient, Shift } from "@prisma/client";
+import {
+  Branch,
+  Prisma,
+  PrismaClient,
+  Shift,
+  Signup,
+  SignupStatus,
+  Skill,
+  User,
+  Volunteer,
+} from "@prisma/client";
 import { Promise as BluebirdPromise } from "bluebird";
+import * as firebaseAdmin from "firebase-admin";
 
 import IShiftService from "../interfaces/IShiftService";
 import {
@@ -8,10 +19,16 @@ import {
   ShiftDataWithoutPostingId,
   ShiftRequestDTO,
   ShiftResponseDTO,
+  ShiftWithSignupAndVolunteerResponseDTO,
+  SignupsAndVolunteerResponseDTO,
   TimeBlock,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import {
+  convertToBranchResponseDTO,
+  convertToSkillResponseDTO,
+} from "./userService";
 
 const prisma = new PrismaClient();
 
@@ -28,6 +45,21 @@ type PrismaTransactionClient = Omit<
 
 const WEEK_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 7;
 const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+
+type SignupWithVolunteers = Signup & {
+  user: User & {
+    volunteer:
+      | (Volunteer & {
+          branches: Branch[];
+          skills: Skill[];
+        })
+      | null;
+  };
+};
+
+type ShiftWithSignupAndVolunteers = Shift & {
+  signups: SignupWithVolunteers[];
+};
 
 class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
@@ -186,6 +218,32 @@ class ShiftService implements IShiftService {
     }
   }
 
+  convertSignupResponeWithUserAndVolunteerToDTO = (
+    signup: SignupWithVolunteers,
+    shiftStartTime: Date,
+    shiftEndTime: Date,
+    email: string,
+  ): SignupsAndVolunteerResponseDTO => {
+    if (signup.user.volunteer == null) {
+      throw new Error("Volunteer should always be present");
+    }
+    return {
+      ...signup,
+      userId: String(signup.userId),
+      shiftId: String(signup.shiftId),
+      shiftStartTime,
+      shiftEndTime,
+      volunteer: {
+        ...signup.user,
+        ...signup.user.volunteer,
+        id: String(signup.user.id),
+        email,
+        branches: convertToBranchResponseDTO(signup.user.volunteer.branches),
+        skills: convertToSkillResponseDTO(signup.user.volunteer.skills),
+      },
+    };
+  };
+
   async getShift(shiftId: string): Promise<ShiftResponseDTO> {
     let shift: Shift | null;
 
@@ -244,6 +302,103 @@ class ShiftService implements IShiftService {
       Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
+  }
+
+  async getShiftsWithSignupAndVolunteerForPosting(
+    postingId: string,
+    userId: string | null,
+    signupStatus: SignupStatus | null,
+  ): Promise<ShiftWithSignupAndVolunteerResponseDTO[]> {
+    let shifts: ShiftWithSignupAndVolunteers[] = [];
+    try {
+      shifts = await prisma.shift.findMany({
+        where: {
+          AND: [
+            {
+              postingId: Number(postingId),
+            },
+            // {
+            // TODO:
+            // Q1. Figure out if there's a better way to filter this. As it stands, we have to do
+            // more filtering outside of prisma to do the filtering that we want
+            //
+            // Q2. What should we do in the case that a shift does not have any signups with the given
+            // userid? Should we return a shift with an empty array of signups or should we omit the
+            // shift completely? Currently, it returns the shift with an empty list of signups. Same
+            // idea for signup status
+            // signups: {
+            //   some: userId ? {
+            //     status: signupStatus,
+            //     // userId: Number(userId)
+            //   } : {
+            //     status: signupStatus
+            //   }
+            // }
+            // },
+          ],
+        },
+        include: {
+          signups: {
+            include: {
+              user: {
+                include: {
+                  volunteer: {
+                    include: {
+                      branches: true,
+                      skills: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+    } catch (error: unknown) {
+      Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+
+    return Promise.all(
+      shifts.map(async (shift) => {
+        const filteredSignups: SignupsAndVolunteerResponseDTO[] = [];
+        await Promise.all(
+          shift.signups.map(async (signup: SignupWithVolunteers) => {
+            try {
+              if (
+                (userId == null || signup.userId === Number(userId)) &&
+                (signupStatus == null || signup.status === signupStatus)
+              ) {
+                const firebaseUser = await firebaseAdmin
+                  .auth()
+                  .getUser(signup.user.authId);
+
+                filteredSignups.push(
+                  this.convertSignupResponeWithUserAndVolunteerToDTO(
+                    signup,
+                    shift.startTime,
+                    shift.endTime,
+                    firebaseUser.email ?? "",
+                  ),
+                );
+              }
+            } catch (error: unknown) {
+              Logger.error(
+                `Failed to get user email. Reason = ${getErrorMessage(error)}`,
+              );
+              throw error;
+            }
+          }),
+        );
+        return {
+          id: String(shift.id),
+          postingId: String(shift.postingId),
+          startTime: shift.startTime,
+          endTime: shift.endTime,
+          signups: filteredSignups,
+        };
+      }),
+    );
   }
 
   async createShift(

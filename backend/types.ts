@@ -125,6 +125,14 @@ export type PostingWithShiftsRequestDTO = PostingRequestDTO & {
   times: TimeBlock[];
 };
 
+export type SignupsAndVolunteerResponseDTO = ShiftSignupResponseDTO & {
+  volunteer: VolunteerUserResponseDTO;
+};
+
+export type ShiftWithSignupAndVolunteerResponseDTO = ShiftResponseDTO & {
+  signups: SignupsAndVolunteerResponseDTO[];
+};
+
 export type ShiftSignupStatus =
   | "PENDING"
   | "CONFIRMED"

@@ -28,10 +28,23 @@ const shiftType = gql`
     endTime: DateTime!
   }
 
+  type ShiftWithSignupAndVolunteerResponseDTO {
+    id: ID!
+    postingId: String!
+    startTime: DateTime!
+    endTime: DateTime!
+    signups: [ShiftSignupResponseWithVolunteersDTO]!
+  }
+
   extend type Query {
     shift(id: ID!): ShiftResponseDTO!
     shifts: [ShiftResponseDTO!]!
     shiftsByPosting(postingId: ID!): [ShiftResponseDTO!]!
+    shiftsWithSignupsAndVolunteersByPosting(
+      postingId: ID!
+      userId: ID
+      signupStatus: SignupStatus
+    ): [ShiftWithSignupAndVolunteerResponseDTO]!
   }
 
   extend type Mutation {
