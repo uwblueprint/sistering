@@ -1,14 +1,21 @@
 import React from "react";
 import { VStack, Text, Select } from "@chakra-ui/react";
+import { formatTimeHourMinutes } from "../../../utils/DateTimeUtils";
+
+type Shift = {
+  shiftId: number;
+  shiftStartTime: Date;
+  shiftEndTime: Date;
+};
 
 type ShiftTimeHeaderProps = {
-  dateTimes: string[];
-  onDateSelected: (date: string) => void;
+  shifts: Shift[];
+  onShiftSelected: (id: number) => void;
 };
 
 const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
-  dateTimes,
-  onDateSelected,
+  shifts,
+  onShiftSelected,
 }: ShiftTimeHeaderProps): React.ReactElement => {
   return (
     <VStack
@@ -21,10 +28,16 @@ const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
       borderColor="background.dark"
     >
       <Text textStyle="body-bold">Shift Time</Text>
-      <Select size="md" onChange={(e) => onDateSelected(e.target.value)}>
-        {dateTimes.map((dateTime, i) => (
-          <option value={dateTime} key={i}>
-            {dateTime}
+      <Select
+        size="md"
+        textStyle="caption"
+        onChange={(e) => onShiftSelected(Number(e.target.value))}
+      >
+        {shifts.map((shift, i) => (
+          <option key={i} value={shift.shiftId}>
+            {`${formatTimeHourMinutes(
+              shift.shiftStartTime,
+            )} - ${formatTimeHourMinutes(shift.shiftEndTime)}`}
           </option>
         ))}
       </Select>

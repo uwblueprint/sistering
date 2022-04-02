@@ -12,8 +12,19 @@ const VolunteerShiftsPage = (): React.ReactElement => {
         <Text textStyle="display-large">Volunteer Shifts</Text>
       </Box>
       <ShiftTimeHeader
-        dateTimes={["5:00pm - 7:00pm", "7:00pm - 9:00pm", "9:00pm - 12:00am"]}
-        onDateSelected={(date) => console.log(date)}
+        shifts={[
+          {
+            shiftId: 1,
+            shiftStartTime: new Date("2022-04-11T13:30"),
+            shiftEndTime: new Date("2022-04-11T15:30"),
+          },
+          {
+            shiftId: 2,
+            shiftStartTime: new Date("2022-04-11T16:30"),
+            shiftEndTime: new Date("2022-04-11T18:30"),
+          },
+        ]}
+        onShiftSelected={(id: number) => console.log(id)}
       />
     </div>
   );
