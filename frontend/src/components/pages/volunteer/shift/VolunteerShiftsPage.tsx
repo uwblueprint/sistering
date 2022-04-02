@@ -2,7 +2,6 @@ import React from "react";
 import { Flex, Box, Text } from "@chakra-ui/react";
 import VolunteerNavbar from "../../../volunteer/VolunteerNavbar";
 import { VolunteerPages } from "../../../../constants/Volunteer";
-import NoShiftsPanel from "../../admin/schedule/NoShiftsPanel";
 
 const VolunteerShiftsPage = (): React.ReactElement => {
   return (
@@ -10,9 +9,6 @@ const VolunteerShiftsPage = (): React.ReactElement => {
       <VolunteerNavbar defaultIndex={VolunteerPages.VolunteerShiftsPage} />
       <Box bg="background.light">
         <Text textStyle="display-large">Volunteer Shifts</Text>
-      </Box>
-      <Box w="400px" h="full">
-        <NoShiftsPanel />
       </Box>
     </Flex>
   );
