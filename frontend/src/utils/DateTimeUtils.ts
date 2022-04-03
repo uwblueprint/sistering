@@ -45,15 +45,6 @@ export const formatDateMonthDay = (dateStringInput: string): string => {
 };
 
 /**
- * @param {string} dateStringInput date string on frontend
- * @returns corresponding date string in the following format (Monday, Oct 13)
- */
-export const formatDateMonthDay = (dateStringInput: string): string => {
-  const inputAsDate = new Date(dateStringInput);
-  return moment(inputAsDate).format("dddd, MMM D");
-};
-
-/**
  * currently only supports filter by week and month
  * @param start a date string on the frontend
  * @param filterType type of filter (week or month)
