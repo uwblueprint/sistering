@@ -1,17 +1,21 @@
 import React from "react";
-import { Tr, Td, Text, Link } from "@chakra-ui/react";
+import { Tr, Td, Text, Button } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
+
 import {
   getElapsedHours,
   formatTimeHourMinutes,
   formatDateMonthDay,
 } from "../../../utils/DateTimeUtils";
+import { ShiftSignupStatus } from "../../../types/api/ShiftSignupTypes";
 
 type VolunteerShiftsTableRowProps = {
   postingName: string;
   postingLink: string;
-  startTime?: string;
-  endTime?: string;
-  deadline?: string;
+  startTime: string;
+  endTime: string;
+  deadline: string;
+  status: ShiftSignupStatus;
 };
 const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
   postingName,
@@ -19,38 +23,39 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
   startTime,
   endTime,
   deadline,
+  status,
 }: VolunteerShiftsTableRowProps) => {
-  let duration;
-  let time;
-  if (endTime && startTime) {
-    const start = new Date(startTime);
-    const end = new Date(endTime);
-    const startString = formatTimeHourMinutes(start);
-    const endString = formatTimeHourMinutes(end);
+  const history = useHistory();
 
-    time = `${startString} - ${endString}`;
-    const elaspedHours = getElapsedHours(start, end);
-    duration =
-      elaspedHours > 1 ? ` (${elaspedHours} hrs)` : `(${elaspedHours} hr)`;
-  }
+  const start = new Date(startTime);
+  const end = new Date(endTime);
+  const startString = formatTimeHourMinutes(start);
+  const endString = formatTimeHourMinutes(end);
+
+  const time = `${startString} - ${endString}`;
+  const elaspedHours = getElapsedHours(start, end);
+  const duration =
+    elaspedHours > 1 ? `(${elaspedHours} hrs)` : `(${elaspedHours} hr)`;
 
   return (
     <Tr>
-      {duration && time && (
+      {(status === "CONFIRMED" || status === "PENDING") && (
         <Td>
-          <Text>{time + duration}</Text>
+          <Text>{`${time} ${duration}`}</Text>
         </Td>
       )}
       <Td>
         <Text>{postingName}</Text>
       </Td>
-      {deadline && (
+      {status === "PUBLISHED" && (
         <Td>
           <Text>Deadline: {formatDateMonthDay(deadline)}</Text>
         </Td>
       )}
       <Td>
-        <Link href={postingLink}>Go To Posting</Link>
+        <Button variant="link" onClick={() => history.push(postingLink)}>
+          Go To Posting
+        </Button>
       </Td>
     </Tr>
   );
