@@ -313,29 +313,7 @@ class ShiftService implements IShiftService {
     try {
       shifts = await prisma.shift.findMany({
         where: {
-          AND: [
-            {
-              postingId: Number(postingId),
-            },
-            // {
-            // TODO:
-            // Q1. Figure out if there's a better way to filter this. As it stands, we have to do
-            // more filtering outside of prisma to do the filtering that we want
-            //
-            // Q2. What should we do in the case that a shift does not have any signups with the given
-            // userid? Should we return a shift with an empty array of signups or should we omit the
-            // shift completely? Currently, it returns the shift with an empty list of signups. Same
-            // idea for signup status
-            // signups: {
-            //   some: userId ? {
-            //     status: signupStatus,
-            //     // userId: Number(userId)
-            //   } : {
-            //     status: signupStatus
-            //   }
-            // }
-            // },
-          ],
+          postingId: Number(postingId),
         },
         include: {
           signups: {
