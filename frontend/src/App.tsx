@@ -48,6 +48,7 @@ import { AuthenticatedUser } from "./types/AuthTypes";
 import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
 import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSchedulePostingPage";
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
+import AdminScheduleTableDemo from "./components/pages/admin/schedule/AdminScheduleTableDemo";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
@@ -177,6 +178,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.NOT_FOUND_PAGE}
                       component={NotFound}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_SCHEDULE_TABLE_DEMO}
+                      component={AdminScheduleTableDemo}
                     />
                     <Route exact path="*" component={NotFound} />
                   </Switch>

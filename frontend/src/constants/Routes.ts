@@ -39,3 +39,5 @@ export const ADMIN_SCHEDULE_POSTING_PAGE = "/admin/schedule/posting/:id";
 
 export const VOLUNTEER_POSTING_AVAILABILITIES =
   "/volunteer/posting/:id/availabilities";
+
+export const ADMIN_SCHEDULE_TABLE_DEMO = "/admin/scheduleTableDemo";
