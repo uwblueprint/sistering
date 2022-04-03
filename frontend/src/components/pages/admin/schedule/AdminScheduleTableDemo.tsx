@@ -1,24 +1,49 @@
+import React, { useState } from "react";
 import { gql, useQuery } from "@apollo/client";
-import { Box, Button, Container, Flex, FormControl, FormLabel, HStack, Input, Select, Spinner, TableContainer, VStack } from "@chakra-ui/react";
-import { isNumber } from "@chakra-ui/utils";
-import React, { useEffect, useState } from "react";
+import {
+  Button,
+  Flex,
+  FormControl,
+  FormLabel,
+  HStack,
+  Input,
+  Select,
+  Spinner,
+  TableContainer,
+  VStack,
+} from "@chakra-ui/react";
+
 import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
-import { ShiftSignupStatus, SignupsAndVolunteerGraphQLResponseDTO } from "../../../../types/api/SignupTypes";
-import AdminScheduleTable, { AdminScheduleDay, AdminScheduleSignup } from "../../../admin/schedule/AdminScheduleTable";
+import {
+  ShiftSignupStatus,
+  SignupsAndVolunteerGraphQLResponseDTO,
+} from "../../../../types/api/SignupTypes";
+import AdminScheduleTable, {
+  AdminScheduleDay,
+  AdminScheduleSignup,
+} from "../../../admin/schedule/AdminScheduleTable";
 
 type AdminScheduleTableDataQueryResponse = {
-  shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[]
-}
+  shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+};
 
 type AdminScheduleTableDataQueryInput = {
-  postingId: number,
-  userId?: number,
-  signupStatus?: ShiftSignupStatus,
-}
+  postingId: number;
+  userId?: number;
+  signupStatus?: ShiftSignupStatus;
+};
 
 const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
-  query AdminScheduleShiftsAndSignups($postingId: ID!, $userId: ID, $signupStatus: SignupStatus) {
-    shiftsWithSignupsAndVolunteersByPosting(postingId: $postingId, userId: $userId, signupStatus: $signupStatus) {
+  query AdminScheduleShiftsAndSignups(
+    $postingId: ID!
+    $userId: ID
+    $signupStatus: SignupStatus
+  ) {
+    shiftsWithSignupsAndVolunteersByPosting(
+      postingId: $postingId
+      userId: $userId
+      signupStatus: $signupStatus
+    ) {
       id
       startTime
       endTime
@@ -33,59 +58,73 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
   }
 `;
 
-const adminScheduleTableDataQueryToAdminScheduleDay = (data: AdminScheduleTableDataQueryResponse): AdminScheduleDay[] => (
-  data.shiftsWithSignupsAndVolunteersByPosting.map((shift: ShiftWithSignupAndVolunteerGraphQLResponseDTO) => ({
-    date: new Date(shift.startTime),
-    signups: shift.signups.map((signup: SignupsAndVolunteerGraphQLResponseDTO): AdminScheduleSignup => ({
-      startTime: new Date(shift.startTime), 
-      endTime: new Date(shift.endTime),
-      volunteer: {
-        name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
-        userId: signup.userId
-      }
-    }))
-  }))
-);
+const adminScheduleTableDataQueryToAdminScheduleDay = (
+  data: AdminScheduleTableDataQueryResponse,
+): AdminScheduleDay[] =>
+  data.shiftsWithSignupsAndVolunteersByPosting.map(
+    (shift: ShiftWithSignupAndVolunteerGraphQLResponseDTO) => ({
+      date: new Date(shift.startTime),
+      signups: shift.signups.map(
+        (
+          signup: SignupsAndVolunteerGraphQLResponseDTO,
+        ): AdminScheduleSignup => ({
+          startTime: new Date(shift.startTime),
+          endTime: new Date(shift.endTime),
+          volunteer: {
+            name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
+            userId: signup.userId,
+          },
+        }),
+      ),
+    }),
+  );
 
 const isShiftSignupStatus = (value: string): value is ShiftSignupStatus => {
-  return ['PENDING', 'CONFIRMED', 'CANCELED', 'PUBLISHED'].includes(value)
-}
+  return ["PENDING", "CONFIRMED", "CANCELED", "PUBLISHED"].includes(value);
+};
 
 const AdminScheduleTableDemo = (): React.ReactElement => {
   const [postingIdInput, setPostingIdInput] = useState<string>("1");
   const [userIdInput, setUserIdInput] = useState<string>("1");
   const [signupStateInput, setSignupStateInput] = useState<string>("");
 
-  const { loading, data: adminScheduleTableData, refetch } = useQuery<AdminScheduleTableDataQueryResponse, AdminScheduleTableDataQueryInput>(
-    ADMIN_SCHEDULE_TABLE_DATA_QUERY,
-    {
-      variables: { postingId: 1, userId: 1 },
-      fetchPolicy: "no-cache"
-    },
-  );
+  const { loading, data: adminScheduleTableData, refetch } = useQuery<
+    AdminScheduleTableDataQueryResponse,
+    AdminScheduleTableDataQueryInput
+  >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
+    variables: { postingId: 1, userId: 1 },
+    fetchPolicy: "no-cache",
+  });
 
   const updateTable = () => {
-    if (Number.isNaN(parseInt(postingIdInput, 10))) return
+    if (Number.isNaN(parseInt(postingIdInput, 10))) return;
     const res: AdminScheduleTableDataQueryInput = {
-      postingId: parseInt(postingIdInput, 10)
-    }
-    if (userIdInput !== "" && !Number.isNaN(parseInt(userIdInput, 10))) res.userId = parseInt(userIdInput, 10)
-    if (isShiftSignupStatus(signupStateInput)) res.signupStatus = signupStateInput
-    console.log(res)
-    refetch(res)
-  }
+      postingId: parseInt(postingIdInput, 10),
+    };
+    if (userIdInput !== "" && !Number.isNaN(parseInt(userIdInput, 10)))
+      res.userId = parseInt(userIdInput, 10);
+    if (isShiftSignupStatus(signupStateInput))
+      res.signupStatus = signupStateInput;
+    refetch(res);
+  };
 
   return (
-    <Flex width='100%' justifyContent="center">
-      <VStack width='70%'>
+    <Flex width="100%" justifyContent="center">
+      <VStack width="70%">
         <FormControl>
           <HStack>
             <FormLabel>Posting ID</FormLabel>
-            <Input value={postingIdInput} onChange={e => setPostingIdInput(e.target.value)} />
+            <Input
+              value={postingIdInput}
+              onChange={(e) => setPostingIdInput(e.target.value)}
+            />
             <FormLabel>User ID</FormLabel>
-            <Input value={userIdInput} onChange={e => setUserIdInput(e.target.value)} />
+            <Input
+              value={userIdInput}
+              onChange={(e) => setUserIdInput(e.target.value)}
+            />
             <FormLabel>Signup state</FormLabel>
-            <Select onChange={e => setSignupStateInput(e.target.value)}>
+            <Select onChange={(e) => setSignupStateInput(e.target.value)}>
               <option value=""> </option>
               <option value="PENDING">PENDING</option>
               <option value="CONFIRMED">CONFIRMED</option>
@@ -95,14 +134,20 @@ const AdminScheduleTableDemo = (): React.ReactElement => {
           </HStack>
         </FormControl>
         <Button onClick={updateTable}>Update Table</Button>
-        { !loading && adminScheduleTableData ? ( 
-          <TableContainer maxW="container.xl" width='100%'>
-            <AdminScheduleTable schedule={adminScheduleTableDataQueryToAdminScheduleDay(adminScheduleTableData)} />
-          </TableContainer> 
-        ) : <Spinner />}
+        {!loading && adminScheduleTableData ? (
+          <TableContainer maxW="container.xl" width="100%">
+            <AdminScheduleTable
+              schedule={adminScheduleTableDataQueryToAdminScheduleDay(
+                adminScheduleTableData,
+              )}
+            />
+          </TableContainer>
+        ) : (
+          <Spinner />
+        )}
       </VStack>
     </Flex>
-  )
+  );
 };
 
 export default AdminScheduleTableDemo;

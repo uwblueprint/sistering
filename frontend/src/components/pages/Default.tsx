@@ -46,7 +46,6 @@ const TeamInfoDisplay = () => {
   );
 };
 
-
 const DesignSystemDisplay = () => {
   return (
     <div style={{ marginTop: "2rem" }}>

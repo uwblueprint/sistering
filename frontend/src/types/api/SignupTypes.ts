@@ -27,12 +27,16 @@ export type ShiftSignupResponseDTO = {
   shiftEndTime: Date;
 } & SignupDTO;
 
-
 export type SignupsAndVolunteerResponseDTO = ShiftSignupResponseDTO & {
   volunteer: VolunteerUserResponseDTO;
 };
 
-export type SignupsAndVolunteerGraphQLResponseDTO = 
-  Pick<SignupsAndVolunteerResponseDTO, "userId"> & 
-  { volunteer: Pick<VolunteerUserResponseDTO, "firstName" | "lastName" | "pronouns"> } & 
-  Partial<SignupsAndVolunteerResponseDTO>
+export type SignupsAndVolunteerGraphQLResponseDTO = Pick<
+  SignupsAndVolunteerResponseDTO,
+  "userId"
+> & {
+  volunteer: Pick<
+    VolunteerUserResponseDTO,
+    "firstName" | "lastName" | "pronouns"
+  >;
+} & Partial<SignupsAndVolunteerResponseDTO>;

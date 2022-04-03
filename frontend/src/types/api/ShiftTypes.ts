@@ -1,6 +1,7 @@
-import { BranchResponseDTO } from "./BranchTypes";
-import { SignupsAndVolunteerGraphQLResponseDTO, SignupsAndVolunteerResponseDTO } from "./SignupTypes";
-import { SkillResponseDTO } from "./SkillTypes";
+import {
+  SignupsAndVolunteerGraphQLResponseDTO,
+  SignupsAndVolunteerResponseDTO,
+} from "./SignupTypes";
 
 export type TimeBlock = {
   startTime: Date;
@@ -30,7 +31,9 @@ export type ShiftWithSignupAndVolunteerResponseDTO = ShiftResponseDTO & {
 
 export type ShiftResponseDTO = ShiftDTO;
 
-export type ShiftWithSignupAndVolunteerGraphQLResponseDTO = 
-  Pick<ShiftWithSignupAndVolunteerResponseDTO, "startTime" | "endTime"> & 
-  { signups: SignupsAndVolunteerGraphQLResponseDTO } & 
-  Partial<ShiftWithSignupAndVolunteerResponseDTO>
+export type ShiftWithSignupAndVolunteerGraphQLResponseDTO = Pick<
+  ShiftWithSignupAndVolunteerResponseDTO,
+  "startTime" | "endTime"
+> & {
+  signups: SignupsAndVolunteerGraphQLResponseDTO;
+} & Partial<ShiftWithSignupAndVolunteerResponseDTO>;
