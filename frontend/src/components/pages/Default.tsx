@@ -1,9 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import { gql, useQuery } from "@apollo/client";
 import { useHistory } from "react-router-dom";
 import {
   Button as ChakraButton,
   HStack,
   Tab,
+  TableContainer,
   TabList,
   Tabs,
   Tag,
@@ -15,6 +17,9 @@ import RefreshCredentials from "../auth/RefreshCredentials";
 
 import * as Routes from "../../constants/Routes";
 import SampleContext from "../../contexts/SampleContext";
+import AdminScheduleTable, { AdminScheduleDay, AdminScheduleSignup, TableTestData } from "../admin/schedule/AdminScheduleTable";
+import { SignupsAndVolunteerGraphQLResponseDTO, ShiftSignupStatus } from "../../types/api/SignupTypes";
+import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../types/api/ShiftTypes";
 
 type ButtonProps = { text: string; path: string };
 
@@ -45,6 +50,7 @@ const TeamInfoDisplay = () => {
     </div>
   );
 };
+
 
 const DesignSystemDisplay = () => {
   return (
@@ -164,9 +170,66 @@ const DesignSystemDisplay = () => {
   );
 };
 
+type AdminScheduleTableDataQueryResponse = {
+  shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[]
+}
+
+const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
+  query AdminScheduleShiftsAndSignups($postingId: ID!, $signupStatus: SignupStatus) {
+    shiftsWithSignupsAndVolunteersByPosting(postingId: $postingId, signupStatus: $signupStatus) {
+      id
+      startTime
+      endTime
+      signups {
+        volunteer {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
+const adminScheduleTableDataQueryToAdminScheduleDay = (data: AdminScheduleTableDataQueryResponse): AdminScheduleDay[] => {
+  const res = data.shiftsWithSignupsAndVolunteersByPosting.map((shift: ShiftWithSignupAndVolunteerGraphQLResponseDTO) => ({
+      date: new Date(shift.startTime),
+      signups: shift.signups.map((signup: SignupsAndVolunteerGraphQLResponseDTO): AdminScheduleSignup => ({
+        startTime: new Date(shift.startTime), 
+        endTime: new Date(shift.endTime),
+        volunteer: {
+          name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
+          userId: signup.userId
+        }
+      }))
+    })
+  )
+  console.log(res);
+  return res;
+}
+
+
+type AdminScheduleTableDataQueryInput = {
+  postingId: number,
+  userId?: number,
+  signupStatus?: ShiftSignupStatus,
+}
+
 const Default = (): React.ReactElement => {
+  const { data: adminScheduleTableData } = useQuery<AdminScheduleTableDataQueryResponse, AdminScheduleTableDataQueryInput>(
+    ADMIN_SCHEDULE_TABLE_DATA_QUERY,
+    {
+      variables: { postingId: 1 },
+      fetchPolicy: "cache-and-network",
+    },
+  );
+
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
+      { adminScheduleTableData ? 
+        <TableContainer maxW="container.xl">
+          <AdminScheduleTable schedule={adminScheduleTableDataQueryToAdminScheduleDay(adminScheduleTableData)} />
+        </TableContainer> : null }
       <Text textStyle="display-large">Default Page</Text>
       <div className="btn-group" style={{ paddingRight: "10px" }}>
         <Logout />

@@ -87,18 +87,18 @@ export const TableTestData = [
   },
 ];
 
-type AdminScheduleSignup = {
+export type AdminScheduleSignup = {
   startTime: Date;
   endTime: Date;
   volunteer?: { name: string; userId: string };
 };
 
-type AdminScheduleDay = {
+export type AdminScheduleDay = {
   date: Date;
   signups: AdminScheduleSignup[];
 };
 
-type AdminScheduleTableProps = {
+export type AdminScheduleTableProps = {
   // The schedule prop should be sorted by date in ascending order.
   schedule: AdminScheduleDay[];
 };
