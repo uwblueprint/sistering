@@ -26,7 +26,7 @@ const SHIFTS_BY_POSTING = gql`
 
 // TODO: Remove redundancy from other pages
 const POSTING = gql`
-  query VolunteerPostingDetails_Posting($id: ID!) {
+  query VolunteerPostingAvailabilitiesDetails_Posting($id: ID!) {
     posting(id: $id) {
       title
       description
@@ -50,8 +50,10 @@ const POSTING = gql`
 // WE pass the user id from our current session token
 // TODO: Make this pass in a array of DTO
 const SUBMIT_SIGNUPS = gql`
-  mutation VolunteerShiftSignup($shiftId: ID!, userId: ID!, numVolunteers: Int!, note: String!) {
-    createShiftSignups(shifts: {shiftId: $shiftId, userId: $userId, numVolunteers: $numVolunteers, note: $note}) {
+  mutation VolunteerPostingAvailabilities_SubmitSignups(
+    $upsertDeleteShifts: UpsertDeleteShiftSignupRequestDTO!
+  ) {
+    upsertDeleteShiftSignups(upsertDeleteShifts: $upsertDeleteShifts) {
       status
     }
   }
@@ -107,13 +109,13 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
             console.log(shiftSignups);
             console.log(signupNotes);
 
+            // Assume Num volunteers would be one...
             // TODO: Merge data from shiftSignups and signupNotes together to pass into query
             const graphQLResult = await submitSignups({
-              // TODO: Fix variable passed in
               variables: {
-                shifts: {
-                  shiftSignups,
-                  signupNotes,
+                upsertDeleteShifts: {
+                  upsertShiftSignups: [],
+                  deleteShiftSignups: [],
                 },
               },
             });

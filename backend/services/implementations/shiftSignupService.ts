@@ -6,6 +6,7 @@ import {
   CreateShiftSignupDTO,
   ShiftSignupResponseDTO,
   UpdateShiftSignupRequestDTO,
+  UpsertDeleteShiftSignupsRequestDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
@@ -150,6 +151,65 @@ class ShiftSignupService implements IShiftSignupService {
     } catch (error: unknown) {
       Logger.error(
         `Failed to update shift signup. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async upsertDeleteShiftSignups(
+    upsertDeleteShiftSignups: UpsertDeleteShiftSignupsRequestDTO,
+  ): Promise<ShiftSignupResponseDTO[]> {
+    try {
+      const newShiftSignups = await prisma.$transaction([
+        prisma.signup.deleteMany({
+          where: {
+            OR: upsertDeleteShiftSignups.deleteShiftSignups.map(
+              (deleteShiftSignup) => ({
+                shiftId: Number(deleteShiftSignup.shiftId),
+                userId: Number(deleteShiftSignup.userId),
+              }),
+            ),
+          },
+        }),
+        ...upsertDeleteShiftSignups.upsertShiftSignups.map(
+          (upsertShiftSignup) => {
+            const { shiftId, userId, status, ...signup } = upsertShiftSignup;
+            return prisma.signup.upsert({
+              where: {
+                shiftId_userId: {
+                  shiftId: Number(upsertShiftSignup.shiftId),
+                  userId: Number(upsertShiftSignup.userId),
+                },
+              },
+              create: {
+                ...signup,
+                status: SignupStatus.PENDING,
+                shiftId: Number(shiftId),
+                userId: Number(userId),
+              },
+              update: {
+                ...signup,
+                shiftId: Number(shiftId),
+                userId: Number(userId),
+                ...(status === null ? {} : { status }),
+              },
+              include: {
+                shift: true,
+              },
+            });
+          },
+        ),
+      ]);
+
+      return newShiftSignups.map((newShiftSignup) => {
+        const signup = newShiftSignup as Signup & {
+          shift: Shift;
+        };
+        return this.convertSignupResponseToDTO(signup, signup.shift);
+      });
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create shift signup. Reason = ${getErrorMessage(error)}`,
       );
       throw error;
     }

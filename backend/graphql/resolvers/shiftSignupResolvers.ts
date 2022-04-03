@@ -3,8 +3,11 @@ import ShiftSignupService from "../../services/implementations/shiftSignupServic
 import IShiftSignupService from "../../services/interfaces/shiftSignupService";
 import {
   CreateShiftSignupDTO,
+  DeleteShiftSignupDTO,
   ShiftSignupResponseDTO,
   UpdateShiftSignupRequestDTO,
+  UpsertDeleteShiftSignupsRequestDTO,
+  UpsertShiftSignupDTO,
 } from "../../types";
 
 const shiftSignupService: IShiftSignupService = new ShiftSignupService();
@@ -58,6 +61,22 @@ const shiftSignupResolvers = {
       },
     ): Promise<ShiftSignupResponseDTO> => {
       return shiftSignupService.updateShiftSignup(shiftId, userId, update);
+    },
+
+    upsertDeleteShiftSignups: async (
+      _parent: undefined,
+      {
+        upsertShifts,
+        deleteShifts,
+      }: {
+        upsertShifts: UpsertShiftSignupDTO[];
+        deleteShifts: DeleteShiftSignupDTO[];
+      },
+    ): Promise<ShiftSignupResponseDTO[]> => {
+      return shiftSignupService.upsertDeleteShiftSignups({
+        upsertShiftSignups: upsertShifts,
+        deleteShiftSignups: deleteShifts,
+      } as UpsertDeleteShiftSignupsRequestDTO);
     },
   },
 };

@@ -132,6 +132,20 @@ export type ShiftSignupDTO = {
 
 export type CreateShiftSignupDTO = Omit<ShiftSignupDTO, "status">;
 
+export type UpsertShiftSignupDTO = CreateShiftSignupDTO & {
+  status: ShiftSignupStatus | null;
+};
+
+export type DeleteShiftSignupDTO = Omit<
+  ShiftSignupDTO,
+  "numVolunteers" | "note" | "status"
+>;
+
+export type UpsertDeleteShiftSignupsRequestDTO = {
+  upsertShiftSignups: UpsertShiftSignupDTO[];
+  deleteShiftSignups: DeleteShiftSignupDTO[];
+};
+
 export type UpdateShiftSignupRequestDTO = Omit<
   ShiftSignupDTO,
   "shiftId" | "userId"

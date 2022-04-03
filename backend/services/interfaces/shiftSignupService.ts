@@ -3,6 +3,7 @@ import {
   CreateShiftSignupDTO,
   ShiftSignupResponseDTO,
   UpdateShiftSignupRequestDTO,
+  UpsertDeleteShiftSignupsRequestDTO,
 } from "../../types";
 
 interface IShiftSignupService {
@@ -29,6 +30,16 @@ interface IShiftSignupService {
     userId: string,
     shiftSignup: UpdateShiftSignupRequestDTO,
   ): Promise<ShiftSignupResponseDTO>;
+
+  /**
+   * Bulk upsert and delete sign ups for shifts
+   * @param upsertDeleteshiftSignups array of UpsertShiftSignupDTOs and DeleteShiftSignupDTOs
+   * @returns an array of ShiftSignupResponseDTO
+   * @throws Error if any of the shifts signups cannot be created
+   */
+  upsertDeleteShiftSignups(
+    upsertDeleteShiftSignups: UpsertDeleteShiftSignupsRequestDTO,
+  ): Promise<ShiftSignupResponseDTO[]>;
 
   /**
    * Gets all shifts the user has signed up for
