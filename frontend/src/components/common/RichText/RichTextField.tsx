@@ -21,11 +21,13 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import "draft-js/dist/Draft.css";
-import Bold from "../../assets/RichTextField/B.svg";
-import Italic from "../../assets/RichTextField/I.svg";
-import Underline from "../../assets/RichTextField/U.svg";
-import UnorderedList from "../../assets/RichTextField/unordered-list.svg";
-import OrderedList from "../../assets/RichTextField/ordered-list.svg";
+
+import Bold from "../../../assets/RichTextField/B.svg";
+import Italic from "../../../assets/RichTextField/I.svg";
+import Underline from "../../../assets/RichTextField/U.svg";
+import UnorderedList from "../../../assets/RichTextField/unordered-list.svg";
+import OrderedList from "../../../assets/RichTextField/ordered-list.svg";
+import fontSizeObject from "./fontSizeObject";
 
 interface RichTextFieldProps {
   initialContent: string;
@@ -410,9 +412,7 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
           h="200px"
           fontSize="16px"
           sx={{
-            h1: { fontSize: "22px" },
-            h2: { fontSize: "20px" },
-            h3: { fontSize: "14px" },
+            ...fontSizeObject,
             ".public-DraftEditorPlaceholder-root": {
               display: showPlaceHolder,
               fontSize: `${textSizes[textSize]}px`,

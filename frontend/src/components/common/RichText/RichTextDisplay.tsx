@@ -8,6 +8,8 @@ import {
 } from "draft-js";
 import "draft-js/dist/Draft.css";
 
+import fontSizeObject from "./fontSizeObject";
+
 type RichTextDisplayProps = {
   children: string;
 };
@@ -35,7 +37,11 @@ const RichTextDisplay = ({
   }, [children]);
 
   return (
-    <Box>
+    <Box
+      sx={{
+        ...fontSizeObject,
+      }}
+    >
       <Editor editorState={editorState} readOnly onChange={() => {}} />
     </Box>
   );

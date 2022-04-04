@@ -25,7 +25,7 @@ import {
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
 
 import FormHeader from "../../common/FormHeader";
-import RichTextField from "../../common/RichTextField";
+import RichTextField from "../../common/RichText/RichTextField";
 import TagsPopover from "../../common/TagsPopover";
 import {
   ADMIN_POSTING_CREATE_BASIC_INFO_CLOSING_DATE_TOOLTIP,
