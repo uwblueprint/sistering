@@ -39,19 +39,26 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
 
   return (
     <Tr>
-      {(status === "CONFIRMED" || status === "PENDING") && (
-        <Td>
-          <Text>{`${time} ${duration}`}</Text>
-        </Td>
-      )}
-      <Td>
-        <Text>{postingName}</Text>
-      </Td>
-      {status === "PUBLISHED" && (
-        <Td>
-          <Text>Deadline: {formatDateMonthDay(deadline)}</Text>
-        </Td>
-      )}
+      {/* eslint-disable-next-line no-nested-ternary */}
+      {status === "CONFIRMED" || status === "PENDING" ? (
+        <>
+          <Td>
+            <Text>{`${time} ${duration}`}</Text>
+          </Td>
+          <Td>
+            <Text>{postingName}</Text>
+          </Td>
+        </>
+      ) : status === "PUBLISHED" ? (
+        <>
+          <Td>
+            <Text>{postingName}</Text>
+          </Td>
+          <Td>
+            <Text>Deadline: {formatDateMonthDay(deadline)}</Text>
+          </Td>
+        </>
+      ) : null}
       <Td>
         <Button variant="link" onClick={() => history.push(postingLink)}>
           Go To Posting
