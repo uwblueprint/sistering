@@ -24,7 +24,7 @@ export const DEFAULT_POSTING_CONTEXT = {
       endTime: "2022-02-06T13:30",
     },
   ],
-  recurrenceInterval: "NONE" as RecurrenceInterval,
+  recurrenceInterval: "" as RecurrenceInterval,
 };
 
 const PostingContext = createContext<PostingContextType>(

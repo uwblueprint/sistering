@@ -33,6 +33,7 @@ import {
   ADMIN_POSTING_CREATE_BASIC_INFO_ROLE_DESCRIPTION_PLACEHOLDER,
   ADMIN_POSTING_CREATE_BASIC_INFO_SKILLS_TOOLTIP,
 } from "../../../constants/Copy";
+import PostingContext from "../../../contexts/admin/PostingContext";
 import PostingContextDispatcherContext from "../../../contexts/admin/PostingContextDispatcherContext";
 
 import { BranchDTO, BranchResponseDTO } from "../../../types/api/BranchTypes";
@@ -73,6 +74,15 @@ const ERROR_MESSAGE_HEIGHT = "35px";
 const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
   navigateToNext,
 }: CreatePostingBasicInfoProps): React.ReactElement => {
+  const {
+    branch: branchFromCtx,
+    skills: skillsFromCtx,
+    employees: employeesFromCtx,
+    title: titleFromCtx,
+    description: descriptionFromCtx,
+    autoClosingDate: autoClosingDateFromCtx,
+    numVolunteers: numVolunteersFromCtx,
+  } = useContext(PostingContext);
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
 
   // #region state variables
@@ -81,14 +91,22 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
   const [employeeOptions, setEmployeeOptions] = useState<EmployeeUserDTO[]>([]);
 
   const [selectedBranch, setSelectedBranch] = useState<string | undefined>(
-    undefined,
+    branchFromCtx.id || undefined,
   );
-  const [numVolunteers, setNumVolunteers] = useState<number>(1);
-  const [title, setTitle] = useState<string>("");
-  const [autoClosingDate, setAutoClosingDate] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
-  const [selectedEmployees, setSelectedEmployees] = useState<string[]>([]);
+  const [numVolunteers, setNumVolunteers] = useState<number>(
+    numVolunteersFromCtx,
+  );
+  const [title, setTitle] = useState<string>(titleFromCtx);
+  const [autoClosingDate, setAutoClosingDate] = useState<string>(
+    autoClosingDateFromCtx,
+  );
+  const [description, setDescription] = useState<string>(descriptionFromCtx);
+  const [selectedSkills, setSelectedSkills] = useState<string[]>(
+    skillsFromCtx.map((skill) => skill.id),
+  );
+  const [selectedEmployees, setSelectedEmployees] = useState<string[]>(
+    employeesFromCtx.map((employee) => employee.id),
+  );
 
   const [branchError, setBranchError] = useState(false);
   const [titleError, setTitleError] = useState(false);
@@ -382,7 +400,6 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
             </HStack>
             <FormControl isRequired isInvalid={descriptionError}>
               <FormLabel textStyle="body-regular">Role Description</FormLabel>
-              {/* TODO: replace with RichTextField from Draft.js */}
               <RichTextField
                 initialContent={description}
                 defaultText={
@@ -446,7 +463,8 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                       mr={4}
                       mb={2}
                     >
-                      {getOptionNameFromId(skillOptions, skillId)}
+                      {skillOptions.length > 0 &&
+                        getOptionNameFromId(skillOptions, skillId)}
                       <TagCloseButton
                         onClick={() => handleSkillRemoval(skillId)}
                       />
@@ -463,7 +481,8 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                           mr={2}
                           mb={2}
                         >
-                          {getOptionNameFromId(skillOptions, skillId)}
+                          {skillOptions.length > 0 &&
+                            getOptionNameFromId(skillOptions, skillId)}
                           <TagCloseButton
                             onClick={() => handleSkillRemoval(skillId)}
                           />
@@ -511,13 +530,16 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                       mb={2}
                     >
                       <Avatar size="xs" mr={1} bg="violet" />
-                      {getOptionNameFromId(
-                        employeeOptions.map(({ id, firstName, lastName }) => ({
-                          id,
-                          name: `${firstName} ${lastName}`,
-                        })),
-                        employeeId,
-                      )}
+                      {employeeOptions.length > 0 &&
+                        getOptionNameFromId(
+                          employeeOptions.map(
+                            ({ id, firstName, lastName }) => ({
+                              id,
+                              name: `${firstName} ${lastName}`,
+                            }),
+                          ),
+                          employeeId,
+                        )}
                       <TagCloseButton
                         onClick={() => handleEmployeeRemoval(employeeId)}
                       />
@@ -535,15 +557,16 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                           mb={2}
                         >
                           <Avatar size="xs" mr={1} bg="violet" />
-                          {getOptionNameFromId(
-                            employeeOptions.map(
-                              ({ id, firstName, lastName }) => ({
-                                id,
-                                name: `${firstName} ${lastName}`,
-                              }),
-                            ),
-                            employeeId,
-                          )}
+                          {employeeOptions.length > 0 &&
+                            getOptionNameFromId(
+                              employeeOptions.map(
+                                ({ id, firstName, lastName }) => ({
+                                  id,
+                                  name: `${firstName} ${lastName}`,
+                                }),
+                              ),
+                              employeeId,
+                            )}
                           <TagCloseButton
                             onClick={() => handleEmployeeRemoval(employeeId)}
                           />

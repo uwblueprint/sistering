@@ -19,6 +19,7 @@ import {
   ADMIN_POSTING_CREATE_SCHEDULING_TIME_SLOTS,
   ADMIN_POSTING_CREATE_SHIFTS_TIME,
 } from "../../../constants/Copy";
+import PostingContext from "../../../contexts/admin/PostingContext";
 import PostingContextDispatcherContext from "../../../contexts/admin/PostingContextDispatcherContext";
 import WeekViewShiftCalendar from "../ShiftCalendar/WeekViewShiftCalendar";
 import { Event } from "../../../types/CalendarTypes";
@@ -28,6 +29,7 @@ import {
   getISOStringDateTime,
   getNextSunday,
   getPreviousSunday,
+  getUTCDateForDateTimeString,
 } from "../../../utils/DateTimeUtils";
 
 type CreatePostingShiftsProps = {
@@ -39,15 +41,27 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
   navigateBack,
   navigateToNext,
 }: CreatePostingShiftsProps): React.ReactElement => {
+  const {
+    startDate: startDateFromCtx,
+    endDate: endDateFromCtx,
+    times: timesFromCtx,
+    recurrenceInterval: recurrenceIntervalFromCtx,
+  } = useContext(PostingContext);
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
 
-  const [startDate, setStartDate] = useState<string>("");
-  const [endDate, setEndDate] = useState<string>("");
+  const [startDate, setStartDate] = useState<string>(startDateFromCtx);
+  const [endDate, setEndDate] = useState<string>(endDateFromCtx);
   const [
     recurrenceInterval,
     setRecurrenceInterval,
-  ] = useState<RecurrenceInterval>("" as RecurrenceInterval);
-  const [events, setEvents] = useState<Event[]>([]);
+  ] = useState<RecurrenceInterval>(recurrenceIntervalFromCtx);
+  const [events, setEvents] = useState<Event[]>(
+    timesFromCtx.map((time, index) => ({
+      id: String(index),
+      start: getUTCDateForDateTimeString(time.startTime),
+      end: getUTCDateForDateTimeString(time.endTime),
+    })),
+  );
   const [eventCount, setEventCount] = useState<number>(0);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
@@ -186,6 +200,7 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
                   placeholder="How often will this occur?"
                   size="sm"
                   width="425px"
+                  value={recurrenceInterval}
                   onChange={(e) =>
                     setRecurrenceInterval(e.target.value as RecurrenceInterval)
                   }
