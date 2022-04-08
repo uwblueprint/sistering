@@ -126,7 +126,7 @@ export type PostingWithShiftsRequestDTO = PostingRequestDTO & {
 };
 
 export type SignupsAndVolunteerResponseDTO = ShiftSignupResponseDTO & {
-  volunteer: VolunteerUserResponseDTO;
+  volunteer: Omit<VolunteerUserResponseDTO, "skills" | "branches">;
 };
 
 export type ShiftWithSignupAndVolunteerResponseDTO = ShiftResponseDTO & {

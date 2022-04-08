@@ -48,12 +48,7 @@ const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
 
 type SignupWithVolunteers = Signup & {
   user: User & {
-    volunteer:
-      | (Volunteer & {
-          branches: Branch[];
-          skills: Skill[];
-        })
-      | null;
+    volunteer: Volunteer | null;
   };
 };
 
@@ -238,8 +233,8 @@ class ShiftService implements IShiftService {
         ...signup.user.volunteer,
         id: String(signup.user.id),
         email,
-        branches: convertToBranchResponseDTO(signup.user.volunteer.branches),
-        skills: convertToSkillResponseDTO(signup.user.volunteer.skills),
+        // branches: convertToBranchResponseDTO(signup.user.volunteer.branches),
+        // skills: convertToSkillResponseDTO(signup.user.volunteer.skills),
       },
     };
   };
@@ -320,12 +315,7 @@ class ShiftService implements IShiftService {
             include: {
               user: {
                 include: {
-                  volunteer: {
-                    include: {
-                      branches: true,
-                      skills: true,
-                    },
-                  },
+                  volunteer: true,
                 },
               },
             },

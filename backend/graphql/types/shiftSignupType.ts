@@ -39,7 +39,7 @@ const shiftSignupType = gql`
     numVolunteers: Int!
     note: String!
     status: SignupStatus!
-    volunteer: VolunteerUserResponseDTO!
+    volunteer: VolunteerUserResponseNoSkillsBranchesDTO!
   }
 
   type ShiftSignupPostingResponseDTO {
