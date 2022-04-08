@@ -1,7 +1,12 @@
 import React, { useState, useLayoutEffect } from "react";
+import { generatePath, useHistory } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { Box, HStack, Select, Text } from "@chakra-ui/react";
 
+import {
+  VOLUNTEER_POSTING_AVAILABILITIES,
+  VOLUNTEER_POSTING_DETAILS,
+} from "../../../../constants/Routes";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import { dateInRange } from "../../../../utils/DateTimeUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
@@ -36,6 +41,7 @@ const POSTINGS = gql`
 `;
 
 const VolunteerPostingsPage = (): React.ReactElement => {
+  const history = useHistory();
   const [postings, setPostings] = useState<Posting[] | null>(null);
   const [unfilteredPostings, setUnfilteredPostings] = useState<
     Posting[] | null
@@ -70,6 +76,16 @@ const VolunteerPostingsPage = (): React.ReactElement => {
         break;
     }
   }, [filter, unfilteredPostings]);
+
+  const navigateToDetails = (id: string) => {
+    const route = generatePath(VOLUNTEER_POSTING_DETAILS, { id });
+    history.push(route);
+  };
+
+  const navigateToSubmitAvailabilities = (id: string) => {
+    const route = generatePath(VOLUNTEER_POSTING_AVAILABILITIES, { id });
+    history.push(route);
+  };
 
   const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value: FilterType = e.target.value as FilterType;
@@ -133,6 +149,10 @@ const VolunteerPostingsPage = (): React.ReactElement => {
                   autoClosingDate={posting.autoClosingDate}
                   description={posting.description}
                   branchName={posting.branch.name}
+                  navigateToDetails={() => navigateToDetails(posting.id)}
+                  navigateToSubmitAvailabilities={() =>
+                    navigateToSubmitAvailabilities(posting.id)
+                  }
                 />
               </Box>
             ))
@@ -155,6 +175,10 @@ const VolunteerPostingsPage = (): React.ReactElement => {
                   autoClosingDate={posting.autoClosingDate}
                   description={posting.description}
                   branchName={posting.branch.name}
+                  navigateToDetails={() => navigateToDetails(posting.id)}
+                  navigateToSubmitAvailabilities={() =>
+                    navigateToSubmitAvailabilities(posting.id)
+                  }
                 />
               </Box>
             ))

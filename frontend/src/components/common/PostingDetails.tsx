@@ -17,12 +17,13 @@ import RichTextDisplay from "./RichText/RichTextDisplay";
 
 type PostingDetailsProps = {
   postingDetails: PostingResponseDTO;
-  showFooterButton: boolean;
+  /* only render footer button if onClick handler is supplied */
+  footerButtonOnClick?: () => void;
 };
 
 const PostingDetails = ({
   postingDetails,
-  showFooterButton,
+  footerButtonOnClick,
 }: PostingDetailsProps): React.ReactElement => {
   return (
     <Box p={6} w="full">
@@ -81,7 +82,9 @@ const PostingDetails = ({
           <Text textStyle="caption" color="text.gray">
             Deadline: {formatDateStringYear(postingDetails.autoClosingDate)}
           </Text>
-          {showFooterButton ? <Button>Submit availability</Button> : null}
+          {footerButtonOnClick && (
+            <Button onClick={footerButtonOnClick}>Submit availability</Button>
+          )}
         </HStack>
       </VStack>
     </Box>

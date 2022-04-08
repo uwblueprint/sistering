@@ -59,12 +59,7 @@ const AdminPostingDetails = (): React.ReactElement => {
           centerContent
           borderRadius={10}
         >
-          {postingDetails ? (
-            <PostingDetails
-              postingDetails={postingDetails}
-              showFooterButton={false}
-            />
-          ) : null}
+          {postingDetails && <PostingDetails postingDetails={postingDetails} />}
         </Container>
       </VStack>
     </Box>
