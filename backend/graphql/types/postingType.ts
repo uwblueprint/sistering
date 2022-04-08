@@ -45,6 +45,7 @@ const postingType = gql`
   type EmployeeResponseDTO {
     id: ID!
     branchId: ID!
+    title: String!
   }
 
   extend type Query {

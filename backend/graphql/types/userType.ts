@@ -37,6 +37,7 @@ const userType = gql`
     role: Role!
     phoneNumber: String
     branchId: ID!
+    title: String
   }
 
   input CreateUserDTO {
@@ -88,6 +89,7 @@ const userType = gql`
     phoneNumber: String
     password: String!
     branchId: ID!
+    title: String!
   }
 
   input UpdateEmployeeUserDTO {
@@ -96,6 +98,7 @@ const userType = gql`
     email: String!
     phoneNumber: String
     branchId: ID!
+    title: String!
   }
 
   extend type Query {

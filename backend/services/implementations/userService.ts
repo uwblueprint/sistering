@@ -844,6 +844,7 @@ class UserService implements IUserService {
         role: user.role,
         phoneNumber: user.phoneNumber,
         branchId: String(employee.branchId),
+        title: employee.title,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -881,6 +882,7 @@ class UserService implements IUserService {
         phoneNumber: user.phoneNumber,
         role: user.role,
         branchId: String(employee.branchId),
+        title: employee.title,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -956,6 +958,7 @@ class UserService implements IUserService {
                 branch: {
                   connect: { id: Number(employeeUser.branchId) },
                 },
+                title: employeeUser.title, 
               },
             },
           },
@@ -971,6 +974,7 @@ class UserService implements IUserService {
           id: String(newUser.id),
           email: firebaseUser.email ?? "",
           branchId: String(employee!.branchId),
+          title: employee!.title,
         };
       } catch (postgresError) {
         try {
@@ -1027,6 +1031,8 @@ class UserService implements IUserService {
             branch: {
               connect: { id: Number(employeeUser.branchId) },
             },
+            title: employeeUser.title
+
           },
           include: {
             user: true,
@@ -1047,6 +1053,7 @@ class UserService implements IUserService {
           id: String(user.id),
           email: updatedFirebaseUser.email ?? "",
           branchId: String(updatedEmployeeUser.branchId),
+          title: updatedEmployeeUser.title,
         };
       } catch (error: unknown) {
         try {
@@ -1066,7 +1073,8 @@ class UserService implements IUserService {
               branch: {
                 connect: { id: Number(oldEmployeeUser!.branchId) },
               },
-            },
+              title: oldEmployeeUser!.title,
+             }
           });
         } catch (postgresError: unknown) {
           const errorMessage = [
@@ -1123,6 +1131,7 @@ class UserService implements IUserService {
                       return { id: Number(p.id) };
                     }),
                   },
+                  title: deletedEmployee!.title,
                 },
               },
             },
