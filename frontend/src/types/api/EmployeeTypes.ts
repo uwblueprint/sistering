@@ -1,7 +1,7 @@
 export type EmployeeResponseDTO = {
   id: string;
   branchId: string;
-  title: string; 
+  title: string;
 };
 
 export type EmployeeUserDTO = {
@@ -12,7 +12,7 @@ export type EmployeeUserDTO = {
   role: string;
   phoneNumber: string | null;
   branchId: string;
-  title: string; 
+  title: string;
 };
 
 export type EmployeeUserResponseDTO = EmployeeUserDTO;
