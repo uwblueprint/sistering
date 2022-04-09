@@ -958,7 +958,7 @@ class UserService implements IUserService {
                 branch: {
                   connect: { id: Number(employeeUser.branchId) },
                 },
-                title: employeeUser.title, 
+                title: employeeUser.title,
               },
             },
           },
@@ -1031,8 +1031,7 @@ class UserService implements IUserService {
             branch: {
               connect: { id: Number(employeeUser.branchId) },
             },
-            title: employeeUser.title
-
+            title: employeeUser.title,
           },
           include: {
             user: true,
@@ -1074,7 +1073,7 @@ class UserService implements IUserService {
                 connect: { id: Number(oldEmployeeUser!.branchId) },
               },
               title: oldEmployeeUser!.title,
-             }
+            },
           });
         } catch (postgresError: unknown) {
           const errorMessage = [
