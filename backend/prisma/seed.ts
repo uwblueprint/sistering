@@ -153,7 +153,7 @@ const main = async () => {
           id: seedBranches[0].id,
         },
       },
-      title: "manager",
+      title: "Supervisor",
     },
   };
 
