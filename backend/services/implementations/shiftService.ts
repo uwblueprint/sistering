@@ -217,7 +217,6 @@ class ShiftService implements IShiftService {
     signup: SignupWithVolunteers,
     shiftStartTime: Date,
     shiftEndTime: Date,
-    email: string,
   ): SignupsAndVolunteerResponseDTO => {
     if (signup.user.volunteer == null) {
       throw new Error("Volunteer should always be present");
@@ -232,9 +231,6 @@ class ShiftService implements IShiftService {
         ...signup.user,
         ...signup.user.volunteer,
         id: String(signup.user.id),
-        email,
-        // branches: convertToBranchResponseDTO(signup.user.volunteer.branches),
-        // skills: convertToSkillResponseDTO(signup.user.volunteer.skills),
       },
     };
   };
@@ -327,46 +323,37 @@ class ShiftService implements IShiftService {
       throw error;
     }
 
-    return Promise.all(
-      shifts.map(async (shift) => {
-        const filteredSignups: SignupsAndVolunteerResponseDTO[] = [];
-        await Promise.all(
-          shift.signups.map(async (signup: SignupWithVolunteers) => {
-            try {
-              if (
-                (userId == null || signup.userId === Number(userId)) &&
-                (signupStatus == null || signup.status === signupStatus)
-              ) {
-                const firebaseUser = await firebaseAdmin
-                  .auth()
-                  .getUser(signup.user.authId);
-
-                filteredSignups.push(
-                  this.convertSignupResponeWithUserAndVolunteerToDTO(
-                    signup,
-                    shift.startTime,
-                    shift.endTime,
-                    firebaseUser.email ?? "",
-                  ),
-                );
-              }
-            } catch (error: unknown) {
-              Logger.error(
-                `Failed to get user email. Reason = ${getErrorMessage(error)}`,
-              );
-              throw error;
-            }
-          }),
-        );
-        return {
-          id: String(shift.id),
-          postingId: String(shift.postingId),
-          startTime: shift.startTime,
-          endTime: shift.endTime,
-          signups: filteredSignups,
-        };
-      }),
-    );
+    return shifts.map(shift => {
+      const filteredSignups: SignupsAndVolunteerResponseDTO[] = [];
+      shift.signups.map((signup: SignupWithVolunteers) => {
+        try {
+          if (
+            (userId == null || signup.userId === Number(userId)) &&
+            (signupStatus == null || signup.status === signupStatus)
+          ) {
+            filteredSignups.push(
+              this.convertSignupResponeWithUserAndVolunteerToDTO(
+                signup,
+                shift.startTime,
+                shift.endTime,
+              ),
+            );
+          }
+        } catch (error: unknown) {
+          Logger.error(
+            `Failed to get user email. Reason = ${getErrorMessage(error)}`,
+          );
+          throw error;
+        }
+      });
+      return {
+        id: String(shift.id),
+        postingId: String(shift.postingId),
+        startTime: shift.startTime,
+        endTime: shift.endTime,
+        signups: filteredSignups,
+      };
+    });
   }
 
   async createShift(
