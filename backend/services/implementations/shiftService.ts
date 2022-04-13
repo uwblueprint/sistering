@@ -323,35 +323,36 @@ class ShiftService implements IShiftService {
       throw error;
     }
 
-    return shifts.map(shift => {
-      const filteredSignups: SignupsAndVolunteerResponseDTO[] = [];
-      shift.signups.map((signup: SignupWithVolunteers) => {
-        try {
+    return shifts.map((shift) => {
+      const filteredShifts = shift.signups.reduce<
+        SignupsAndVolunteerResponseDTO[]
+      >(
+        (
+          filtered: SignupsAndVolunteerResponseDTO[],
+          curr: SignupWithVolunteers,
+        ): SignupsAndVolunteerResponseDTO[] => {
           if (
-            (userId == null || signup.userId === Number(userId)) &&
-            (signupStatus == null || signup.status === signupStatus)
+            (userId == null || curr.userId === Number(userId)) &&
+            (signupStatus == null || curr.status === signupStatus)
           ) {
-            filteredSignups.push(
+            filtered.push(
               this.convertSignupResponeWithUserAndVolunteerToDTO(
-                signup,
+                curr,
                 shift.startTime,
                 shift.endTime,
               ),
             );
           }
-        } catch (error: unknown) {
-          Logger.error(
-            `Failed to get user email. Reason = ${getErrorMessage(error)}`,
-          );
-          throw error;
-        }
-      });
+          return filtered;
+        },
+        [],
+      );
       return {
         id: String(shift.id),
         postingId: String(shift.postingId),
         startTime: shift.startTime,
         endTime: shift.endTime,
-        signups: filteredSignups,
+        signups: filteredShifts,
       };
     });
   }
