@@ -101,10 +101,15 @@ const AdminScheduleTableDemo = (): React.ReactElement => {
     const res: AdminScheduleTableDataQueryInput = {
       postingId: parseInt(postingIdInput, 10),
     };
-    if (userIdInput !== "" && !Number.isNaN(parseInt(userIdInput, 10)))
+
+    res.userId = undefined
+    if (userIdInput !== "" && !Number.isNaN(parseInt(userIdInput, 10))) {
       res.userId = parseInt(userIdInput, 10);
-    if (isShiftSignupStatus(signupStateInput))
+    } 
+    res.signupStatus = undefined
+    if (isShiftSignupStatus(signupStateInput)) {
       res.signupStatus = signupStateInput;
+    } 
     refetch(res);
   };
 
