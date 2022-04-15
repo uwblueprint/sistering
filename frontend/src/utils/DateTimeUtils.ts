@@ -133,3 +133,39 @@ export const getWeekDiff = (start: Date, end: Date): number => {
     .startOf("week")
     .diff(moment(start).startOf("week").toDate(), "week", false);
 };
+
+/**
+ * get integer difference of months between 2 dates (end - start)
+ * @param  {Date} start
+ * @param  {Date} end
+ * @returns number
+ */
+export const getMonthDiff = (start: Date, end: Date): number => {
+  return moment(end)
+    .startOf("month")
+    .diff(moment(start).startOf("month").toDate(), "month", false);
+};
+
+/**
+ * get the first day of a month
+ */
+export const getFirstDayOfMonth = (date: Date): Date => {
+  return moment(date).startOf("month").toDate();
+};
+
+/**
+ * Gets all months within the range of startDate and endDate
+ * @param startDate the start date of the range
+ * @param endDate the end date of the range
+ * @returns an array of months in between startDate and endDate
+ */
+export const getMonthsInRange = (startDate: Date, endDate: Date): Date[] => {
+  const monthsInRange: Date[] = [];
+  let currentMonth = moment(startDate).startOf("month");
+  const endMonth = moment(endDate).endOf("month");
+  while (currentMonth.isBefore(endMonth)) {
+    monthsInRange.push(currentMonth.toDate());
+    currentMonth = currentMonth.add(1, "month");
+  }
+  return monthsInRange;
+};
