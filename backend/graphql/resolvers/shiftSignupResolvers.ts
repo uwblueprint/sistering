@@ -66,17 +66,12 @@ const shiftSignupResolvers = {
     upsertDeleteShiftSignups: async (
       _parent: undefined,
       {
-        upsertShifts,
-        deleteShifts,
+        upsertDeleteShifts,
       }: {
-        upsertShifts: UpsertShiftSignupDTO[];
-        deleteShifts: DeleteShiftSignupDTO[];
+        upsertDeleteShifts: UpsertDeleteShiftSignupsRequestDTO;
       },
     ): Promise<ShiftSignupResponseDTO[]> => {
-      return shiftSignupService.upsertDeleteShiftSignups({
-        upsertShiftSignups: upsertShifts,
-        deleteShiftSignups: deleteShifts,
-      } as UpsertDeleteShiftSignupsRequestDTO);
+      return shiftSignupService.upsertDeleteShiftSignups(upsertDeleteShifts);
     },
   },
 };

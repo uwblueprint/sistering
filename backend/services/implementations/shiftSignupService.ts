@@ -201,7 +201,8 @@ class ShiftSignupService implements IShiftSignupService {
         ),
       ]);
 
-      return newShiftSignups.map((newShiftSignup) => {
+      // Skip first transaction result for deleted count
+      return newShiftSignups.slice(1).map((newShiftSignup) => {
         const signup = newShiftSignup as Signup & {
           shift: Shift;
         };
