@@ -135,6 +135,21 @@ const customTheme = extendTheme(
           color: "violet",
         },
       },
+      Checkbox: {
+        baseStyle: {
+          control: {
+            _checked: {
+              _disabled: {
+                borderColor: "violet",
+                bg: "violet",
+                color: "white",
+                opacity: 0.5,
+              },
+            },
+            _disabled: { bg: "" },
+          },
+        },
+      },
     },
   },
   withDefaultColorScheme({ colorScheme: "brand" }),

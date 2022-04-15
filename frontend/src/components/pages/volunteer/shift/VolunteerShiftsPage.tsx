@@ -38,7 +38,101 @@ const mockData = [
   },
 ];
 
+import AdminScheduleVolunteerTable, {
+  Signup,
+} from "../../../admin/schedule/AdminScheduleVolunteerTable";
+
 const VolunteerShiftsPage = (): React.ReactElement => {
+  const [signups, setSignups] = useState<Signup[]>([
+    {
+      volunteerId: "1",
+      volunteerName: "Brian Tu",
+      note: "hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "2",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "3",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "4",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "5",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "6",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "7",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "8",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "9",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+    {
+      volunteerId: "10",
+      volunteerName: "Joseph Hu",
+      note: "dont hire me",
+      status: "PENDING",
+    },
+  ]);
+  const selectAllSignups = () => {
+    setSignups(
+      signups.map((signup) => {
+        return {
+          ...signup,
+          status: signup.status !== "PUBLISHED" ? "CONFIRMED" : "PUBLISHED",
+        };
+      }),
+    );
+  };
+  const updateSignupStatus = (id: string, isChecked: boolean) => {
+    let index;
+    for (let i = 0; i < signups.length; i += 1) {
+      let signup;
+      if (signups[i].volunteerId === id) {
+        index = i;
+        signup = signups[i];
+      }
+    }
+    if (index !== undefined) {
+      const updatedSignups = [...signups];
+      updatedSignups[index] = {
+        ...signups[index],
+        status: isChecked ? "CONFIRMED" : "PENDING",
+      };
+      setSignups(updatedSignups);
+    }
+  };
   return (
     <Flex h="100vh" flexFlow="column">
       <VolunteerNavbar defaultIndex={VolunteerPages.VolunteerShiftsPage} />
@@ -50,6 +144,13 @@ const VolunteerShiftsPage = (): React.ReactElement => {
         >
           <VolunteerShiftsTable shifts={mockData} />
         </Container>
+      </Box>
+      <Box w="400px" h="full" overflow="auto">
+        <AdminScheduleVolunteerTable
+          signups={signups}
+          selectAll={selectAllSignups}
+          updateSignupStatus={updateSignupStatus}
+        />
       </Box>
     </Flex>
   );

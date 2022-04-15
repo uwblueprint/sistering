@@ -15,6 +15,8 @@ type AdminScheduleVolunteerRowProps = {
   volunteerName: string;
   note: string;
   isConfirmed: boolean;
+  isDisabled: boolean;
+  updateSignupStatus: (id: string, isChecked: boolean) => void;
 };
 
 const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
@@ -22,9 +24,9 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
   volunteerName,
   note,
   isConfirmed,
+  isDisabled,
+  updateSignupStatus,
 }: AdminScheduleVolunteerRowProps): React.ReactElement => {
-  const [checked, setChecked] = useState(isConfirmed);
-
   return (
     <Box
       w="full"
@@ -32,30 +34,26 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
       pr="20px"
       pb={note === "" ? "4px" : "12px"}
       pt="4px"
-      bg={checked ? "purple.50" : "white"}
+      bg={isConfirmed ? "purple.50" : "white"}
       border="1px"
       borderColor="background.dark"
     >
       <VStack alignItems="flex-start" spacing={0} w="full">
         <HStack alignItems="center" justifyContent="space-between" w="full">
-          <Checkbox
-            isChecked={checked}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setChecked(e.target.checked)
-            }
-            alignItems="center"
-            mb={0}
-            spacing={2}
-          >
-            <Text
-              textStyle="body-regular"
-              fontSize="14px"
-              fontWeight="600"
-              align="start"
-            >
+          <HStack spacing={2}>
+            <Checkbox
+              isChecked={isConfirmed}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                updateSignupStatus(volunteerID, e.target.checked)
+              }
+              alignItems="center"
+              mb={0}
+              isDisabled={isDisabled}
+            />
+            <Text textStyle="body-regular" fontSize="14px" fontWeight="600">
               {volunteerName}
             </Text>
-          </Checkbox>
+          </HStack>
           <IconButton
             colorScheme="none"
             aria-label="Person Icon"
