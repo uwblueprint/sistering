@@ -108,14 +108,23 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
             // Submit the selected shifts
             console.log(shiftSignups);
             console.log(signupNotes);
+            console.log(shiftsByPosting);
 
             // Assume Num volunteers would be one...
             // TODO: Merge data from shiftSignups and signupNotes together to pass into query
             const graphQLResult = await submitSignups({
               variables: {
                 upsertDeleteShifts: {
-                  upsertShiftSignups: [],
-                  deleteShiftSignups: [],
+                  upsertShiftSignups: shiftSignups.map((signup) => {
+                    const { id: shiftId } = signup;
+                    return {
+                      shiftId,
+                      userId: "1", // TODO: Replace with userID from me query or cookie
+                      note: "",
+                      numVolunteers: 0, // TODO: Replace with actual numVolunteer or make optional if allowed
+                    } as SignupRequestDTO;
+                  }),
+                  deleteShiftSignups: [], // Here, we want a new init state for existing signups to get deleted shifts
                 },
               },
             });
