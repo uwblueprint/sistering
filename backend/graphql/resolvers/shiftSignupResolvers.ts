@@ -3,11 +3,9 @@ import ShiftSignupService from "../../services/implementations/shiftSignupServic
 import IShiftSignupService from "../../services/interfaces/shiftSignupService";
 import {
   CreateShiftSignupDTO,
-  DeleteShiftSignupDTO,
   ShiftSignupResponseDTO,
   UpdateShiftSignupRequestDTO,
   UpsertDeleteShiftSignupsRequestDTO,
-  UpsertShiftSignupDTO,
 } from "../../types";
 
 const shiftSignupService: IShiftSignupService = new ShiftSignupService();

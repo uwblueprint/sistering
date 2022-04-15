@@ -165,8 +165,10 @@ class ShiftSignupService implements IShiftSignupService {
           where: {
             OR: upsertDeleteShiftSignups.deleteShiftSignups.map(
               (deleteShiftSignup) => ({
-                shiftId: Number(deleteShiftSignup.shiftId),
-                userId: Number(deleteShiftSignup.userId),
+                AND: {
+                  shiftId: Number(deleteShiftSignup.shiftId),
+                  userId: Number(deleteShiftSignup.userId),
+                },
               }),
             ),
           },
