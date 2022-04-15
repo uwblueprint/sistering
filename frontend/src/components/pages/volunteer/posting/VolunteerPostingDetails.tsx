@@ -2,9 +2,18 @@ import React from "react";
 import { VStack, HStack, Box, Container, Button } from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
-import { useParams, Redirect } from "react-router-dom";
+import {
+  generatePath,
+  useHistory,
+  useParams,
+  Redirect,
+} from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import PostingDetails from "../../../common/PostingDetails";
+import {
+  VOLUNTEER_POSTING_AVAILABILITIES,
+  VOLUNTEER_POSTINGS_PAGE,
+} from "../../../../constants/Routes";
 
 const POSTING = gql`
   query VolunteerPostingDetails_Posting($id: ID!) {
@@ -29,6 +38,7 @@ const POSTING = gql`
 `;
 
 const VolunteerPostingDetails = (): React.ReactElement => {
+  const history = useHistory();
   const { id } = useParams<{ id: string }>();
   const { loading, data: { posting: postingDetails } = {} } = useQuery(
     POSTING,
@@ -38,6 +48,11 @@ const VolunteerPostingDetails = (): React.ReactElement => {
     },
   );
 
+  const navigateToSubmitAvailabilities = () => {
+    const route = generatePath(VOLUNTEER_POSTING_AVAILABILITIES, { id });
+    history.push(route);
+  };
+
   return !loading && !postingDetails ? (
     <Redirect to="/not-found" />
   ) : (
@@ -45,10 +60,16 @@ const VolunteerPostingDetails = (): React.ReactElement => {
       <VStack>
         <Container pt={0} pb={4} px={0} maxW="container.xl">
           <HStack justifyContent="space-between">
-            <Button leftIcon={<ChevronLeftIcon />} variant="link">
+            <Button
+              leftIcon={<ChevronLeftIcon />}
+              variant="link"
+              onClick={() => history.push(VOLUNTEER_POSTINGS_PAGE)}
+            >
               Back to volunteer postings
             </Button>
-            <Button>Submit availability</Button>
+            <Button onClick={navigateToSubmitAvailabilities}>
+              Submit availability
+            </Button>
           </HStack>
         </Container>
 
@@ -59,7 +80,10 @@ const VolunteerPostingDetails = (): React.ReactElement => {
           borderRadius={10}
         >
           {postingDetails ? (
-            <PostingDetails postingDetails={postingDetails} showFooterButton />
+            <PostingDetails
+              postingDetails={postingDetails}
+              footerButtonOnClick={navigateToSubmitAvailabilities}
+            />
           ) : null}
         </Container>
       </VStack>

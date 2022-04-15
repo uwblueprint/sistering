@@ -24,6 +24,8 @@ type PostingCardProps = {
   endDate: string;
   autoClosingDate: string;
   branchName: string;
+  navigateToDetails: () => void;
+  navigateToSubmitAvailabilities: () => void;
 };
 
 const PostingCard = ({
@@ -35,6 +37,8 @@ const PostingCard = ({
   endDate,
   autoClosingDate,
   branchName,
+  navigateToDetails,
+  navigateToSubmitAvailabilities,
 }: PostingCardProps): React.ReactElement => {
   return (
     <Box
@@ -79,8 +83,12 @@ const PostingCard = ({
             Deadline: {formatDateStringYear(autoClosingDate)}
           </Text>
           <ButtonGroup spacing="10px" size="md">
-            <Button variant="ghost">View Details</Button>
-            <Button variant="solid">Submit Availability</Button>
+            <Button variant="ghost" onClick={navigateToDetails}>
+              View Details
+            </Button>
+            <Button variant="solid" onClick={navigateToSubmitAvailabilities}>
+              Submit Availability
+            </Button>
           </ButtonGroup>
         </HStack>
       </VStack>
