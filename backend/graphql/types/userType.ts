@@ -37,7 +37,7 @@ const userType = gql`
     role: Role!
     phoneNumber: String
     branchId: ID!
-    title: String
+    title: String!
   }
 
   input CreateUserDTO {

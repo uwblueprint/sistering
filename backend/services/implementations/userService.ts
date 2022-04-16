@@ -519,6 +519,7 @@ class UserService implements IUserService {
         volunteers.map(async (volunteer) => {
           firebaseUser = await firebaseAdmin
             .auth()
+            /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
             .getUser(volunteer.user.authId!);
 
           return {
@@ -598,10 +599,15 @@ class UserService implements IUserService {
           ...newUser,
           id: String(newUser.id),
           email: firebaseUser.email ?? "",
+          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           hireDate: volunteer!.hireDate,
+          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           dateOfBirth: volunteer!.dateOfBirth,
+          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           pronouns: volunteer!.pronouns,
+          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           skills: convertToSkillResponseDTO(volunteer!.skills),
+          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           branches: convertToBranchResponseDTO(volunteer!.branches),
         };
       } catch (postgresError) {
@@ -706,20 +712,29 @@ class UserService implements IUserService {
               id: Number(userId),
             },
             data: {
+              /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
               hireDate: oldVolunteerUser!.hireDate,
+              /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
               pronouns: oldVolunteerUser!.pronouns,
+              /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
               dateOfBirth: oldVolunteerUser!.dateOfBirth,
               branches: {
+                /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                 connect: oldVolunteerUser!.branches,
               },
               skills: {
+                /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                 connect: oldVolunteerUser!.skills,
               },
               user: {
                 update: {
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   firstName: oldVolunteerUser!.user.firstName,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   lastName: oldVolunteerUser!.user.lastName,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   role: oldVolunteerUser!.user.role,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   phoneNumber: oldVolunteerUser!.user.phoneNumber,
                 },
               },
@@ -773,10 +788,14 @@ class UserService implements IUserService {
               phoneNumber: deletedVolunteerUser.phoneNumber,
               volunteer: {
                 create: {
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   hireDate: deletedVolunteer!.hireDate,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   pronouns: deletedVolunteer!.pronouns ?? "",
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   dateOfBirth: deletedVolunteer!.dateOfBirth ?? "",
                   branches: {
+                    /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                     connect: deletedVolunteer!.branches.map((b) => {
                       return {
                         id: Number(b.id),
@@ -784,6 +803,7 @@ class UserService implements IUserService {
                     }),
                   },
                   skills: {
+                    /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                     connect: deletedVolunteer!.skills.map((s) => {
                       return {
                         id: Number(s.id),
@@ -905,6 +925,7 @@ class UserService implements IUserService {
         employees.map(async (employee) => {
           firebaseUser = await firebaseAdmin
             .auth()
+            /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
             .getUser(employee.user.authId!);
 
           return {
@@ -973,7 +994,9 @@ class UserService implements IUserService {
           ...newUser,
           id: String(newUser.id),
           email: firebaseUser.email ?? "",
+          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           branchId: String(employee!.branchId),
+          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           title: employee!.title,
         };
       } catch (postgresError) {
@@ -1063,15 +1086,21 @@ class UserService implements IUserService {
             data: {
               user: {
                 update: {
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   firstName: oldEmployeeUser!.user.firstName,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   lastName: oldEmployeeUser!.user.lastName,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   role: oldEmployeeUser!.user.role,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   phoneNumber: oldEmployeeUser!.user.phoneNumber,
                 },
               },
               branch: {
+                /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                 connect: { id: Number(oldEmployeeUser!.branchId) },
               },
+              /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
               title: oldEmployeeUser!.title,
             },
           });
@@ -1123,13 +1152,16 @@ class UserService implements IUserService {
               employee: {
                 create: {
                   branch: {
+                    /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                     connect: { id: Number(deletedEmployee!.branchId) },
                   },
                   postings: {
+                    /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                     connect: deletedEmployee!.postings.map((p) => {
                       return { id: Number(p.id) };
                     }),
                   },
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   title: deletedEmployee!.title,
                 },
               },
