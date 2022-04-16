@@ -78,6 +78,7 @@ const convertToEmployeeResponseDTO = (
     return {
       id: String(employee.id),
       branchId: String(employee.branchId),
+      title: employee.title,
     };
   });
 };

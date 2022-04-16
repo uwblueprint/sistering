@@ -44,6 +44,7 @@ export type PostingResponseDTO = Omit<
 export type EmployeeResponseDTO = {
   id: string;
   branchId: string;
+  title: string;
 };
 
 export type VolunteerDTO = {
@@ -72,6 +73,7 @@ export type UpdateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id">;
 export type EmployeeUserDTO = {
   id: string;
   branchId: string;
+  title: string;
 };
 
 export type EmployeeUserRequestDTO = UserDTO & EmployeeUserDTO;
