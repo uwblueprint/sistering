@@ -116,7 +116,14 @@ export type ShiftBulkRequestDTO = {
   recurrenceInterval: RecurrenceInterval;
 };
 
+export type ShiftDataWithoutPostingId = Omit<ShiftBulkRequestDTO, "postingId">;
+
 export type ShiftResponseDTO = ShiftDTO;
+
+export type PostingWithShiftsRequestDTO = PostingRequestDTO & {
+  recurrenceInterval: RecurrenceInterval;
+  times: TimeBlock[];
+};
 
 export type ShiftSignupStatus =
   | "PENDING"

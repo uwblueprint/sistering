@@ -14,11 +14,13 @@ import {
   PostingResponseDTO,
   PostingStatus,
   PostingType,
+  PostingWithShiftsRequestDTO,
   ShiftResponseDTO,
   SkillResponseDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import IShiftService from "../interfaces/IShiftService";
 
 const prisma = new PrismaClient();
 
@@ -84,7 +86,12 @@ const convertToEmployeeResponseDTO = (
 };
 
 class PostingService implements IPostingService {
+  shiftService: IShiftService;
   /* eslint-disable class-methods-use-this */
+
+  constructor(shiftService: IShiftService) {
+    this.shiftService = shiftService;
+  }
 
   async getPosting(postingId: string): Promise<PostingResponseDTO> {
     let posting: PostingWithRelations | null;
@@ -164,9 +171,19 @@ class PostingService implements IPostingService {
     }
   }
 
-  async createPosting(posting: PostingRequestDTO): Promise<PostingResponseDTO> {
+  async createPosting(
+    posting: PostingWithShiftsRequestDTO,
+  ): Promise<PostingResponseDTO> {
     let newPosting: PostingWithRelations;
+
     try {
+      const timeBlocks = this.shiftService.bulkGenerateTimeBlocks({
+        times: posting.times,
+        recurrenceInterval: posting.recurrenceInterval,
+        startDate: posting.startDate,
+        endDate: posting.endDate,
+      });
+
       newPosting = await prisma.posting.create({
         data: {
           branch: {
@@ -181,6 +198,11 @@ class PostingService implements IPostingService {
             connect: posting.employees.map((employeeId: string) => {
               return { id: Number(employeeId) };
             }),
+          },
+          shifts: {
+            createMany: {
+              data: timeBlocks,
+            },
           },
           title: posting.title,
           type: posting.type,

@@ -1,11 +1,19 @@
 import {
   ShiftBulkRequestDTO,
+  ShiftDataWithoutPostingId,
   ShiftRequestDTO,
   ShiftResponseDTO,
   TimeBlock,
 } from "../../types";
 
 interface IShiftService {
+  /**
+   * Generate shift data in bulk
+   * @param shifts the shifts to be created
+   * @returns an array of TimeBlocks
+   * @throws Error if shift validation fails
+   */
+  bulkGenerateTimeBlocks(shifts: ShiftDataWithoutPostingId): TimeBlock[];
   /**
    * Get ShiftDTO associated with id
    * @param id shift's id

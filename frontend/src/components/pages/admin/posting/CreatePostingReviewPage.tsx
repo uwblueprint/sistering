@@ -19,40 +19,24 @@ import {
 import PostingContext from "../../../../contexts/admin/PostingContext";
 
 const CREATE_POSTING = gql`
-  mutation CreatePostingReviewPage_CreatePosting($posting: PostingRequestDTO!) {
+  mutation CreatePostingReviewPage_CreatePosting(
+    $posting: PostingWithShiftsRequestDTO!
+  ) {
     createPosting(posting: $posting) {
-      id
-      title
-    }
-  }
-`;
-
-const CREATE_SHIFTS = gql`
-  mutation CreatePostingReviewPage_CreateShifts($shifts: ShiftBulkRequestDTO!) {
-    createShifts(shifts: $shifts) {
       id
     }
   }
 `;
 
 const CreatePostingReviewPage = (): React.ReactElement => {
-  const {
-    status,
-    times,
-    recurrenceInterval,
-    ...postingToCreateFromContext
-  } = useContext(PostingContext);
+  const { branch, skills, employees, ...rest } = useContext(PostingContext);
   const [
     createPosting,
     { loading: createPostingLoading, error: createPostingError },
   ] = useMutation(CREATE_POSTING);
-  const [
-    createShifts,
-    { loading: createShiftsLoading, error: createShiftsError },
-  ] = useMutation(CREATE_SHIFTS);
+
   const [isDraftClicked, setIsDraftClicked] = useBoolean();
 
-  const { branch, skills, employees, ...rest } = postingToCreateFromContext;
   const postingToCreate = {
     ...rest,
     branchId: branch.id,
@@ -64,9 +48,8 @@ const CreatePostingReviewPage = (): React.ReactElement => {
   const navigateToHome = () => history.push(HOME_PAGE);
   const navigateBack = () => history.push(ADMIN_POSTING_CREATE_SHIFTS_PAGE);
 
-  const error = createPostingError || createShiftsError;
   /* eslint-disable-next-line no-alert */
-  if (error) window.alert(error);
+  if (createPostingError) window.alert(createPostingError);
 
   return (
     <Container maxW="container.xl" p={0}>
@@ -88,25 +71,12 @@ const CreatePostingReviewPage = (): React.ReactElement => {
             </Button>
             <Button
               variant="outline"
-              isLoading={
-                (createPostingLoading || createShiftsLoading) && isDraftClicked
-              }
+              isLoading={createPostingLoading && isDraftClicked}
               onClick={async () => {
                 setIsDraftClicked.on();
-                const createPostingResponse = await createPosting({
+                await createPosting({
                   variables: {
                     posting: { ...postingToCreate, status: "DRAFT" },
-                  },
-                });
-                const postingId = createPostingResponse.data.createPosting.id;
-                await createShifts({
-                  variables: {
-                    shifts: {
-                      postingId,
-                      times,
-                      endDate: postingToCreate.endDate,
-                      recurrenceInterval,
-                    },
                   },
                 });
                 navigateToHome();
@@ -115,26 +85,12 @@ const CreatePostingReviewPage = (): React.ReactElement => {
               Save as Draft
             </Button>
             <Button
-              isLoading={
-                (createPostingLoading || createShiftsLoading) && !isDraftClicked
-              }
+              isLoading={createPostingLoading && !isDraftClicked}
               onClick={async () => {
                 setIsDraftClicked.off();
-                const createPostingResponse = await createPosting({
+                await createPosting({
                   variables: {
                     posting: { ...postingToCreate, status: "PUBLISHED" },
-                  },
-                });
-                const postingId = createPostingResponse.data.createPosting.id;
-                await createShifts({
-                  variables: {
-                    shifts: {
-                      postingId,
-                      times,
-                      endDate: postingToCreate.endDate,
-                      startDate: postingToCreate.startDate,
-                      recurrenceInterval,
-                    },
                   },
                 });
                 navigateToHome();
