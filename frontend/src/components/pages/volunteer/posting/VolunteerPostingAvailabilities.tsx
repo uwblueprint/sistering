@@ -1,16 +1,13 @@
 import React, { useState } from "react";
 import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
 
-import { gql, useMutation, useQuery } from "@apollo/client";
+import { gql, useQuery } from "@apollo/client";
 import { Redirect, useHistory, useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
 import { ShiftResponseDTO } from "../../../../types/api/ShiftTypes";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
-import {
-  SignupRequestDTO,
-  SignupResponseDTO,
-} from "../../../../types/api/SignupTypes";
+import { SignupRequestDTO } from "../../../../types/api/SignupTypes";
 
 // TODO: A filter should be added to the backend, currently, no filter is supported
 const SHIFTS_BY_POSTING = gql`
@@ -26,7 +23,7 @@ const SHIFTS_BY_POSTING = gql`
 
 // TODO: Remove redundancy from other pages
 const POSTING = gql`
-  query VolunteerPostingAvailabilitiesDetails_Posting($id: ID!) {
+  query VolunteerPostingDetails_Posting($id: ID!) {
     posting(id: $id) {
       title
       description
@@ -47,18 +44,6 @@ const POSTING = gql`
   }
 `;
 
-// WE pass the user id from our current session token
-// TODO: Make this pass in a array of DTO
-const SUBMIT_SIGNUPS = gql`
-  mutation VolunteerPostingAvailabilities_SubmitSignups(
-    $upsertDeleteShifts: UpsertDeleteShiftSignupRequestDTO!
-  ) {
-    upsertDeleteShiftSignups(upsertDeleteShifts: $upsertDeleteShifts) {
-      status
-    }
-  }
-`;
-
 const VolunteerPostingAvailabilities = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const { loading: isShiftsLoading, data: { shiftsByPosting } = {} } = useQuery(
@@ -75,12 +60,8 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     variables: { id },
     fetchPolicy: "cache-and-network",
   });
-
-  const [submitSignups] = useMutation<{ submitSignups: SignupResponseDTO }>(
-    SUBMIT_SIGNUPS,
-  );
-
   const history = useHistory();
+  // TODO: Use these state of selected shifts + notes for submission
   const [shiftSignups, setShiftSignups] = useState<ShiftResponseDTO[]>([]);
   const [signupNotes, setSignupNotes] = useState<SignupRequestDTO[]>([]);
 
@@ -104,32 +85,10 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
         <Text textStyle="display-large">Select your Availability</Text>
         <Spacer />
         <Button
-          onClick={async () => {
+          onClick={() => {
             // Submit the selected shifts
             console.log(shiftSignups);
             console.log(signupNotes);
-            console.log(shiftsByPosting);
-
-            // Assume Num volunteers would be one...
-            // TODO: Merge data from shiftSignups and signupNotes together to pass into query
-            const graphQLResult = await submitSignups({
-              variables: {
-                upsertDeleteShifts: {
-                  upsertShiftSignups: shiftSignups.map((signup) => {
-                    const { id: shiftId } = signup;
-                    return {
-                      shiftId,
-                      userId: "1", // TODO: Replace with userID from me query or cookie
-                      note: "",
-                      numVolunteers: 0, // TODO: Replace with actual numVolunteer or make optional if allowed
-                    } as SignupRequestDTO;
-                  }),
-                  deleteShiftSignups: [], // Here, we want a new init state for existing signups to get deleted shifts
-                },
-              },
-            });
-
-            // TODO: Do something after submission (move on to some page?)...
           }}
         >
           Submit

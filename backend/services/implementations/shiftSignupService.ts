@@ -7,7 +7,6 @@ import {
   DeleteShiftSignupDTO,
   ShiftSignupResponseDTO,
   UpdateShiftSignupRequestDTO,
-  UpsertDeleteShiftSignupsRequestDTO,
   UpsertShiftSignupDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
