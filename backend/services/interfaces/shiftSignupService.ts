@@ -1,9 +1,10 @@
 import { SignupStatus } from "@prisma/client";
 import {
   CreateShiftSignupDTO,
+  DeleteShiftSignupDTO,
   ShiftSignupResponseDTO,
   UpdateShiftSignupRequestDTO,
-  UpsertDeleteShiftSignupsRequestDTO,
+  UpsertShiftSignupDTO,
 } from "../../types";
 
 interface IShiftSignupService {
@@ -33,12 +34,14 @@ interface IShiftSignupService {
 
   /**
    * Bulk upsert and delete sign ups for shifts
-   * @param upsertDeleteshiftSignups array of UpsertShiftSignupDTOs and DeleteShiftSignupDTOs
+   * @param upsertShiftSignups array of UpsertShiftSignupDTOs for request
+   * @param deleteShiftSignups array of DeleteShiftSignupDTOs for request
    * @returns an array of ShiftSignupResponseDTO
    * @throws Error if any of the shifts signups cannot be created
    */
   upsertDeleteShiftSignups(
-    upsertDeleteShiftSignups: UpsertDeleteShiftSignupsRequestDTO,
+    upsertShiftSignups: UpsertShiftSignupDTO[],
+    deleteShiftSignups: DeleteShiftSignupDTO[],
   ): Promise<ShiftSignupResponseDTO[]>;
 
   /**

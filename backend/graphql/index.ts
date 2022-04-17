@@ -198,7 +198,7 @@ const graphQLMiddlewares = {
     deleteBranch: authorizedByAdmin(),
     createShiftSignups: isAuthorizedForCreateShiftSignups("userId"),
     updateShiftSignup: isAuthorizedForUpdateShiftSignups("userId"),
-    upsertDeleteShiftSignups: isAuthorizedForUpdateShiftSignups("userId"),
+    upsertDeleteShiftSignups: authorizedByAdminAndVolunteer(),
   },
 };
 

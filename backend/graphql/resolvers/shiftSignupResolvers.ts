@@ -69,7 +69,10 @@ const shiftSignupResolvers = {
         upsertDeleteShifts: UpsertDeleteShiftSignupsRequestDTO;
       },
     ): Promise<ShiftSignupResponseDTO[]> => {
-      return shiftSignupService.upsertDeleteShiftSignups(upsertDeleteShifts);
+      return shiftSignupService.upsertDeleteShiftSignups(
+        upsertDeleteShifts.upsertShiftSignups,
+        upsertDeleteShifts.deleteShiftSignups,
+      );
     },
   },
 };
