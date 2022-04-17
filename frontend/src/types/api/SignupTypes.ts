@@ -12,3 +12,9 @@ export type SignupRequestDTO = Omit<
 >;
 
 export type SignupResponseDTO = SignupDTO;
+
+export type ShiftSignupStatus =
+  | "PENDING"
+  | "CONFIRMED"
+  | "CANCELED"
+  | "PUBLISHED";

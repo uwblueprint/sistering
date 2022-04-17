@@ -9,7 +9,7 @@ import {
 } from "@chakra-ui/react";
 
 import AdminScheduleVolunteerRow from "./AdminScheduleVolunteerRow";
-import { ShiftSignupStatus } from "../../../types/api/ShiftSignupStatus";
+import { ShiftSignupStatus } from "../../../types/api/SignupTypes";
 
 export type Signup = {
   volunteerId: string;
@@ -20,24 +20,32 @@ export type Signup = {
 
 type AdminScheduleVolunteerTableProps = {
   signups: Signup[];
+  numVolunteers: number;
   selectAll: () => void;
   updateSignupStatus: (id: string, isChecked: boolean) => void;
 };
 
 const AdminScheduleVolunteerTable = ({
   signups,
+  numVolunteers,
   selectAll,
   updateSignupStatus,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [isEditing, setIsEditing] = useBoolean(true);
   return (
-    <VStack w="full" spacing={0}>
+    <VStack
+      w="full"
+      h="full"
+      spacing={0}
+      border="1px"
+      borderColor="background.dark"
+    >
       <VStack
         w="full"
         px="32px"
         py="12px"
         spacing="10px"
-        borderBottom="2px"
+        borderBottom="1px"
         borderColor="background.dark"
       >
         <Flex w="full" alignItems="center">
@@ -68,23 +76,25 @@ const AdminScheduleVolunteerTable = ({
           </Text>
           <Spacer />
           <Text textStyle="caption" fontSize="12px">
-            Volunteers per shift: {signups.length}
+            Volunteers per shift: {numVolunteers}
           </Text>
         </Flex>
       </VStack>
-      {signups.map((signup, i) => (
-        <AdminScheduleVolunteerRow
-          key={i}
-          volunteerID={signup.volunteerId}
-          volunteerName={signup.volunteerName}
-          note={signup.note}
-          isConfirmed={
-            signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
-          }
-          isDisabled={!isEditing}
-          updateSignupStatus={updateSignupStatus}
-        />
-      ))}
+      <VStack w="full" spacing={0} overflow="auto">
+        {signups.map((signup, i) => (
+          <AdminScheduleVolunteerRow
+            key={i}
+            volunteerID={signup.volunteerId}
+            volunteerName={signup.volunteerName}
+            note={signup.note}
+            isConfirmed={
+              signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
+            }
+            isDisabled={!isEditing}
+            updateSignupStatus={updateSignupStatus}
+          />
+        ))}
+      </VStack>
     </VStack>
   );
 };

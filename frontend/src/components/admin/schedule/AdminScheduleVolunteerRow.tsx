@@ -35,7 +35,7 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
       pb={note === "" ? "4px" : "12px"}
       pt="4px"
       bg={isConfirmed ? "purple.50" : "white"}
-      border="1px"
+      borderBottom="1px"
       borderColor="background.dark"
     >
       <VStack alignItems="flex-start" spacing={0} w="full">
