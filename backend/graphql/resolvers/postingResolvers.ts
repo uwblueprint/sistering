@@ -1,15 +1,22 @@
 import PostingService from "../../services/implementations/postingService";
 import IPostingService from "../../services/interfaces/postingService";
+import IShiftService from "../../services/interfaces/IShiftService";
+import ShiftService from "../../services/implementations/shiftService";
+import UserService from "../../services/implementations/userService";
+import IUserService from "../../services/interfaces/userService";
 import {
   PostingRequestDTO,
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
+  PostingStatus,
 } from "../../types";
-import IShiftService from "../../services/interfaces/IShiftService";
-import ShiftService from "../../services/implementations/shiftService";
 
+const userService: IUserService = new UserService();
 const shiftService: IShiftService = new ShiftService();
-const postingService: IPostingService = new PostingService(shiftService);
+const postingService: IPostingService = new PostingService(
+  userService,
+  shiftService,
+);
 
 const postingResolvers = {
   Query: {
@@ -19,8 +26,19 @@ const postingResolvers = {
     ): Promise<PostingResponseDTO> => {
       return postingService.getPosting(id);
     },
-    postings: async (): Promise<PostingResponseDTO[]> => {
-      return postingService.getPostings();
+    postings: async (
+      _parent: undefined,
+      {
+        closingDate,
+        statuses,
+        userId,
+      }: {
+        closingDate?: Date;
+        statuses?: [PostingStatus];
+        userId?: string;
+      } = {},
+    ): Promise<PostingResponseDTO[]> => {
+      return postingService.getPostings(closingDate, statuses, userId);
     },
   },
   Mutation: {

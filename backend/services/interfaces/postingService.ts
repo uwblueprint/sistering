@@ -2,6 +2,7 @@ import {
   PostingRequestDTO,
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
+  PostingStatus,
 } from "../../types";
 
 interface IPostingService {
@@ -14,11 +15,18 @@ interface IPostingService {
   getPosting(postingId: string): Promise<PostingResponseDTO>;
 
   /**
-   * Get all posting information (possibly paginated in the future)
+   * Get all posting information (possibly paginated in the future) filtered by optional parameters
+   * @param closingDate posting's autoClosingDate must be strictly after closingDate
+   * @param statuses posting's status is one of the statuses supplied in statuses
+   * @param userId posting's branch is one of the branches the user (as indicated by userId param) is assigned to
    * @returns array of PostingDTOs
    * @throws Error if posting retrieval fails
    */
-  getPostings(): Promise<PostingResponseDTO[]>;
+  getPostings(
+    closingDate?: Date,
+    statuses?: [PostingStatus],
+    userId?: string,
+  ): Promise<PostingResponseDTO[]>;
 
   /**
    * Create a posting
