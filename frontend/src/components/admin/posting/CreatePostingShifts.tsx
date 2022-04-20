@@ -51,10 +51,9 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
 
   const [startDate, setStartDate] = useState<string>(startDateFromCtx);
   const [endDate, setEndDate] = useState<string>(endDateFromCtx);
-  const [
-    recurrenceInterval,
-    setRecurrenceInterval,
-  ] = useState<RecurrenceInterval>(recurrenceIntervalFromCtx);
+  const [recurrenceInterval, setRecurrenceInterval] = useState<
+    RecurrenceInterval | ""
+  >(recurrenceIntervalFromCtx);
   const [events, setEvents] = useState<Event[]>(
     timesFromCtx.map((time, index) => ({
       id: String(index),
