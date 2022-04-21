@@ -21,6 +21,24 @@ const shiftSignupType = gql`
     status: SignupStatus!
   }
 
+  input UpsertShiftSignupRequestDTO {
+    shiftId: ID!
+    userId: ID!
+    numVolunteers: Int!
+    note: String!
+    status: SignupStatus
+  }
+
+  input DeleteShiftSignupRequestDTO {
+    shiftId: ID!
+    userId: ID!
+  }
+
+  input UpsertDeleteShiftSignupRequestDTO {
+    upsertShiftSignups: [UpsertShiftSignupRequestDTO!]!
+    deleteShiftSignups: [DeleteShiftSignupRequestDTO!]!
+  }
+
   type ShiftSignupResponseDTO {
     shiftId: ID!
     shiftStartTime: DateTime!
@@ -64,6 +82,9 @@ const shiftSignupType = gql`
       userId: ID!
       update: UpdateShiftSignupRequestDTO!
     ): ShiftSignupResponseDTO!
+    upsertDeleteShiftSignups(
+      upsertDeleteShifts: UpsertDeleteShiftSignupRequestDTO!
+    ): [ShiftSignupResponseDTO!]!
   }
 `;
 

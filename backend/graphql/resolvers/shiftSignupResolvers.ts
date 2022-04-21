@@ -5,6 +5,7 @@ import {
   CreateShiftSignupDTO,
   ShiftSignupResponseDTO,
   UpdateShiftSignupRequestDTO,
+  UpsertDeleteShiftSignupsRequestDTO,
 } from "../../types";
 
 const shiftSignupService: IShiftSignupService = new ShiftSignupService();
@@ -58,6 +59,20 @@ const shiftSignupResolvers = {
       },
     ): Promise<ShiftSignupResponseDTO> => {
       return shiftSignupService.updateShiftSignup(shiftId, userId, update);
+    },
+
+    upsertDeleteShiftSignups: async (
+      _parent: undefined,
+      {
+        upsertDeleteShifts,
+      }: {
+        upsertDeleteShifts: UpsertDeleteShiftSignupsRequestDTO;
+      },
+    ): Promise<ShiftSignupResponseDTO[]> => {
+      return shiftSignupService.upsertDeleteShiftSignups(
+        upsertDeleteShifts.upsertShiftSignups,
+        upsertDeleteShifts.deleteShiftSignups,
+      );
     },
   },
 };
