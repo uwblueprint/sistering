@@ -172,7 +172,7 @@ class PostingService implements IPostingService {
 
   async getPostings(
     closingDate?: Date,
-    statuses?: [PostingStatus],
+    statuses?: PostingStatus[],
     userId?: string,
   ): Promise<PostingResponseDTO[]> {
     return prisma.$transaction(async (prismaClient) => {

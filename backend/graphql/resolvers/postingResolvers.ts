@@ -34,7 +34,7 @@ const postingResolvers = {
         userId,
       }: {
         closingDate?: Date;
-        statuses?: [PostingStatus];
+        statuses?: PostingStatus[];
         userId?: string;
       } = {},
     ): Promise<PostingResponseDTO[]> => {

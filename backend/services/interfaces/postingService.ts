@@ -24,7 +24,7 @@ interface IPostingService {
    */
   getPostings(
     closingDate?: Date,
-    statuses?: [PostingStatus],
+    statuses?: PostingStatus[],
     userId?: string,
   ): Promise<PostingResponseDTO[]>;
 
