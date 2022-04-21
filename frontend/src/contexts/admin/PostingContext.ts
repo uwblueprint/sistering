@@ -1,10 +1,6 @@
 import { createContext } from "react";
 import { PostingContextType } from "../../types/PostingContextTypes";
-import {
-  PostingStatus,
-  PostingType,
-  RecurrenceInterval,
-} from "../../types/PostingTypes";
+import { PostingStatus, PostingType } from "../../types/PostingTypes";
 
 export const DEFAULT_POSTING_CONTEXT = {
   branch: { id: "", name: "" },
@@ -24,7 +20,7 @@ export const DEFAULT_POSTING_CONTEXT = {
       endTime: "2022-02-06T13:30",
     },
   ],
-  recurrenceInterval: "NONE" as RecurrenceInterval,
+  recurrenceInterval: "" as const,
 };
 
 const PostingContext = createContext<PostingContextType>(

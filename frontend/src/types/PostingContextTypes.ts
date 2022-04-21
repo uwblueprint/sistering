@@ -21,7 +21,7 @@ export type PostingContextType = {
   autoClosingDate: string;
   numVolunteers: number;
   times: Shift[];
-  recurrenceInterval: RecurrenceInterval;
+  recurrenceInterval: RecurrenceInterval | "";
 };
 
 export type PostingContextAction =
