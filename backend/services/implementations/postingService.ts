@@ -7,6 +7,7 @@ import {
   Shift,
 } from "@prisma/client";
 import IPostingService from "../interfaces/postingService";
+import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
   EmployeeResponseDTO,
@@ -42,6 +43,26 @@ type PostingWithRelations = {
   shifts: Shift[];
   skills: Skill[];
   employees: Employee[];
+};
+
+export type Enumerable<T> = T | Array<T>;
+
+type IntFilter = {
+  in?: Enumerable<number>;
+};
+
+type EnumPostingStatusFilter = {
+  in?: Enumerable<PostingStatus>;
+};
+
+type DateTimeFilter = {
+  gt?: Date;
+};
+
+type PostingWhereInput = {
+  branchId?: IntFilter;
+  status?: EnumPostingStatusFilter;
+  autoClosingDate?: DateTimeFilter;
 };
 
 // HELPER FUNCTIONS
@@ -87,10 +108,23 @@ const convertToEmployeeResponseDTO = (
 
 class PostingService implements IPostingService {
   shiftService: IShiftService;
+
+  userService: IUserService;
   /* eslint-disable class-methods-use-this */
 
-  constructor(shiftService: IShiftService) {
+  constructor(userService: IUserService, shiftService: IShiftService) {
+    this.userService = userService;
     this.shiftService = shiftService;
+  }
+
+  async getUserBranchesByUserId(userId: string): Promise<number[]> {
+    try {
+      const volunteer = await this.userService.getVolunteerUserById(userId);
+      return volunteer.branches.map((branch: BranchResponseDTO) => +branch.id);
+    } catch (error: unknown) {
+      Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
   }
 
   async getPosting(postingId: string): Promise<PostingResponseDTO> {
@@ -134,41 +168,62 @@ class PostingService implements IPostingService {
     };
   }
 
-  async getPostings(): Promise<PostingResponseDTO[]> {
-    try {
-      const postings: Array<PostingWithRelations> = await prisma.posting.findMany(
-        {
-          include: {
-            branch: true,
-            shifts: true,
-            skills: true,
-            employees: true,
+  async getPostings(
+    closingDate?: Date,
+    statuses?: PostingStatus[],
+    userId?: string,
+  ): Promise<PostingResponseDTO[]> {
+    return prisma.$transaction(async (prismaClient) => {
+      const filter: PostingWhereInput[] = [];
+      if (closingDate !== undefined) {
+        filter.push({ autoClosingDate: { gt: closingDate } });
+      }
+      if (statuses !== undefined) {
+        filter.push({ status: { in: statuses } });
+      }
+      if (userId !== undefined) {
+        const userBranchIds = await this.getUserBranchesByUserId(userId);
+        filter.push({ branchId: { in: userBranchIds } });
+      }
+
+      try {
+        const postings: Array<PostingWithRelations> = await prismaClient.posting.findMany(
+          {
+            where: {
+              AND: filter,
+            },
+            include: {
+              branch: true,
+              shifts: true,
+              skills: true,
+              employees: true,
+            },
           },
-        },
-      );
-      return postings.map((posting: PostingWithRelations) => {
-        return {
-          id: String(posting.id),
-          branch: convertToBranchResponseDTO(posting.branch),
-          shifts: convertToShiftResponseDTO(posting.shifts),
-          skills: convertToSkillResponseDTO(posting.skills),
-          employees: convertToEmployeeResponseDTO(posting.employees),
-          title: posting.title,
-          type: posting.type,
-          status: posting.status,
-          description: posting.description,
-          startDate: posting.startDate,
-          endDate: posting.endDate,
-          autoClosingDate: posting.autoClosingDate,
-          numVolunteers: posting.numVolunteers,
-        };
-      });
-    } catch (error: unknown) {
-      Logger.error(
-        `Failed to get postings. Reason = ${getErrorMessage(error)}`,
-      );
-      throw error;
-    }
+        );
+        return postings.map((posting: PostingWithRelations) => {
+          return {
+            id: String(posting.id),
+            branch: convertToBranchResponseDTO(posting.branch),
+            shifts: convertToShiftResponseDTO(posting.shifts),
+            skills: convertToSkillResponseDTO(posting.skills),
+            employees: convertToEmployeeResponseDTO(posting.employees),
+            title: posting.title,
+            type: posting.type,
+            status: posting.status,
+            description: posting.description,
+            startDate: posting.startDate,
+            endDate: posting.endDate,
+            autoClosingDate: posting.autoClosingDate,
+            numVolunteers: posting.numVolunteers,
+          };
+        });
+      } catch (error: unknown) {
+        Logger.error(
+          `Failed to get postings. Reason = ${getErrorMessage(error)}`,
+        );
+        throw error;
+      }
+    });
   }
 
   async createPosting(

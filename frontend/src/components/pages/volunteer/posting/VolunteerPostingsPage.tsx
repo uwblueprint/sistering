@@ -1,13 +1,17 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState, useLayoutEffect, useContext } from "react";
 import { generatePath, useHistory } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { Box, HStack, Select, Text } from "@chakra-ui/react";
+import AuthContext from "../../../../contexts/AuthContext";
 
 import {
   VOLUNTEER_POSTING_AVAILABILITIES,
   VOLUNTEER_POSTING_DETAILS,
 } from "../../../../constants/Routes";
-import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
+import {
+  PostingResponseDTO,
+  PostingStatus,
+} from "../../../../types/api/PostingTypes";
 import { dateInRange } from "../../../../utils/DateTimeUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
@@ -20,8 +24,12 @@ type Posting = Omit<
 >;
 
 const POSTINGS = gql`
-  query VolunteerPostingsPage_postings {
-    postings {
+  query VolunteerPostingsPage_postings(
+    $closingDate: Date!
+    $statuses: [PostingStatus!]!
+    $userId: ID!
+  ) {
+    postings(closingDate: $closingDate, statuses: $statuses, userId: $userId) {
       id
       branch {
         id
@@ -47,8 +55,14 @@ const VolunteerPostingsPage = (): React.ReactElement => {
     Posting[] | null
   >(null);
   const [filter, setFilter] = useState<FilterType>("week");
+  const { authenticatedUser } = useContext(AuthContext);
 
   useQuery(POSTINGS, {
+    variables: {
+      closingDate: new Date().toISOString().split("T")[0],
+      statuses: ["PUBLISHED" as PostingStatus],
+      userId: authenticatedUser?.id,
+    },
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       setPostings(data.postings);

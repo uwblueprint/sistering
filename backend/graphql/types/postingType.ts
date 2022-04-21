@@ -66,7 +66,11 @@ const postingType = gql`
 
   extend type Query {
     posting(id: ID!): PostingResponseDTO!
-    postings: [PostingResponseDTO!]!
+    postings(
+      closingDate: Date
+      statuses: [PostingStatus!]
+      userId: ID
+    ): [PostingResponseDTO!]!
   }
 
   extend type Mutation {
