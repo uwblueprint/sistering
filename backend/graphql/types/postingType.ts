@@ -26,6 +26,22 @@ const postingType = gql`
     numVolunteers: Int!
   }
 
+  input PostingWithShiftsRequestDTO {
+    branchId: ID!
+    skills: [ID!]!
+    employees: [ID!]!
+    title: String!
+    type: PostingType!
+    status: PostingStatus!
+    description: String!
+    startDate: Date!
+    endDate: Date!
+    autoClosingDate: Date!
+    numVolunteers: Int!
+    recurrenceInterval: RecurrenceInterval!
+    times: [ShiftRequestDTO]!
+  }
+
   type PostingResponseDTO {
     id: ID!
     branch: BranchResponseDTO!
@@ -54,7 +70,7 @@ const postingType = gql`
   }
 
   extend type Mutation {
-    createPosting(posting: PostingRequestDTO!): PostingResponseDTO!
+    createPosting(posting: PostingWithShiftsRequestDTO!): PostingResponseDTO!
     updatePosting(id: ID!, posting: PostingRequestDTO!): PostingResponseDTO!
     deletePosting(id: ID!): ID!
   }

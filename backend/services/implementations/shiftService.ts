@@ -5,6 +5,7 @@ import IShiftService from "../interfaces/IShiftService";
 import {
   RecurrenceInterval,
   ShiftBulkRequestDTO,
+  ShiftDataWithoutPostingId,
   ShiftRequestDTO,
   ShiftResponseDTO,
   TimeBlock,
@@ -106,7 +107,7 @@ class ShiftService implements IShiftService {
     return [true, ""];
   }
 
-  buildTimeBlocks(shifts: ShiftBulkRequestDTO): TimeBlock[] {
+  buildTimeBlocks(shifts: ShiftDataWithoutPostingId): TimeBlock[] {
     const endDate = new Date(shifts.endDate.getTime() + DAY_IN_MILLISECONDS);
 
     const interval = this.getInterval(shifts.recurrenceInterval);
@@ -157,6 +158,32 @@ class ShiftService implements IShiftService {
         );
       }
     });
+  }
+
+  // This is used to generate shift data when a new posting is created
+  bulkGenerateTimeBlocks(shifts: ShiftDataWithoutPostingId): TimeBlock[] {
+    try {
+      const filteredShifts = shifts;
+
+      // Skip shifts that occur before start date
+      filteredShifts.times = shifts.times.filter(
+        (shift) => shift.startTime.getTime() >= shifts.startDate.getTime(),
+      );
+
+      // Check that input times are valid
+      const [valid, errorMessage] = this.validateTimeBlocks(
+        filteredShifts.times,
+      );
+      if (!valid) throw new Error(errorMessage);
+
+      // Build shiftTimes object
+      return this.buildTimeBlocks(filteredShifts);
+    } catch (error) {
+      Logger.error(
+        `Failed to create shift. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
   }
 
   async getShift(shiftId: string): Promise<ShiftResponseDTO> {

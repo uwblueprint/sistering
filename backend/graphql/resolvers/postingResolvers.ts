@@ -1,8 +1,15 @@
 import PostingService from "../../services/implementations/postingService";
 import IPostingService from "../../services/interfaces/postingService";
-import { PostingRequestDTO, PostingResponseDTO } from "../../types";
+import {
+  PostingRequestDTO,
+  PostingResponseDTO,
+  PostingWithShiftsRequestDTO,
+} from "../../types";
+import IShiftService from "../../services/interfaces/IShiftService";
+import ShiftService from "../../services/implementations/shiftService";
 
-const postingService: IPostingService = new PostingService();
+const shiftService: IShiftService = new ShiftService();
+const postingService: IPostingService = new PostingService(shiftService);
 
 const postingResolvers = {
   Query: {
@@ -19,7 +26,7 @@ const postingResolvers = {
   Mutation: {
     createPosting: async (
       _parent: undefined,
-      { posting }: { posting: PostingRequestDTO },
+      { posting }: { posting: PostingWithShiftsRequestDTO },
     ): Promise<PostingResponseDTO> => {
       const newPosting = await postingService.createPosting(posting);
       return newPosting;

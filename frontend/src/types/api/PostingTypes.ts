@@ -1,6 +1,6 @@
 import { BranchResponseDTO } from "./BranchTypes";
 import { SkillResponseDTO } from "./SkillTypes";
-import { ShiftResponseDTO } from "./ShiftTypes";
+import { ShiftResponseDTO, RecurrenceInterval, TimeBlock } from "./ShiftTypes";
 import { EmployeeResponseDTO } from "./EmployeeTypes";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
@@ -23,6 +23,11 @@ export type PostingDTO = {
 };
 
 export type PostingRequestDTO = Omit<PostingDTO, "id">;
+
+export type PostingWithShiftsRequestDTO = PostingRequestDTO & {
+  recurrenceInterval: RecurrenceInterval;
+  times: TimeBlock[];
+};
 
 export type PostingResponseDTO = Omit<
   PostingDTO,
