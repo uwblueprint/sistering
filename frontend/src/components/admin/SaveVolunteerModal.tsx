@@ -1,5 +1,7 @@
+import { CloseIcon } from "@chakra-ui/icons";
 import {
   Button,
+  Flex,
   Modal,
   ModalBody,
   ModalContent,
@@ -10,17 +12,15 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-type RemoveVolunteerModalProps = {
-  name: string;
+type SaveVolunteerModalProps = {
   isOpen: boolean;
   onClose(): void;
 };
 
-const RemoveVolunteerModal = ({
-  name = "",
+const SaveVolunteerModal = ({
   isOpen = false,
   onClose = () => {},
-}: RemoveVolunteerModalProps): React.ReactElement => {
+}: SaveVolunteerModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
 
   return (
@@ -33,11 +33,14 @@ const RemoveVolunteerModal = ({
       <ModalOverlay />
       <ModalContent borderRadius={0} p="10px">
         <ModalHeader py="11px">
-          <Text textStyle="body-bold">Remove volunteer?</Text>
+          <Flex dir="horizontal" justify="space-between" alignItems="center">
+            <Text textStyle="body-bold">Save Changes?</Text>
+            <CloseIcon boxSize="16px" onClick={() => {}} cursor="pointer" />
+          </Flex>
         </ModalHeader>
         <ModalBody>
           <Text textStyle="body-regular">
-            Are you sure you want to remove {name}?
+            There are unsaved changes made to volunteer list.
           </Text>
         </ModalBody>
         <ModalFooter mt="10px" py="6px" px="12px">
@@ -48,7 +51,7 @@ const RemoveVolunteerModal = ({
             colorScheme="gray"
             textStyle="button-semibold"
           >
-            Cancel
+            Don&apos;t Save
           </Button>
           <Button
             borderRadius="4px"
@@ -57,11 +60,10 @@ const RemoveVolunteerModal = ({
               onClose();
             }}
             ref={initialRef}
-            colorScheme="red"
             textStyle="button-semibold"
             fontWeight={700}
           >
-            Remove
+            Save
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -69,4 +71,4 @@ const RemoveVolunteerModal = ({
   );
 };
 
-export default RemoveVolunteerModal;
+export default SaveVolunteerModal;
