@@ -108,11 +108,13 @@ const convertToEmployeeResponseDTO = (
 
 class PostingService implements IPostingService {
   shiftService: IShiftService;
-  /* eslint-disable class-methods-use-this */
-  userService: IUserService;
 
-  constructor(userService: IUserService) {
+  userService: IUserService;
+  /* eslint-disable class-methods-use-this */
+
+  constructor(userService: IUserService, shiftService: IShiftService) {
     this.userService = userService;
+    this.shiftService = shiftService;
   }
 
   async getUserBranchesByUserId(userId: string): Promise<number[]> {
@@ -123,10 +125,6 @@ class PostingService implements IPostingService {
       Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
-  }
-
-  constructor(shiftService: IShiftService) {
-    this.shiftService = shiftService;
   }
 
   async getPosting(postingId: string): Promise<PostingResponseDTO> {
