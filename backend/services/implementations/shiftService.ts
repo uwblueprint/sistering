@@ -1,16 +1,13 @@
 import {
-  Branch,
   Prisma,
   PrismaClient,
   Shift,
   Signup,
   SignupStatus,
-  Skill,
   User,
   Volunteer,
 } from "@prisma/client";
 import { Promise as BluebirdPromise } from "bluebird";
-import * as firebaseAdmin from "firebase-admin";
 
 import IShiftService from "../interfaces/IShiftService";
 import {
@@ -25,10 +22,6 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
-import {
-  convertToBranchResponseDTO,
-  convertToSkillResponseDTO,
-} from "./userService";
 
 const prisma = new PrismaClient();
 
@@ -308,6 +301,10 @@ class ShiftService implements IShiftService {
         },
         include: {
           signups: {
+            where: {
+              userId: userId ? Number(userId) : undefined,
+              status: signupStatus ?? undefined,
+            },
             include: {
               user: {
                 include: {
@@ -323,38 +320,19 @@ class ShiftService implements IShiftService {
       throw error;
     }
 
-    return shifts.map((shift) => {
-      const filteredShifts = shift.signups.reduce<
-        SignupsAndVolunteerResponseDTO[]
-      >(
-        (
-          filtered: SignupsAndVolunteerResponseDTO[],
-          curr: SignupWithVolunteers,
-        ): SignupsAndVolunteerResponseDTO[] => {
-          if (
-            (userId == null || curr.userId === Number(userId)) &&
-            (signupStatus == null || curr.status === signupStatus)
-          ) {
-            filtered.push(
-              this.convertSignupResponeWithUserAndVolunteerToDTO(
-                curr,
-                shift.startTime,
-                shift.endTime,
-              ),
-            );
-          }
-          return filtered;
-        },
-        [],
-      );
-      return {
-        id: String(shift.id),
-        postingId: String(shift.postingId),
-        startTime: shift.startTime,
-        endTime: shift.endTime,
-        signups: filteredShifts,
-      };
-    });
+    return shifts.map((shift) => ({
+      id: String(shift.id),
+      postingId: String(shift.postingId),
+      startTime: shift.startTime,
+      endTime: shift.endTime,
+      signups: shift.signups.map((shiftSignup) =>
+        this.convertSignupResponeWithUserAndVolunteerToDTO(
+          shiftSignup,
+          shift.startTime,
+          shift.endTime,
+        ),
+      ),
+    }));
   }
 
   async createShift(
