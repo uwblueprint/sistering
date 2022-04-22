@@ -9,26 +9,17 @@ import {
 } from "@chakra-ui/react";
 
 import AdminScheduleVolunteerRow from "./AdminScheduleVolunteerRow";
-import { ShiftSignupStatus } from "../../../types/api/SignupTypes";
-
-export type Signup = {
-  volunteerId: string;
-  volunteerName: string;
-  note: string;
-  status: ShiftSignupStatus;
-};
+import { Signup } from "../../pages/admin/schedule/testData";
 
 type AdminScheduleVolunteerTableProps = {
   signups: Signup[];
-  numVolunteers: number;
-  selectAll: () => void;
+  selectAllSignups: () => void;
   updateSignupStatus: (id: string, isChecked: boolean) => void;
 };
 
 const AdminScheduleVolunteerTable = ({
   signups,
-  numVolunteers,
-  selectAll,
+  selectAllSignups,
   updateSignupStatus,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [isEditing, setIsEditing] = useBoolean(true);
@@ -70,13 +61,13 @@ const AdminScheduleVolunteerTable = ({
             color="violet"
             textDecor="underline"
             cursor="pointer"
-            onClick={selectAll}
+            onClick={selectAllSignups}
           >
             Select All
           </Text>
           <Spacer />
           <Text textStyle="caption" fontSize="12px">
-            Volunteers per shift: {numVolunteers}
+            Volunteers per shift: {signups[0].numVolunteers}
           </Text>
         </Flex>
       </VStack>
@@ -84,8 +75,8 @@ const AdminScheduleVolunteerTable = ({
         {signups.map((signup, i) => (
           <AdminScheduleVolunteerRow
             key={i}
-            volunteerID={signup.volunteerId}
-            volunteerName={signup.volunteerName}
+            volunteerID={signup.volunteer.id}
+            volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
             note={signup.note}
             isConfirmed={
               signup.status === "CONFIRMED" || signup.status === "PUBLISHED"

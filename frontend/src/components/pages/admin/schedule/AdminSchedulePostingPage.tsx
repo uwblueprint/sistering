@@ -1,17 +1,14 @@
+import { Flex, Box, HStack, Text, VStack } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
-import { Flex, Box, HStack, Text, VStack } from "@chakra-ui/react";
+import cloneDeep from "lodash.clonedeep";
 
 import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
 import {
   ShiftSignupStatus,
   SignupsAndVolunteerGraphQLResponseDTO,
 } from "../../../../types/api/SignupTypes";
-
-import AdminScheduleVolunteerTable, {
-  Signup,
-} from "../../../admin/schedule/AdminScheduleVolunteerTable";
 import Navbar from "../../../common/Navbar";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
@@ -25,6 +22,7 @@ import { formatDateStringYear } from "../../../../utils/DateTimeUtils";
 import AdminScheduleTable, {
   TableTestData,
 } from "../../../admin/schedule/AdminScheduleTable";
+import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -52,7 +50,11 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
       userId: $userId
       signupStatus: $signupStatus
     ) {
+      id
+      startTime
+      endTime
       signups {
+        numVolunteers
         note
         status
         volunteer {
@@ -65,25 +67,14 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
   }
 `;
 
-const adminScheduleTableDataQueryToSignup = (
-  data: AdminScheduleTableDataQueryResponse,
-): Signup[] =>
-  data.shiftsWithSignupsAndVolunteersByPosting
-    .map((shift: ShiftWithSignupAndVolunteerGraphQLResponseDTO) =>
-      shift.signups.map(
-        (signup: SignupsAndVolunteerGraphQLResponseDTO): Signup => ({
-          note: signup.note,
-          status: signup.status,
-          volunteerName: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
-          volunteerId: signup.volunteer.id,
-        }),
-      ),
-    )
-    .flat();
-
 const AdminSchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
-  const [signups, setSignups] = useState<Signup[]>([]);
+  const [shifts, setShifts] = useState<
+    ShiftWithSignupAndVolunteerGraphQLResponseDTO[]
+  >([]);
+  const [currentlyEditingSignups, setCurrentlyEditingSignups] = useState<
+    SignupsAndVolunteerGraphQLResponseDTO[]
+  >([]);
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
   );
@@ -94,28 +85,43 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
     variables: { postingId: Number(id) },
     onCompleted: (data) =>
-      setSignups(adminScheduleTableDataQueryToSignup(data)),
+      setShifts(data.shiftsWithSignupsAndVolunteersByPosting),
     fetchPolicy: "no-cache",
   });
 
   const selectAllSignups = () => {
-    setSignups(
-      signups.map((signup) => {
+    const selectedShiftIndex = shifts.findIndex(
+      (shift) => shift.id === selectedShiftId,
+    );
+    if (selectedShiftIndex >= 0) {
+      const shiftsCopy = [...shifts];
+      shiftsCopy[selectedShiftIndex].signups = shiftsCopy[
+        selectedShiftIndex
+      ].signups.map((signup) => {
         return {
           ...signup,
           status: signup.status !== "PUBLISHED" ? "CONFIRMED" : "PUBLISHED",
         };
-      }),
-    );
+      });
+      setShifts(shiftsCopy);
+    }
   };
+
   const updateSignupStatus = (volunteerId: string, isChecked: boolean) => {
-    const index = signups.findIndex(
-      (signup) => signup.volunteerId === volunteerId,
+    const selectedShiftIndex = shifts.findIndex(
+      (shift) => shift.id === selectedShiftId,
     );
-    if (index > 0) {
-      const updatedSignups = [...signups];
-      updatedSignups[index].status = isChecked ? "CONFIRMED" : "PENDING";
-      setSignups(updatedSignups);
+    if (selectedShiftIndex >= 0) {
+      const shiftsCopy = [...shifts];
+      const signupIndex = shiftsCopy[selectedShiftIndex].signups.findIndex(
+        (signup) => signup.volunteer.id === volunteerId,
+      );
+      if (signupIndex >= 0) {
+        shiftsCopy[selectedShiftIndex].signups[signupIndex].status = isChecked
+          ? "CONFIRMED"
+          : "PENDING";
+        setShifts(shiftsCopy);
+      }
     }
   };
 
@@ -141,34 +147,15 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS}
             />
           </Box>
-          <Box
-            w="400px"
-            overflow="hidden"
-            borderLeftWidth="2px"
-            borderLeftColor="background.dark"
-            h="full"
-          >
-            <Box
-              w="full"
-              px="32px"
-              py="17px"
-              borderLeft="2px"
-              borderBottom="2px"
-              borderColor="background.dark"
-            >
-              <Text textStyle="heading">
-                {formatDateStringYear(new Date().toString())}
-              </Text>
-            </Box>
-            <ShiftTimeHeader
-              shifts={[]}
-              // eslint-disable-next-line no-console
-              onShiftSelected={(shiftId: number) => console.log(shiftId)}
-            />
-            <AdminScheduleVolunteerTable
-              signups={signups}
-              numVolunteers={4}
-              selectAll={selectAllSignups}
+          <Box w="400px" overflow="hidden">
+            <ScheduleSidePanel
+              shifts={shiftsData}
+              selectedShift={
+                shifts.find((shift) => shift.id === selectedShiftId) ||
+                shifts[0]
+              }
+              onShiftSelected={(shiftId: string) => setSelectedShiftId(shiftId)}
+              selectAllSignups={selectAllSignups}
               updateSignupStatus={updateSignupStatus}
             />
           </Box>
