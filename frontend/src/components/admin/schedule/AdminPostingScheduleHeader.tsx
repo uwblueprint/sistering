@@ -19,7 +19,7 @@ const AdminPostingScheduleHeader = ({
         dir="horizontal"
         justifyContent="space-between"
         alignItems="center"
-        px="47px"
+        mx="47px"
         width="100%"
       >
         <Text textStyle="display-small-semibold">{postingName}</Text>
@@ -32,7 +32,14 @@ const AdminPostingScheduleHeader = ({
           >
             View Posting
           </Button>
-          <Button textStyle="button-semibold">Review</Button>
+          <Button
+            textStyle="button-semibold"
+            onClick={() =>
+              history.push(`admin/schedule/posting/${postingID}/review`)
+            }
+          >
+            Review
+          </Button>
         </Flex>
       </Flex>
       <Divider />
