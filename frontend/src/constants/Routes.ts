@@ -37,5 +37,8 @@ export const ADMIN_POSTING_DETAILS = "/admin/posting/:id";
 
 export const ADMIN_SCHEDULE_POSTING_PAGE = "/admin/schedule/posting/:id";
 
+export const ADMIN_SCHEDULE_POSTING_REVIEW_PAGE =
+  "/admin/schedule/posting/:id/review";
+
 export const VOLUNTEER_POSTING_AVAILABILITIES =
   "/volunteer/posting/:id/availabilities";

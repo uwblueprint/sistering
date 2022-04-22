@@ -48,6 +48,7 @@ import { AuthenticatedUser } from "./types/AuthTypes";
 import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
 import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSchedulePostingPage";
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
+import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/AdminSchedulePostingReviewPage";
 
 const App = (): React.ReactElement => {
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
@@ -172,6 +173,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
                       component={AdminSchedulePostingPage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_SCHEDULE_POSTING_REVIEW_PAGE}
+                      component={AdminSchedulePostingReviewPage}
                     />
                     <PrivateRoute
                       exact
