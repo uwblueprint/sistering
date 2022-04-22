@@ -7,6 +7,7 @@ import {
   Shift,
 } from "@prisma/client";
 import IPostingService from "../interfaces/postingService";
+import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
   EmployeeResponseDTO,
@@ -19,6 +20,8 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+
+import UserService from "./userService";
 
 const prisma = new PrismaClient();
 
@@ -41,6 +44,7 @@ type PostingWithRelations = {
   skills: Skill[];
   employees: Employee[];
 };
+
 
 // HELPER FUNCTIONS
 
@@ -83,6 +87,8 @@ const convertToEmployeeResponseDTO = (
   });
 };
 
+const userService: IUserService = new UserService();
+
 class PostingService implements IPostingService {
   /* eslint-disable class-methods-use-this */
 
@@ -102,6 +108,8 @@ class PostingService implements IPostingService {
         },
       });
 
+      const employee = await userService.getEmployeeUserById(posting?.employees[0].id);
+            // const employee = await prisma.
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
       }
