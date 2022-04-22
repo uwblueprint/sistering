@@ -1,3 +1,8 @@
+import {
+  SignupsAndVolunteerGraphQLResponseDTO,
+  SignupsAndVolunteerResponseDTO,
+} from "./SignupTypes";
+
 export type TimeBlock = {
   startTime: Date;
   endTime: Date;
@@ -20,4 +25,12 @@ export type ShiftBulkRequestDTO = {
   recurrenceInterval: RecurrenceInterval;
 };
 
+export type ShiftWithSignupAndVolunteerResponseDTO = ShiftResponseDTO & {
+  signups: SignupsAndVolunteerResponseDTO[];
+};
+
 export type ShiftResponseDTO = ShiftDTO;
+
+export type ShiftWithSignupAndVolunteerGraphQLResponseDTO = ShiftWithSignupAndVolunteerResponseDTO & {
+  signups: SignupsAndVolunteerGraphQLResponseDTO;
+} & Partial<ShiftWithSignupAndVolunteerResponseDTO>;

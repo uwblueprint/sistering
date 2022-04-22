@@ -29,6 +29,17 @@ const userType = gql`
     branches: [BranchResponseDTO!]!
   }
 
+  type VolunteerUserResponseNoSkillsBranchesEmailDTO {
+    id: ID!
+    firstName: String!
+    lastName: String!
+    role: Role!
+    phoneNumber: String
+    hireDate: Date
+    dateOfBirth: Date
+    pronouns: String
+  }
+
   type EmployeeUserResponseDTO {
     id: ID!
     firstName: String!

@@ -1,4 +1,12 @@
-import { Prisma, PrismaClient, Shift } from "@prisma/client";
+import {
+  Prisma,
+  PrismaClient,
+  Shift,
+  Signup,
+  SignupStatus,
+  User,
+  Volunteer,
+} from "@prisma/client";
 import { Promise as BluebirdPromise } from "bluebird";
 
 import IShiftService from "../interfaces/IShiftService";
@@ -8,6 +16,8 @@ import {
   ShiftDataWithoutPostingId,
   ShiftRequestDTO,
   ShiftResponseDTO,
+  ShiftWithSignupAndVolunteerResponseDTO,
+  SignupsAndVolunteerResponseDTO,
   TimeBlock,
 } from "../../types";
 import logger from "../../utilities/logger";
@@ -28,6 +38,16 @@ type PrismaTransactionClient = Omit<
 
 const WEEK_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 7;
 const DAY_IN_MILLISECONDS = 1000 * 60 * 60 * 24;
+
+type SignupWithVolunteers = Signup & {
+  user: User & {
+    volunteer: Volunteer | null;
+  };
+};
+
+type ShiftWithSignupAndVolunteers = Shift & {
+  signups: SignupWithVolunteers[];
+};
 
 class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
@@ -186,6 +206,28 @@ class ShiftService implements IShiftService {
     }
   }
 
+  convertSignupResponeWithUserAndVolunteerToDTO = (
+    signup: SignupWithVolunteers,
+    shiftStartTime: Date,
+    shiftEndTime: Date,
+  ): SignupsAndVolunteerResponseDTO => {
+    if (signup.user.volunteer == null) {
+      throw new Error("Volunteer should always be present");
+    }
+    return {
+      ...signup,
+      userId: String(signup.userId),
+      shiftId: String(signup.shiftId),
+      shiftStartTime,
+      shiftEndTime,
+      volunteer: {
+        ...signup.user,
+        ...signup.user.volunteer,
+        id: String(signup.user.id),
+      },
+    };
+  };
+
   async getShift(shiftId: string): Promise<ShiftResponseDTO> {
     let shift: Shift | null;
 
@@ -244,6 +286,53 @@ class ShiftService implements IShiftService {
       Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
+  }
+
+  async getShiftsWithSignupAndVolunteerForPosting(
+    postingId: string,
+    userId: string | null,
+    signupStatus: SignupStatus | null,
+  ): Promise<ShiftWithSignupAndVolunteerResponseDTO[]> {
+    let shifts: ShiftWithSignupAndVolunteers[] = [];
+    try {
+      shifts = await prisma.shift.findMany({
+        where: {
+          postingId: Number(postingId),
+        },
+        include: {
+          signups: {
+            where: {
+              userId: userId ? Number(userId) : undefined,
+              status: signupStatus ?? undefined,
+            },
+            include: {
+              user: {
+                include: {
+                  volunteer: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    } catch (error: unknown) {
+      Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+
+    return shifts.map((shift) => ({
+      id: String(shift.id),
+      postingId: String(shift.postingId),
+      startTime: shift.startTime,
+      endTime: shift.endTime,
+      signups: shift.signups.map((shiftSignup) =>
+        this.convertSignupResponeWithUserAndVolunteerToDTO(
+          shiftSignup,
+          shift.startTime,
+          shift.endTime,
+        ),
+      ),
+    }));
   }
 
   async createShift(

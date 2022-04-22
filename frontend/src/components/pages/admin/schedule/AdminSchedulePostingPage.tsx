@@ -1,10 +1,67 @@
-import { Flex, Box, Text, VStack } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
+import { gql, useQuery } from "@apollo/client";
+import { Flex, Box, Text, VStack } from "@chakra-ui/react";
+
+import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
+import {
+  ShiftSignupStatus,
+  SignupsAndVolunteerGraphQLResponseDTO,
+} from "../../../../types/api/SignupTypes";
 
 import AdminScheduleVolunteerTable, {
   Signup,
 } from "../../../admin/schedule/AdminScheduleVolunteerTable";
+
+type AdminScheduleTableDataQueryResponse = {
+  shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+};
+
+type AdminScheduleTableDataQueryInput = {
+  postingId: number;
+  userId?: number;
+  signupStatus?: ShiftSignupStatus;
+};
+
+const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
+  query AdminScheduleShiftsAndSignups(
+    $postingId: ID!
+    $userId: ID
+    $signupStatus: SignupStatus
+  ) {
+    shiftsWithSignupsAndVolunteersByPosting(
+      postingId: $postingId
+      userId: $userId
+      signupStatus: $signupStatus
+    ) {
+      signups {
+        note
+        status
+        volunteer {
+          id
+          firstName
+          lastName
+        }
+      }
+    }
+  }
+`;
+
+const adminScheduleTableDataQueryToSignup = (
+  data: AdminScheduleTableDataQueryResponse,
+): Signup[] =>
+  data.shiftsWithSignupsAndVolunteersByPosting
+    .map((shift: ShiftWithSignupAndVolunteerGraphQLResponseDTO) =>
+      shift.signups.map(
+        (signup: SignupsAndVolunteerGraphQLResponseDTO): Signup => ({
+          note: signup.note,
+          status: signup.status,
+          volunteerName: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
+          volunteerId: signup.volunteer.id,
+        }),
+      ),
+    )
+    .flat();
 
 const AdminSchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
@@ -70,6 +127,17 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
       status: "PENDING",
     },
   ]);
+
+  useQuery<
+    AdminScheduleTableDataQueryResponse,
+    AdminScheduleTableDataQueryInput
+  >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
+    variables: { postingId: Number(id) },
+    onCompleted: (data) =>
+      setSignups(adminScheduleTableDataQueryToSignup(data)),
+    fetchPolicy: "no-cache",
+  });
+
   const selectAllSignups = () => {
     setSignups(
       signups.map((signup) => {
