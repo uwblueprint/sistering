@@ -33,10 +33,10 @@ export type SignupsAndVolunteerResponseDTO = ShiftSignupResponseDTO & {
 
 export type SignupsAndVolunteerGraphQLResponseDTO = Pick<
   SignupsAndVolunteerResponseDTO,
-  "userId"
+  "note" | "status"
 > & {
   volunteer: Pick<
     VolunteerUserResponseDTO,
-    "firstName" | "lastName" | "pronouns"
+    "firstName" | "lastName" 
   >;
 } & Partial<SignupsAndVolunteerResponseDTO>;
