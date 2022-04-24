@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { Box, Button, Flex, Spacer, Spinner, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Button,
+  Flex,
+  Spacer,
+  Spinner,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
 import { Redirect, useHistory, useParams } from "react-router-dom";
@@ -61,6 +69,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     fetchPolicy: "cache-and-network",
   });
   const history = useHistory();
+  const toast = useToast();
   // TODO: Use these state of selected shifts + notes for submission
   const [shiftSignups, setShiftSignups] = useState<ShiftResponseDTO[]>([]);
   const [signupNotes, setSignupNotes] = useState<SignupRequestDTO[]>([]);
@@ -89,6 +98,15 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
             // Submit the selected shifts
             console.log(shiftSignups);
             console.log(signupNotes);
+
+            toast({
+              title: "Availability Submitted",
+              description: "Your availability has been submitted for review.",
+              status: "success",
+              duration: 5000,
+              isClosable: true,
+            });
+            history.push(`/volunteer/posting/${id}`);
           }}
         >
           Submit
