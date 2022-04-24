@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
-import { Flex, Box, Text, VStack } from "@chakra-ui/react";
+import { Flex, Box, HStack, Text, VStack } from "@chakra-ui/react";
 
 import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
 import {
@@ -12,6 +12,18 @@ import {
 import AdminScheduleVolunteerTable, {
   Signup,
 } from "../../../admin/schedule/AdminScheduleVolunteerTable";
+import Navbar from "../../../common/Navbar";
+import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
+import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
+import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
+import ShiftTimeHeader from "../../../admin/schedule/ShiftTimeHeader";
+import MonthlyViewShiftCalendar, {
+  ADMIN_SHIFT_CALENDAR_TEST_EVENTS,
+} from "../../../admin/ShiftCalendar/MonthlyViewReadOnlyShiftCalendar";
+import { formatDateStringYear } from "../../../../utils/DateTimeUtils";
+import AdminScheduleTable, {
+  TableTestData,
+} from "../../../admin/schedule/AdminScheduleTable";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -22,6 +34,11 @@ type AdminScheduleTableDataQueryInput = {
   userId?: number;
   signupStatus?: ShiftSignupStatus;
 };
+
+enum AdminScheduleViews {
+  CalendarView,
+  ReviewView,
+}
 
 const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
   query AdminScheduleShiftsAndSignups(
@@ -65,68 +82,10 @@ const adminScheduleTableDataQueryToSignup = (
 
 const AdminSchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
-  const [signups, setSignups] = useState<Signup[]>([
-    {
-      volunteerId: "1",
-      volunteerName: "Brian Tu",
-      note: "hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "2",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "3",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "4",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "5",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "6",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "7",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "8",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "9",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-    {
-      volunteerId: "10",
-      volunteerName: "Joseph Hu",
-      note: "dont hire me",
-      status: "PENDING",
-    },
-  ]);
+  const [signups, setSignups] = useState<Signup[]>([]);
+  const [currentView, setCurrentView] = useState<AdminScheduleViews>(
+    AdminScheduleViews.CalendarView,
+  );
 
   useQuery<
     AdminScheduleTableDataQueryResponse,
@@ -161,18 +120,67 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
-      <VStack spacing={4}>
-        <Text>Hello! 👋 This is a placeholder page.</Text>
-        <Text>The id is: {id}</Text>
-      </VStack>
-      <Box w="400px" overflow="hidden">
-        <AdminScheduleVolunteerTable
-          signups={signups}
-          numVolunteers={4}
-          selectAll={selectAllSignups}
-          updateSignupStatus={updateSignupStatus}
-        />
-      </Box>
+      <Navbar
+        defaultIndex={Number(AdminPages.AdminSchedulePosting)}
+        tabs={AdminNavbarTabs}
+      />
+      {currentView === AdminScheduleViews.CalendarView ? (
+        <HStack alignItems="start" spacing={0}>
+          <Box width="full">
+            <AdminSchedulePageHeader branchName="Kitchen" />
+            <AdminPostingScheduleHeader
+              postingID={Number(id)}
+              postingName="Posting Name"
+              onReviewClick={() =>
+                setCurrentView(AdminScheduleViews.ReviewView)
+              }
+            />
+            <MonthlyViewShiftCalendar
+              events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS}
+            />
+          </Box>
+          <Box
+            w="400px"
+            overflow="hidden"
+            borderLeftWidth="2px"
+            borderLeftColor="background.dark"
+            h="full"
+          >
+            <Box
+              w="full"
+              px="32px"
+              py="17px"
+              borderLeft="2px"
+              borderBottom="2px"
+              borderColor="background.dark"
+            >
+              <Text textStyle="heading">
+                {formatDateStringYear(new Date().toString())}
+              </Text>
+            </Box>
+            <ShiftTimeHeader
+              shifts={[]}
+              // eslint-disable-next-line no-console
+              onShiftSelected={(shiftId: number) => console.log(shiftId)}
+            />
+            <AdminScheduleVolunteerTable
+              signups={signups}
+              numVolunteers={4}
+              selectAll={selectAllSignups}
+              updateSignupStatus={updateSignupStatus}
+            />
+          </Box>
+        </HStack>
+      ) : (
+        <VStack
+          backgroundColor="background.light"
+          width="100%"
+          alignItems="center"
+          px="100px"
+        >
+          <AdminScheduleTable schedule={TableTestData} />
+        </VStack>
+      )}
     </Flex>
   );
 };

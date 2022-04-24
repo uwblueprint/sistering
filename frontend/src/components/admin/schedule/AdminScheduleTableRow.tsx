@@ -19,7 +19,7 @@ const AdminScheduleTableRow = ({
   // No shifts available
   if (postingStart && postingEnd) {
     return (
-      <Tr h="74px">
+      <Tr h="74px" bg="white">
         <Td>
           <Text>
             {getTime(postingStart)} - {getTime(postingEnd)} ({elapsedHours}{" "}
@@ -44,7 +44,7 @@ const AdminScheduleTableRow = ({
     );
   }
   return (
-    <Tr h="74px">
+    <Tr h="74px" bg="white">
       <Td colSpan={3}>
         <Text color="text.gray">No shifts available</Text>
       </Td>
