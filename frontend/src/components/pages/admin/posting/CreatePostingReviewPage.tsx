@@ -12,6 +12,8 @@ import { gql, useMutation } from "@apollo/client";
 
 import CreatePostingReview from "../../../admin/posting/CreatePostingReview";
 import SideNavBar from "../../../common/SideNavbar";
+import ErrorModal from "../../../common/ErrorModal";
+
 import {
   ADMIN_POSTING_CREATE_SHIFTS_PAGE,
   HOME_PAGE,
@@ -48,11 +50,9 @@ const CreatePostingReviewPage = (): React.ReactElement => {
   const navigateToHome = () => history.push(HOME_PAGE);
   const navigateBack = () => history.push(ADMIN_POSTING_CREATE_SHIFTS_PAGE);
 
-  /* eslint-disable-next-line no-alert */
-  if (createPostingError) window.alert(createPostingError);
-
   return (
     <Container maxW="container.xl" p={0}>
+      {createPostingError && <ErrorModal />}
       <HStack alignItems="flex-start" spacing={0}>
         <VStack alignItems="flex-start" spacing="90px">
           <Text textStyle="display-medium" pt={10}>

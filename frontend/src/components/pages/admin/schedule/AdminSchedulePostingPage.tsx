@@ -17,6 +17,7 @@ import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
 import ShiftTimeHeader from "../../../admin/schedule/ShiftTimeHeader";
+import ErrorModal from "../../../common/ErrorModal";
 import MonthlyViewShiftCalendar, {
   ADMIN_SHIFT_CALENDAR_TEST_EVENTS,
 } from "../../../admin/ShiftCalendar/MonthlyViewReadOnlyShiftCalendar";
@@ -87,7 +88,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     AdminScheduleViews.CalendarView,
   );
 
-  useQuery<
+  const { error } = useQuery<
     AdminScheduleTableDataQueryResponse,
     AdminScheduleTableDataQueryInput
   >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
@@ -120,6 +121,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
+      {error && <ErrorModal />}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
         tabs={AdminNavbarTabs}

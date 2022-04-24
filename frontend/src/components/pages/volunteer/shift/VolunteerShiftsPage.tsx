@@ -7,6 +7,7 @@ import {
   VolunteerNavbarTabs,
   VolunteerPages,
 } from "../../../../constants/Tabs";
+import ErrorModal from "../../../common/ErrorModal";
 
 const upcomingShift = {
   postingName: "Posting Name",
@@ -42,8 +43,10 @@ const mockData = [
 ];
 
 const VolunteerShiftsPage = (): React.ReactElement => {
+  const error = false; // TODO: replace variable with error from GQL query or mutation
   return (
     <Flex h="100vh" flexFlow="column">
+      {error && <ErrorModal />}
       <Navbar
         defaultIndex={VolunteerPages.VolunteerShifts}
         tabs={VolunteerNavbarTabs}
