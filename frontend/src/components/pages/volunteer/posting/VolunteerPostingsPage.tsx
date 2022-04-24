@@ -16,7 +16,11 @@ import { dateInRange } from "../../../../utils/DateTimeUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
 import PostingCard from "../../../volunteer/PostingCard";
-import VolunteerNavbar from "../../../volunteer/VolunteerNavbar";
+import Navbar from "../../../common/Navbar";
+import {
+  VolunteerNavbarTabs,
+  VolunteerPages,
+} from "../../../../constants/Tabs";
 
 type Posting = Omit<
   PostingResponseDTO,
@@ -123,7 +127,10 @@ const VolunteerPostingsPage = (): React.ReactElement => {
 
   return (
     <div>
-      <VolunteerNavbar defaultIndex={1} />
+      <Navbar
+        defaultIndex={VolunteerPages.VolunteerPostings}
+        tabs={VolunteerNavbarTabs}
+      />
       <Box
         bg="background.light"
         pt="48px"
