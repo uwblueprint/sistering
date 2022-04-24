@@ -1,7 +1,7 @@
 import { BranchResponseDTO } from "./BranchTypes";
 import { SkillResponseDTO } from "./SkillTypes";
 import { ShiftResponseDTO } from "./ShiftTypes";
-import { EmployeeResponseDTO } from "./EmployeeTypes";
+import { EmployeeUserResponseDTO } from "./EmployeeTypes";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
 
@@ -31,5 +31,5 @@ export type PostingResponseDTO = Omit<
   branch: BranchResponseDTO;
   shifts: ShiftResponseDTO[];
   skills: SkillResponseDTO[];
-  employees: EmployeeResponseDTO[];
+  employees: EmployeeUserResponseDTO[];
 };

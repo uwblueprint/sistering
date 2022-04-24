@@ -31,7 +31,7 @@ const postingType = gql`
     branch: BranchResponseDTO!
     shifts: [ShiftResponseDTO!]!
     skills: [SkillResponseDTO!]!
-    employees: [EmployeeResponseDTO!]!
+    employees: [EmployeeUserResponseDTO!]!
     title: String!
     type: PostingType!
     status: PostingStatus!

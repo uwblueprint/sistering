@@ -61,20 +61,15 @@ const PostingDetails = ({
         </Text>
         <Text textStyle="body-regular">Point(s) of contact:</Text>
         <HStack pb={4}>
-          <PocCard
-            name="John Doe"
-            title="hard code"
-            email="hard code"
-            phoneNumber="hard code"
-            key={1}
-          />
-          <PocCard
-            name="John Doe"
-            title="hard code"
-            email="hard code"
-            phoneNumber="hard code"
-            key={1}
-          />
+          {postingDetails.employees?.map((employee, index) => (
+            <PocCard
+              name={`${employee.firstName} ${employee.lastName}`}
+              title={employee.title}
+              email={employee.email}
+              phoneNumber={employee.phoneNumber ?? ""}
+              key={index}
+            />
+          ))}
         </HStack>
         <Divider />
         <HStack justifyContent="space-between" pt={4} w="full">

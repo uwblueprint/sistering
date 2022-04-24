@@ -11,6 +11,7 @@ import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
   EmployeeResponseDTO,
+  EmployeeUserResponseDTO,
   PostingRequestDTO,
   PostingResponseDTO,
   PostingStatus,
@@ -45,8 +46,9 @@ type PostingWithRelations = {
   employees: Employee[];
 };
 
-
 // HELPER FUNCTIONS
+
+const userService: IUserService = new UserService();
 
 const convertToBranchResponseDTO = (branch: Branch): BranchResponseDTO => {
   return {
@@ -75,19 +77,20 @@ const convertToSkillResponseDTO = (skills: Skill[]): SkillResponseDTO[] => {
   });
 };
 
-const convertToEmployeeResponseDTO = (
+const convertToEmployeeUserResponseDTO = async (
   employees: Employee[],
-): EmployeeResponseDTO[] => {
-  return employees.map((employee: Employee) => {
-    return {
-      id: String(employee.id),
-      branchId: String(employee.branchId),
-      title: employee.title,
-    };
-  });
-};
+): Promise<EmployeeUserResponseDTO[]> => {
+  const employeesArr: EmployeeUserResponseDTO[] = [];
 
-const userService: IUserService = new UserService();
+  employees.forEach(async (employee) => {
+    const employeeInfo = await userService.getEmployeeUserById(
+      String(employee.id),
+    );
+    employeesArr.push(employeeInfo);
+  });
+
+  return employeesArr;
+};
 
 class PostingService implements IPostingService {
   /* eslint-disable class-methods-use-this */
@@ -108,8 +111,7 @@ class PostingService implements IPostingService {
         },
       });
 
-      const employee = await userService.getEmployeeUserById(posting?.employees[0].id);
-            // const employee = await prisma.
+      // const employee = await prisma.
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
       }
@@ -123,7 +125,7 @@ class PostingService implements IPostingService {
       branch: convertToBranchResponseDTO(posting.branch),
       shifts: convertToShiftResponseDTO(posting.shifts),
       skills: convertToSkillResponseDTO(posting.skills),
-      employees: convertToEmployeeResponseDTO(posting.employees),
+      employees: await convertToEmployeeUserResponseDTO(posting.employees),
       title: posting.title,
       type: posting.type,
       status: posting.status,
@@ -147,23 +149,30 @@ class PostingService implements IPostingService {
           },
         },
       );
-      return postings.map((posting: PostingWithRelations) => {
-        return {
-          id: String(posting.id),
-          branch: convertToBranchResponseDTO(posting.branch),
-          shifts: convertToShiftResponseDTO(posting.shifts),
-          skills: convertToSkillResponseDTO(posting.skills),
-          employees: convertToEmployeeResponseDTO(posting.employees),
-          title: posting.title,
-          type: posting.type,
-          status: posting.status,
-          description: posting.description,
-          startDate: posting.startDate,
-          endDate: posting.endDate,
-          autoClosingDate: posting.autoClosingDate,
-          numVolunteers: posting.numVolunteers,
-        };
-      });
+
+      return await Promise.all(
+        postings.map(async (posting: PostingWithRelations) => {
+          const employeesArr: EmployeeUserResponseDTO[] = await convertToEmployeeUserResponseDTO(
+            posting.employees,
+          );
+
+          return {
+            id: String(posting.id),
+            branch: convertToBranchResponseDTO(posting.branch),
+            shifts: convertToShiftResponseDTO(posting.shifts),
+            skills: convertToSkillResponseDTO(posting.skills),
+            employees: employeesArr,
+            title: posting.title,
+            type: posting.type,
+            status: posting.status,
+            description: posting.description,
+            startDate: posting.startDate,
+            endDate: posting.endDate,
+            autoClosingDate: posting.autoClosingDate,
+            numVolunteers: posting.numVolunteers,
+          };
+        }),
+      );
     } catch (error: unknown) {
       Logger.error(
         `Failed to get postings. Reason = ${getErrorMessage(error)}`,
@@ -174,6 +183,7 @@ class PostingService implements IPostingService {
 
   async createPosting(posting: PostingRequestDTO): Promise<PostingResponseDTO> {
     let newPosting: PostingWithRelations;
+
     try {
       newPosting = await prisma.posting.create({
         data: {
@@ -212,12 +222,17 @@ class PostingService implements IPostingService {
       );
       throw error;
     }
+
+    const employeesArr: EmployeeUserResponseDTO[] = await convertToEmployeeUserResponseDTO(
+      newPosting.employees,
+    );
+
     return {
       id: String(newPosting.id),
       branch: convertToBranchResponseDTO(newPosting.branch),
       shifts: convertToShiftResponseDTO(newPosting.shifts),
       skills: convertToSkillResponseDTO(newPosting.skills),
-      employees: convertToEmployeeResponseDTO(newPosting.employees),
+      employees: employeesArr,
       title: newPosting.title,
       type: newPosting.type,
       status: newPosting.status,
@@ -276,12 +291,17 @@ class PostingService implements IPostingService {
       );
       throw error;
     }
+
+    const employeesArr: EmployeeUserResponseDTO[] = await convertToEmployeeUserResponseDTO(
+      updateResult.employees,
+    );
+
     return {
       id: String(updateResult.id),
       branch: convertToBranchResponseDTO(updateResult.branch),
       shifts: convertToShiftResponseDTO(updateResult.shifts),
       skills: convertToSkillResponseDTO(updateResult.skills),
-      employees: convertToEmployeeResponseDTO(updateResult.employees),
+      employees: employeesArr,
       title: updateResult.title,
       type: updateResult.type,
       status: updateResult.status,
