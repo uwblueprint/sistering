@@ -16,7 +16,7 @@ type AdminScheduleVolunteerRowProps = {
   note: string;
   isConfirmed: boolean;
   isDisabled: boolean;
-  updateSignupStatus: (id: string, isChecked: boolean) => void;
+  onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
 };
 
 const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
@@ -25,7 +25,7 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
   note,
   isConfirmed,
   isDisabled,
-  updateSignupStatus,
+  onSignupCheckboxClick,
 }: AdminScheduleVolunteerRowProps): React.ReactElement => {
   return (
     <Box
@@ -44,7 +44,7 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
             <Checkbox
               isChecked={isConfirmed}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                updateSignupStatus(volunteerID, e.target.checked)
+                onSignupCheckboxClick(volunteerID, e.target.checked)
               }
               alignItems="center"
               mb={0}

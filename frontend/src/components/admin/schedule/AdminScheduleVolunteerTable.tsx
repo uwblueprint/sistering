@@ -13,16 +13,20 @@ import { Signup } from "../../pages/admin/schedule/testData";
 
 type AdminScheduleVolunteerTableProps = {
   signups: Signup[];
-  selectAllSignups: () => void;
-  updateSignupStatus: (id: string, isChecked: boolean) => void;
+  currentlyEditingSignups: Signup[];
+  onEditSignupsClick: (signups: Signup[]) => void;
+  onSelectAllSignupsClick: () => void;
+  onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
 };
 
 const AdminScheduleVolunteerTable = ({
   signups,
-  selectAllSignups,
-  updateSignupStatus,
+  currentlyEditingSignups,
+  onEditSignupsClick,
+  onSelectAllSignupsClick,
+  onSignupCheckboxClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
-  const [isEditing, setIsEditing] = useBoolean(true);
+  const [isEditing, setIsEditing] = useBoolean(false);
   return (
     <VStack
       w="full"
@@ -49,7 +53,10 @@ const AdminScheduleVolunteerTable = ({
             px="18px"
             fontSize="12px"
             lineHeight="100%"
-            onClick={setIsEditing.toggle}
+            onClick={() => {
+              if (!isEditing) onEditSignupsClick(signups);
+              setIsEditing.toggle();
+            }}
           >
             {isEditing ? "Save" : "Edit"}
           </Button>
@@ -61,7 +68,7 @@ const AdminScheduleVolunteerTable = ({
             color="violet"
             textDecor="underline"
             cursor="pointer"
-            onClick={selectAllSignups}
+            onClick={onSelectAllSignupsClick}
           >
             Select All
           </Text>
@@ -72,19 +79,33 @@ const AdminScheduleVolunteerTable = ({
         </Flex>
       </VStack>
       <VStack w="full" spacing={0} overflow="auto">
-        {signups.map((signup, i) => (
-          <AdminScheduleVolunteerRow
-            key={i}
-            volunteerID={signup.volunteer.id}
-            volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
-            note={signup.note}
-            isConfirmed={
-              signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
-            }
-            isDisabled={!isEditing}
-            updateSignupStatus={updateSignupStatus}
-          />
-        ))}
+        {isEditing
+          ? currentlyEditingSignups.map((signup, i) => (
+              <AdminScheduleVolunteerRow
+                key={i}
+                volunteerID={signup.volunteer.id}
+                volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
+                note={signup.note}
+                isConfirmed={
+                  signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
+                }
+                isDisabled={!isEditing}
+                onSignupCheckboxClick={onSignupCheckboxClick}
+              />
+            ))
+          : signups.map((signup, i) => (
+              <AdminScheduleVolunteerRow
+                key={i}
+                volunteerID={signup.volunteer.id}
+                volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
+                note={signup.note}
+                isConfirmed={
+                  signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
+                }
+                isDisabled={!isEditing}
+                onSignupCheckboxClick={onSignupCheckboxClick}
+              />
+            ))}
       </VStack>
     </VStack>
   );

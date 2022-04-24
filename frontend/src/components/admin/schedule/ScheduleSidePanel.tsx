@@ -1,27 +1,41 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { VStack, Box, Text } from "@chakra-ui/react";
 import { formatDateStringYear } from "../../../utils/DateTimeUtils";
 
 import ShiftTimeHeader from "./ShiftTimeHeader";
 import NoShiftsPanel from "../../pages/admin/schedule/NoShiftsPanel";
 import AdminScheduleVolunteerTable from "./AdminScheduleVolunteerTable";
-import { ShiftWithSignupAndVolunteerResponseDTO } from "../../pages/admin/schedule/testData";
+import {
+  ShiftWithSignupAndVolunteerResponseDTO,
+  Signup,
+} from "../../pages/admin/schedule/testData";
 
 type ScheduleSidePanelProps = {
   shifts: ShiftWithSignupAndVolunteerResponseDTO[];
-  selectedShift: ShiftWithSignupAndVolunteerResponseDTO;
-  onShiftSelected: (id: string) => void;
-  selectAllSignups: () => void;
-  updateSignupStatus: (id: string, isChecked: boolean) => void;
+  currentlyEditingSignups: Signup[];
+  onEditSignupsClick: (signups: Signup[]) => void;
+  onSelectAllSignupsClick: () => void;
+  onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
 };
 
 const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   shifts,
-  selectedShift,
-  onShiftSelected,
-  selectAllSignups,
-  updateSignupStatus,
+  currentlyEditingSignups,
+  onEditSignupsClick,
+  onSelectAllSignupsClick,
+  onSignupCheckboxClick,
 }: ScheduleSidePanelProps): React.ReactElement => {
+  const [selectedShiftId, setSelectedShiftId] = useState<string>(shifts[0].id);
+  const [
+    selectedShift,
+    setSelectedShift,
+  ] = useState<ShiftWithSignupAndVolunteerResponseDTO>(shifts[0]);
+  useEffect(() => {
+    setSelectedShift(
+      shifts.find((shift) => shift.id === selectedShiftId) || shifts[0],
+    );
+  }, [selectedShiftId]);
+
   return (
     <VStack
       w="full"
@@ -46,11 +60,16 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
 
       {shifts.length ? (
         <>
-          <ShiftTimeHeader shifts={shifts} onShiftSelected={onShiftSelected} />
+          <ShiftTimeHeader
+            shifts={shifts}
+            onShiftSelected={(shiftId: string) => setSelectedShiftId(shiftId)}
+          />
           <AdminScheduleVolunteerTable
             signups={selectedShift.signups}
-            selectAllSignups={selectAllSignups}
-            updateSignupStatus={updateSignupStatus}
+            currentlyEditingSignups={currentlyEditingSignups}
+            onEditSignupsClick={onEditSignupsClick}
+            onSelectAllSignupsClick={onSelectAllSignupsClick}
+            onSignupCheckboxClick={onSignupCheckboxClick}
           />
         </>
       ) : (

@@ -89,39 +89,33 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     fetchPolicy: "no-cache",
   });
 
-  const selectAllSignups = () => {
-    const selectedShiftIndex = shifts.findIndex(
-      (shift) => shift.id === selectedShiftId,
-    );
-    if (selectedShiftIndex >= 0) {
-      const shiftsCopy = [...shifts];
-      shiftsCopy[selectedShiftIndex].signups = shiftsCopy[
-        selectedShiftIndex
-      ].signups.map((signup) => {
+  const handleSidePanelEditClick = (
+    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+  ) => setCurrentlyEditingSignups(signups);
+
+  const handleSelectAllSignupsClick = () => {
+    const updatedSignups: SignupsAndVolunteerGraphQLResponseDTO[] = currentlyEditingSignups.map(
+      (signup) => {
         return {
           ...signup,
           status: signup.status !== "PUBLISHED" ? "CONFIRMED" : "PUBLISHED",
         };
-      });
-      setShifts(shiftsCopy);
-    }
+      },
+    );
+    setCurrentlyEditingSignups(updatedSignups);
   };
 
-  const updateSignupStatus = (volunteerId: string, isChecked: boolean) => {
-    const selectedShiftIndex = shifts.findIndex(
-      (shift) => shift.id === selectedShiftId,
+  const handleSignupCheckboxClick = (
+    volunteerId: string,
+    isChecked: boolean,
+  ) => {
+    const signupIndex = currentlyEditingSignups.findIndex(
+      (signup) => signup.volunteer.id === volunteerId,
     );
-    if (selectedShiftIndex >= 0) {
-      const shiftsCopy = [...shifts];
-      const signupIndex = shiftsCopy[selectedShiftIndex].signups.findIndex(
-        (signup) => signup.volunteer.id === volunteerId,
-      );
-      if (signupIndex >= 0) {
-        shiftsCopy[selectedShiftIndex].signups[signupIndex].status = isChecked
-          ? "CONFIRMED"
-          : "PENDING";
-        setShifts(shiftsCopy);
-      }
+    if (signupIndex >= 0) {
+      const signupsCopy = cloneDeep(currentlyEditingSignups);
+      signupsCopy[signupIndex].status = isChecked ? "CONFIRMED" : "PENDING";
+      setCurrentlyEditingSignups(signupsCopy);
     }
   };
 
@@ -150,13 +144,10 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel
               shifts={shiftsData}
-              selectedShift={
-                shifts.find((shift) => shift.id === selectedShiftId) ||
-                shifts[0]
-              }
-              onShiftSelected={(shiftId: string) => setSelectedShiftId(shiftId)}
-              selectAllSignups={selectAllSignups}
-              updateSignupStatus={updateSignupStatus}
+              currentlyEditingSignups={currentlyEditingSignups || []}
+              onEditSignupsClick={handleSidePanelEditClick}
+              onSelectAllSignupsClick={handleSelectAllSignupsClick}
+              onSignupCheckboxClick={handleSignupCheckboxClick}
             />
           </Box>
         </HStack>
