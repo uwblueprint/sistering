@@ -13,7 +13,7 @@ export const DEFAULT_POSTING_CONTEXT = {
   startDate: "",
   endDate: "",
   autoClosingDate: "",
-  numVolunteers: 0,
+  numVolunteers: 1,
   times: [
     {
       startTime: "2022-02-06T09:30",
