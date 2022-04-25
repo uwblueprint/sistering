@@ -24,6 +24,7 @@ const PostingDetails = ({
   postingDetails,
   showFooterButton,
 }: PostingDetailsProps): React.ReactElement => {
+
   return (
     <Box p={6} w="full">
       <VStack alignItems="start" w="full">
