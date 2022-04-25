@@ -80,16 +80,12 @@ const convertToSkillResponseDTO = (skills: Skill[]): SkillResponseDTO[] => {
 const convertToEmployeeUserResponseDTO = async (
   employees: Employee[],
 ): Promise<EmployeeUserResponseDTO[]> => {
-  const employeesArr: EmployeeUserResponseDTO[] = [];
-
-  employees.forEach(async (employee) => {
-    const employeeInfo = await userService.getEmployeeUserById(
+  return await Promise.all(employees.map(async (employee) => {
+    return await userService.getEmployeeUserById(
       String(employee.id),
     );
-    employeesArr.push(employeeInfo);
-  });
+  }));
 
-  return employeesArr;
 };
 
 class PostingService implements IPostingService {
@@ -111,6 +107,7 @@ class PostingService implements IPostingService {
         },
       });
 
+
       // const employee = await prisma.
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
@@ -120,12 +117,15 @@ class PostingService implements IPostingService {
       throw error;
     }
 
+
+    const employeesArr = await convertToEmployeeUserResponseDTO(posting.employees);
+
     return {
       id: String(posting.id),
       branch: convertToBranchResponseDTO(posting.branch),
       shifts: convertToShiftResponseDTO(posting.shifts),
       skills: convertToSkillResponseDTO(posting.skills),
-      employees: await convertToEmployeeUserResponseDTO(posting.employees),
+      employees: employeesArr,
       title: posting.title,
       type: posting.type,
       status: posting.status,

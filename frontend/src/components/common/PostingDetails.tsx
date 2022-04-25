@@ -25,6 +25,7 @@ const PostingDetails = ({
   showFooterButton,
 }: PostingDetailsProps): React.ReactElement => {
 
+  console.log(postingDetails)
   return (
     <Box p={6} w="full">
       <VStack alignItems="start" w="full">
@@ -62,13 +63,13 @@ const PostingDetails = ({
         </Text>
         <Text textStyle="body-regular">Point(s) of contact:</Text>
         <HStack pb={4}>
-          {postingDetails.employees?.map((employee, index) => (
+          {postingDetails.employees?.map((employee) => (
             <PocCard
               name={`${employee.firstName} ${employee.lastName}`}
               title={employee.title}
               email={employee.email}
               phoneNumber={employee.phoneNumber ?? ""}
-              key={index}
+              key={employee.id}
             />
           ))}
         </HStack>
