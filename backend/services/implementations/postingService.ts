@@ -10,7 +10,6 @@ import IPostingService from "../interfaces/postingService";
 import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
-  EmployeeResponseDTO,
   EmployeeUserResponseDTO,
   PostingRequestDTO,
   PostingResponseDTO,
@@ -80,12 +79,11 @@ const convertToSkillResponseDTO = (skills: Skill[]): SkillResponseDTO[] => {
 const convertToEmployeeUserResponseDTO = async (
   employees: Employee[],
 ): Promise<EmployeeUserResponseDTO[]> => {
-  return await Promise.all(employees.map(async (employee) => {
-    return await userService.getEmployeeUserById(
-      String(employee.id),
-    );
-  }));
-
+  return Promise.all(
+    employees.map(async (employee) => {
+      return userService.getEmployeeUserById(String(employee.id));
+    }),
+  );
 };
 
 class PostingService implements IPostingService {
@@ -107,7 +105,6 @@ class PostingService implements IPostingService {
         },
       });
 
-
       // const employee = await prisma.
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
@@ -117,8 +114,9 @@ class PostingService implements IPostingService {
       throw error;
     }
 
-
-    const employeesArr = await convertToEmployeeUserResponseDTO(posting.employees);
+    const employeesArr = await convertToEmployeeUserResponseDTO(
+      posting.employees,
+    );
 
     return {
       id: String(posting.id),
