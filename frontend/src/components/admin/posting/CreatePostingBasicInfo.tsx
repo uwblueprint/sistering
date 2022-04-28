@@ -267,7 +267,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
 
   const handleNext = () => {
     setBranchError(!selectedBranch);
-    setNumVolunteersError(Number.isNaN(parseInt(numVolunteers, 10)))
+    setNumVolunteersError(Number.isNaN(parseInt(numVolunteers, 10)));
     setTitleError(!title);
     setAutoClosingDateError(!autoClosingDate);
     setDescriptionError(
@@ -314,7 +314,11 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                 <Select
                   placeholder="Select option"
                   size="sm"
-                  mb={!branchError && numVolunteersError ? ERROR_MESSAGE_HEIGHT : "0px"}
+                  mb={
+                    !branchError && numVolunteersError
+                      ? ERROR_MESSAGE_HEIGHT
+                      : "0px"
+                  }
                   value={selectedBranch}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                     setSelectedBranch(e.target.value)
@@ -334,12 +338,14 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                 </FormLabel>
                 <NumberInput
                   size="sm"
-                  mb={!numVolunteersError && branchError ? ERROR_MESSAGE_HEIGHT : "0px"}
+                  mb={
+                    !numVolunteersError && branchError
+                      ? ERROR_MESSAGE_HEIGHT
+                      : "0px"
+                  }
                   value={numVolunteers}
                   min={1}
-                  onChange={(valueString) => 
-                    setNumVolunteers(valueString)
-                  }
+                  onChange={(valueString) => setNumVolunteers(valueString)}
                 >
                   <NumberInputField />
                   <NumberInputStepper>
@@ -347,7 +353,9 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                     <NumberDecrementStepper />
                   </NumberInputStepper>
                 </NumberInput>
-                <FormErrorMessage>Please enter a valid number of volunteers.</FormErrorMessage>
+                <FormErrorMessage>
+                  Please enter a valid number of volunteers.
+                </FormErrorMessage>
               </FormControl>
             </HStack>
             <HStack spacing={7} w="full">
