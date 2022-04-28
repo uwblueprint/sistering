@@ -93,8 +93,8 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
   const [selectedBranch, setSelectedBranch] = useState<string | undefined>(
     branchFromCtx.id || undefined,
   );
-  const [numVolunteers, setNumVolunteers] = useState<number>(
-    numVolunteersFromCtx,
+  const [numVolunteers, setNumVolunteers] = useState<string>(
+    String(numVolunteersFromCtx),
   );
   const [title, setTitle] = useState<string>(titleFromCtx);
   const [autoClosingDate, setAutoClosingDate] = useState<string>(
@@ -109,6 +109,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
   );
 
   const [branchError, setBranchError] = useState(false);
+  const [numVolunteersError, setNumVolunteersError] = useState(false);
   const [titleError, setTitleError] = useState(false);
   const [autoClosingDateError, setAutoClosingDateError] = useState(false);
   const [descriptionError, setDescriptionError] = useState(false);
@@ -266,6 +267,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
 
   const handleNext = () => {
     setBranchError(!selectedBranch);
+    setNumVolunteersError(Number.isNaN(parseInt(numVolunteers, 10)))
     setTitleError(!title);
     setAutoClosingDateError(!autoClosingDate);
     setDescriptionError(
@@ -280,11 +282,12 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
       autoClosingDate &&
       description &&
       selectedSkills &&
-      selectedEmployees
+      selectedEmployees &&
+      !Number.isNaN(parseInt(numVolunteers, 10))
     ) {
       /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
       addBranch(selectedBranch!);
-      addNumVolunteers(numVolunteers);
+      addNumVolunteers(parseInt(numVolunteers, 10));
       addTitle(title);
       addAutoClosingDate(autoClosingDate);
       addDescription(description);
@@ -311,6 +314,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                 <Select
                   placeholder="Select option"
                   size="sm"
+                  mb={!branchError && numVolunteersError ? ERROR_MESSAGE_HEIGHT : "0px"}
                   value={selectedBranch}
                   onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
                     setSelectedBranch(e.target.value)
@@ -324,17 +328,17 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                 </Select>
                 <FormErrorMessage>Please select a branch.</FormErrorMessage>
               </FormControl>
-              <FormControl isRequired>
+              <FormControl isRequired isInvalid={numVolunteersError}>
                 <FormLabel textStyle="body-regular">
                   Total Number of Volunteers
                 </FormLabel>
                 <NumberInput
                   size="sm"
-                  mb={branchError ? ERROR_MESSAGE_HEIGHT : "0px"}
+                  mb={!numVolunteersError && branchError ? ERROR_MESSAGE_HEIGHT : "0px"}
                   value={numVolunteers}
                   min={1}
-                  onChange={(_valueAsString, valueAsNumber) =>
-                    setNumVolunteers(valueAsNumber)
+                  onChange={(valueString) => 
+                    setNumVolunteers(valueString)
                   }
                 >
                   <NumberInputField />
@@ -343,6 +347,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                     <NumberDecrementStepper />
                   </NumberInputStepper>
                 </NumberInput>
+                <FormErrorMessage>Please enter a valid number of volunteers.</FormErrorMessage>
               </FormControl>
             </HStack>
             <HStack spacing={7} w="full">
