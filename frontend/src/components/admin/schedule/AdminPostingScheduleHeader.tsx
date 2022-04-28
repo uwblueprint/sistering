@@ -1,25 +1,31 @@
-import { Button, Divider, Flex, Text, VStack } from "@chakra-ui/react";
+import { Button, Flex, Text, VStack } from "@chakra-ui/react";
 import React from "react";
 import { useHistory } from "react-router-dom";
 
 type AdminPostingScheduleHeaderProps = {
   postingName: string;
   postingID: number;
+  onReviewClick: () => void;
 };
 
 const AdminPostingScheduleHeader = ({
   postingName,
   postingID,
+  onReviewClick,
 }: AdminPostingScheduleHeaderProps): React.ReactElement => {
   const history = useHistory();
 
   return (
-    <VStack spacing="15px">
+    <VStack
+      py="15px"
+      mx="47px"
+      borderBottomWidth="2px"
+      borderBottomColor="background.dark"
+    >
       <Flex
         dir="horizontal"
         justifyContent="space-between"
         alignItems="center"
-        mx="47px"
         width="100%"
       >
         <Text textStyle="display-small-semibold">{postingName}</Text>
@@ -32,17 +38,11 @@ const AdminPostingScheduleHeader = ({
           >
             View Posting
           </Button>
-          <Button
-            textStyle="button-semibold"
-            onClick={() =>
-              history.push(`admin/schedule/posting/${postingID}/review`)
-            }
-          >
+          <Button textStyle="button-semibold" onClick={onReviewClick}>
             Review
           </Button>
         </Flex>
       </Flex>
-      <Divider />
     </VStack>
   );
 };

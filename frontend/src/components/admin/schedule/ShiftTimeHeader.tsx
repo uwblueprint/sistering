@@ -23,7 +23,7 @@ const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
       px="32px"
       py="16px"
       alignItems="flex-start"
-      borderBottom="2px"
+      borderBottom="1px"
       borderLeft="2px"
       borderColor="background.dark"
     >

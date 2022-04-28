@@ -1,9 +1,12 @@
 import React from "react";
 import { Flex, Box, Container } from "@chakra-ui/react";
-import VolunteerNavbar from "../../../volunteer/VolunteerNavbar";
-import { VolunteerPages } from "../../../../constants/Volunteer";
 import VolunteerShiftsTable from "../../../volunteer/shifts/VolunteerShiftsTable";
 import { ShiftSignupStatus } from "../../../../types/api/ShiftSignupTypes";
+import Navbar from "../../../common/Navbar";
+import {
+  VolunteerNavbarTabs,
+  VolunteerPages,
+} from "../../../../constants/Tabs";
 
 const upcomingShift = {
   postingName: "Posting Name",
@@ -41,7 +44,10 @@ const mockData = [
 const VolunteerShiftsPage = (): React.ReactElement => {
   return (
     <Flex h="100vh" flexFlow="column">
-      <VolunteerNavbar defaultIndex={VolunteerPages.VolunteerShiftsPage} />
+      <Navbar
+        defaultIndex={VolunteerPages.VolunteerShifts}
+        tabs={VolunteerNavbarTabs}
+      />
       <Box bg="background.light" p={10} h="100vp">
         <Container
           maxW="container.xl"

@@ -103,7 +103,7 @@ const MonthlyViewShiftCalendar = ({
   };
 
   return (
-    <Box id="admin-calendar">
+    <Box id="admin-calendar" padding="16px 47px">
       <FullCalendar
         dayMaxEvents={3}
         displayEventEnd
