@@ -13,6 +13,8 @@ import { gql, useQuery } from "@apollo/client";
 import { Redirect, useHistory, useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
+import ErrorModal from "../../../common/ErrorModal";
+
 import { ShiftResponseDTO } from "../../../../types/api/ShiftTypes";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import { SignupRequestDTO } from "../../../../types/api/SignupTypes";
@@ -54,13 +56,14 @@ const POSTING = gql`
 
 const VolunteerPostingAvailabilities = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
-  const { loading: isShiftsLoading, data: { shiftsByPosting } = {} } = useQuery(
-    SHIFTS_BY_POSTING,
-    {
-      variables: { postingId: id },
-      fetchPolicy: "cache-and-network",
-    },
-  );
+  const {
+    loading: isShiftsLoading,
+    error,
+    data: { shiftsByPosting } = {},
+  } = useQuery(SHIFTS_BY_POSTING, {
+    variables: { postingId: id },
+    fetchPolicy: "cache-and-network",
+  });
   const {
     loading: isPostingLoading,
     data: { posting: postingDetails } = {},
@@ -82,6 +85,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" pt={14} px={100} minH="100vh">
+      {error && <ErrorModal />}
       <Button
         onClick={() => history.push(`/volunteer/posting/${id}`)}
         variant="link"

@@ -17,6 +17,8 @@ import {
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
+import ErrorModal from "../common/ErrorModal";
+
 type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
 
 type GoogleErrorResponse = {
@@ -56,10 +58,12 @@ const Login = (): React.ReactElement => {
   const [password, setPassword] = useState("");
   const history = useHistory();
 
-  const [login] = useMutation<{ login: AuthenticatedUser }>(LOGIN);
-  const [loginWithGoogle] = useMutation<{ loginWithGoogle: AuthenticatedUser }>(
-    LOGIN_WITH_GOOGLE,
-  );
+  const [login, { error: loginError }] = useMutation<{
+    login: AuthenticatedUser;
+  }>(LOGIN);
+  const [loginWithGoogle, { error: loginWithGoogleError }] = useMutation<{
+    loginWithGoogle: AuthenticatedUser;
+  }>(LOGIN_WITH_GOOGLE);
 
   const onLogInClick = async () => {
     const user: AuthenticatedUser = await authAPIClient.login(
@@ -92,6 +96,7 @@ const Login = (): React.ReactElement => {
 
   return (
     <div style={{ textAlign: "center" }}>
+      {(loginError || loginWithGoogleError) && <ErrorModal />}
       <Text textStyle="display-large">Login</Text>
       <form>
         <div>
