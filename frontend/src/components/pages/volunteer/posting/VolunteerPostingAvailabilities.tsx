@@ -13,22 +13,38 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { Redirect, useHistory, useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
-import { ShiftResponseDTO } from "../../../../types/api/ShiftTypes";
+import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../../types/api/ShiftTypes";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import {
   DeleteSignupRequestDTO,
   SignupRequestDTO,
   SignupResponseDTO,
 } from "../../../../types/api/SignupTypes";
+import AUTHENTICATED_USER_KEY from "../../../../constants/AuthConstants";
+import { AuthenticatedUser } from "../../../../types/AuthTypes";
+import { getLocalStorageObj } from "../../../../utils/LocalStorageUtils";
 
 // TODO: A filter should be added to the backend, currently, no filter is supported
-const SHIFTS_BY_POSTING = gql`
-  query VolunteerPostingAvailabilities_ShiftsByPosting($postingId: ID!) {
-    shiftsByPosting(postingId: $postingId) {
+// TODO: Check we we need confirmed shift status
+const SHIFTS_WITH_SIGNUPS_BY_POSTING = gql`
+  query VolunteerPostingAvailabilities_ShiftsWithSignupsByPosting(
+    $postingId: ID!
+    $userId: ID!
+  ) {
+    shiftsWithSignupsAndVolunteersByPosting(
+      postingId: $postingId
+      userId: $userId
+    ) {
       id
       postingId
       startTime
       endTime
+      signups {
+        shiftId
+        shiftStartTime
+        shiftEndTime
+        note
+      }
     }
   }
 `;
@@ -69,15 +85,20 @@ const SUBMIT_SIGNUPS = gql`
 `;
 
 const VolunteerPostingAvailabilities = (): React.ReactElement => {
+  // TODO: Get current user ID from cookie or me query
+  const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
+    AUTHENTICATED_USER_KEY,
+  );
+
   const { id } = useParams<{ id: string }>();
   // TODO: Use query by user ids to get signed up shifts
-  const { loading: isShiftsLoading, data: { shiftsByPosting } = {} } = useQuery(
-    SHIFTS_BY_POSTING,
-    {
-      variables: { postingId: id },
-      fetchPolicy: "cache-and-network",
-    },
-  );
+  const {
+    loading: isShiftsLoading,
+    data: { shiftsWithSignupsAndVolunteersByPosting: shiftsByPosting } = {},
+  } = useQuery(SHIFTS_WITH_SIGNUPS_BY_POSTING, {
+    variables: { postingId: id, userId: currentUser?.id },
+    fetchPolicy: "cache-and-network",
+  });
   const {
     loading: isPostingLoading,
     data: { posting: postingDetails } = {},
@@ -91,14 +112,42 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     SUBMIT_SIGNUPS,
   );
   // TODO: Use these state of selected shifts + notes for submission
-  const [shiftSignups, setShiftSignups] = useState<ShiftResponseDTO[]>([]);
-  const [signupNotes, setSignupNotes] = useState<SignupRequestDTO[]>([]);
-  // Keep track of deleted shifts, add user ID on call
-  const [deletedSignupIds, setDeletedSignupIds] = useState<string[]>([]);
+  // init shiftSignups and notes from query, combine type into one
+  const [shiftSignups, setShiftSignups] = useState<
+    ShiftWithSignupAndVolunteerResponseDTO[]
+  >([]);
+  const [deleteSignups, setDeleteSignups] = useState<
+    { shiftId: string; toDelete: boolean }[]
+  >([]);
 
   if (isPostingLoading || isShiftsLoading) {
     return <Spinner />;
   }
+
+  console.log(shiftSignups);
+  console.log(deleteSignups);
+  console.log(shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]);
+  console.log(
+    (
+      (shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]) ?? []
+    ).filter((shift) => shift.signups.length > 0),
+  );
+
+  // setShiftSignups(
+  //   (
+  //     (shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]) ?? []
+  //   ).filter((shift) => shift.signups.length > 0),
+  // );
+  // setDeleteSignups(
+  //   ((shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]) ?? [])
+  //     .filter((shift) => shift.signups.length > 0)
+  //     .map((shift) => {
+  //       return {
+  //         shiftId: shift.id,
+  //         toDelete: false,
+  //       };
+  //     }),
+  // );
 
   return !(isShiftsLoading || isPostingLoading) && !shiftsByPosting ? (
     <Redirect to="/not-found" />
@@ -118,7 +167,9 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
         <Button
           onClick={async () => {
             // Submit the selected shifts
-            console.log(shiftsByPosting);
+            // console.log(shiftsByPosting);
+            console.log("press");
+            console.log(shiftSignups);
 
             toast({
               title: "Availability Submitted",
@@ -137,17 +188,19 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
                     const { id: shiftId } = signup;
                     return {
                       shiftId,
-                      userId: "1", // TODO: Replace with userID from me query or cookie
-                      note: "",
-                      numVolunteers: 0, // TODO: Replace with actual numVolunteer or make optional if allowed
+                      userId: currentUser?.id,
+                      note: signup.signups[0].note,
+                      numVolunteers: 0, // TODO: Confirm this is correct for init
                     } as SignupRequestDTO;
                   }),
-                  deleteShiftSignups: deletedSignupIds.map((shiftId) => {
-                    return {
-                      shiftId,
-                      userId: "1", // TODO: Replace with userID from me query or cookie
-                    } as DeleteSignupRequestDTO;
-                  }), // Here, we want a new init state for existing signups to get deleted shifts
+                  deleteShiftSignups: deleteSignups
+                    .filter((signup) => signup.toDelete)
+                    .map((shift) => {
+                      return {
+                        shiftId: shift.shiftId,
+                        userId: currentUser?.id,
+                      } as DeleteSignupRequestDTO;
+                    }),
                 },
               },
             });
@@ -158,7 +211,9 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
         </Button>
       </Flex>
       <VolunteerAvailabilityTable
-        postingShifts={shiftsByPosting as ShiftResponseDTO[]}
+        postingShifts={
+          shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]
+        }
         postingStartDate={
           new Date(Date.parse((postingDetails as PostingResponseDTO).startDate))
         }
@@ -167,8 +222,6 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
         }
         selectedShifts={shiftSignups}
         setSelectedShifts={setShiftSignups}
-        signupNotes={signupNotes}
-        setSignupNotes={setSignupNotes}
       />
     </Box>
   );

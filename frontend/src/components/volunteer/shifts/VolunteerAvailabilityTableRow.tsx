@@ -11,36 +11,26 @@ import {
   formatTimeHourMinutes,
   getElapsedHours,
 } from "../../../utils/DateTimeUtils";
-import { ShiftResponseDTO } from "../../../types/api/ShiftTypes";
-import { SignupRequestDTO } from "../../../types/api/SignupTypes";
+import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../types/api/ShiftTypes";
+import { SignupsAndVolunteerResponseDTO } from "../../../types/api/SignupTypes";
 
 type VolunteerAvailabilityTableRowProps = {
-  shift: ShiftResponseDTO;
-  selectedShifts: ShiftResponseDTO[];
-  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftResponseDTO[]>>;
-  signupNotes: SignupRequestDTO[];
-  setSignupNotes: React.Dispatch<React.SetStateAction<SignupRequestDTO[]>>;
-  start: Date;
-  end: Date;
+  shift: ShiftWithSignupAndVolunteerResponseDTO;
+  selectedShifts: ShiftWithSignupAndVolunteerResponseDTO[];
+  setSelectedShifts: React.Dispatch<
+    React.SetStateAction<ShiftWithSignupAndVolunteerResponseDTO[]>
+  >;
 };
 
 const VolunteerAvailabilityTableRow = ({
   shift,
   selectedShifts,
   setSelectedShifts,
-  signupNotes,
-  setSignupNotes,
-  start,
-  end,
 }: VolunteerAvailabilityTableRowProps): React.ReactElement => {
-  const [checked, setChecked] = React.useState(selectedShifts.includes(shift));
-  const signupNote = React.useMemo(() => {
-    const note = signupNotes.find((s) => s.shiftId === shift.id);
-    if (note) {
-      return note.note;
-    }
-    return "";
-  }, [signupNotes, shift]);
+  const [checked, setChecked] = React.useState(shift.signups.length > 0);
+  const [note, setNote] = React.useState(
+    shift.signups.length > 0 ? shift.signups[0].note : "",
+  );
 
   return (
     <Flex bgColor={checked ? "purple.50" : undefined} px={25} py={3}>
@@ -50,38 +40,69 @@ const VolunteerAvailabilityTableRow = ({
         isChecked={checked}
         onChange={(event) => {
           if (!checked) {
-            setSelectedShifts([...selectedShifts, shift]);
+            // Add new signup
+            shift.signups.push({
+              shiftId: shift.id,
+              note,
+            } as SignupsAndVolunteerResponseDTO);
           } else {
-            const selected = selectedShifts.filter((s) => s !== shift);
-            setSelectedShifts(selected);
+            // Remove existing signup
+            while (shift.signups.length > 0) {
+              shift.signups.pop();
+            }
+            setNote("");
+          }
+          // Add push shift into newShifts if not in existing
+          const target = selectedShifts.find(
+            (select) => select.id === shift.id,
+          );
+          if (target) {
+            const newShiftsWithSignups = selectedShifts.map((select) => {
+              if (select.id === shift.id) {
+                return shift;
+              }
+              return select;
+            });
+            setSelectedShifts(newShiftsWithSignups);
+          } else {
+            setSelectedShifts([shift, ...selectedShifts]);
           }
           setChecked(event.target.checked);
         }}
       >
-        {`${formatTimeHourMinutes(start)} -  ${formatTimeHourMinutes(
-          end,
-        )} (${getElapsedHours(start, end)} hrs)`}
+        {`${formatTimeHourMinutes(shift.startTime)} -  ${formatTimeHourMinutes(
+          shift.endTime,
+        )} (${getElapsedHours(shift.startTime, shift.endTime)} hrs)`}
       </Checkbox>
       <InputGroup>
         <Input
           isDisabled={!checked}
           bg="white"
           placeholder="Add note (optional)"
+          value={note}
           onChange={(event) => {
-            const otherNotes = signupNotes.filter(
-              (s) => s.shiftId !== shift.id,
-            );
-            setSignupNotes([
-              ...otherNotes,
-              {
-                shiftId: shift.id,
-                note: event.target.value.toString().trim(),
-              },
-            ]);
+            setNote(event.target.value);
+          }}
+          onBlur={(event) => {
+            // const target = newShifts.filter(
+            //   (shiftWithSignup) => shiftWithSignup.id === shift.id,
+            // );
+            // if (target.length > 0 && target[0].signups.length > 0) {
+            //   target[0].signups[0].note = event.target.value.toString().trim();
+            // }
+            const newShifts = selectedShifts.map((select) => {
+              if (select.id === shift.id) {
+                const newShift = select;
+                newShift.signups[0].note = note;
+                return newShift;
+              }
+              return select;
+            });
+            setSelectedShifts(newShifts);
           }}
         />
         <InputRightElement
-          visibility={signupNote.length > 0 && checked ? "visible" : "hidden"}
+          visibility={note.length > 0 && checked ? "visible" : "hidden"}
         >
           <CheckIcon color="brand.500" />
         </InputRightElement>
