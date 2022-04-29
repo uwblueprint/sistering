@@ -62,7 +62,7 @@ const PostingDetails = ({
         </Text>
         <Text textStyle="body-regular">Point(s) of contact:</Text>
         <HStack pb={4}>
-        {postingDetails.employees.map((employee) => (
+          {postingDetails.employees.map((employee) => (
             <PocCard
               name={`${employee.firstName} ${employee.lastName}`}
               title={employee.title}
