@@ -23,6 +23,11 @@ const POSTING = gql`
       }
       employees {
         id
+        firstName
+        lastName
+        email
+        title
+        phoneNumber
       }
       autoClosingDate
     }
