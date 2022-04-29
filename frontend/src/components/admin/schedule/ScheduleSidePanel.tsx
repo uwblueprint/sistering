@@ -5,15 +5,15 @@ import { formatDateStringYear } from "../../../utils/DateTimeUtils";
 import ShiftTimeHeader from "./ShiftTimeHeader";
 import NoShiftsPanel from "../../pages/admin/schedule/NoShiftsPanel";
 import AdminScheduleVolunteerTable from "./AdminScheduleVolunteerTable";
-import {
-  ShiftWithSignupAndVolunteerResponseDTO,
-  Signup,
-} from "../../pages/admin/schedule/testData";
+import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
+import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
 
 type ScheduleSidePanelProps = {
-  shifts: ShiftWithSignupAndVolunteerResponseDTO[];
-  currentlyEditingSignups: Signup[];
-  onEditSignupsClick: (signups: Signup[]) => void;
+  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
+  onEditSignupsClick: (
+    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+  ) => void;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
 };
@@ -25,16 +25,18 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   onSelectAllSignupsClick,
   onSignupCheckboxClick,
 }: ScheduleSidePanelProps): React.ReactElement => {
-  const [selectedShiftId, setSelectedShiftId] = useState<string>(shifts[0].id);
+  const [selectedShiftId, setSelectedShiftId] = useState<string>(
+    shifts[0] ? shifts[0].id : "",
+  );
   const [
     selectedShift,
     setSelectedShift,
-  ] = useState<ShiftWithSignupAndVolunteerResponseDTO>(shifts[0]);
+  ] = useState<ShiftWithSignupAndVolunteerGraphQLResponseDTO>(shifts[0]);
   useEffect(() => {
     setSelectedShift(
       shifts.find((shift) => shift.id === selectedShiftId) || shifts[0],
     );
-  }, [selectedShiftId]);
+  }, [selectedShiftId, shifts]);
 
   return (
     <VStack
@@ -54,7 +56,9 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
         borderColor="background.dark"
       >
         <Text textStyle="heading">
-          {formatDateStringYear(selectedShift.startTime.toString())}
+          {selectedShift
+            ? formatDateStringYear(selectedShift.startTime.toString())
+            : ""}
         </Text>
       </Box>
 
@@ -65,7 +69,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
             onShiftSelected={(shiftId: string) => setSelectedShiftId(shiftId)}
           />
           <AdminScheduleVolunteerTable
-            signups={selectedShift.signups}
+            signups={selectedShift ? selectedShift.signups : []}
             currentlyEditingSignups={currentlyEditingSignups}
             onEditSignupsClick={onEditSignupsClick}
             onSelectAllSignupsClick={onSelectAllSignupsClick}

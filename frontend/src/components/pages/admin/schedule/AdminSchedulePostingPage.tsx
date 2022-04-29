@@ -13,12 +13,10 @@ import Navbar from "../../../common/Navbar";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
-import ShiftTimeHeader from "../../../admin/schedule/ShiftTimeHeader";
 import ErrorModal from "../../../common/ErrorModal";
 import MonthlyViewShiftCalendar, {
   ADMIN_SHIFT_CALENDAR_TEST_EVENTS,
 } from "../../../admin/ShiftCalendar/MonthlyViewReadOnlyShiftCalendar";
-import { formatDateStringYear } from "../../../../utils/DateTimeUtils";
 import AdminScheduleTable, {
   TableTestData,
 } from "../../../admin/schedule/AdminScheduleTable";
@@ -143,8 +141,8 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           </Box>
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel
-              shifts={shiftsData}
-              currentlyEditingSignups={currentlyEditingSignups || []}
+              shifts={shifts}
+              currentlyEditingSignups={currentlyEditingSignups}
               onEditSignupsClick={handleSidePanelEditClick}
               onSelectAllSignupsClick={handleSelectAllSignupsClick}
               onSignupCheckboxClick={handleSignupCheckboxClick}

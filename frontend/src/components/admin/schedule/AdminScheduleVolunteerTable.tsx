@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Flex,
   VStack,
@@ -9,12 +9,14 @@ import {
 } from "@chakra-ui/react";
 
 import AdminScheduleVolunteerRow from "./AdminScheduleVolunteerRow";
-import { Signup } from "../../pages/admin/schedule/testData";
+import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
 
 type AdminScheduleVolunteerTableProps = {
-  signups: Signup[];
-  currentlyEditingSignups: Signup[];
-  onEditSignupsClick: (signups: Signup[]) => void;
+  signups: SignupsAndVolunteerGraphQLResponseDTO[];
+  currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
+  onEditSignupsClick: (
+    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+  ) => void;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
 };
@@ -27,6 +29,14 @@ const AdminScheduleVolunteerTable = ({
   onSignupCheckboxClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [isEditing, setIsEditing] = useBoolean(false);
+  const [signupsToDisplay, setSignupsToDisplay] = useState<
+    SignupsAndVolunteerGraphQLResponseDTO[]
+  >(signups);
+  useEffect(() => {
+    if (isEditing) setSignupsToDisplay(currentlyEditingSignups);
+    else setSignupsToDisplay(signups);
+  }, [isEditing, signups, currentlyEditingSignups]);
+
   return (
     <VStack
       w="full"
@@ -74,38 +84,24 @@ const AdminScheduleVolunteerTable = ({
           </Text>
           <Spacer />
           <Text textStyle="caption" fontSize="12px">
-            Volunteers per shift: {signups[0].numVolunteers}
+            Volunteers per shift: {signups[0] ? signups[0].numVolunteers : ""}
           </Text>
         </Flex>
       </VStack>
       <VStack w="full" spacing={0} overflow="auto">
-        {isEditing
-          ? currentlyEditingSignups.map((signup, i) => (
-              <AdminScheduleVolunteerRow
-                key={i}
-                volunteerID={signup.volunteer.id}
-                volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
-                note={signup.note}
-                isConfirmed={
-                  signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
-                }
-                isDisabled={!isEditing}
-                onSignupCheckboxClick={onSignupCheckboxClick}
-              />
-            ))
-          : signups.map((signup, i) => (
-              <AdminScheduleVolunteerRow
-                key={i}
-                volunteerID={signup.volunteer.id}
-                volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
-                note={signup.note}
-                isConfirmed={
-                  signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
-                }
-                isDisabled={!isEditing}
-                onSignupCheckboxClick={onSignupCheckboxClick}
-              />
-            ))}
+        {signupsToDisplay.map((signup, i) => (
+          <AdminScheduleVolunteerRow
+            key={i}
+            volunteerID={signup.volunteer.id}
+            volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
+            note={signup.note}
+            isConfirmed={
+              signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
+            }
+            isDisabled={!isEditing}
+            onSignupCheckboxClick={onSignupCheckboxClick}
+          />
+        ))}
       </VStack>
     </VStack>
   );
