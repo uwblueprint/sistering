@@ -1,4 +1,4 @@
-import { Flex, Box, HStack, Text, VStack } from "@chakra-ui/react";
+import { Flex, Box, HStack, VStack } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
@@ -125,8 +125,8 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
         tabs={AdminNavbarTabs}
       />
       {currentView === AdminScheduleViews.CalendarView ? (
-        <HStack alignItems="start" spacing={0}>
-          <Box width="full">
+        <Flex>
+          <Box flex={1}>
             <AdminSchedulePageHeader branchName="Kitchen" />
             <AdminPostingScheduleHeader
               postingID={Number(id)}
@@ -148,7 +148,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               onSignupCheckboxClick={handleSignupCheckboxClick}
             />
           </Box>
-        </HStack>
+        </Flex>
       ) : (
         <VStack
           backgroundColor="background.light"

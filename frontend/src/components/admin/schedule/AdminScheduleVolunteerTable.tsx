@@ -42,7 +42,9 @@ const AdminScheduleVolunteerTable = ({
       w="full"
       h="full"
       spacing={0}
-      border="1px"
+      borderTop="1px"
+      borderLeft="1px"
+      borderBottom="1px"
       borderColor="background.dark"
     >
       <VStack

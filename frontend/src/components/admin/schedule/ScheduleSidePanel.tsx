@@ -50,7 +50,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
       <Box
         w="full"
         px="32px"
-        py="16px"
+        py="17px"
         borderLeft="1px"
         borderBottom="1px"
         borderColor="background.dark"
