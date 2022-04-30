@@ -17,15 +17,19 @@ import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../types/api/Shift
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
+import {
+  DeleteSignupRequest,
+  SignupRequest,
+} from "../../../types/api/SignupTypes";
 
 type VolunteerAvailabilityTableProps = {
   postingShifts: ShiftWithSignupAndVolunteerResponseDTO[];
   postingStartDate: Date;
   postingEndDate: Date;
-  selectedShifts: ShiftWithSignupAndVolunteerResponseDTO[];
-  setSelectedShifts: React.Dispatch<
-    React.SetStateAction<ShiftWithSignupAndVolunteerResponseDTO[]>
-  >;
+  selectedShifts: SignupRequest[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<SignupRequest[]>>;
+  deleteSignups: DeleteSignupRequest[];
+  setDeleteSignups: React.Dispatch<React.SetStateAction<DeleteSignupRequest[]>>;
 };
 
 const VolunteerAvailabilityTable = ({
@@ -34,6 +38,8 @@ const VolunteerAvailabilityTable = ({
   postingEndDate,
   selectedShifts,
   setSelectedShifts,
+  deleteSignups,
+  setDeleteSignups,
 }: VolunteerAvailabilityTableProps): React.ReactElement => {
   const [currentWeek, setWeek] = React.useState(
     moment(postingStartDate).startOf("week").toDate(),
@@ -152,6 +158,8 @@ const VolunteerAvailabilityTable = ({
                           shift={shift}
                           selectedShifts={selectedShifts}
                           setSelectedShifts={setSelectedShifts}
+                          deleteSignups={deleteSignups}
+                          setDeleteSignups={setDeleteSignups}
                         />
                       </Td>
                     </Tr>

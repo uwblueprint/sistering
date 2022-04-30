@@ -12,20 +12,25 @@ import {
   getElapsedHours,
 } from "../../../utils/DateTimeUtils";
 import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../types/api/ShiftTypes";
-import { SignupsAndVolunteerResponseDTO } from "../../../types/api/SignupTypes";
+import {
+  DeleteSignupRequest,
+  SignupRequest,
+} from "../../../types/api/SignupTypes";
 
 type VolunteerAvailabilityTableRowProps = {
   shift: ShiftWithSignupAndVolunteerResponseDTO;
-  selectedShifts: ShiftWithSignupAndVolunteerResponseDTO[];
-  setSelectedShifts: React.Dispatch<
-    React.SetStateAction<ShiftWithSignupAndVolunteerResponseDTO[]>
-  >;
+  selectedShifts: SignupRequest[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<SignupRequest[]>>;
+  deleteSignups: DeleteSignupRequest[];
+  setDeleteSignups: React.Dispatch<React.SetStateAction<DeleteSignupRequest[]>>;
 };
 
 const VolunteerAvailabilityTableRow = ({
   shift,
   selectedShifts,
   setSelectedShifts,
+  deleteSignups,
+  setDeleteSignups,
 }: VolunteerAvailabilityTableRowProps): React.ReactElement => {
   const [checked, setChecked] = React.useState(shift.signups.length > 0);
   const [note, setNote] = React.useState(
@@ -40,33 +45,22 @@ const VolunteerAvailabilityTableRow = ({
         isChecked={checked}
         onChange={(event) => {
           if (!checked) {
-            // Add new signup
-            shift.signups.push({
-              shiftId: shift.id,
-              note,
-            } as SignupsAndVolunteerResponseDTO);
+            setSelectedShifts([...selectedShifts, { shiftId: shift.id, note }]);
           } else {
-            // Remove existing signup
-            while (shift.signups.length > 0) {
-              shift.signups.pop();
-            }
+            setSelectedShifts(
+              selectedShifts.filter((select) => select.shiftId !== shift.id),
+            );
             setNote("");
           }
-          // Add push shift into newShifts if not in existing
-          const target = selectedShifts.find(
-            (select) => select.id === shift.id,
-          );
-          if (target) {
-            const newShiftsWithSignups = selectedShifts.map((select) => {
-              if (select.id === shift.id) {
-                return shift;
+          setDeleteSignups(
+            deleteSignups.map((signup) => {
+              const newSignup = signup;
+              if (newSignup.shiftId === shift.id) {
+                newSignup.toDelete = checked;
               }
-              return select;
-            });
-            setSelectedShifts(newShiftsWithSignups);
-          } else {
-            setSelectedShifts([shift, ...selectedShifts]);
-          }
+              return newSignup;
+            }),
+          );
           setChecked(event.target.checked);
         }}
       >
@@ -84,21 +78,16 @@ const VolunteerAvailabilityTableRow = ({
             setNote(event.target.value);
           }}
           onBlur={(event) => {
-            // const target = newShifts.filter(
-            //   (shiftWithSignup) => shiftWithSignup.id === shift.id,
-            // );
-            // if (target.length > 0 && target[0].signups.length > 0) {
-            //   target[0].signups[0].note = event.target.value.toString().trim();
-            // }
-            const newShifts = selectedShifts.map((select) => {
-              if (select.id === shift.id) {
-                const newShift = select;
-                newShift.signups[0].note = note;
-                return newShift;
-              }
-              return select;
-            });
-            setSelectedShifts(newShifts);
+            setSelectedShifts(
+              selectedShifts.map((select) => {
+                if (select.shiftId === shift.id) {
+                  const newShift = select;
+                  newShift.note = note.trim();
+                  return newShift;
+                }
+                return select;
+              }),
+            );
           }}
         />
         <InputRightElement
