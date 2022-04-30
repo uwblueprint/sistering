@@ -14,6 +14,7 @@ import { Redirect, useHistory, useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
 import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../../types/api/ShiftTypes";
+import ErrorModal from "../../../common/ErrorModal";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import {
   DeleteSignupRequest,
@@ -96,6 +97,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const {
     loading: isShiftsLoading,
+    error: shiftError,
     data: { shiftsWithSignupsAndVolunteersByPosting: shiftsByPosting } = {},
   } = useQuery(SHIFTS_WITH_SIGNUPS_BY_POSTING, {
     variables: { postingId: id, userId: currentUser?.id },
@@ -124,6 +126,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     },
   });
   const {
+    error: postingError,
     loading: isPostingLoading,
     data: { posting: postingDetails } = {},
   } = useQuery(POSTING, {
@@ -143,6 +146,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" pt={14} px={100} minH="100vh">
+      {(shiftError || postingError) && <ErrorModal />}
       <Button
         onClick={() => history.push(`/volunteer/posting/${id}`)}
         variant="link"

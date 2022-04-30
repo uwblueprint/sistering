@@ -10,6 +10,7 @@ import {
 } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import PostingDetails from "../../../common/PostingDetails";
+import ErrorModal from "../../../common/ErrorModal";
 import {
   VOLUNTEER_POSTING_AVAILABILITIES,
   VOLUNTEER_POSTINGS_PAGE,
@@ -40,7 +41,7 @@ const POSTING = gql`
 const VolunteerPostingDetails = (): React.ReactElement => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
-  const { loading, data: { posting: postingDetails } = {} } = useQuery(
+  const { loading, error, data: { posting: postingDetails } = {} } = useQuery(
     POSTING,
     {
       variables: { id },
@@ -57,6 +58,7 @@ const VolunteerPostingDetails = (): React.ReactElement => {
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" py={7} px={10} minH="100vh">
+      {error && <ErrorModal />}
       <VStack>
         <Container pt={0} pb={4} px={0} maxW="container.xl">
           <HStack justifyContent="space-between">

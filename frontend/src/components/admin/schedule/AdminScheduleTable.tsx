@@ -1,5 +1,5 @@
 import React, { Fragment } from "react";
-import { Table, Tbody } from "@chakra-ui/react";
+import { Table, Tbody, Box } from "@chakra-ui/react";
 import AdminScheduleTableDate from "./AdminScheduleTableDate";
 import AdminScheduleTableRow from "./AdminScheduleTableRow";
 
@@ -107,37 +107,39 @@ const AdminScheduleTable = ({
   schedule,
 }: AdminScheduleTableProps): React.ReactElement => {
   return (
-    <Table variant="brand">
-      <colgroup>
-        <col style={{ width: "30%" }} />
-        <col style={{ width: "40%" }} />
-        <col style={{ width: "30%" }} />
-      </colgroup>
-      <Tbody>
-        {schedule.map((day) => {
-          return (
-            <Fragment key={day.date.toDateString()}>
-              <AdminScheduleTableDate
-                key={day.date.toDateString()}
-                date={day.date}
-              />
-              {day.signups.length > 0 ? (
-                day.signups.map((signup: AdminScheduleSignup, i) => (
-                  <AdminScheduleTableRow
-                    key={`${signup.volunteer?.userId}-${i}`}
-                    volunteer={signup.volunteer}
-                    postingStart={signup.startTime}
-                    postingEnd={signup.endTime}
-                  />
-                ))
-              ) : (
-                <AdminScheduleTableRow />
-              )}
-            </Fragment>
-          );
-        })}
-      </Tbody>
-    </Table>
+    <Box borderWidth="1px" borderColor="background.dark" width="100%">
+      <Table variant="brand">
+        <colgroup>
+          <col style={{ width: "30%" }} />
+          <col style={{ width: "40%" }} />
+          <col style={{ width: "30%" }} />
+        </colgroup>
+        <Tbody>
+          {schedule.map((day) => {
+            return (
+              <Fragment key={day.date.toDateString()}>
+                <AdminScheduleTableDate
+                  key={day.date.toDateString()}
+                  date={day.date}
+                />
+                {day.signups.length > 0 ? (
+                  day.signups.map((signup: AdminScheduleSignup, i) => (
+                    <AdminScheduleTableRow
+                      key={`${signup.volunteer?.userId}-${i}`}
+                      volunteer={signup.volunteer}
+                      postingStart={signup.startTime}
+                      postingEnd={signup.endTime}
+                    />
+                  ))
+                ) : (
+                  <AdminScheduleTableRow />
+                )}
+              </Fragment>
+            );
+          })}
+        </Tbody>
+      </Table>
+    </Box>
   );
 };
 

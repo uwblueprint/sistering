@@ -16,7 +16,12 @@ import { dateInRange } from "../../../../utils/DateTimeUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
 import PostingCard from "../../../volunteer/PostingCard";
-import VolunteerNavbar from "../../../volunteer/VolunteerNavbar";
+import Navbar from "../../../common/Navbar";
+import {
+  VolunteerNavbarTabs,
+  VolunteerPages,
+} from "../../../../constants/Tabs";
+import ErrorModal from "../../../common/ErrorModal";
 
 type Posting = Omit<
   PostingResponseDTO,
@@ -57,7 +62,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
   const [filter, setFilter] = useState<FilterType>("week");
   const { authenticatedUser } = useContext(AuthContext);
 
-  useQuery(POSTINGS, {
+  const { error } = useQuery(POSTINGS, {
     variables: {
       closingDate: new Date().toISOString().split("T")[0],
       statuses: ["PUBLISHED" as PostingStatus],
@@ -123,7 +128,11 @@ const VolunteerPostingsPage = (): React.ReactElement => {
 
   return (
     <div>
-      <VolunteerNavbar defaultIndex={1} />
+      {error && <ErrorModal />}
+      <Navbar
+        defaultIndex={VolunteerPages.VolunteerPostings}
+        tabs={VolunteerNavbarTabs}
+      />
       <Box
         bg="background.light"
         pt="48px"

@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PostingDetails from "../../../common/PostingDetails";
+import ErrorModal from "../../../common/ErrorModal";
 
 const POSTING = gql`
   query AdminPostingDetails_Posting($id: ID!) {
@@ -35,7 +36,7 @@ const AdminPostingDetails = (): React.ReactElement => {
     postingDetails,
     setPostingDetails,
   ] = useState<PostingResponseDTO | null>(null);
-  useQuery(POSTING, {
+  const { error } = useQuery(POSTING, {
     variables: { id },
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
@@ -44,6 +45,7 @@ const AdminPostingDetails = (): React.ReactElement => {
   });
   return (
     <Box bg="background.light" py={7} px={10} minH="100vh">
+      {error && <ErrorModal />}
       <VStack>
         <Container pt={3} pb={6} px={0} maxW="container.xl">
           <Flex justifyContent="flex-start">

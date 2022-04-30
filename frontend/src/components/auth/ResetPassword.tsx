@@ -5,6 +5,7 @@ import { Box, Button, Image, Input, Text, VStack } from "@chakra-ui/react";
 import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 
 import { DONE_RESET_PASSWORD_PAGE } from "../../constants/Routes";
+import ErrorModal from "../common/ErrorModal";
 
 const RESET_PASSWORD = gql`
   mutation ResetPassword($email: String!) {
@@ -16,7 +17,7 @@ const ResetPassword = (): React.ReactElement => {
   const [email, setEmail] = useState("");
   const history = useHistory();
 
-  const [resetPassword] = useMutation<{ resetPassword: boolean }>(
+  const [resetPassword, { error }] = useMutation<{ resetPassword: boolean }>(
     RESET_PASSWORD,
   );
 
@@ -32,6 +33,7 @@ const ResetPassword = (): React.ReactElement => {
 
   return (
     <VStack>
+      {error && <ErrorModal />}
       <Image src={Sistering_Logo} alt="Sistering logo" h={32} />
       <Text textStyle="display-large">Reset Password</Text>
       <Text w={300} align="center">

@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Link } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import {
   Flex,
   Box,
@@ -16,44 +16,33 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 
 import { AuthenticatedUser } from "../../types/AuthTypes";
 import AuthContext from "../../contexts/AuthContext";
-import { VolunteerPages } from "../../constants/Volunteer";
 import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 
-const VolunteerNavbar = ({
-  defaultIndex,
-}: {
-  defaultIndex: VolunteerPages;
-}): React.ReactElement => {
+type TabInfo = {
+  name: string;
+  route: string;
+};
+
+type NavbarProps = {
+  defaultIndex: number;
+  tabs: TabInfo[];
+};
+
+const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
   const {
     authenticatedUser,
   }: { authenticatedUser: AuthenticatedUser } = useContext(AuthContext);
   const userName = `${authenticatedUser?.firstName} ${authenticatedUser?.lastName}`;
-
+  const history = useHistory();
   return (
-    <Box px="90px">
+    <Box px="90px" boxShadow="md">
       <Flex h="80px" alignItems="center" justifyContent="space-between">
         <Image src={Sistering_Logo} alt="Sistering logo" h={14} />
         <Tabs defaultIndex={defaultIndex} alignSelf="flex-end">
           <TabList>
-            <Link to="/volunteer/shifts" style={{ textDecoration: "none" }}>
+            {tabs.map((tab) => (
               <Tab
-                color="violet"
-                _hover={{
-                  borderColor: "currentColor",
-                  textDecoration: "none",
-                }}
-                _selected={{
-                  color: "teal",
-                  borderColor: "currentColor",
-                  textDecoration: "none",
-                }}
-                py="26px"
-              >
-                My Shifts
-              </Tab>
-            </Link>
-            <Link to="/volunteer/postings" style={{ textDecoration: "none" }}>
-              <Tab
+                key={tab.name}
                 color="violet"
                 _hover={{
                   borderColor: "currentColor",
@@ -63,10 +52,11 @@ const VolunteerNavbar = ({
                   borderColor: "currentColor",
                 }}
                 py="26px"
+                onClick={() => history.push(tab.route)}
               >
-                Browse Volunteer Postings
+                {tab.name}
               </Tab>
-            </Link>
+            ))}
           </TabList>
         </Tabs>
         <Menu>
@@ -89,4 +79,4 @@ const VolunteerNavbar = ({
   );
 };
 
-export default VolunteerNavbar;
+export default Navbar;
