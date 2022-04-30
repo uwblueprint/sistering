@@ -1,16 +1,11 @@
 import React from "react";
 import { VStack, Text, Select } from "@chakra-ui/react";
 import { formatTimeHourMinutes } from "../../../utils/DateTimeUtils";
-
-type Shift = {
-  shiftId: number;
-  shiftStartTime: Date;
-  shiftEndTime: Date;
-};
+import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 
 type ShiftTimeHeaderProps = {
-  shifts: Shift[];
-  onShiftSelected: (id: number) => void;
+  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  onShiftSelected: (id: string) => void;
 };
 
 const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
@@ -20,24 +15,26 @@ const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
   return (
     <VStack
       spacing="12px"
+      w="full"
       px="32px"
       py="16px"
       alignItems="flex-start"
+      borderTop="1px"
+      borderLeft="1px"
       borderBottom="1px"
-      borderLeft="2px"
       borderColor="background.dark"
     >
       <Text textStyle="body-bold">Shift Time</Text>
       <Select
         size="md"
         textStyle="caption"
-        onChange={(e) => onShiftSelected(Number(e.target.value))}
+        onChange={(e) => onShiftSelected(String(e.target.value))}
       >
         {shifts.map((shift, i) => (
-          <option key={i} value={shift.shiftId}>
+          <option key={i} value={shift.id}>
             {`${formatTimeHourMinutes(
-              shift.shiftStartTime,
-            )} - ${formatTimeHourMinutes(shift.shiftEndTime)}`}
+              shift.startTime,
+            )} - ${formatTimeHourMinutes(shift.endTime)}`}
           </option>
         ))}
       </Select>

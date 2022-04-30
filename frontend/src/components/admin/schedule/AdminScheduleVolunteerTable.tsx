@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   Flex,
   VStack,
@@ -9,35 +9,42 @@ import {
 } from "@chakra-ui/react";
 
 import AdminScheduleVolunteerRow from "./AdminScheduleVolunteerRow";
-import { ShiftSignupStatus } from "../../../types/api/SignupTypes";
-
-export type Signup = {
-  volunteerId: string;
-  volunteerName: string;
-  note: string;
-  status: ShiftSignupStatus;
-};
+import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
 
 type AdminScheduleVolunteerTableProps = {
-  signups: Signup[];
-  numVolunteers: number;
-  selectAll: () => void;
-  updateSignupStatus: (id: string, isChecked: boolean) => void;
+  signups: SignupsAndVolunteerGraphQLResponseDTO[];
+  currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
+  onEditSignupsClick: (
+    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+  ) => void;
+  onSelectAllSignupsClick: () => void;
+  onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
 };
 
 const AdminScheduleVolunteerTable = ({
   signups,
-  numVolunteers,
-  selectAll,
-  updateSignupStatus,
+  currentlyEditingSignups,
+  onEditSignupsClick,
+  onSelectAllSignupsClick,
+  onSignupCheckboxClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
-  const [isEditing, setIsEditing] = useBoolean(true);
+  const [isEditing, setIsEditing] = useBoolean(false);
+  const [signupsToDisplay, setSignupsToDisplay] = useState<
+    SignupsAndVolunteerGraphQLResponseDTO[]
+  >(signups);
+  useEffect(() => {
+    if (isEditing) setSignupsToDisplay(currentlyEditingSignups);
+    else setSignupsToDisplay(signups);
+  }, [isEditing, signups, currentlyEditingSignups]);
+
   return (
     <VStack
       w="full"
       h="full"
       spacing={0}
-      border="1px"
+      borderTop="1px"
+      borderLeft="1px"
+      borderBottom="1px"
       borderColor="background.dark"
     >
       <VStack
@@ -58,7 +65,10 @@ const AdminScheduleVolunteerTable = ({
             px="18px"
             fontSize="12px"
             lineHeight="100%"
-            onClick={setIsEditing.toggle}
+            onClick={() => {
+              if (!isEditing) onEditSignupsClick(signups);
+              setIsEditing.toggle();
+            }}
           >
             {isEditing ? "Save" : "Edit"}
           </Button>
@@ -70,28 +80,28 @@ const AdminScheduleVolunteerTable = ({
             color="violet"
             textDecor="underline"
             cursor="pointer"
-            onClick={selectAll}
+            onClick={onSelectAllSignupsClick}
           >
             Select All
           </Text>
           <Spacer />
           <Text textStyle="caption" fontSize="12px">
-            Volunteers per shift: {numVolunteers}
+            Volunteers per shift: {signups[0] ? signups[0].numVolunteers : ""}
           </Text>
         </Flex>
       </VStack>
       <VStack w="full" spacing={0} overflow="auto">
-        {signups.map((signup, i) => (
+        {signupsToDisplay.map((signup, i) => (
           <AdminScheduleVolunteerRow
             key={i}
-            volunteerID={signup.volunteerId}
-            volunteerName={signup.volunteerName}
+            volunteerID={signup.volunteer.id}
+            volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
             note={signup.note}
             isConfirmed={
               signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
             }
             isDisabled={!isEditing}
-            updateSignupStatus={updateSignupStatus}
+            onSignupCheckboxClick={onSignupCheckboxClick}
           />
         ))}
       </VStack>
