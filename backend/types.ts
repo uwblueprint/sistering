@@ -41,12 +41,6 @@ export type PostingResponseDTO = Omit<
   employees: EmployeeUserResponseDTO[];
 };
 
-export type EmployeeResponseDTO = {
-  id: string;
-  branchId: string;
-  title: string;
-};
-
 export type VolunteerDTO = {
   id: string;
   hireDate: Date;

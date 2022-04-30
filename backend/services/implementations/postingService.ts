@@ -94,16 +94,16 @@ const convertToSkillResponseDTO = (skills: Skill[]): SkillResponseDTO[] => {
   });
 };
 
-const convertToEmployeeUserResponseDTO = async (
-  employees: Employee[],
-  userService: IUserService,
-): Promise<EmployeeUserResponseDTO[]> => {
-  return Promise.all(
-    employees.map(async (employee) => {
-      return userService.getEmployeeUserById(String(employee.id));
-    }),
-  );
-};
+// const convertToEmployeeUserResponseDTO = async (
+//   employees: Employee[],
+//   userService: IUserService,
+// ): Promise<EmployeeUserResponseDTO[]> => {
+//   return Promise.all(
+//     employees.map(async (employee) => {
+//       return userService.getEmployeeUserById(String(employee.id));
+//     }),
+//   );
+// };
 
 class PostingService implements IPostingService {
   shiftService: IShiftService;
@@ -124,6 +124,16 @@ class PostingService implements IPostingService {
       Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
+  }
+
+  async convertToEmployeeUserResponseDTO(
+    employees: Employee[],
+  ): Promise<EmployeeUserResponseDTO[]> {
+    return Promise.all(
+      employees.map(async (employee) => {
+        return this.userService.getEmployeeUserById(String(employee.id));
+      }),
+    );
   }
 
   async getPosting(postingId: string): Promise<PostingResponseDTO> {
@@ -150,9 +160,8 @@ class PostingService implements IPostingService {
       throw error;
     }
 
-    const employeeUsers = await convertToEmployeeUserResponseDTO(
+    const employeeUsers = await this.convertToEmployeeUserResponseDTO(
       posting.employees,
-      this.userService,
     );
 
     return {
@@ -206,10 +215,10 @@ class PostingService implements IPostingService {
         );
         return await Promise.all(
           postings.map(async (posting: PostingWithRelations) => {
-            const employeeUsers: EmployeeUserResponseDTO[] = await convertToEmployeeUserResponseDTO(
+            const employeeUsers: EmployeeUserResponseDTO[] = await this.convertToEmployeeUserResponseDTO(
               posting.employees,
-              this.userService,
             );
+
             return {
               id: String(posting.id),
               branch: convertToBranchResponseDTO(posting.branch),
@@ -292,10 +301,10 @@ class PostingService implements IPostingService {
       throw error;
     }
 
-    const employeeUsers: EmployeeUserResponseDTO[] = await convertToEmployeeUserResponseDTO(
+    const employeeUsers: EmployeeUserResponseDTO[] = await this.convertToEmployeeUserResponseDTO(
       newPosting.employees,
-      this.userService,
     );
+
     return {
       id: String(newPosting.id),
       branch: convertToBranchResponseDTO(newPosting.branch),
@@ -361,9 +370,8 @@ class PostingService implements IPostingService {
       throw error;
     }
 
-    const employeesArr: EmployeeUserResponseDTO[] = await convertToEmployeeUserResponseDTO(
+    const employeeUsers: EmployeeUserResponseDTO[] = await this.convertToEmployeeUserResponseDTO(
       updateResult.employees,
-      this.userService,
     );
 
     return {
@@ -371,7 +379,7 @@ class PostingService implements IPostingService {
       branch: convertToBranchResponseDTO(updateResult.branch),
       shifts: convertToShiftResponseDTO(updateResult.shifts),
       skills: convertToSkillResponseDTO(updateResult.skills),
-      employees: employeesArr,
+      employees: employeeUsers,
       title: updateResult.title,
       type: updateResult.type,
       status: updateResult.status,

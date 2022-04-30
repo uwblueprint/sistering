@@ -58,12 +58,6 @@ const postingType = gql`
     numVolunteers: Int!
   }
 
-  type EmployeeResponseDTO {
-    id: ID!
-    branchId: ID!
-    title: String!
-  }
-
   extend type Query {
     posting(id: ID!): PostingResponseDTO!
     postings(
