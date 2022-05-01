@@ -94,17 +94,6 @@ const convertToSkillResponseDTO = (skills: Skill[]): SkillResponseDTO[] => {
   });
 };
 
-// const convertToEmployeeUserResponseDTO = async (
-//   employees: Employee[],
-//   userService: IUserService,
-// ): Promise<EmployeeUserResponseDTO[]> => {
-//   return Promise.all(
-//     employees.map(async (employee) => {
-//       return userService.getEmployeeUserById(String(employee.id));
-//     }),
-//   );
-// };
-
 class PostingService implements IPostingService {
   shiftService: IShiftService;
 
