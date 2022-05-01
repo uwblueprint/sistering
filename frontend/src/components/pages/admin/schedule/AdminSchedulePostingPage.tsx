@@ -2,7 +2,6 @@ import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
-import cloneDeep from "lodash.clonedeep";
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
@@ -112,8 +111,12 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
       (signup) => signup.volunteer.id === volunteerId,
     );
     if (signupIndex >= 0) {
-      const signupsCopy = cloneDeep(currentlyEditingSignups);
-      signupsCopy[signupIndex].status = isChecked ? "CONFIRMED" : "PENDING";
+      const signup = currentlyEditingSignups[signupIndex];
+      const signupsCopy = [...currentlyEditingSignups];
+      signupsCopy[signupIndex] = {
+        ...signup,
+        status: isChecked ? "CONFIRMED" : "PENDING",
+      };
       setCurrentlyEditingSignups(signupsCopy);
     }
   };
