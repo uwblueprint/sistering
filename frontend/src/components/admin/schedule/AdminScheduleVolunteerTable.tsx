@@ -1,12 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  Flex,
-  VStack,
-  Text,
-  Button,
-  Spacer,
-  useBoolean,
-} from "@chakra-ui/react";
+import { Flex, VStack, Text, Button, Spacer } from "@chakra-ui/react";
 
 import AdminScheduleVolunteerRow from "./AdminScheduleVolunteerRow";
 import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
@@ -14,24 +7,24 @@ import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/Signup
 type AdminScheduleVolunteerTableProps = {
   signups: SignupsAndVolunteerGraphQLResponseDTO[];
   currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
-  onEditSignupsClick: (
-    signups: SignupsAndVolunteerGraphQLResponseDTO[],
-  ) => void;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
+  isEditing: boolean;
+  onButtonClick: () => void;
 };
 
 const AdminScheduleVolunteerTable = ({
   signups,
   currentlyEditingSignups,
-  onEditSignupsClick,
   onSelectAllSignupsClick,
   onSignupCheckboxClick,
+  isEditing,
+  onButtonClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
-  const [isEditing, setIsEditing] = useBoolean(false);
   const [signupsToDisplay, setSignupsToDisplay] = useState<
     SignupsAndVolunteerGraphQLResponseDTO[]
   >(signups);
+
   useEffect(() => {
     if (isEditing) setSignupsToDisplay(currentlyEditingSignups);
     else setSignupsToDisplay(signups);
@@ -65,10 +58,7 @@ const AdminScheduleVolunteerTable = ({
             px="18px"
             fontSize="12px"
             lineHeight="100%"
-            onClick={() => {
-              if (!isEditing) onEditSignupsClick(signups);
-              setIsEditing.toggle();
-            }}
+            onClick={onButtonClick}
           >
             {isEditing ? "Save" : "Edit"}
           </Button>
