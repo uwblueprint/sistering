@@ -98,9 +98,10 @@ const MonthViewShiftCalendar = ({
 
   const getEventsInMonth = (): MonthEvent[] => {
     const selectedMonthString = moment(selectedMonth).format("YYYY-MM");
-    return sortedEvents.filter((event) => {
+    const selectedMonthEvents = sortedEvents.filter((event) => {
       return moment(event.start).format("YYYY-MM") === selectedMonthString;
     });
+    return selectedMonthEvents;
   };
 
   return sortedEvents && sortedEvents.length > 0 ? (
