@@ -168,7 +168,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             Back to editing
           </Button>
           <Flex pb={6}>
-            <Text textStyle="display-large">Medical Reception Volunteer</Text>
+            <Text textStyle="display-medium">Medical Reception Volunteer</Text>
             <Spacer />
             <Button
               onClick={() => {
@@ -182,8 +182,8 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           {/* TODO: Get start and end date range from start/end of month */}
           <AdminScheduleTable
             schedule={TableTestData}
-            startDate={new Date()}
-            endDate={new Date()}
+            startDate={new Date(2022, 2, 6)}
+            endDate={new Date(2022, 3, 9)}
           />
         </Box>
       )}

@@ -96,6 +96,14 @@ export const TableTestData = [
     date: new Date("2022-03-12"),
     signups: [],
   },
+  {
+    date: new Date("2022-03-13"),
+    signups: [],
+  },
+  {
+    date: new Date("2022-03-14"),
+    signups: [],
+  },
 ];
 
 export type AdminScheduleSignup = {
@@ -121,10 +129,6 @@ const AdminScheduleTable = ({
   endDate,
   schedule,
 }: AdminScheduleTableProps): React.ReactElement => {
-  // start/end date is from schedule
-  // const startDate = moment(schedule.date).startOf("month");
-  // const endDate = moment(schedule.date).endOf("month");
-
   const [currentWeek, setWeek] = React.useState(
     moment(startDate).startOf("week").toDate(),
   );
@@ -206,28 +210,40 @@ const AdminScheduleTable = ({
           <col style={{ width: "30%" }} />
         </colgroup>
         <Tbody>
-          {schedule.map((day) => {
-            return (
-              <Fragment key={day.date.toDateString()}>
-                <AdminScheduleTableDate
-                  key={day.date.toDateString()}
-                  date={day.date}
-                />
-                {day.signups.length > 0 ? (
-                  day.signups.map((signup: AdminScheduleSignup, i) => (
-                    <AdminScheduleTableRow
-                      key={`${signup.volunteer?.userId}-${i}`}
-                      volunteer={signup.volunteer}
-                      postingStart={signup.startTime}
-                      postingEnd={signup.endTime}
-                    />
-                  ))
-                ) : (
-                  <AdminScheduleTableRow />
-                )}
-              </Fragment>
-            );
-          })}
+          {schedule
+            .filter(
+              (day) =>
+                moment(day.date)
+                  .add(1, "day")
+                  .endOf("week")
+                  .diff(
+                    moment(currentWeek).add(1, "day").endOf("week"),
+                    "days",
+                    false,
+                  ) === 0,
+            )
+            .map((day) => {
+              return (
+                <Fragment key={day.date.toDateString()}>
+                  <AdminScheduleTableDate
+                    key={day.date.toDateString()}
+                    date={day.date}
+                  />
+                  {day.signups.length > 0 ? (
+                    day.signups.map((signup: AdminScheduleSignup, i) => (
+                      <AdminScheduleTableRow
+                        key={`${signup.volunteer?.userId}-${i}`}
+                        volunteer={signup.volunteer}
+                        postingStart={signup.startTime}
+                        postingEnd={signup.endTime}
+                      />
+                    ))
+                  ) : (
+                    <AdminScheduleTableRow />
+                  )}
+                </Fragment>
+              );
+            })}
         </Tbody>
       </Table>
     </Box>
