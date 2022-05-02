@@ -98,9 +98,10 @@ const MonthViewShiftCalendar = ({
 
   const getEventsInMonth = (): MonthEvent[] => {
     const selectedMonthString = moment(selectedMonth).format("YYYY-MM");
-    return sortedEvents.filter((event) => {
+    const selectedMonthEvents = sortedEvents.filter((event) => {
       return moment(event.start).format("YYYY-MM") === selectedMonthString;
     });
+    return selectedMonthEvents;
   };
 
   return sortedEvents && sortedEvents.length > 0 ? (
@@ -167,7 +168,10 @@ const MonthViewShiftCalendar = ({
           Next month
         </Button>
       </Flex>
-      <MonthlyViewShiftCalendar events={getEventsInMonth()} />
+      <MonthlyViewShiftCalendar
+        events={getEventsInMonth()}
+        initialDate={selectedMonth}
+      />
     </Box>
   ) : (
     <Box>No events to display</Box>

@@ -15,17 +15,19 @@ import "./Calendar.css";
 // AdminShiftCalendar assumes that all events are in the same month.
 type AdminShiftCalendarProps = {
   events: Event[];
+  initialDate: Date;
 };
 
 const MonthlyViewShiftCalendar = ({
   events,
+  initialDate,
 }: AdminShiftCalendarProps): React.ReactElement => {
   const calendarRef = React.useRef<FullCalendar>(null);
 
   useEffect(() => {
     const calendarApi = calendarRef.current?.getApi();
-    if (calendarApi && events.length > 0) {
-      calendarApi.gotoDate(events[0].start);
+    if (calendarApi) {
+      calendarApi.gotoDate(initialDate);
     }
   });
 
@@ -72,7 +74,7 @@ const MonthlyViewShiftCalendar = ({
         }}
         fixedWeekCount={false}
         headerToolbar={false}
-        initialDate={events.length > 0 ? events[0].start : new Date()}
+        initialDate={initialDate}
         initialView="dayGridMonth"
         plugins={[dayGridPlugin]}
         selectable
