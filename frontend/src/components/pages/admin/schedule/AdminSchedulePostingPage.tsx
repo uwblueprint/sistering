@@ -15,9 +15,8 @@ import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
 import ErrorModal from "../../../common/ErrorModal";
-import MonthlyViewShiftCalendar, {
-  ADMIN_SHIFT_CALENDAR_TEST_EVENTS,
-} from "../../../admin/ShiftCalendar/MonthlyViewReadOnlyShiftCalendar";
+import MonthlyViewShiftCalendar from "../../../admin/ShiftCalendar/MonthlyViewReadOnlyShiftCalendar";
+import { ADMIN_SHIFT_CALENDAR_TEST_EVENTS } from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
 import AdminScheduleTable, {
   TableTestData,
 } from "../../../admin/schedule/AdminScheduleTable";
@@ -138,6 +137,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             />
             <MonthlyViewShiftCalendar
               events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS}
+              initialDate={ADMIN_SHIFT_CALENDAR_TEST_EVENTS[0].start}
             />
           </Box>
           <Box w="400px" overflow="hidden">
