@@ -1,7 +1,18 @@
 import React, { Fragment } from "react";
-import { Table, Tbody, Box } from "@chakra-ui/react";
+import {
+  Table,
+  Tbody,
+  Box,
+  Flex,
+  Button,
+  Select,
+  Spacer,
+} from "@chakra-ui/react";
+import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
+import moment from "moment";
 import AdminScheduleTableDate from "./AdminScheduleTableDate";
 import AdminScheduleTableRow from "./AdminScheduleTableRow";
+import { getWeekDiff } from "../../../utils/DateTimeUtils";
 
 // Example test data for the AdminScheduleTable component.
 export const TableTestData = [
@@ -85,6 +96,14 @@ export const TableTestData = [
     date: new Date("2022-03-12"),
     signups: [],
   },
+  {
+    date: new Date("2022-03-13"),
+    signups: [],
+  },
+  {
+    date: new Date("2022-03-14"),
+    signups: [],
+  },
 ];
 
 export type AdminScheduleSignup = {
@@ -100,14 +119,90 @@ export type AdminScheduleDay = {
 
 export type AdminScheduleTableProps = {
   // The schedule prop should be sorted by date in ascending order.
+  startDate: Date;
+  endDate: Date;
   schedule: AdminScheduleDay[];
 };
 
 const AdminScheduleTable = ({
+  startDate,
+  endDate,
   schedule,
 }: AdminScheduleTableProps): React.ReactElement => {
+  const [currentWeek, setWeek] = React.useState(
+    moment(startDate).startOf("week").toDate(),
+  );
   return (
-    <Box borderWidth="1px" borderColor="background.dark" width="100%">
+    <Box
+      borderWidth="1px"
+      borderColor="background.dark"
+      bgColor="white"
+      width="100%"
+    >
+      <Flex alignContent="center" px={25} py={25}>
+        <Button
+          disabled={getWeekDiff(startDate, currentWeek) === 0}
+          onClick={() =>
+            setWeek(moment(currentWeek).subtract(1, "weeks").toDate())
+          }
+          variant="link"
+          leftIcon={<ChevronLeftIcon />}
+        >
+          Previous week
+        </Button>
+        <Spacer />
+        <Select
+          width="33%"
+          _hover={{ bgColor: "gray.100" }}
+          value={getWeekDiff(startDate, currentWeek)}
+          onChange={(e) =>
+            setWeek(
+              moment(startDate)
+                .startOf("week")
+                .add(Number(e.target.value), "weeks")
+                .toDate(),
+            )
+          }
+        >
+          {Array(getWeekDiff(startDate, endDate) + 1)
+            .fill(0)
+            .map((_, i) => i)
+            .map((week) => {
+              const startWeek = moment(startDate)
+                .startOf("week")
+                .add(week, "weeks")
+                .toDate();
+
+              return (
+                <option key={week} value={week} color="gray.100">
+                  {startWeek.toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "short",
+                    day: "numeric",
+                  })}{" "}
+                  to{" "}
+                  {moment(startWeek)
+                    .endOf("week")
+                    .toDate()
+                    .toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "short",
+                      day: "numeric",
+                    })}
+                </option>
+              );
+            })}
+        </Select>
+        <Spacer />
+        <Button
+          disabled={getWeekDiff(currentWeek, endDate) === 0}
+          onClick={() => setWeek(moment(currentWeek).add(1, "weeks").toDate())}
+          variant="link"
+          rightIcon={<ChevronRightIcon />}
+        >
+          Next week
+        </Button>
+      </Flex>
       <Table variant="brand">
         <colgroup>
           <col style={{ width: "30%" }} />
@@ -115,28 +210,40 @@ const AdminScheduleTable = ({
           <col style={{ width: "30%" }} />
         </colgroup>
         <Tbody>
-          {schedule.map((day) => {
-            return (
-              <Fragment key={day.date.toDateString()}>
-                <AdminScheduleTableDate
-                  key={day.date.toDateString()}
-                  date={day.date}
-                />
-                {day.signups.length > 0 ? (
-                  day.signups.map((signup: AdminScheduleSignup, i) => (
-                    <AdminScheduleTableRow
-                      key={`${signup.volunteer?.userId}-${i}`}
-                      volunteer={signup.volunteer}
-                      postingStart={signup.startTime}
-                      postingEnd={signup.endTime}
-                    />
-                  ))
-                ) : (
-                  <AdminScheduleTableRow />
-                )}
-              </Fragment>
-            );
-          })}
+          {schedule
+            .filter(
+              (day) =>
+                moment(day.date)
+                  .add(1, "day")
+                  .endOf("week")
+                  .diff(
+                    moment(currentWeek).add(1, "day").endOf("week"),
+                    "days",
+                    false,
+                  ) === 0,
+            )
+            .map((day) => {
+              return (
+                <Fragment key={day.date.toDateString()}>
+                  <AdminScheduleTableDate
+                    key={day.date.toDateString()}
+                    date={day.date}
+                  />
+                  {day.signups.length > 0 ? (
+                    day.signups.map((signup: AdminScheduleSignup, i) => (
+                      <AdminScheduleTableRow
+                        key={`${signup.volunteer?.userId}-${i}`}
+                        volunteer={signup.volunteer}
+                        postingStart={signup.startTime}
+                        postingEnd={signup.endTime}
+                      />
+                    ))
+                  ) : (
+                    <AdminScheduleTableRow />
+                  )}
+                </Fragment>
+              );
+            })}
         </Tbody>
       </Table>
     </Box>
