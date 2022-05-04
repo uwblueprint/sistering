@@ -32,9 +32,11 @@ const VolunteerAvailabilityTableRow = ({
   deleteSignups,
   setDeleteSignups,
 }: VolunteerAvailabilityTableRowProps): React.ReactElement => {
-  const [checked, setChecked] = React.useState(shift.signups.length > 0);
+  const [checked, setChecked] = React.useState(
+    selectedShifts.findIndex((select) => select.shiftId === shift.id) >= 0,
+  );
   const [note, setNote] = React.useState(
-    shift.signups.length > 0 ? shift.signups[0].note : "",
+    selectedShifts.find((select) => select.shiftId === shift.id)?.note ?? "",
   );
 
   return (
