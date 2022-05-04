@@ -155,7 +155,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
               >
                 <option value="week">This week</option>
                 <option value="month">This month</option>
-                <option value="all">All shifts</option>
+                <option value="all">All postings</option>
               </Select>
             </HStack>
           </HStack>
