@@ -1,10 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
-import {
-  GoogleLogin,
-  GoogleLoginResponse,
-  GoogleLoginResponseOffline,
-} from "react-google-login";
+
 import { gql, useMutation } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
 
@@ -19,29 +15,9 @@ import { AuthenticatedUser } from "../../types/AuthTypes";
 
 import ErrorModal from "../common/ErrorModal";
 
-type GoogleResponse = GoogleLoginResponse | GoogleLoginResponseOffline;
-
-type GoogleErrorResponse = {
-  error: string;
-  details: string;
-};
-
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
     login(email: $email, password: $password) {
-      id
-      firstName
-      lastName
-      email
-      role
-      accessToken
-    }
-  }
-`;
-
-const LOGIN_WITH_GOOGLE = gql`
-  mutation LoginWithGoogle($idToken: String!) {
-    loginWithGoogle(idToken: $idToken) {
       id
       firstName
       lastName
@@ -61,9 +37,6 @@ const Login = (): React.ReactElement => {
   const [login, { error: loginError }] = useMutation<{
     login: AuthenticatedUser;
   }>(LOGIN);
-  const [loginWithGoogle, { error: loginWithGoogleError }] = useMutation<{
-    loginWithGoogle: AuthenticatedUser;
-  }>(LOGIN_WITH_GOOGLE);
 
   const onLogInClick = async () => {
     const user: AuthenticatedUser = await authAPIClient.login(
@@ -82,21 +55,13 @@ const Login = (): React.ReactElement => {
     history.push(RESET_PASSWORD_PAGE);
   };
 
-  const onGoogleLoginSuccess = async (idToken: string) => {
-    const user: AuthenticatedUser = await authAPIClient.loginWithGoogle(
-      idToken,
-      loginWithGoogle,
-    );
-    setAuthenticatedUser(user);
-  };
-
   if (authenticatedUser) {
     return <Redirect to={HOME_PAGE} />;
   }
 
   return (
     <div style={{ textAlign: "center" }}>
-      {(loginError || loginWithGoogleError) && <ErrorModal />}
+      {loginError && <ErrorModal />}
       <Text textStyle="display-large">Login</Text>
       <form>
         <div>
@@ -126,22 +91,6 @@ const Login = (): React.ReactElement => {
             Log In
           </button>
         </div>
-        <GoogleLogin
-          clientId={process.env.REACT_APP_OAUTH_CLIENT_ID || ""}
-          buttonText="Login with Google"
-          onSuccess={(response: GoogleResponse): void => {
-            if ("tokenId" in response) {
-              onGoogleLoginSuccess(response.tokenId);
-            } else {
-              // eslint-disable-next-line no-alert
-              window.alert(response);
-            }
-          }}
-          onFailure={(error: GoogleErrorResponse) =>
-            // eslint-disable-next-line no-alert
-            window.alert(JSON.stringify(error))
-          }
-        />
       </form>
       <div>
         <button
