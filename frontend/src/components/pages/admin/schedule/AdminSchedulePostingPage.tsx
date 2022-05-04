@@ -1,9 +1,10 @@
-import { Flex, Box, HStack, VStack } from "@chakra-ui/react";
+import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
 
+import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
 import {
   ShiftSignupStatus,
@@ -150,14 +151,41 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           </Box>
         </Flex>
       ) : (
-        <VStack
+        <Box
           backgroundColor="background.light"
           width="100%"
           alignItems="center"
           px="100px"
+          pt={14}
+          minH="100vh"
         >
-          <AdminScheduleTable schedule={TableTestData} />
-        </VStack>
+          <Button
+            onClick={() => console.log("TODO: Back")}
+            variant="link"
+            mb={4}
+            leftIcon={<ChevronLeftIcon />}
+          >
+            Back to editing
+          </Button>
+          <Flex pb={6}>
+            <Text textStyle="display-medium">Medical Reception Volunteer</Text>
+            <Spacer />
+            <Button
+              onClick={() => {
+                // Submit the selected shifts
+                console.log("TODO: Publish");
+              }}
+            >
+              Publish schedule
+            </Button>
+          </Flex>
+          {/* TODO: Get start and end date range from start/end of month */}
+          <AdminScheduleTable
+            schedule={TableTestData}
+            startDate={new Date(2022, 2, 6)}
+            endDate={new Date(2022, 3, 9)}
+          />
+        </Box>
       )}
     </Flex>
   );

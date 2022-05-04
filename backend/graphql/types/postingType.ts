@@ -47,7 +47,7 @@ const postingType = gql`
     branch: BranchResponseDTO!
     shifts: [ShiftResponseDTO!]!
     skills: [SkillResponseDTO!]!
-    employees: [EmployeeResponseDTO!]!
+    employees: [EmployeeUserResponseDTO!]!
     title: String!
     type: PostingType!
     status: PostingStatus!
@@ -56,12 +56,6 @@ const postingType = gql`
     endDate: Date!
     autoClosingDate: Date!
     numVolunteers: Int!
-  }
-
-  type EmployeeResponseDTO {
-    id: ID!
-    branchId: ID!
-    title: String!
   }
 
   extend type Query {

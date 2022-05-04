@@ -38,13 +38,7 @@ export type PostingResponseDTO = Omit<
   branch: BranchResponseDTO;
   shifts: ShiftResponseDTO[];
   skills: SkillResponseDTO[];
-  employees: EmployeeResponseDTO[];
-};
-
-export type EmployeeResponseDTO = {
-  id: string;
-  branchId: string;
-  title: string;
+  employees: EmployeeUserResponseDTO[];
 };
 
 export type VolunteerDTO = {
