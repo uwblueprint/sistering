@@ -38,3 +38,11 @@ export type PostingResponseDTO = Omit<
   skills: SkillResponseDTO[];
   employees: EmployeeResponseDTO[];
 };
+
+export type PostingDataQueryResponse = {
+  posting: PostingResponseDTO;
+};
+
+export type PostingDataQueryInput = {
+  id: string;
+};

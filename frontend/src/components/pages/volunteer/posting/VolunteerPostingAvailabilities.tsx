@@ -13,9 +13,17 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { Redirect, useHistory, useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import VolunteerAvailabilityTable from "../../../volunteer/shifts/VolunteerAvailabilityTable";
-import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../../types/api/ShiftTypes";
+import {
+  ShiftWithSignupAndVolunteerResponseDTO,
+  VolunteerPostingAvailabilitiesDataQueryInput,
+  VolunteerPostingAvailabilitiesDataQueryResponse,
+} from "../../../../types/api/ShiftTypes";
 import ErrorModal from "../../../common/ErrorModal";
-import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
+import {
+  PostingDataQueryInput,
+  PostingDataQueryResponse,
+  PostingResponseDTO,
+} from "../../../../types/api/PostingTypes";
 import {
   DeleteSignupRequest,
   DeleteSignupRequestDTO,
@@ -27,8 +35,6 @@ import AUTHENTICATED_USER_KEY from "../../../../constants/AuthConstants";
 import { AuthenticatedUser } from "../../../../types/AuthTypes";
 import { getLocalStorageObj } from "../../../../utils/LocalStorageUtils";
 
-// TODO: A filter should be added to the backend, currently, no filter is supported
-// TODO: Check we we need confirmed shift status
 const SHIFTS_WITH_SIGNUPS_BY_POSTING = gql`
   query VolunteerPostingAvailabilities_ShiftsWithSignupsByPosting(
     $postingId: ID!
@@ -52,7 +58,6 @@ const SHIFTS_WITH_SIGNUPS_BY_POSTING = gql`
   }
 `;
 
-// TODO: Remove redundancy from other pages
 const POSTING = gql`
   query VolunteerPostingAvailabilitiesDetails_Posting($id: ID!) {
     posting(id: $id) {
@@ -75,8 +80,6 @@ const POSTING = gql`
   }
 `;
 
-// WE pass the user id from our current session token
-// TODO: Make this pass in a array of DTO
 const SUBMIT_SIGNUPS = gql`
   mutation VolunteerPostingAvailabilities_SubmitSignups(
     $upsertDeleteShifts: UpsertDeleteShiftSignupRequestDTO!
@@ -93,43 +96,45 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
   );
   const [shiftSignups, setShiftSignups] = useState<SignupRequest[]>([]);
   const [deleteSignups, setDeleteSignups] = useState<DeleteSignupRequest[]>([]);
+  const [hasSubmitError, setHasSubmitError] = useState(false);
 
   const { id } = useParams<{ id: string }>();
   const {
     loading: isShiftsLoading,
     error: shiftError,
     data: { shiftsWithSignupsAndVolunteersByPosting: shiftsByPosting } = {},
-  } = useQuery(SHIFTS_WITH_SIGNUPS_BY_POSTING, {
+  } = useQuery<
+    VolunteerPostingAvailabilitiesDataQueryResponse,
+    VolunteerPostingAvailabilitiesDataQueryInput
+  >(SHIFTS_WITH_SIGNUPS_BY_POSTING, {
     variables: { postingId: id, userId: currentUser?.id },
     fetchPolicy: "cache-and-network",
     onCompleted: () => {
-      setShiftSignups(
-        ((shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]) ?? [])
-          .filter((shift) => shift.signups.length > 0)
-          .map((shift) => {
-            return {
-              shiftId: shift.id,
-              note: shift.signups[0].note,
-            };
-          }),
-      );
-      setDeleteSignups(
-        ((shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]) ?? [])
-          .filter((shift) => shift.signups.length > 0)
-          .map((shift) => {
-            return {
-              shiftId: shift.id,
-              toDelete: false,
-            };
-          }),
-      );
+      const initShiftSignups = (shiftsByPosting ?? [])
+        .filter((shift) => shift.signups.length > 0)
+        .map((shift) => {
+          return {
+            shiftId: shift.id,
+            note: shift.signups[0].note,
+          };
+        });
+      const initDeleteSignups = (shiftsByPosting ?? [])
+        .filter((shift) => shift.signups.length > 0)
+        .map((shift) => {
+          return {
+            shiftId: shift.id,
+            toDelete: false,
+          };
+        });
+      setShiftSignups(initShiftSignups);
+      setDeleteSignups(initDeleteSignups);
     },
   });
   const {
     error: postingError,
     loading: isPostingLoading,
     data: { posting: postingDetails } = {},
-  } = useQuery(POSTING, {
+  } = useQuery<PostingDataQueryResponse, PostingDataQueryInput>(POSTING, {
     variables: { id },
     fetchPolicy: "cache-and-network",
   });
@@ -138,6 +143,45 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
   const [submitSignups] = useMutation<{ submitSignups: SignupResponseDTO }>(
     SUBMIT_SIGNUPS,
   );
+
+  const handleSubmitClick = async () => {
+    const graphQLResult = await submitSignups({
+      variables: {
+        upsertDeleteShifts: {
+          upsertShiftSignups: shiftSignups.map((signup) => {
+            return {
+              shiftId: signup.shiftId,
+              userId: currentUser?.id,
+              note: signup.note,
+              numVolunteers: postingDetails?.numVolunteers,
+            } as SignupRequestDTO;
+          }),
+          deleteShiftSignups: deleteSignups
+            .filter((signup) => signup.toDelete)
+            .map((shift) => {
+              return {
+                shiftId: shift.shiftId,
+                userId: currentUser?.id,
+              } as DeleteSignupRequestDTO;
+            }),
+        },
+      },
+    });
+    if (!graphQLResult.errors) {
+      toast({
+        title: "Availability Submitted",
+        description: "Your availability has been submitted for review.",
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      history.push(`/volunteer/posting/${id}`);
+    } else {
+      // Display error model
+      setHasSubmitError(true);
+    }
+  };
+
   if (isPostingLoading || isShiftsLoading) {
     return <Spinner />;
   }
@@ -146,7 +190,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" pt={14} px={100} minH="100vh">
-      {(shiftError || postingError) && <ErrorModal />}
+      {(shiftError || postingError || hasSubmitError) && <ErrorModal />}
       <Button
         onClick={() => history.push(`/volunteer/posting/${id}`)}
         variant="link"
@@ -158,45 +202,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
       <Flex pb={7}>
         <Text textStyle="display-large">Select your Availability</Text>
         <Spacer />
-        <Button
-          onClick={async () => {
-            const graphQLResult = await submitSignups({
-              variables: {
-                upsertDeleteShifts: {
-                  upsertShiftSignups: shiftSignups.map((signup) => {
-                    return {
-                      shiftId: signup.shiftId,
-                      userId: currentUser?.id,
-                      note: signup.note,
-                      numVolunteers: 0, // TODO: Confirm this is correct for init
-                    } as SignupRequestDTO;
-                  }),
-                  deleteShiftSignups: deleteSignups
-                    .filter((signup) => signup.toDelete)
-                    .map((shift) => {
-                      return {
-                        shiftId: shift.shiftId,
-                        userId: currentUser?.id,
-                      } as DeleteSignupRequestDTO;
-                    }),
-                },
-              },
-            });
-            // TODO: Handle error case
-            if (!graphQLResult.errors) {
-              toast({
-                title: "Availability Submitted",
-                description: "Your availability has been submitted for review.",
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-              });
-              history.push(`/volunteer/posting/${id}`);
-            }
-          }}
-        >
-          Submit
-        </Button>
+        <Button onClick={handleSubmitClick}>Submit</Button>
       </Flex>
       <VolunteerAvailabilityTable
         postingShifts={

@@ -77,7 +77,7 @@ const VolunteerAvailabilityTableRow = ({
           onChange={(event) => {
             setNote(event.target.value);
           }}
-          onBlur={(event) => {
+          onBlur={() => {
             setSelectedShifts(
               selectedShifts.map((select) => {
                 if (select.shiftId === shift.id) {
