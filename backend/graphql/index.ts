@@ -150,7 +150,7 @@ const graphQLMiddlewares = {
     shift: authorizedByAdmin(),
     shifts: authorizedByAdmin(),
     shiftsByPosting: authorizedByAdminAndVolunteer(),
-    shiftsWithSignupsAndVolunteersByPosting: authorizedByAdmin(),
+    shiftsWithSignupsAndVolunteersByPosting: authorizedByAdminAndVolunteer(),
     posting: authorizedByAdminAndVolunteer(),
     postings: authorizedByAdminAndVolunteer(),
     volunteerUserById: authorizedByAdminAndVolunteer(),

@@ -13,20 +13,23 @@ import {
 import React from "react";
 import moment from "moment";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { ShiftResponseDTO } from "../../../types/api/ShiftTypes";
+import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../types/api/ShiftTypes";
 import NoShiftsAvailableTableRow from "./NoShiftsAvailableTableRow";
 import VolunteerAvailabilityTableRow from "./VolunteerAvailabilityTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
-import { SignupRequestDTO } from "../../../types/api/SignupTypes";
+import {
+  DeleteSignupRequest,
+  SignupRequest,
+} from "../../../types/api/SignupTypes";
 
 type VolunteerAvailabilityTableProps = {
-  postingShifts: ShiftResponseDTO[];
+  postingShifts: ShiftWithSignupAndVolunteerResponseDTO[];
   postingStartDate: Date;
   postingEndDate: Date;
-  selectedShifts: ShiftResponseDTO[];
-  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftResponseDTO[]>>;
-  signupNotes: SignupRequestDTO[];
-  setSignupNotes: React.Dispatch<React.SetStateAction<SignupRequestDTO[]>>;
+  selectedShifts: SignupRequest[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<SignupRequest[]>>;
+  deleteSignups: DeleteSignupRequest[];
+  setDeleteSignups: React.Dispatch<React.SetStateAction<DeleteSignupRequest[]>>;
 };
 
 const VolunteerAvailabilityTable = ({
@@ -35,8 +38,8 @@ const VolunteerAvailabilityTable = ({
   postingEndDate,
   selectedShifts,
   setSelectedShifts,
-  signupNotes,
-  setSignupNotes,
+  deleteSignups,
+  setDeleteSignups,
 }: VolunteerAvailabilityTableProps): React.ReactElement => {
   const [currentWeek, setWeek] = React.useState(
     moment(postingStartDate).startOf("week").toDate(),
@@ -155,10 +158,8 @@ const VolunteerAvailabilityTable = ({
                           shift={shift}
                           selectedShifts={selectedShifts}
                           setSelectedShifts={setSelectedShifts}
-                          signupNotes={signupNotes}
-                          setSignupNotes={setSignupNotes}
-                          start={shift.startTime}
-                          end={shift.endTime}
+                          deleteSignups={deleteSignups}
+                          setDeleteSignups={setDeleteSignups}
                         />
                       </Td>
                     </Tr>

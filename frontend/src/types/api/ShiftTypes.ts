@@ -34,3 +34,12 @@ export type ShiftResponseDTO = ShiftDTO;
 export type ShiftWithSignupAndVolunteerGraphQLResponseDTO = ShiftWithSignupAndVolunteerResponseDTO & {
   signups: SignupsAndVolunteerGraphQLResponseDTO;
 } & Partial<ShiftWithSignupAndVolunteerResponseDTO>;
+
+export type VolunteerPostingAvailabilitiesDataQueryResponse = {
+  shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+};
+
+export type VolunteerPostingAvailabilitiesDataQueryInput = {
+  postingId: string;
+  userId?: string;
+};

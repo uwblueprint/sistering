@@ -11,36 +11,33 @@ import {
   formatTimeHourMinutes,
   getElapsedHours,
 } from "../../../utils/DateTimeUtils";
-import { ShiftResponseDTO } from "../../../types/api/ShiftTypes";
-import { SignupRequestDTO } from "../../../types/api/SignupTypes";
+import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../types/api/ShiftTypes";
+import {
+  DeleteSignupRequest,
+  SignupRequest,
+} from "../../../types/api/SignupTypes";
 
 type VolunteerAvailabilityTableRowProps = {
-  shift: ShiftResponseDTO;
-  selectedShifts: ShiftResponseDTO[];
-  setSelectedShifts: React.Dispatch<React.SetStateAction<ShiftResponseDTO[]>>;
-  signupNotes: SignupRequestDTO[];
-  setSignupNotes: React.Dispatch<React.SetStateAction<SignupRequestDTO[]>>;
-  start: Date;
-  end: Date;
+  shift: ShiftWithSignupAndVolunteerResponseDTO;
+  selectedShifts: SignupRequest[];
+  setSelectedShifts: React.Dispatch<React.SetStateAction<SignupRequest[]>>;
+  deleteSignups: DeleteSignupRequest[];
+  setDeleteSignups: React.Dispatch<React.SetStateAction<DeleteSignupRequest[]>>;
 };
 
 const VolunteerAvailabilityTableRow = ({
   shift,
   selectedShifts,
   setSelectedShifts,
-  signupNotes,
-  setSignupNotes,
-  start,
-  end,
+  deleteSignups,
+  setDeleteSignups,
 }: VolunteerAvailabilityTableRowProps): React.ReactElement => {
-  const [checked, setChecked] = React.useState(selectedShifts.includes(shift));
-  const signupNote = React.useMemo(() => {
-    const note = signupNotes.find((s) => s.shiftId === shift.id);
-    if (note) {
-      return note.note;
-    }
-    return "";
-  }, [signupNotes, shift]);
+  const [checked, setChecked] = React.useState(
+    selectedShifts.findIndex((select) => select.shiftId === shift.id) >= 0,
+  );
+  const [note, setNote] = React.useState(
+    selectedShifts.find((select) => select.shiftId === shift.id)?.note ?? "",
+  );
 
   return (
     <Flex bgColor={checked ? "purple.50" : undefined} px={25} py={3}>
@@ -50,38 +47,53 @@ const VolunteerAvailabilityTableRow = ({
         isChecked={checked}
         onChange={(event) => {
           if (!checked) {
-            setSelectedShifts([...selectedShifts, shift]);
+            setSelectedShifts([...selectedShifts, { shiftId: shift.id, note }]);
           } else {
-            const selected = selectedShifts.filter((s) => s !== shift);
-            setSelectedShifts(selected);
+            setSelectedShifts(
+              selectedShifts.filter((select) => select.shiftId !== shift.id),
+            );
+            setNote("");
           }
+          setDeleteSignups(
+            deleteSignups.map((signup) => {
+              const newSignup = signup;
+              if (newSignup.shiftId === shift.id) {
+                newSignup.toDelete = checked;
+              }
+              return newSignup;
+            }),
+          );
           setChecked(event.target.checked);
         }}
       >
-        {`${formatTimeHourMinutes(start)} -  ${formatTimeHourMinutes(
-          end,
-        )} (${getElapsedHours(start, end)} hrs)`}
+        {`${formatTimeHourMinutes(shift.startTime)} -  ${formatTimeHourMinutes(
+          shift.endTime,
+        )} (${getElapsedHours(shift.startTime, shift.endTime)} hrs)`}
       </Checkbox>
       <InputGroup>
         <Input
           isDisabled={!checked}
           bg="white"
           placeholder="Add note (optional)"
+          value={note}
           onChange={(event) => {
-            const otherNotes = signupNotes.filter(
-              (s) => s.shiftId !== shift.id,
+            setNote(event.target.value);
+          }}
+          onBlur={() => {
+            setSelectedShifts(
+              selectedShifts.map((select) => {
+                if (select.shiftId === shift.id) {
+                  const newShift = select;
+                  newShift.note = note.trim();
+                  return newShift;
+                }
+                return select;
+              }),
             );
-            setSignupNotes([
-              ...otherNotes,
-              {
-                shiftId: shift.id,
-                note: event.target.value.toString().trim(),
-              },
-            ]);
           }}
         />
         <InputRightElement
-          visibility={signupNote.length > 0 && checked ? "visible" : "hidden"}
+          visibility={note.length > 0 && checked ? "visible" : "hidden"}
         >
           <CheckIcon color="brand.500" />
         </InputRightElement>

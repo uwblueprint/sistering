@@ -20,10 +20,17 @@ export type SignupRequestDTO = Omit<
   "id" | "numVolunteers" | "userId" | "status"
 >;
 
+export type SignupRequest = Omit<SignupRequestDTO, "status">;
+
 export type DeleteSignupRequestDTO = Omit<
   SignupDTO,
   "id" | "numVolunteers" | "note"
 >;
+
+export type DeleteSignupRequest = Omit<
+  DeleteSignupRequestDTO,
+  "status" | "userId"
+> & { toDelete: boolean };
 
 export type SignupResponseDTO = SignupDTO;
 
