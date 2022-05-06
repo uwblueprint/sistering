@@ -143,22 +143,25 @@ const AdminScheduleTable = ({
                     key={new Date(shift.startTime).toDateString()}
                     date={new Date(shift.startTime)}
                   />
-                  {shift.signups.length > 0 ? (
+                  {shift.signups.filter(
+                    (signup) => signup.status !== "CANCELED",
+                  ).length > 0 ? (
                     shift.signups.map(
-                      (signup: SignupsAndVolunteerGraphQLResponseDTO, i) => (
-                        <AdminScheduleTableRow
-                          key={`${signup.volunteer.id}-${i}`}
-                          volunteer={{
-                            name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
-                            userId: signup.volunteer.id,
-                          }}
-                          postingStart={signup.shiftStartTime}
-                          postingEnd={signup.shiftEndTime}
-                          numVolunteers={signup.numVolunteers}
-                          note={signup.note}
-                          shiftId={shift.id}
-                        />
-                      ),
+                      (signup: SignupsAndVolunteerGraphQLResponseDTO, i) =>
+                        signup.status !== "CANCELED" && (
+                          <AdminScheduleTableRow
+                            key={`${signup.volunteer.id}-${i}`}
+                            volunteer={{
+                              name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
+                              userId: signup.volunteer.id,
+                            }}
+                            postingStart={signup.shiftStartTime}
+                            postingEnd={signup.shiftEndTime}
+                            numVolunteers={signup.numVolunteers}
+                            note={signup.note}
+                            shiftId={shift.id}
+                          />
+                        ),
                     )
                   ) : (
                     <AdminScheduleTableRow shiftId={shift.id} />
