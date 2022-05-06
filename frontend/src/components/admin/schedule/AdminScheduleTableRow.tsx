@@ -1,6 +1,5 @@
 import { Button, Td, Text, Tr } from "@chakra-ui/react";
 import React from "react";
-import { ShiftSignupStatus } from "../../../types/api/SignupTypes";
 import { getElapsedHours, getTime } from "../../../utils/DateTimeUtils";
 import RemoveVolunteerModal from "../RemoveVolunteerModal";
 
