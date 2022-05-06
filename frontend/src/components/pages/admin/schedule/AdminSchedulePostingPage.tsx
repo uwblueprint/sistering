@@ -53,6 +53,8 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
       startTime
       endTime
       signups {
+        shiftStartTime
+        shiftEndTime
         numVolunteers
         note
         status
@@ -190,13 +192,15 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             </Button>
           </Flex>
           {/* TODO: Get start and end date range from start/end of month */}
-          <AdminScheduleTable
-            startDate={getEarliestDate(
-              shifts.flatMap((shift) => shift.startTime),
-            )}
-            endDate={getLatestDate(shifts.flatMap((shift) => shift.endTime))}
-            shifts={shifts}
-          />
+          {shifts.length > 0 && (
+            <AdminScheduleTable
+              startDate={getEarliestDate(
+                shifts.flatMap((shift) => shift.startTime),
+              )}
+              endDate={getLatestDate(shifts.flatMap((shift) => shift.endTime))}
+              shifts={shifts.sort()}
+            />
+          )}
         </Box>
       )}
     </Flex>

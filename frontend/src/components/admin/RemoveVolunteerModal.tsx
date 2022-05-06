@@ -21,6 +21,8 @@ type RemoveVolunteerModalProps = {
   shiftId: string;
   userId: string;
   status: ShiftSignupStatus;
+  numVolunteers: number;
+  note: string;
   onClose(): void;
 };
 
@@ -31,7 +33,6 @@ const UPDATE_SHIFT_SIGNUP = gql`
     $update: UpdateShiftSignupRequestDTO!
   ) {
     updateShiftSignup(shiftId: $shiftId, userId: $userId, update: $update) {
-      id
       shiftId
       userId
       numVolunteers
@@ -49,6 +50,8 @@ const RemoveVolunteerModal = ({
   shiftId,
   userId,
   status,
+  numVolunteers,
+  note,
   onClose = () => {},
 }: RemoveVolunteerModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
@@ -58,19 +61,17 @@ const RemoveVolunteerModal = ({
   );
 
   const submitUpdateRequest = async () => {
-    const graphQLResult = await updateShiftSignup({
+    await updateShiftSignup({
       variables: {
         shiftId,
         userId,
         update: {
+          numVolunteers,
+          note,
           status,
         },
       },
     });
-    const result: ShiftSignupResponseDTO | null =
-      graphQLResult.data?.shift ?? null;
-    // setData(result);
-    console.log(result);
   };
 
   return (

@@ -8,7 +8,8 @@ type AdminScheduleTableRowProps = {
   volunteer?: { name: string; userId: string };
   postingStart?: Date;
   postingEnd?: Date;
-  status?: ShiftSignupStatus;
+  numVolunteers?: number;
+  note?: string;
   shiftId: string;
 };
 
@@ -16,7 +17,8 @@ const AdminScheduleTableRow = ({
   volunteer,
   postingStart,
   postingEnd,
-  status,
+  numVolunteers,
+  note,
   shiftId,
 }: AdminScheduleTableRowProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
@@ -27,13 +29,15 @@ const AdminScheduleTableRow = ({
   if (postingStart && postingEnd) {
     return (
       <>
-        {volunteer && status && (
+        {volunteer && numVolunteers && note && (
           <RemoveVolunteerModal
             name={volunteer.name}
             isOpen={isModalOpen}
             shiftId={shiftId}
             userId={volunteer.userId}
-            status={status}
+            status="CANCELED"
+            numVolunteers={numVolunteers}
+            note={note}
             onClose={() => setIsModalOpen(false)}
           />
         )}

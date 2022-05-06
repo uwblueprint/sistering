@@ -134,7 +134,11 @@ const AdminScheduleTable = ({
             )
             .map((shift) => {
               return (
-                <Fragment key={new Date(shift.startTime).toDateString()}>
+                <Fragment
+                  key={`${shift.id}-${new Date(
+                    shift.startTime,
+                  ).toDateString()}`}
+                >
                   <AdminScheduleTableDate
                     key={new Date(shift.startTime).toDateString()}
                     date={new Date(shift.startTime)}
@@ -145,15 +149,13 @@ const AdminScheduleTable = ({
                         <AdminScheduleTableRow
                           key={`${signup.volunteer.id}-${i}`}
                           volunteer={{
-                            name: `${
-                              signup.volunteer.firstName +
-                              signup.volunteer.lastName
-                            }.`,
+                            name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
                             userId: signup.volunteer.id,
                           }}
                           postingStart={signup.shiftStartTime}
                           postingEnd={signup.shiftEndTime}
-                          status={signup.status}
+                          numVolunteers={signup.numVolunteers}
+                          note={signup.note}
                           shiftId={shift.id}
                         />
                       ),
