@@ -15,13 +15,13 @@ import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
 import ErrorModal from "../../../common/ErrorModal";
-import MonthViewShiftCalendar, {
-  ADMIN_SHIFT_CALENDAR_TEST_EVENTS,
-} from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
-import AdminScheduleTable, {
-  TableTestData,
-} from "../../../admin/schedule/AdminScheduleTable";
+import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthlyViewReadOnlyShiftCalendar";
+import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
+import {
+  getEarliestDate,
+  getLatestDate,
+} from "../../../../utils/DateTimeUtils";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -75,7 +75,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     SignupsAndVolunteerGraphQLResponseDTO[]
   >([]);
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
-    AdminScheduleViews.CalendarView,
+    AdminScheduleViews.ReviewView,
   );
 
   const { error } = useQuery<
@@ -136,7 +136,19 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
             />
-            <MonthViewShiftCalendar events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS} />
+            <MonthViewShiftCalendar
+              events={shifts.map((shift) => {
+                return {
+                  id: shift.id,
+                  start: shift.startTime,
+                  end: shift.endTime,
+                  signups: shift.signups,
+                };
+              })}
+              initialDate={getEarliestDate(
+                shifts.flatMap((shift) => shift.startTime),
+              )}
+            />
           </Box>
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel
@@ -179,9 +191,11 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           </Flex>
           {/* TODO: Get start and end date range from start/end of month */}
           <AdminScheduleTable
-            schedule={TableTestData}
-            startDate={new Date(2022, 2, 6)}
-            endDate={new Date(2022, 3, 9)}
+            startDate={getEarliestDate(
+              shifts.flatMap((shift) => shift.startTime),
+            )}
+            endDate={getLatestDate(shifts.flatMap((shift) => shift.endTime))}
+            shifts={shifts}
           />
         </Box>
       )}

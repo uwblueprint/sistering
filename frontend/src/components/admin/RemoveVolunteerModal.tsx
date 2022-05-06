@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Button,
   Modal,
@@ -9,19 +10,68 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
+import {
+  ShiftSignupResponseDTO,
+  ShiftSignupStatus,
+} from "../../types/api/SignupTypes";
 
 type RemoveVolunteerModalProps = {
   name: string;
   isOpen: boolean;
+  shiftId: string;
+  userId: string;
+  status: ShiftSignupStatus;
   onClose(): void;
 };
+
+const UPDATE_SHIFT_SIGNUP = gql`
+  mutation UpdateShiftSignup(
+    $shiftId: ID!
+    $userId: ID!
+    $update: UpdateShiftSignupRequestDTO!
+  ) {
+    updateShiftSignup(shiftId: $shiftId, userId: $userId, update: $update) {
+      id
+      shiftId
+      userId
+      numVolunteers
+      note
+      status
+      shiftStartTime
+      shiftEndTime
+    }
+  }
+`;
 
 const RemoveVolunteerModal = ({
   name = "",
   isOpen = false,
+  shiftId,
+  userId,
+  status,
   onClose = () => {},
 }: RemoveVolunteerModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
+
+  const [updateShiftSignup] = useMutation<{ shift: ShiftSignupResponseDTO }>(
+    UPDATE_SHIFT_SIGNUP,
+  );
+
+  const submitUpdateRequest = async () => {
+    const graphQLResult = await updateShiftSignup({
+      variables: {
+        shiftId,
+        userId,
+        update: {
+          status,
+        },
+      },
+    });
+    const result: ShiftSignupResponseDTO | null =
+      graphQLResult.data?.shift ?? null;
+    // setData(result);
+    console.log(result);
+  };
 
   return (
     <Modal
@@ -53,7 +103,7 @@ const RemoveVolunteerModal = ({
           <Button
             borderRadius="4px"
             onClick={() => {
-              /* This is where we would add logic to call API endpoint to remove the volunteer */
+              submitUpdateRequest();
               onClose();
             }}
             ref={initialRef}

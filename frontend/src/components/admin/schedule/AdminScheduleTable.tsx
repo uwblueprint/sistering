@@ -13,98 +13,8 @@ import moment from "moment";
 import AdminScheduleTableDate from "./AdminScheduleTableDate";
 import AdminScheduleTableRow from "./AdminScheduleTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
-
-// Example test data for the AdminScheduleTable component.
-export const TableTestData = [
-  {
-    date: new Date("2022-03-06"),
-    signups: [
-      {
-        startTime: new Date("2022-03-06 10:00:00"),
-        endTime: new Date("2022-03-06 11:00:00"),
-        volunteer: {
-          name: "Lambert Liu",
-          userId: "1",
-        },
-      },
-      {
-        startTime: new Date("2022-03-06 15:00:00"),
-        endTime: new Date("2022-03-06 17:00:00"),
-      },
-    ],
-  },
-  {
-    date: new Date("2022-03-07"),
-    signups: [],
-  },
-  {
-    date: new Date("2022-03-08"),
-    signups: [
-      {
-        startTime: new Date("2022-03-08 10:00:00"),
-        endTime: new Date("2022-03-08 11:00:00"),
-        volunteer: {
-          name: "Lambert Liu",
-          userId: "1",
-        },
-      },
-    ],
-  },
-  {
-    date: new Date("2022-03-09"),
-    signups: [],
-  },
-  {
-    date: new Date("2022-03-10"),
-    signups: [
-      {
-        startTime: new Date("2022-03-10 14:00:00"),
-        endTime: new Date("2022-03-10 16:00:00"),
-        volunteer: {
-          name: "Brian Tu",
-          userId: "69",
-        },
-      },
-      {
-        startTime: new Date("2022-03-10 16:00:00"),
-        endTime: new Date("2022-03-10 16:30:00"),
-      },
-      {
-        startTime: new Date("2022-03-10 19:00:00"),
-        endTime: new Date("2022-03-10 21:30:00"),
-        volunteer: {
-          name: "Albert Lai",
-          userId: "420",
-        },
-      },
-    ],
-  },
-  {
-    date: new Date("2022-03-11"),
-    signups: [
-      {
-        startTime: new Date("2022-03-11 11:00:00"),
-        endTime: new Date("2022-03-11 13:00:00"),
-        volunteer: {
-          name: "Albert Lai",
-          userId: "420",
-        },
-      },
-    ],
-  },
-  {
-    date: new Date("2022-03-12"),
-    signups: [],
-  },
-  {
-    date: new Date("2022-03-13"),
-    signups: [],
-  },
-  {
-    date: new Date("2022-03-14"),
-    signups: [],
-  },
-];
+import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
+import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
 
 export type AdminScheduleSignup = {
   startTime: Date;
@@ -118,16 +28,16 @@ export type AdminScheduleDay = {
 };
 
 export type AdminScheduleTableProps = {
-  // The schedule prop should be sorted by date in ascending order.
   startDate: Date;
   endDate: Date;
-  schedule: AdminScheduleDay[];
+  // The schedule prop should be sorted by date in ascending order.
+  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
 };
 
 const AdminScheduleTable = ({
   startDate,
   endDate,
-  schedule,
+  shifts,
 }: AdminScheduleTableProps): React.ReactElement => {
   const [currentWeek, setWeek] = React.useState(
     moment(startDate).startOf("week").toDate(),
@@ -210,10 +120,10 @@ const AdminScheduleTable = ({
           <col style={{ width: "30%" }} />
         </colgroup>
         <Tbody>
-          {schedule
+          {shifts
             .filter(
-              (day) =>
-                moment(day.date)
+              (shift) =>
+                moment(shift.startTime)
                   .add(1, "day")
                   .endOf("week")
                   .diff(
@@ -222,24 +132,34 @@ const AdminScheduleTable = ({
                     false,
                   ) === 0,
             )
-            .map((day) => {
+            .map((shift) => {
               return (
-                <Fragment key={day.date.toDateString()}>
+                <Fragment key={new Date(shift.startTime).toDateString()}>
                   <AdminScheduleTableDate
-                    key={day.date.toDateString()}
-                    date={day.date}
+                    key={new Date(shift.startTime).toDateString()}
+                    date={new Date(shift.startTime)}
                   />
-                  {day.signups.length > 0 ? (
-                    day.signups.map((signup: AdminScheduleSignup, i) => (
-                      <AdminScheduleTableRow
-                        key={`${signup.volunteer?.userId}-${i}`}
-                        volunteer={signup.volunteer}
-                        postingStart={signup.startTime}
-                        postingEnd={signup.endTime}
-                      />
-                    ))
+                  {shift.signups.length > 0 ? (
+                    shift.signups.map(
+                      (signup: SignupsAndVolunteerGraphQLResponseDTO, i) => (
+                        <AdminScheduleTableRow
+                          key={`${signup.volunteer.id}-${i}`}
+                          volunteer={{
+                            name: `${
+                              signup.volunteer.firstName +
+                              signup.volunteer.lastName
+                            }.`,
+                            userId: signup.volunteer.id,
+                          }}
+                          postingStart={signup.shiftStartTime}
+                          postingEnd={signup.shiftEndTime}
+                          status={signup.status}
+                          shiftId={shift.id}
+                        />
+                      ),
+                    )
                   ) : (
-                    <AdminScheduleTableRow />
+                    <AdminScheduleTableRow shiftId={shift.id} />
                   )}
                 </Fragment>
               );

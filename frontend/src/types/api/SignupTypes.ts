@@ -49,3 +49,8 @@ export type SignupsAndVolunteerGraphQLResponseDTO = Pick<
 > & {
   volunteer: Pick<VolunteerUserResponseDTO, "firstName" | "lastName">;
 } & Partial<SignupsAndVolunteerResponseDTO>;
+
+export type UpdateShiftSignupRequestDTO = Pick<
+  SignupDTO,
+  "numVolunteers" | "note" | "status"
+>;
