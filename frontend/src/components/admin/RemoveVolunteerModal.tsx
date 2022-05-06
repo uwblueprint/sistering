@@ -24,6 +24,7 @@ type RemoveVolunteerModalProps = {
   numVolunteers: number;
   note: string;
   onClose(): void;
+  refetchShifts: () => void;
 };
 
 const UPDATE_SHIFT_SIGNUP = gql`
@@ -53,6 +54,7 @@ const RemoveVolunteerModal = ({
   numVolunteers,
   note,
   onClose = () => {},
+  refetchShifts = () => {},
 }: RemoveVolunteerModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
 
@@ -72,6 +74,7 @@ const RemoveVolunteerModal = ({
         },
       },
     });
+    refetchShifts();
   };
 
   return (

@@ -32,12 +32,14 @@ export type AdminScheduleTableProps = {
   endDate: Date;
   // The schedule prop should be sorted by date in ascending order.
   shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  refetchShifts: () => void;
 };
 
 const AdminScheduleTable = ({
   startDate,
   endDate,
   shifts,
+  refetchShifts,
 }: AdminScheduleTableProps): React.ReactElement => {
   const [currentWeek, setWeek] = React.useState(
     moment(startDate).startOf("week").toDate(),
@@ -160,11 +162,15 @@ const AdminScheduleTable = ({
                             numVolunteers={signup.numVolunteers}
                             note={signup.note}
                             shiftId={shift.id}
+                            refetchShifts={refetchShifts}
                           />
                         ),
                     )
                   ) : (
-                    <AdminScheduleTableRow shiftId={shift.id} />
+                    <AdminScheduleTableRow
+                      shiftId={shift.id}
+                      refetchShifts={refetchShifts}
+                    />
                   )}
                 </Fragment>
               );
