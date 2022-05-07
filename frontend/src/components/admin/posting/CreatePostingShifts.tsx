@@ -64,10 +64,19 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
   const [eventCount, setEventCount] = useState<number>(0);
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  const [startDateError, setStartDateError] = useState(false);
-  const [endDateError, setEndDateError] = useState(false);
-  const [recurrenceIntervalError, setRecurrenceIntervalError] = useState(false);
-  const [eventsError, setEventsError] = useState(false);
+  const [startDateErrorMessage, setStartDateErrorMessage] = useState<
+    string | undefined
+  >(undefined);
+  const [endDateErrorMessage, setEndDateErrorMessage] = useState<
+    string | undefined
+  >(undefined);
+  const [
+    recurrenceIntervalErrorMessage,
+    setRecurrenceIntervalErrorMessage,
+  ] = useState<string | undefined>(undefined);
+  const [eventsErrorMessage, setEventsErrorMessage] = useState<
+    string | undefined
+  >(undefined);
 
   const initialDateProps = startDate
     ? { initialDate: getPreviousSunday(startDate) }
@@ -152,17 +161,57 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
 
   const handleNext = () => {
     // field validations
-    setStartDateError(!startDate);
-    setEndDateError(!endDate);
-    setRecurrenceIntervalError(!recurrenceInterval);
-    setEventsError(events.length < 1);
+    setStartDateErrorMessage(
+      !startDate ? "Please enter a valid date." : undefined,
+    );
+    setEndDateErrorMessage(!endDate ? "Please enter a valid date." : undefined);
+    setRecurrenceIntervalErrorMessage(
+      !recurrenceInterval ? "Please select a frequency." : undefined,
+    );
+    setEventsErrorMessage(
+      events.length < 1 ? "Please select at least one shift time." : undefined,
+    );
 
     if (startDate > endDate) {
-      setStartDateError(true);
-      setEndDateError(true);
+      setStartDateErrorMessage(
+        "Please ensure that start date is before end date.",
+      );
+      setEndDateErrorMessage(
+        "Please ensure that end date is after start date.",
+      );
     }
 
-    if (startDate && endDate && recurrenceInterval && events.length >= 1) {
+    const now = new Date();
+    let currentMonth = `${now.getMonth() + 1}`;
+    if (currentMonth.length < 2) {
+      currentMonth = `0${currentMonth}`;
+    }
+    let currentDay = `${now.getDate()}`;
+    if (currentDay.length < 2) {
+      currentDay = `0${currentDay}`;
+    }
+    const currentDateISOString = `${now.getFullYear()}-${currentMonth}-${currentDay}`;
+    if (startDate < currentDateISOString) {
+      setStartDateErrorMessage(
+        "Please select a start date that is not in the past.",
+      );
+    }
+    if (endDate < currentDateISOString) {
+      setEndDateErrorMessage(
+        "Please select an end date that is not in the past.",
+      );
+    }
+
+    const validated =
+      startDate &&
+      endDate &&
+      recurrenceInterval &&
+      events.length >= 1 &&
+      startDate <= endDate &&
+      startDate >= currentDateISOString &&
+      endDate >= currentDateISOString;
+
+    if (validated) {
       addStartDate(startDate);
       addEndDate(endDate);
       addRecurrenceInterval(recurrenceInterval);
@@ -191,7 +240,10 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
           <Text textStyle="caption">
             {ADMIN_POSTING_CREATE_SCHEDULING_TIME_SLOTS}
           </Text>
-          <FormControl isRequired isInvalid={recurrenceIntervalError}>
+          <FormControl
+            isRequired
+            isInvalid={recurrenceIntervalErrorMessage !== undefined}
+          >
             <FormLabel textStyle="body-regular">Recurrence Frequency</FormLabel>
             <Flex alignItems="flex-start">
               <VStack spacing={2} alignItems="flex-end">
@@ -210,7 +262,9 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
                     </option>
                   ))}
                 </Select>
-                <FormErrorMessage>Please select a frequency.</FormErrorMessage>
+                <FormErrorMessage>
+                  {recurrenceIntervalErrorMessage}
+                </FormErrorMessage>
               </VStack>
             </Flex>
           </FormControl>
@@ -219,7 +273,10 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
               Select Start and End Dates
             </Text>
             <HStack spacing={5} alignItems="flex-start">
-              <FormControl isRequired isInvalid={startDateError}>
+              <FormControl
+                isRequired
+                isInvalid={startDateErrorMessage !== undefined}
+              >
                 <Flex>
                   <FormLabel textStyle="caption">From</FormLabel>
                   <VStack spacing={2} alignItems="flex-end">
@@ -232,13 +289,14 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
                         maxWidth: "278px",
                       }}
                     />
-                    <FormErrorMessage>
-                      Please enter a valid date.
-                    </FormErrorMessage>
+                    <FormErrorMessage>{startDateErrorMessage}</FormErrorMessage>
                   </VStack>
                 </Flex>
               </FormControl>
-              <FormControl isRequired isInvalid={endDateError}>
+              <FormControl
+                isRequired
+                isInvalid={endDateErrorMessage !== undefined}
+              >
                 <Flex>
                   <FormLabel textStyle="caption">To</FormLabel>
                   <VStack spacing={2} alignItems="flex-end">
@@ -251,23 +309,22 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
                         maxWidth: "278px",
                       }}
                     />
-                    <FormErrorMessage>
-                      Please enter a valid date.
-                    </FormErrorMessage>
+                    <FormErrorMessage>{endDateErrorMessage}</FormErrorMessage>
                   </VStack>
                 </Flex>
               </FormControl>
             </HStack>
           </VStack>
           <VStack spacing={2}>
-            <FormControl isRequired isInvalid={eventsError}>
+            <FormControl
+              isRequired
+              isInvalid={eventsErrorMessage !== undefined}
+            >
               <FormLabel textStyle="body-regular">Select Shift Times</FormLabel>
               <Text textStyle="caption">
                 {ADMIN_POSTING_CREATE_SHIFTS_TIME}
               </Text>
-              <FormErrorMessage>
-                Please select at least one shift time.
-              </FormErrorMessage>
+              <FormErrorMessage>{eventsErrorMessage}</FormErrorMessage>
             </FormControl>
           </VStack>
         </VStack>

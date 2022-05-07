@@ -111,7 +111,10 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
   const [branchError, setBranchError] = useState(false);
   const [numVolunteersError, setNumVolunteersError] = useState(false);
   const [titleError, setTitleError] = useState(false);
-  const [autoClosingDateError, setAutoClosingDateError] = useState(false);
+  const [
+    autoClosingDateErrorMessage,
+    setAutoClosingDateErrorMessage,
+  ] = useState<string | undefined>(undefined);
   const [descriptionError, setDescriptionError] = useState(false);
   const [skillsError, setSkillsError] = useState(false);
   const [employeesError, setEmployeesError] = useState(false);
@@ -269,22 +272,42 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
     setBranchError(!selectedBranch);
     setNumVolunteersError(Number.isNaN(parseInt(numVolunteers, 10)));
     setTitleError(!title);
-    setAutoClosingDateError(!autoClosingDate);
+    setAutoClosingDateErrorMessage(
+      !autoClosingDate ? "Please enter a date." : undefined,
+    );
     setDescriptionError(
       !description || JSON.parse(description).blocks[0].text.length === 0,
     );
     setSkillsError(selectedSkills.length < 1);
     setEmployeesError(selectedEmployees.length < 1);
 
-    if (
+    const now = new Date();
+    let currentMonth = `${now.getMonth() + 1}`;
+    if (currentMonth.length < 2) {
+      currentMonth = `0${currentMonth}`;
+    }
+    let currentDay = `${now.getDate()}`;
+    if (currentDay.length < 2) {
+      currentDay = `0${currentDay}`;
+    }
+    const currentDateISOString = `${now.getFullYear()}-${currentMonth}-${currentDay}`;
+    if (autoClosingDate < currentDateISOString) {
+      setAutoClosingDateErrorMessage(
+        "Please select a closing date that is not in the past.",
+      );
+    }
+
+    const validated =
       selectedBranch &&
       title &&
       autoClosingDate &&
       description &&
       selectedSkills &&
       selectedEmployees &&
-      !Number.isNaN(parseInt(numVolunteers, 10))
-    ) {
+      !Number.isNaN(parseInt(numVolunteers, 10)) &&
+      autoClosingDate >= currentDateISOString;
+
+    if (validated) {
       /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
       addBranch(selectedBranch!);
       addNumVolunteers(parseInt(numVolunteers, 10));
@@ -365,7 +388,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                   placeholder="e.g. Yoga Instructor"
                   size="sm"
                   mb={
-                    !titleError && autoClosingDateError
+                    !titleError && autoClosingDateErrorMessage !== undefined
                       ? ERROR_MESSAGE_HEIGHT
                       : "0px"
                   }
@@ -376,7 +399,10 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                 />
                 <FormErrorMessage>Please enter role title.</FormErrorMessage>
               </FormControl>
-              <FormControl isRequired isInvalid={autoClosingDateError}>
+              <FormControl
+                isRequired
+                isInvalid={autoClosingDateErrorMessage !== undefined}
+              >
                 <HStack>
                   <FormLabel textStyle="body-regular" mr={0}>
                     Posting Closing Date
@@ -399,7 +425,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                   size="sm"
                   type="date"
                   mb={
-                    !autoClosingDateError && titleError
+                    autoClosingDateErrorMessage === undefined && titleError
                       ? ERROR_MESSAGE_HEIGHT
                       : "0px"
                   }
@@ -408,7 +434,9 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
                     setAutoClosingDate(e.target.value)
                   }
                 />
-                <FormErrorMessage>Please enter a date.</FormErrorMessage>
+                <FormErrorMessage>
+                  {autoClosingDateErrorMessage}
+                </FormErrorMessage>
               </FormControl>
             </HStack>
             <FormControl isRequired isInvalid={descriptionError}>
