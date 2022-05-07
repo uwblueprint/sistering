@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Container,
   Table,
@@ -12,6 +12,8 @@ import {
   Select,
   HStack,
   Tbody,
+  Tr,
+  Td,
 } from "@chakra-ui/react";
 import VolunteerShiftsTableRow from "./VolunteerShiftsTableRow";
 import VolunteerShiftsTableDate from "./VolunteerShiftsTableDate";
@@ -55,17 +57,6 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
     setDisplayShifts(tabIndex === 0 ? upcomingShifts : pendingShifts);
   }, [tabIndex, shifts]);
 
-  if (!shifts.length) {
-    return (
-      <Container maxW="container.xl" minH="90vh">
-        <VStack pt="25%">
-          <Text color="text.gray">No shifts to show</Text>
-          <Button variant="outline">Browse volunteer postings</Button>
-        </VStack>
-      </Container>
-    );
-  }
-
   return (
     <Box
       bgColor="background.white"
@@ -92,17 +83,31 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
 
       <Table variant="brand">
         <Tbody>
-          {displayShifts.map((shift, idx) => (
-            <VolunteerShiftsTableRow
-              key={idx}
-              postingName={shift.postingTitle}
-              postingLink={shift.postingId}
-              startTime={shift.shiftStartTime}
-              endTime={shift.shiftEndTime}
-              deadline={shift.autoClosingDate}
-              status={shift.status}
-            />
-          ))}
+          {displayShifts.length > 0 ? (
+            displayShifts.map((shift, idx) => (
+              <VolunteerShiftsTableRow
+                key={idx}
+                postingName={shift.postingTitle}
+                postingLink={shift.postingId}
+                startTime={shift.shiftStartTime}
+                endTime={shift.shiftEndTime}
+                deadline={shift.autoClosingDate}
+                status={shift.status}
+              />
+            ))
+          ) : (
+            // empty state
+            <Tr>
+              <Td>
+                <Container maxW="container.xl" minH="90vh">
+                  <VStack pt="25%">
+                    <Text color="text.gray">No shifts to show</Text>
+                    <Button variant="outline">Browse volunteer postings</Button>
+                  </VStack>
+                </Container>
+              </Td>
+            </Tr>
+          )}
         </Tbody>
       </Table>
     </Box>
