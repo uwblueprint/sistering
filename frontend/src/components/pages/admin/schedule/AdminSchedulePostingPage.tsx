@@ -80,7 +80,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     AdminScheduleViews.ReviewView,
   );
 
-  const { error, refetch } = useQuery<
+  const { error } = useQuery<
     AdminScheduleTableDataQueryResponse,
     AdminScheduleTableDataQueryInput
   >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
@@ -89,14 +89,6 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
       setShifts(data.shiftsWithSignupsAndVolunteersByPosting),
     fetchPolicy: "no-cache",
   });
-
-  console.log(shifts);
-
-  const refetchShifts = () => {
-    refetch({
-      postingId: Number(id),
-    });
-  };
 
   const handleSidePanelEditClick = (
     signups: SignupsAndVolunteerGraphQLResponseDTO[],
@@ -207,7 +199,6 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               )}
               endDate={getLatestDate(shifts.flatMap((shift) => shift.endTime))}
               shifts={shifts.sort()}
-              refetchShifts={refetchShifts}
             />
           )}
         </Box>

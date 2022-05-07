@@ -10,7 +10,6 @@ type AdminScheduleTableRowProps = {
   numVolunteers?: number;
   note?: string;
   shiftId: string;
-  refetchShifts: () => void;
 };
 
 const AdminScheduleTableRow = ({
@@ -20,7 +19,6 @@ const AdminScheduleTableRow = ({
   numVolunteers,
   note,
   shiftId,
-  refetchShifts,
 }: AdminScheduleTableRowProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const elapsedHours =
@@ -40,7 +38,6 @@ const AdminScheduleTableRow = ({
             numVolunteers={numVolunteers}
             note={note}
             onClose={() => setIsModalOpen(false)}
-            refetchShifts={refetchShifts}
           />
         )}
         <Tr h="74px" bg="white">
