@@ -286,7 +286,11 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
     if (currentMonth.length < 2) {
       currentMonth = `0${currentMonth}`;
     }
-    const currentDateISOString = `${now.getFullYear()}-${currentMonth}-${now.getDate()}`;
+    let currentDay = `${now.getDate()}`;
+    if (currentDay.length < 2) {
+      currentDay = `0${currentDay}`;
+    }
+    const currentDateISOString = `${now.getFullYear()}-${currentMonth}-${currentDay}`;
     if (autoClosingDate < currentDateISOString) {
       setAutoClosingDateErrorMessage(
         "Please select a closing date that is not in the past.",
