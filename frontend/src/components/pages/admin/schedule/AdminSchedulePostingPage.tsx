@@ -8,6 +8,8 @@ import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types
 import {
   ShiftSignupStatus,
   SignupsAndVolunteerGraphQLResponseDTO,
+  SignupsAndVolunteerResponseDTO,
+  SignupsAndVolunteerWithNoteStatusResponseDTO,
 } from "../../../../types/api/SignupTypes";
 import Navbar from "../../../common/Navbar";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
@@ -70,9 +72,10 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   const [shifts, setShifts] = useState<
     ShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
-  const [currentlyEditingSignups, setCurrentlyEditingSignups] = useState<
-    SignupsAndVolunteerGraphQLResponseDTO[]
-  >([]);
+  const [
+    currentlyEditingSignups,
+    setCurrentlyEditingSignups,
+  ] = useState<ShiftWithSignupAndVolunteerGraphQLResponseDTO>();
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
   );
@@ -88,28 +91,32 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   });
 
   const handleSidePanelEditClick = (
-    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+    signups: ShiftWithSignupAndVolunteerGraphQLResponseDTO,
   ) => setCurrentlyEditingSignups(signups);
 
   const handleSelectAllSignupsClick = () => {
-    const updatedSignups: SignupsAndVolunteerGraphQLResponseDTO[] = currentlyEditingSignups.map(
-      (signup) => {
+    const updatedSignups: SignupsAndVolunteerGraphQLResponseDTO[] =
+      currentlyEditingSignups?.signups.map((signup) => {
         return {
           ...signup,
           status: signup.status !== "PUBLISHED" ? "CONFIRMED" : "PUBLISHED",
         };
-      },
-    );
-    setCurrentlyEditingSignups(updatedSignups);
+      }) ?? [];
+
+    setCurrentlyEditingSignups({
+      ...currentlyEditingSignups,
+      signups: updatedSignups,
+    });
   };
 
   const handleSignupCheckboxClick = (
     volunteerId: string,
     isChecked: boolean,
   ) => {
-    const signupIndex = currentlyEditingSignups.findIndex(
-      (signup) => signup.volunteer.id === volunteerId,
-    );
+    const signupIndex =
+      currentlyEditingSignups?.signups.findIndex(
+        (signup) => signup.volunteer.id === volunteerId,
+      ) ?? -1;
     if (signupIndex >= 0) {
       const signup = currentlyEditingSignups[signupIndex];
       const signupsCopy = [...currentlyEditingSignups];

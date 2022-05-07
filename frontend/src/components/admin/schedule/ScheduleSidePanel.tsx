@@ -10,7 +10,7 @@ import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/Signup
 
 type ScheduleSidePanelProps = {
   shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
-  currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
+  currentlyEditingSignups: ShiftWithSignupAndVolunteerGraphQLResponseDTO;
   onEditSignupsClick: (
     signups: SignupsAndVolunteerGraphQLResponseDTO[],
   ) => void;

@@ -43,6 +43,9 @@ export type SignupsAndVolunteerResponseDTO = ShiftSignupResponseDTO & {
   volunteer: VolunteerUserResponseDTO;
 };
 
+export type SignupsAndVolunteerWithNoteStatusResponseDTO = SignupsAndVolunteerResponseDTO &
+  Pick<SignupsAndVolunteerResponseDTO, "note" | "status">;
+
 export type SignupsAndVolunteerGraphQLResponseDTO = Pick<
   SignupsAndVolunteerResponseDTO,
   "note" | "status"

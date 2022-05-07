@@ -3,10 +3,11 @@ import { Flex, VStack, Text, Button, Spacer } from "@chakra-ui/react";
 
 import AdminScheduleVolunteerRow from "./AdminScheduleVolunteerRow";
 import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
+import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 
 type AdminScheduleVolunteerTableProps = {
   signups: SignupsAndVolunteerGraphQLResponseDTO[];
-  currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
+  currentlyEditingSignups: ShiftWithSignupAndVolunteerGraphQLResponseDTO;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
   isEditing: boolean;
@@ -26,7 +27,7 @@ const AdminScheduleVolunteerTable = ({
   >(signups);
 
   useEffect(() => {
-    if (isEditing) setSignupsToDisplay(currentlyEditingSignups);
+    if (isEditing) setSignupsToDisplay(currentlyEditingSignups.signups);
     else setSignupsToDisplay(signups);
   }, [isEditing, signups, currentlyEditingSignups]);
 
