@@ -52,14 +52,14 @@ const PostingDetails = ({
         <HStack w="100%" pt={4}>
           <Text textStyle="caption">Skills:</Text>
           {postingDetails.skills.map((skill) => (
-            <Tag key={skill.id} variant="outline">
+            <Tag key={skill.name} variant="outline">
               {skill.name}
             </Tag>
           ))}
         </HStack>
-        <Text textStyle="body-regular" py={4}>
+        <Box textStyle="body-regular" py={4}>
           <RichTextDisplay>{postingDetails.description}</RichTextDisplay>
-        </Text>
+        </Box>
         <Text textStyle="body-regular">Point(s) of contact:</Text>
         <HStack pb={4}>
           {postingDetails.employees.map((employee) => (
