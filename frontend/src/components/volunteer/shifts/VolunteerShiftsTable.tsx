@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState, useEffect } from "react";
 import {
   Container,
   Table,
@@ -11,10 +11,14 @@ import {
   Box,
   Select,
   HStack,
+  Tbody,
 } from "@chakra-ui/react";
 import VolunteerShiftsTableRow from "./VolunteerShiftsTableRow";
 import VolunteerShiftsTableDate from "./VolunteerShiftsTableDate";
-import { ShiftSignupStatus } from "../../../types/api/ShiftSignupTypes";
+import {
+  ShiftSignupStatus,
+  ShiftSignupPostingResponseDTO,
+} from "../../../types/api/ShiftSignupTypes";
 
 type Shift = {
   startTime: string;
@@ -32,12 +36,25 @@ type VolunteerDateShifts = {
 
 type VolunteerShiftsTableProps = {
   // The schedule prop should be sorted by date in ascending order.
-  shifts: VolunteerDateShifts[];
+  shifts: ShiftSignupPostingResponseDTO[];
+  // shifts: VolunteerDateShifts[];
 };
 
 const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   shifts,
 }: VolunteerShiftsTableProps) => {
+  const upcomingShifts = shifts.filter((shift) => shift.status === "PUBLISHED");
+  const pendingShifts = shifts.filter(
+    (shift) => shift.status === "PENDING" || shift.status === "CONFIRMED",
+  );
+
+  const [tabIndex, setTabIndex] = useState(0);
+  const [displayShifts, setDisplayShifts] = useState(upcomingShifts);
+
+  useEffect(() => {
+    setDisplayShifts(tabIndex === 0 ? upcomingShifts : pendingShifts);
+  }, [tabIndex, shifts]);
+
   if (!shifts.length) {
     return (
       <Container maxW="container.xl" minH="90vh">
@@ -57,7 +74,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       borderColor="background.dark"
     >
       <HStack justifyContent="space-between" px={12}>
-        <Tabs pt={8}>
+        <Tabs pt={8} onChange={(index) => setTabIndex(index)}>
           <TabList borderBottom="none">
             <Tab>Upcoming Shifts</Tab>
             <Tab>Requests Pending Confirmation</Tab>
@@ -74,22 +91,19 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       </HStack>
 
       <Table variant="brand">
-        {shifts.map((day) => (
-          <Fragment key={day.date.toDateString()}>
-            <VolunteerShiftsTableDate date={day.date} />{" "}
-            {day.shifts.map((shift: Shift, idx) => (
-              <VolunteerShiftsTableRow
-                key={idx}
-                postingName={shift.postingName}
-                postingLink={shift.postingLink}
-                startTime={shift.startTime}
-                endTime={shift.endTime}
-                deadline={shift.deadline}
-                status={shift.status}
-              />
-            ))}
-          </Fragment>
-        ))}
+        <Tbody>
+          {displayShifts.map((shift, idx) => (
+            <VolunteerShiftsTableRow
+              key={idx}
+              postingName={shift.postingTitle}
+              postingLink={shift.postingId}
+              startTime={shift.shiftStartTime}
+              endTime={shift.shiftEndTime}
+              deadline={shift.autoClosingDate}
+              status={shift.status}
+            />
+          ))}
+        </Tbody>
       </Table>
     </Box>
   );
