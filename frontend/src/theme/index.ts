@@ -35,6 +35,7 @@ const customTheme = extendTheme(
             tab: {
               _selected: {
                 color: "brand.500",
+                boxShadow: "none",
               },
             },
           },

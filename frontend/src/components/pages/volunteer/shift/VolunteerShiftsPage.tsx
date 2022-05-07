@@ -3,7 +3,10 @@ import { Box, Container, Flex } from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
 import VolunteerShiftsTable from "../../../volunteer/shifts/VolunteerShiftsTable";
-import { ShiftSignupStatus } from "../../../../types/api/ShiftSignupTypes";
+import {
+  ShiftSignupStatus,
+  ShiftSignupPostingResponseDTO,
+} from "../../../../types/api/ShiftSignupTypes";
 import Navbar from "../../../common/Navbar";
 import {
   VolunteerNavbarTabs,
@@ -67,10 +70,10 @@ const VolunteerShiftsPage = (): React.ReactElement => {
     ShiftSignupPostingResponseDTO[]
   >([]);
 
-  // const [unfilteredShiftSignups, setUnfilteredShiftSignups] = useState<
-  //   ShiftSignupPostingResponseDTO[]
-  // >([]);
-  // const [filter, setFilter] = useState<FilterType>("week");
+  const [unfilteredShiftSignups, setUnfilteredShiftSignups] = useState<
+    ShiftSignupPostingResponseDTO[]
+  >([]);
+  const [filter, setFilter] = useState<FilterType>("week");
 
   useQuery(SHIFT_SIGNUPS, {
     variables: { userId: 2 },
@@ -78,38 +81,9 @@ const VolunteerShiftsPage = (): React.ReactElement => {
     onCompleted: (data) => {
       console.log("data", data);
       setShiftSignups(data.getShiftSignupsForUser);
-      // setUnfilteredShiftSignups(data.getShiftSignupsForUser);
+      setUnfilteredShiftSignups(data.getShiftSignupsForUser);
     },
   });
-
-  // useLayoutEffect(() => {
-  //   let filteredShiftSignups;
-  //   switch (filter) {
-  //     case "month":
-  //       filteredShiftSignups = unfilteredShiftSignups?.filter((shiftSignup) =>
-  //         dateInRange(shiftSignup.shiftStartTime, "month"),
-  //       );
-  //       setShiftSignups(filteredShiftSignups ?? []);
-  //       break;
-  //     case "all":
-  //       setShiftSignups(unfilteredShiftSignups);
-  //       break;
-  //     default:
-  //       filteredShiftSignups = unfilteredShiftSignups?.filter((shiftSignup) =>
-  //         dateInRange(shiftSignup.shiftStartTime, "week"),
-  //       );
-  //       setShiftSignups(filteredShiftSignups ?? []);
-  //       break;
-  //   }
-  // }, [filter, unfilteredShiftSignups]);
-
-  // const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-  //   const value: FilterType = e.target.value as FilterType;
-  //   setFilter(value);
-  // };
-
-  // console.log("shiftSignups",  shiftSignups);
-
   return (
     <Flex h="100vh" flexFlow="column">
       {error && <ErrorModal />}
