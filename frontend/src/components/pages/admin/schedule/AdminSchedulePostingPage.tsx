@@ -90,6 +90,22 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     fetchPolicy: "no-cache",
   });
 
+  // Change status of shift to CANCELED
+  const cancelShift = (shiftId: string, userId: string) => {
+    const newShifts = cloneDeep(shifts);
+    for (let i = 0; i < newShifts.length; i += 1) {
+      if (newShifts[i].id === shiftId) {
+        for (let j = 0; j < newShifts[i].signups.length; j += 1) {
+          if (newShifts[i].signups[j].volunteer.id === userId) {
+            newShifts[i].signups[j].status = "CANCELED";
+            break;
+          }
+        }
+      }
+    }
+    setShifts(newShifts);
+  };
+
   const handleSidePanelEditClick = (
     signups: SignupsAndVolunteerGraphQLResponseDTO[],
   ) => setCurrentlyEditingSignups(signups);
@@ -199,6 +215,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               )}
               endDate={getLatestDate(shifts.flatMap((shift) => shift.endTime))}
               shifts={shifts.sort()}
+              cancelShift={cancelShift}
             />
           )}
         </Box>
