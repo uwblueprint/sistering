@@ -40,7 +40,7 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
   return (
     <Tr>
       {/* eslint-disable-next-line no-nested-ternary */}
-      {status === "CONFIRMED" || status === "PENDING" ? (
+      {status === "PUBLISHED" ? (
         <>
           <Td>
             <Text>{`${time} ${duration}`}</Text>
@@ -49,7 +49,7 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
             <Text>{postingName}</Text>
           </Td>
         </>
-      ) : status === "PUBLISHED" ? (
+      ) : status === "CONFIRMED" || status === "PENDING" ? (
         <>
           <Td>
             <Text>{postingName}</Text>
