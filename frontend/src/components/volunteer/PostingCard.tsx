@@ -57,16 +57,16 @@ const PostingCard = ({
             <TimeIcon w={4} pr={1} />
             See Posting Details
           </Text>
-          <Text textStyle="caption">
+          <Box textStyle="caption">
             <CalendarIcon w={4} pr={1} />
             {`${formatDateStringYear(startDate)} - ${formatDateStringYear(
               endDate,
             )}`}
-          </Text>
+          </Box>
         </HStack>
-        <Text textStyle="body-regular" noOfLines={2}>
+        <Box textStyle="body-regular" noOfLines={2}>
           <RichTextDisplay>{description}</RichTextDisplay>
-        </Text>
+        </Box>
         <HStack>
           <Text textStyle="body-regular">Skills: </Text>
           {skills.slice(0, 5).map((skill) => (
