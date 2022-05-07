@@ -15,7 +15,7 @@ import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
 import ErrorModal from "../../../common/ErrorModal";
-import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthlyViewReadOnlyShiftCalendar";
+import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
 import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
 import {
@@ -161,12 +161,10 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
                     id: shift.id,
                     start: new Date(shift.startTime),
                     end: new Date(shift.endTime),
+                    groupId: "", // TODO: Add groupId for saved/unsaved
                   };
                 })}
                 shifts={shifts}
-                initialDate={getEarliestDate(
-                  shifts.flatMap((shift) => shift.startTime),
-                )}
               />
             )}
           </Box>
