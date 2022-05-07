@@ -10,16 +10,19 @@ import { Box } from "@chakra-ui/react";
 import { Event } from "../../../types/CalendarTypes";
 import colors from "../../../theme/colors";
 import "./Calendar.css";
+import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 
 // Events can be passed in any order (does not have to be sorted).
 // AdminShiftCalendar assumes that all events are in the same month.
 type AdminShiftCalendarProps = {
   events: Event[];
+  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
   initialDate: Date;
 };
 
 const MonthlyViewShiftCalendar = ({
   events,
+  shifts,
   initialDate,
 }: AdminShiftCalendarProps): React.ReactElement => {
   const calendarRef = React.useRef<FullCalendar>(null);
@@ -32,14 +35,26 @@ const MonthlyViewShiftCalendar = ({
   });
 
   const displayCustomEvent = (content: EventContentArg) => {
+    const shift = shifts.find((currShift) => currShift.id === content.event.id);
+    if (shift) {
+      const isConfirmed = shift.signups.some(
+        (signup) => signup.status === "CONFIRMED",
+      );
+      return (
+        <>
+          {isConfirmed ? (
+            <div className="fc-daygrid-event-dot fc-event-confirmed" />
+          ) : (
+            <div className="fc-daygrid-event-dot fc-event-unconfirmed" />
+          )}
+
+          {content.timeText}
+        </>
+      );
+    }
     return (
       <>
-        {content.event.groupId === "saved" ? (
-          <div className="fc-daygrid-event-dot fc-event-saved" />
-        ) : (
-          <div className="fc-daygrid-event-dot fc-event-unsaved" />
-        )}
-
+        <div className="fc-daygrid-event-dot fc-event-unconfirmed" />
         {content.timeText}
       </>
     );

@@ -77,7 +77,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     SignupsAndVolunteerGraphQLResponseDTO[]
   >([]);
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
-    AdminScheduleViews.ReviewView,
+    AdminScheduleViews.CalendarView,
   );
 
   const { error } = useQuery<
@@ -154,19 +154,21 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
             />
-            <MonthViewShiftCalendar
-              events={shifts.map((shift) => {
-                return {
-                  id: shift.id,
-                  start: shift.startTime,
-                  end: shift.endTime,
-                  signups: shift.signups,
-                };
-              })}
-              initialDate={getEarliestDate(
-                shifts.flatMap((shift) => shift.startTime),
-              )}
-            />
+            {shifts.length > 0 && (
+              <MonthViewShiftCalendar
+                events={shifts.map((shift) => {
+                  return {
+                    id: shift.id,
+                    start: new Date(shift.startTime),
+                    end: new Date(shift.endTime),
+                  };
+                })}
+                shifts={shifts}
+                initialDate={getEarliestDate(
+                  shifts.flatMap((shift) => shift.startTime),
+                )}
+              />
+            )}
           </Box>
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel

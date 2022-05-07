@@ -88,11 +88,11 @@ a:hover {
   background-color: #f4f4f4;
 }
 
-.fc-daygrid-event-dot.fc-event-saved {
+.fc-daygrid-event-dot.fc-event-confirmed {
   border-color: #38a169;
 }
 
-.fc-daygrid-event-dot.fc-event-unsaved {
+.fc-daygrid-event-dot.fc-event-unconfirmed {
   border-color: #e53e3e;
 }
 
