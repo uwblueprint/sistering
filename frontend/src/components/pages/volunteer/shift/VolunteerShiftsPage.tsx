@@ -1,6 +1,5 @@
 import React, { useState, useLayoutEffect } from "react";
 import { Box, Container, Flex } from "@chakra-ui/react";
-
 import { gql, useQuery } from "@apollo/client";
 import VolunteerShiftsTable from "../../../volunteer/shifts/VolunteerShiftsTable";
 import {
@@ -15,39 +14,6 @@ import {
 import ErrorModal from "../../../common/ErrorModal";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import { dateInRange } from "../../../../utils/DateTimeUtils";
-
-const upcomingShift = {
-  postingName: "Posting Name",
-  postingLink: "/volunteer/posting/1",
-  startTime: "2022-01-21T11:00:00+00:00",
-  endTime: "2022-01-21T12:00:00+00:00",
-  deadline: "",
-  status: "CONFIRMED" as ShiftSignupStatus,
-};
-
-const pendingShift = {
-  postingName: "Posting Name",
-  postingLink: "/volunteer/posting/2",
-  deadline: "Deadline: Friday, February 17",
-  startTime: "",
-  endTime: "",
-  status: "PUBLISHED" as ShiftSignupStatus,
-};
-
-const mockData = [
-  {
-    date: new Date("2022-01-21T00:00:00+00:00"),
-    shifts: [upcomingShift, pendingShift],
-  },
-  {
-    date: new Date("2022-01-22T00:00:00+00:00"),
-    shifts: [upcomingShift, pendingShift],
-  },
-  {
-    date: new Date("2022-01-23T00:00:00+00:00"),
-    shifts: [upcomingShift, pendingShift],
-  },
-];
 
 const SHIFT_SIGNUPS = gql`
   query ShiftSignups($userId: ID!) {
@@ -84,6 +50,33 @@ const VolunteerShiftsPage = (): React.ReactElement => {
       setUnfilteredShiftSignups(data.getShiftSignupsForUser);
     },
   });
+
+  // useLayoutEffect(() => {
+  //   let filteredShiftSignups;
+  //   switch (filter) {
+  //     case "month":
+  //       filteredShiftSignups = unfilteredShiftSignups?.filter((shiftSignup) =>
+  //         dateInRange(shiftSignup.shiftStartTime, "month"),
+  //       );
+  //       setShiftSignups(filteredShiftSignups ?? []);
+  //       break;
+  //     case "all":
+  //       setShiftSignups(unfilteredShiftSignups);
+  //       break;
+  //     default:
+  //       filteredShiftSignups = unfilteredShiftSignups?.filter((shiftSignup) =>
+  //         dateInRange(shiftSignup.shiftStartTime, "week"),
+  //       );
+  //       setShiftSignups(filteredShiftSignups ?? []);
+  //       break;
+  //   }
+  // }, [filter, unfilteredShiftSignups]);
+
+  const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value: FilterType = e.target.value as FilterType;
+    setFilter(value);
+  };
+
   return (
     <Flex h="100vh" flexFlow="column">
       {error && <ErrorModal />}
