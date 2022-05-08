@@ -97,7 +97,6 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
   }, [startDate, setEvents]);
 
   const addEvent = (newEvent: DateSelectArg) => {
-    console.log(newEvent.start)
     setEvents([
       ...events,
       {
