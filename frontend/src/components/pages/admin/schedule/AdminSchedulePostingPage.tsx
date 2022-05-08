@@ -89,7 +89,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   });
 
   const handleSidePanelEditClick = (
-    signups: ShiftWithSignupAndVolunteerGraphQLResponseDTO,
+    signups?: ShiftWithSignupAndVolunteerGraphQLResponseDTO,
   ) => setCurrentlyEditingSignups(signups);
 
   const handleSelectAllSignupsClick = () => {
@@ -117,7 +117,9 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
       ) ?? -1;
     if (signupIndex >= 0) {
       if (currentlyEditingSignups) {
-        currentlyEditingSignups.signups[signupIndex].status = isChecked ? "CONFIRMED" : "PENDING";
+        currentlyEditingSignups.signups[signupIndex].status = isChecked
+          ? "CONFIRMED"
+          : "PENDING";
       }
       setCurrentlyEditingSignups(currentlyEditingSignups);
     }

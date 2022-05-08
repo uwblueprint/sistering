@@ -30,13 +30,18 @@ const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
         textStyle="caption"
         onChange={(e) => onShiftSelected(String(e.target.value))}
       >
-        {shifts.map((shift, i) => (
-          <option key={i} value={shift.id}>
-            {`${formatTimeHourMinutes(
-              shift.startTime,
-            )} - ${formatTimeHourMinutes(shift.endTime)}`}
-          </option>
-        ))}
+        {shifts
+          .map((shift, i) => {
+            if (!shift.startTime || !shift.endTime) return null;
+            return (
+              <option key={i} value={shift.id}>
+                {`${formatTimeHourMinutes(
+                  shift.startTime,
+                )} - ${formatTimeHourMinutes(shift.endTime)}`}
+              </option>
+            );
+          })
+          .filter(Boolean)}
       </Select>
     </VStack>
   );

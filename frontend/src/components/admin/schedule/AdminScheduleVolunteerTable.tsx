@@ -7,7 +7,7 @@ import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/ap
 
 type AdminScheduleVolunteerTableProps = {
   signups: SignupsAndVolunteerGraphQLResponseDTO[];
-  currentlyEditingSignups: ShiftWithSignupAndVolunteerGraphQLResponseDTO;
+  currentlyEditingSignups?: ShiftWithSignupAndVolunteerGraphQLResponseDTO;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
   isEditing: boolean;
@@ -27,7 +27,7 @@ const AdminScheduleVolunteerTable = ({
   >(signups);
 
   useEffect(() => {
-    if (isEditing) setSignupsToDisplay(currentlyEditingSignups.signups);
+    if (isEditing) setSignupsToDisplay(currentlyEditingSignups?.signups ?? []);
     else setSignupsToDisplay(signups);
   }, [isEditing, signups, currentlyEditingSignups]);
 

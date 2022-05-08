@@ -6,13 +6,12 @@ import ShiftTimeHeader from "./ShiftTimeHeader";
 import NoShiftsPanel from "../../pages/admin/schedule/NoShiftsPanel";
 import AdminScheduleVolunteerTable from "./AdminScheduleVolunteerTable";
 import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
-import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
 
 type ScheduleSidePanelProps = {
   shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
-  currentlyEditingSignups: ShiftWithSignupAndVolunteerGraphQLResponseDTO;
+  currentlyEditingSignups?: ShiftWithSignupAndVolunteerGraphQLResponseDTO;
   onEditSignupsClick: (
-    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+    signups?: ShiftWithSignupAndVolunteerGraphQLResponseDTO,
   ) => void;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
@@ -32,8 +31,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
 
   const handleEditSaveButtonClick = () => {
     if (!isEditing) {
-      const signupsToEdit = selectedShift ? selectedShift.signups : [];
-      onEditSignupsClick(signupsToEdit);
+      onEditSignupsClick(selectedShift);
     }
     setIsEditing.toggle();
   };
@@ -63,7 +61,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
         borderColor="background.dark"
       >
         <Text textStyle="heading">
-          {selectedShift
+          {selectedShift && selectedShift.startTime
             ? formatDateStringYear(selectedShift.startTime.toString())
             : ""}
         </Text>
