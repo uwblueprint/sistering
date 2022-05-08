@@ -118,8 +118,8 @@ const WeekViewShiftCalendar = ({
         timeZone="UTC"
         initialDate={initialDate}
         selectConstraint={{
-          startTime: '0:00', 
-          endTime: '24:00'
+          startTime: "0:00",
+          endTime: "24:00",
         }}
         eventConstraint="businessHours"
       />
