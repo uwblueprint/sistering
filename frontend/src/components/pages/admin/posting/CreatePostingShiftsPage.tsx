@@ -1,9 +1,9 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Container, HStack, Text, VStack } from "@chakra-ui/react";
+import { Box, HStack } from "@chakra-ui/react";
 
 import CreatePostingShifts from "../../../admin/posting/CreatePostingShifts";
-import SideNavBar from "../../../common/SideNavbar";
+import SideNavBarWithTitle from "../../../common/SideNavbarWithTitle";
 import {
   ADMIN_POSTING_CREATE_BASIC_INFO_PAGE,
   ADMIN_POSTING_CREATE_REVIEW_PAGE,
@@ -14,23 +14,19 @@ const CreatePostingShiftsPage = (): React.ReactElement => {
   const navigateBack = () => history.push(ADMIN_POSTING_CREATE_BASIC_INFO_PAGE);
   const navigateToNext = () => history.push(ADMIN_POSTING_CREATE_REVIEW_PAGE);
   return (
-    <Container maxW="container.xl" p={0}>
+    <Box>
       <HStack alignItems="flex-start" spacing={0}>
-        <VStack alignItems="flex-start" spacing="90px">
-          <Text textStyle="display-medium" pt={10}>
-            Create New Posting
-          </Text>
-          <SideNavBar
-            activeStep={1}
-            labels={["Basic Information", "Time Slots", "Review and Post"]}
-          />
-        </VStack>
+        <SideNavBarWithTitle
+          title="Create New Posting"
+          labels={["Basic Information", "Time Slots", "Review and Post"]}
+          activeStep={1}
+        />
         <CreatePostingShifts
           navigateBack={navigateBack}
           navigateToNext={navigateToNext}
         />
       </HStack>
-    </Container>
+    </Box>
   );
 };
 
