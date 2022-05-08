@@ -117,6 +117,10 @@ const WeekViewShiftCalendar = ({
         slotLabelInterval="01:00"
         timeZone="UTC"
         initialDate={initialDate}
+        selectConstraint={{
+          startTime: "0:00",
+          endTime: "24:00",
+        }}
       />
     </Box>
   );
