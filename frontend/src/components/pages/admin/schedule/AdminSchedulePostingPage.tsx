@@ -8,8 +8,6 @@ import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types
 import {
   ShiftSignupStatus,
   SignupsAndVolunteerGraphQLResponseDTO,
-  SignupsAndVolunteerResponseDTO,
-  SignupsAndVolunteerWithNoteStatusResponseDTO,
 } from "../../../../types/api/SignupTypes";
 import Navbar from "../../../common/Navbar";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
@@ -118,13 +116,10 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
         (signup) => signup.volunteer.id === volunteerId,
       ) ?? -1;
     if (signupIndex >= 0) {
-      const signup = currentlyEditingSignups[signupIndex];
-      const signupsCopy = [...currentlyEditingSignups];
-      signupsCopy[signupIndex] = {
-        ...signup,
-        status: isChecked ? "CONFIRMED" : "PENDING",
-      };
-      setCurrentlyEditingSignups(signupsCopy);
+      if (currentlyEditingSignups) {
+        currentlyEditingSignups.signups[signupIndex].status = isChecked ? "CONFIRMED" : "PENDING";
+      }
+      setCurrentlyEditingSignups(currentlyEditingSignups);
     }
   };
 

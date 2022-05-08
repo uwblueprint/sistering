@@ -20,4 +20,10 @@ export type VolunteerDTO = {
   branches: BranchResponseDTO[];
 };
 
+export type VolunteerUserGraphQLResponseDTO = {
+  id: string;
+  firstName: string;
+  lastName: string;
+}
+
 export type VolunteerUserResponseDTO = UserDTO & VolunteerDTO;

@@ -1,4 +1,4 @@
-import { VolunteerUserResponseDTO } from "./UserType";
+import { VolunteerUserGraphQLResponseDTO, VolunteerUserResponseDTO } from "./UserType";
 
 export type ShiftSignupStatus =
   | "PENDING"
@@ -43,12 +43,12 @@ export type SignupsAndVolunteerResponseDTO = ShiftSignupResponseDTO & {
   volunteer: VolunteerUserResponseDTO;
 };
 
-export type SignupsAndVolunteerWithNoteStatusResponseDTO = SignupsAndVolunteerResponseDTO &
-  Pick<SignupsAndVolunteerResponseDTO, "note" | "status">;
 
-export type SignupsAndVolunteerGraphQLResponseDTO = Pick<
-  SignupsAndVolunteerResponseDTO,
-  "note" | "status"
-> & {
-  volunteer: Pick<VolunteerUserResponseDTO, "firstName" | "lastName">;
-} & Partial<SignupsAndVolunteerResponseDTO>;
+export type SignupsAndVolunteerGraphQLResponseDTO = {
+  note: string;
+  status: ShiftSignupStatus;
+  volunteer: VolunteerUserGraphQLResponseDTO;
+}
+  
+
+

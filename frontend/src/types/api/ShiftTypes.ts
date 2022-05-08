@@ -31,9 +31,10 @@ export type ShiftWithSignupAndVolunteerResponseDTO = ShiftResponseDTO & {
 
 export type ShiftResponseDTO = ShiftDTO;
 
-export type ShiftWithSignupAndVolunteerGraphQLResponseDTO = Partial<ShiftWithSignupAndVolunteerResponseDTO> & {
+export type ShiftWithSignupAndVolunteerGraphQLResponseDTO = 
+  Partial<Omit<ShiftWithSignupAndVolunteerResponseDTO, "signups">> & {
   signups: SignupsAndVolunteerGraphQLResponseDTO[];
-};
+}
 
 export type VolunteerPostingAvailabilitiesDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
