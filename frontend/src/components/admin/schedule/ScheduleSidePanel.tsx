@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { VStack, Box, Text } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { VStack, Box, Text, useBoolean } from "@chakra-ui/react";
 import { formatDateStringYear } from "../../../utils/DateTimeUtils";
 
 import ShiftTimeHeader from "./ShiftTimeHeader";
@@ -25,18 +25,25 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   onSelectAllSignupsClick,
   onSignupCheckboxClick,
 }: ScheduleSidePanelProps): React.ReactElement => {
-  const [selectedShiftId, setSelectedShiftId] = useState<string>(
-    shifts[0] ? shifts[0].id : "",
-  );
-  const [
-    selectedShift,
-    setSelectedShift,
-  ] = useState<ShiftWithSignupAndVolunteerGraphQLResponseDTO>(shifts[0]);
-  useEffect(() => {
+  const [selectedShift, setSelectedShift] = useState<
+    ShiftWithSignupAndVolunteerGraphQLResponseDTO | undefined
+  >(shifts[0]);
+  const [isEditing, setIsEditing] = useBoolean(false);
+
+  const handleEditSaveButtonClick = () => {
+    if (!isEditing) {
+      const signupsToEdit = selectedShift ? selectedShift.signups : [];
+      onEditSignupsClick(signupsToEdit);
+    }
+    setIsEditing.toggle();
+  };
+
+  const handleShiftTimeSelect = (selectedShiftId: string) => {
     setSelectedShift(
       shifts.find((shift) => shift.id === selectedShiftId) || shifts[0],
     );
-  }, [selectedShiftId, shifts]);
+    setIsEditing.off();
+  };
 
   return (
     <VStack
@@ -66,14 +73,17 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
         <>
           <ShiftTimeHeader
             shifts={shifts}
-            onShiftSelected={(shiftId: string) => setSelectedShiftId(shiftId)}
+            onShiftSelected={(shiftId: string) =>
+              handleShiftTimeSelect(shiftId)
+            }
           />
           <AdminScheduleVolunteerTable
             signups={selectedShift ? selectedShift.signups : []}
             currentlyEditingSignups={currentlyEditingSignups}
-            onEditSignupsClick={onEditSignupsClick}
             onSelectAllSignupsClick={onSelectAllSignupsClick}
             onSignupCheckboxClick={onSignupCheckboxClick}
+            isEditing={isEditing}
+            onButtonClick={handleEditSaveButtonClick}
           />
         </>
       ) : (
