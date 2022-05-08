@@ -72,9 +72,10 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
-  const [currentlyEditingShift, setcurrentlyEditingShift] = useState<
-    AdminSchedulingSignupsAndVolunteerResponseDTO[]
-  >([]);
+  const [
+    currentlyEditingShift,
+    setcurrentlyEditingShift,
+  ] = useState<AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO>();
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
   );
@@ -90,11 +91,13 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   });
 
   const handleSidePanelEditClick = (
-    signups: AdminSchedulingSignupsAndVolunteerResponseDTO[],
-  ) => setcurrentlyEditingShift(signups);
+    shift?: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
+  ) => setcurrentlyEditingShift(shift);
 
   const handleSelectAllSignupsClick = () => {
-    const updatedSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[] = currentlyEditingShift.map(
+    if (!currentlyEditingShift) return;
+    const signupsCopy = [...currentlyEditingShift.signups];
+    const updatedSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[] = signupsCopy.map(
       (signup) => {
         return {
           ...signup,
@@ -102,20 +105,32 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
         };
       },
     );
-    setcurrentlyEditingShift(updatedSignups);
+    setcurrentlyEditingShift({
+      ...currentlyEditingShift,
+      signups: updatedSignups,
+    });
   };
 
   const handleSignupCheckboxClick = (
     volunteerId: string,
     isChecked: boolean,
   ) => {
-    const signupIndex = currentlyEditingShift.findIndex(
+    if (!currentlyEditingShift) return;
+
+    const signupIndex = currentlyEditingShift.signups.findIndex(
       (signup) => signup.volunteer.id === volunteerId,
     );
     if (signupIndex >= 0) {
-      const signupsCopy = cloneDeep(currentlyEditingShift);
-      signupsCopy[signupIndex].status = isChecked ? "CONFIRMED" : "PENDING";
-      setcurrentlyEditingShift(signupsCopy);
+      const signupsCopy = [...currentlyEditingShift.signups];
+      const signup = currentlyEditingShift.signups[signupIndex];
+      signupsCopy[signupIndex] = {
+        ...signup,
+        status: isChecked ? "CONFIRMED" : "PENDING",
+      };
+      setcurrentlyEditingShift({
+        ...currentlyEditingShift,
+        signups: signupsCopy,
+      });
     }
   };
 
