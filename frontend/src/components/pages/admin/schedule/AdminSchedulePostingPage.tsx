@@ -72,7 +72,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
-  const [currentlyEditingSignups, setCurrentlyEditingSignups] = useState<
+  const [currentlyEditingShift, setcurrentlyEditingShift] = useState<
     AdminSchedulingSignupsAndVolunteerResponseDTO[]
   >([]);
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
@@ -91,10 +91,10 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
 
   const handleSidePanelEditClick = (
     signups: AdminSchedulingSignupsAndVolunteerResponseDTO[],
-  ) => setCurrentlyEditingSignups(signups);
+  ) => setcurrentlyEditingShift(signups);
 
   const handleSelectAllSignupsClick = () => {
-    const updatedSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[] = currentlyEditingSignups.map(
+    const updatedSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[] = currentlyEditingShift.map(
       (signup) => {
         return {
           ...signup,
@@ -102,20 +102,20 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
         };
       },
     );
-    setCurrentlyEditingSignups(updatedSignups);
+    setcurrentlyEditingShift(updatedSignups);
   };
 
   const handleSignupCheckboxClick = (
     volunteerId: string,
     isChecked: boolean,
   ) => {
-    const signupIndex = currentlyEditingSignups.findIndex(
+    const signupIndex = currentlyEditingShift.findIndex(
       (signup) => signup.volunteer.id === volunteerId,
     );
     if (signupIndex >= 0) {
-      const signupsCopy = cloneDeep(currentlyEditingSignups);
+      const signupsCopy = cloneDeep(currentlyEditingShift);
       signupsCopy[signupIndex].status = isChecked ? "CONFIRMED" : "PENDING";
-      setCurrentlyEditingSignups(signupsCopy);
+      setcurrentlyEditingShift(signupsCopy);
     }
   };
 
@@ -142,7 +142,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel
               shifts={shifts}
-              currentlyEditingSignups={currentlyEditingSignups}
+              currentlyEditingShift={currentlyEditingShift}
               onEditSignupsClick={handleSidePanelEditClick}
               onSelectAllSignupsClick={handleSelectAllSignupsClick}
               onSignupCheckboxClick={handleSignupCheckboxClick}

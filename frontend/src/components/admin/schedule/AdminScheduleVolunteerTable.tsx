@@ -6,29 +6,29 @@ import { AdminSchedulingSignupsAndVolunteerResponseDTO } from "../../../types/ap
 
 type AdminScheduleVolunteerTableProps = {
   signups: AdminSchedulingSignupsAndVolunteerResponseDTO[];
-  currentlyEditingSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[];
+  currentlyEditingShift: AdminSchedulingSignupsAndVolunteerResponseDTO[];
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
   isEditing: boolean;
-  onButtonClick: () => void;
+  onEditSaveClick: () => void;
 };
 
 const AdminScheduleVolunteerTable = ({
   signups,
-  currentlyEditingSignups,
+  currentlyEditingShift,
   onSelectAllSignupsClick,
   onSignupCheckboxClick,
   isEditing,
-  onButtonClick,
+  onEditSaveClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [signupsToDisplay, setSignupsToDisplay] = useState<
     AdminSchedulingSignupsAndVolunteerResponseDTO[]
   >(signups);
 
   useEffect(() => {
-    if (isEditing) setSignupsToDisplay(currentlyEditingSignups);
+    if (isEditing) setSignupsToDisplay(currentlyEditingShift);
     else setSignupsToDisplay(signups);
-  }, [isEditing, signups, currentlyEditingSignups]);
+  }, [isEditing, signups, currentlyEditingShift]);
 
   return (
     <VStack
@@ -58,7 +58,7 @@ const AdminScheduleVolunteerTable = ({
             px="18px"
             fontSize="12px"
             lineHeight="100%"
-            onClick={onButtonClick}
+            onClick={onEditSaveClick}
           >
             {isEditing ? "Save" : "Edit"}
           </Button>

@@ -10,7 +10,7 @@ import { AdminSchedulingSignupsAndVolunteerResponseDTO } from "../../../types/ap
 
 type ScheduleSidePanelProps = {
   shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
-  currentlyEditingSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[];
+  currentlyEditingShift: AdminSchedulingSignupsAndVolunteerResponseDTO[];
   onEditSignupsClick: (
     signups: AdminSchedulingSignupsAndVolunteerResponseDTO[],
   ) => void;
@@ -20,7 +20,7 @@ type ScheduleSidePanelProps = {
 
 const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   shifts,
-  currentlyEditingSignups,
+  currentlyEditingShift,
   onEditSignupsClick,
   onSelectAllSignupsClick,
   onSignupCheckboxClick,
@@ -73,17 +73,15 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
         <>
           <ShiftTimeHeader
             shifts={shifts}
-            onShiftSelected={(shiftId: string) =>
-              handleShiftTimeSelect(shiftId)
-            }
+            onShiftSelected={handleShiftTimeSelect}
           />
           <AdminScheduleVolunteerTable
             signups={selectedShift ? selectedShift.signups : []}
-            currentlyEditingSignups={currentlyEditingSignups}
+            currentlyEditingShift={currentlyEditingShift}
             onSelectAllSignupsClick={onSelectAllSignupsClick}
             onSignupCheckboxClick={onSignupCheckboxClick}
             isEditing={isEditing}
-            onButtonClick={handleEditSaveButtonClick}
+            onEditSaveClick={handleEditSaveButtonClick}
           />
         </>
       ) : (
