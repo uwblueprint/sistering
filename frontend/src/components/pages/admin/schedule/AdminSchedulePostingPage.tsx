@@ -5,10 +5,10 @@ import { gql, useQuery } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
 import {
+  AdminSchedulingSignupsAndVolunteerResponseDTO,
   ShiftSignupStatus,
-  SignupsAndVolunteerGraphQLResponseDTO,
 } from "../../../../types/api/SignupTypes";
 import Navbar from "../../../common/Navbar";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
@@ -24,7 +24,7 @@ import AdminScheduleTable, {
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
 
 type AdminScheduleTableDataQueryResponse = {
-  shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
 };
 
 type AdminScheduleTableDataQueryInput = {
@@ -50,6 +50,7 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
       signupStatus: $signupStatus
     ) {
       id
+      postingId
       startTime
       endTime
       signups {
@@ -69,10 +70,10 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
 const AdminSchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const [shifts, setShifts] = useState<
-    ShiftWithSignupAndVolunteerGraphQLResponseDTO[]
+    AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
   const [currentlyEditingSignups, setCurrentlyEditingSignups] = useState<
-    SignupsAndVolunteerGraphQLResponseDTO[]
+    AdminSchedulingSignupsAndVolunteerResponseDTO[]
   >([]);
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
@@ -89,11 +90,11 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   });
 
   const handleSidePanelEditClick = (
-    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+    signups: AdminSchedulingSignupsAndVolunteerResponseDTO[],
   ) => setCurrentlyEditingSignups(signups);
 
   const handleSelectAllSignupsClick = () => {
-    const updatedSignups: SignupsAndVolunteerGraphQLResponseDTO[] = currentlyEditingSignups.map(
+    const updatedSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[] = currentlyEditingSignups.map(
       (signup) => {
         return {
           ...signup,
@@ -158,7 +159,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           minH="100vh"
         >
           <Button
-            onClick={() => console.log("TODO: Back")}
+            onClick={() => setCurrentView(AdminScheduleViews.CalendarView)}
             variant="link"
             mb={4}
             leftIcon={<ChevronLeftIcon />}

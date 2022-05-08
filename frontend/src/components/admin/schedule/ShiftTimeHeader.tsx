@@ -1,10 +1,13 @@
 import React from "react";
 import { VStack, Text, Select } from "@chakra-ui/react";
 import { formatTimeHourMinutes } from "../../../utils/DateTimeUtils";
-import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
+import {
+  AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
+  ShiftWithSignupAndVolunteerGraphQLResponseDTO,
+} from "../../../types/api/ShiftTypes";
 
 type ShiftTimeHeaderProps = {
-  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
   onShiftSelected: (id: string) => void;
 };
 

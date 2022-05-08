@@ -5,14 +5,14 @@ import { formatDateStringYear } from "../../../utils/DateTimeUtils";
 import ShiftTimeHeader from "./ShiftTimeHeader";
 import NoShiftsPanel from "../../pages/admin/schedule/NoShiftsPanel";
 import AdminScheduleVolunteerTable from "./AdminScheduleVolunteerTable";
-import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
-import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
+import { AdminSchedulingSignupsAndVolunteerResponseDTO } from "../../../types/api/SignupTypes";
 
 type ScheduleSidePanelProps = {
-  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
-  currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  currentlyEditingSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[];
   onEditSignupsClick: (
-    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+    signups: AdminSchedulingSignupsAndVolunteerResponseDTO[],
   ) => void;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
@@ -26,7 +26,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   onSignupCheckboxClick,
 }: ScheduleSidePanelProps): React.ReactElement => {
   const [selectedShift, setSelectedShift] = useState<
-    ShiftWithSignupAndVolunteerGraphQLResponseDTO | undefined
+    AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO | undefined
   >(shifts[0]);
   const [isEditing, setIsEditing] = useBoolean(false);
 
