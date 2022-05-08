@@ -19,6 +19,10 @@ const CustomStepsTheme = {
       ...StepsStyleConfig.baseStyle(props).label,
       color: "currentColor",
       fontFamily: "Inter",
+      "& div:last-child": {
+        color: "black",
+        opacity: "1",
+      },
     },
     stepIconContainer: {
       ...StepsStyleConfig.baseStyle(props).stepIconContainer,
