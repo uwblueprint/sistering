@@ -7,6 +7,7 @@ import FullCalendar, {
 import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import React, { useState } from "react";
+import moment from 'moment';
 import {
   Box,
   Button,
@@ -31,6 +32,8 @@ type ShiftCalendarProps = {
   changeEvent: (event: Event, oldEvent: Event, currEvents: Event[]) => void;
   deleteEvent: (currEvents: Event[]) => void;
   initialDate?: string;
+  startDate: string, 
+  endDate: string,
 };
 
 const WeekViewShiftCalendar = ({
@@ -41,7 +44,10 @@ const WeekViewShiftCalendar = ({
   changeEvent,
   deleteEvent,
   initialDate,
+  startDate, 
+  endDate,
 }: ShiftCalendarProps): React.ReactElement => {
+  console.log(startDate, endDate)
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const openModal = (): void => {
@@ -111,16 +117,14 @@ const WeekViewShiftCalendar = ({
         plugins={[timeGridPlugin, interactionPlugin]}
         select={(selectInfo: DateSelectArg) => addEvent(selectInfo)}
         selectMirror
-        selectable
+        selectable={Boolean(startDate && endDate)}
         scrollTime="09:00:00"
         slotDuration="00:15:00"
         slotLabelInterval="01:00"
         timeZone="UTC"
         initialDate={initialDate}
-        selectConstraint={{
-          startTime: "0:00",
-          endTime: "24:00",
-        }}
+        selectConstraint={{ startTime: '0:00', endTime: '24:00'}}
+        validRange={{start: startDate, end: moment(endDate).add(1, 'day').format('YYYY-MM-DD')}}
       />
     </Box>
   );
