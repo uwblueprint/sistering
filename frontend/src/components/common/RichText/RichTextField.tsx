@@ -305,7 +305,7 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
   };
 
   return (
-    <VStack alignItems="flex-start">
+    <VStack alignItems="flex-start" w="full">
       <HStack h="32px">
         <Select
           ml="12px"
@@ -405,17 +405,17 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
         borderWidth={editorBorderWidth}
         borderRadius="sm"
         borderColor={editorBorderColor}
-        overflowY="auto"
-        p="12px"
-        m="12px"
-        minH="200px"
-        maxH="200px"
+        p="5px"
         maxW="container.md"
         sx={{
           ...fontSizeObject,
           ".public-DraftEditorPlaceholder-root": {
             display: showPlaceHolder,
             fontSize: `${textSizes[textSize]}px`,
+          },
+          ".public-DraftEditor-content": {
+            overflow: "auto",
+            height: "200px",
           },
         }}
       >
