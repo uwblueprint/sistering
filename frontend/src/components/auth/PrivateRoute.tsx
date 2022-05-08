@@ -16,13 +16,14 @@ const PrivateRoute: React.FC<PrivateRouteProps> = ({
   component,
   exact,
   path,
-  authorizedRoles,
+  authorizedRoles = [],
 }: PrivateRouteProps) => {
   const { authenticatedUser } = useContext(AuthContext);
 
   const isAuthorized =
     authenticatedUser &&
-    (!authorizedRoles || authorizedRoles.includes(authenticatedUser.role));
+    (authorizedRoles.length === 0 ||
+      authorizedRoles.includes(authenticatedUser.role));
 
   return isAuthorized ? (
     <Route path={path} exact={exact} component={component} />
