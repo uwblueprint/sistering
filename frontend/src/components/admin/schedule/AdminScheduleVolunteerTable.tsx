@@ -29,6 +29,7 @@ const AdminScheduleVolunteerTable = ({
   useEffect(() => {
     if (isEditing) setSignupsToDisplay(currentlyEditingSignups?.signups ?? []);
     else setSignupsToDisplay(signups);
+    console.log("Side panel", signupsToDisplay);
   }, [isEditing, signups, currentlyEditingSignups]);
 
   return (

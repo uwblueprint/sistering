@@ -117,12 +117,17 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
       ) ?? -1;
     if (signupIndex >= 0) {
       if (currentlyEditingSignups) {
-        currentlyEditingSignups.signups[signupIndex].status = isChecked
-          ? "CONFIRMED"
-          : "PENDING";
+        const signup = currentlyEditingSignups.signups[signupIndex];
+        const signupsCopy = [...currentlyEditingSignups.signups];
+        signupsCopy[signupIndex] = {
+          ...signup,
+          status: isChecked ? "CONFIRMED" : "PENDING",
+        };
+        currentlyEditingSignups.signups = signupsCopy;
       }
       setCurrentlyEditingSignups(currentlyEditingSignups);
     }
+    console.log(signupIndex, currentlyEditingSignups);
   };
 
   return (
