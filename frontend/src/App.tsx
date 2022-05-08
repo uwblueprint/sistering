@@ -44,7 +44,7 @@ import VolunteerPostingDetails from "./components/pages/volunteer/posting/Volunt
 import AdminPostingDetails from "./components/pages/admin/posting/AdminPostingDetails";
 
 import customTheme from "./theme";
-import { AuthenticatedUser } from "./types/AuthTypes";
+import { AuthenticatedUser, Role } from "./types/AuthTypes";
 import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
 import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSchedulePostingPage";
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
@@ -132,51 +132,61 @@ const App = (): React.ReactElement => {
                     <PrivateRoute
                       exact
                       path={Routes.VOLUNTEER_POSTINGS_PAGE}
+                      authorizedRoles={[Role.Volunteer]}
                       component={VolunteerPostingsPage}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.VOLUNTEER_SHIFTS_PAGE}
+                      authorizedRoles={[Role.Volunteer]}
                       component={VolunteerShiftsPage}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_POSTING_CREATE_BASIC_INFO_PAGE}
+                      authorizedRoles={[Role.Admin]}
                       component={CreatePostingBasicInfoPage}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_POSTING_CREATE_SHIFTS_PAGE}
+                      authorizedRoles={[Role.Admin]}
                       component={CreatePostingShiftsPage}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_POSTING_CREATE_REVIEW_PAGE}
+                      authorizedRoles={[Role.Admin]}
                       component={CreatePostingReviewPage}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.VOLUNTEER_POSTING_DETAILS}
+                      authorizedRoles={[Role.Volunteer]}
                       component={VolunteerPostingDetails}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.VOLUNTEER_POSTING_AVAILABILITIES}
+                      authorizedRoles={[Role.Volunteer]}
                       component={VolunteerPostingAvailabilities}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_POSTING_DETAILS}
+                      authorizedRoles={[Role.Admin]}
                       component={AdminPostingDetails}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
+                      authorizedRoles={[Role.Admin]}
                       component={AdminSchedulePostingPage}
                     />
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_SCHEDULE_POSTING_REVIEW_PAGE}
+                      authorizedRoles={[Role.Admin]}
                       component={AdminSchedulePostingReviewPage}
                     />
                     <PrivateRoute
