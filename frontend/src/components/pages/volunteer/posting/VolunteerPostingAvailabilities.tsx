@@ -114,7 +114,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
         .filter((shift) => shift.signups.length > 0)
         .map((shift) => {
           return {
-            shiftId: shift.id ?? "",
+            shiftId: shift.id,
             note: shift.signups[0].note,
           };
         });
@@ -122,7 +122,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
         .filter((shift) => shift.signups.length > 0)
         .map((shift) => {
           return {
-            shiftId: shift.id ?? "",
+            shiftId: shift.id,
             toDelete: false,
           };
         });
