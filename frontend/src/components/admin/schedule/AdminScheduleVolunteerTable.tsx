@@ -12,6 +12,7 @@ type AdminScheduleVolunteerTableProps = {
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
   isEditing: boolean;
   onEditSaveClick: () => void;
+  submitSignupsLoading: boolean;
 };
 
 const AdminScheduleVolunteerTable = ({
@@ -21,6 +22,7 @@ const AdminScheduleVolunteerTable = ({
   onSignupCheckboxClick,
   isEditing,
   onEditSaveClick,
+  submitSignupsLoading,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [signupsToDisplay, setSignupsToDisplay] = useState<
     AdminSchedulingSignupsAndVolunteerResponseDTO[]
@@ -60,6 +62,7 @@ const AdminScheduleVolunteerTable = ({
             fontSize="12px"
             lineHeight="100%"
             onClick={onEditSaveClick}
+            isLoading={submitSignupsLoading}
           >
             {isEditing ? "Save" : "Edit"}
           </Button>
