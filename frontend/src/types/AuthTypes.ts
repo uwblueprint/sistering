@@ -1,9 +1,15 @@
+export enum Role {
+  Admin = "ADMIN",
+  Volunteer = "VOLUNTEER",
+  Employee = "EMPLOYEE",
+}
+
 export type AuthenticatedUser = {
   id: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: "Admin" | "User";
+  role: Role;
   accessToken: string;
 } | null;
 

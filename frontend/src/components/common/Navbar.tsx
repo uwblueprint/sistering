@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router-dom";
 import {
   Flex,
@@ -14,9 +15,9 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
-import { AuthenticatedUser } from "../../types/AuthTypes";
 import AuthContext from "../../contexts/AuthContext";
 import Sistering_Logo from "../../assets/Sistering_Logo.svg";
+import authAPIClient from "../../APIClients/AuthAPIClient";
 
 type TabInfo = {
   name: string;
@@ -28,10 +29,26 @@ type NavbarProps = {
   tabs: TabInfo[];
 };
 
+const LOGOUT = gql`
+  mutation Logout($userId: ID!) {
+    logout(userId: $userId)
+  }
+`;
+
 const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
-  const {
-    authenticatedUser,
-  }: { authenticatedUser: AuthenticatedUser } = useContext(AuthContext);
+  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
+  const [logout] = useMutation<{ logout: null }>(LOGOUT);
+
+  const onLogOutClick = async () => {
+    const success = await authAPIClient.logout(
+      String(authenticatedUser?.id),
+      logout,
+    );
+    if (success) {
+      setAuthenticatedUser(null);
+    }
+  };
+
   const userName = `${authenticatedUser?.firstName} ${authenticatedUser?.lastName}`;
   const history = useHistory();
   return (
@@ -71,7 +88,7 @@ const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
           </MenuButton>
           <MenuList textStyle="caption" color="black">
             <MenuItem>Profile</MenuItem>
-            <MenuItem>Logout</MenuItem>
+            <MenuItem onClick={onLogOutClick}>Logout</MenuItem>
           </MenuList>
         </Menu>
       </Flex>
