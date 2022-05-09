@@ -8,6 +8,7 @@ import {
   VolunteerPages,
 } from "../../../../constants/Tabs";
 import ErrorModal from "../../../common/ErrorModal";
+import Loading from "../../../common/Loading";
 
 const upcomingShift = {
   postingName: "Posting Name",
@@ -44,6 +45,7 @@ const mockData = [
 
 const VolunteerShiftsPage = (): React.ReactElement => {
   const error = false; // TODO: replace variable with error from GQL query or mutation
+  const loading = false; // TODO: replace with loading from GQL query
   return (
     <Flex h="100vh" flexFlow="column">
       {error && <ErrorModal />}
@@ -57,7 +59,7 @@ const VolunteerShiftsPage = (): React.ReactElement => {
           backgroundColor="background.white"
           px={0}
         >
-          <VolunteerShiftsTable shifts={mockData} />
+          {loading ? <Loading /> : <VolunteerShiftsTable shifts={mockData} />}
         </Container>
       </Box>
     </Flex>
