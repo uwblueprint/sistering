@@ -2,33 +2,36 @@ import React, { useState, useEffect } from "react";
 import { Flex, VStack, Text, Button, Spacer } from "@chakra-ui/react";
 
 import AdminScheduleVolunteerRow from "./AdminScheduleVolunteerRow";
-import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
+import { AdminSchedulingSignupsAndVolunteerResponseDTO } from "../../../types/api/SignupTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 
 type AdminScheduleVolunteerTableProps = {
-  signups: SignupsAndVolunteerGraphQLResponseDTO[];
-  currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
+  signups: AdminSchedulingSignupsAndVolunteerResponseDTO[];
+  currentlyEditingShift?: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
   isEditing: boolean;
-  onButtonClick: () => void;
+  onEditSaveClick: () => void;
+  submitSignupsLoading: boolean;
 };
 
 const AdminScheduleVolunteerTable = ({
   signups,
-  currentlyEditingSignups,
+  currentlyEditingShift,
   onSelectAllSignupsClick,
   onSignupCheckboxClick,
   isEditing,
-  onButtonClick,
+  onEditSaveClick,
+  submitSignupsLoading,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [signupsToDisplay, setSignupsToDisplay] = useState<
-    SignupsAndVolunteerGraphQLResponseDTO[]
+    AdminSchedulingSignupsAndVolunteerResponseDTO[]
   >(signups);
 
   useEffect(() => {
-    if (isEditing) setSignupsToDisplay(currentlyEditingSignups);
+    if (isEditing) setSignupsToDisplay(currentlyEditingShift?.signups ?? []);
     else setSignupsToDisplay(signups);
-  }, [isEditing, signups, currentlyEditingSignups]);
+  }, [isEditing, signups, currentlyEditingShift]);
 
   return (
     <VStack
@@ -58,7 +61,8 @@ const AdminScheduleVolunteerTable = ({
             px="18px"
             fontSize="12px"
             lineHeight="100%"
-            onClick={onButtonClick}
+            onClick={onEditSaveClick}
+            isLoading={submitSignupsLoading}
           >
             {isEditing ? "Save" : "Edit"}
           </Button>

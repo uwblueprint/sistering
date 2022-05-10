@@ -1,4 +1,5 @@
 import {
+  AdminSchedulingSignupsAndVolunteerResponseDTO,
   SignupsAndVolunteerGraphQLResponseDTO,
   SignupsAndVolunteerResponseDTO,
 } from "./SignupTypes";
@@ -27,6 +28,13 @@ export type ShiftBulkRequestDTO = {
 
 export type ShiftWithSignupAndVolunteerResponseDTO = ShiftResponseDTO & {
   signups: SignupsAndVolunteerResponseDTO[];
+};
+
+export type AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO = Omit<
+  ShiftDTO,
+  "postingId"
+> & {
+  signups: AdminSchedulingSignupsAndVolunteerResponseDTO[];
 };
 
 export type ShiftResponseDTO = ShiftDTO;
