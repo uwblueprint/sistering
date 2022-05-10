@@ -24,7 +24,7 @@ type RemoveVolunteerModalProps = {
   numVolunteers: number;
   note: string;
   onClose(): void;
-  cancelShift: (shiftId: string, userId: string) => void;
+  removeSignup: (shiftId: string, userId: string) => void;
 };
 
 const UPDATE_SHIFT_SIGNUP = gql`
@@ -54,13 +54,13 @@ const RemoveVolunteerModal = ({
   numVolunteers,
   note,
   onClose = () => {},
-  cancelShift,
+  removeSignup,
 }: RemoveVolunteerModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
 
-  const [updateShiftSignup] = useMutation<{ shift: ShiftSignupResponseDTO }>(
-    UPDATE_SHIFT_SIGNUP,
-  );
+  const [updateShiftSignup, { loading }] = useMutation<{
+    shift: ShiftSignupResponseDTO;
+  }>(UPDATE_SHIFT_SIGNUP);
 
   const submitUpdateRequest = async () => {
     await updateShiftSignup({
@@ -74,7 +74,12 @@ const RemoveVolunteerModal = ({
         },
       },
     });
-    cancelShift(shiftId, userId);
+    removeSignup(shiftId, userId);
+  };
+
+  const handleRemoveClick = async () => {
+    await submitUpdateRequest();
+    onClose();
   };
 
   return (
@@ -106,14 +111,12 @@ const RemoveVolunteerModal = ({
           </Button>
           <Button
             borderRadius="4px"
-            onClick={() => {
-              submitUpdateRequest();
-              onClose();
-            }}
+            onClick={handleRemoveClick}
             ref={initialRef}
             colorScheme="red"
             textStyle="button-semibold"
             fontWeight={700}
+            isLoading={loading}
           >
             Remove
           </Button>

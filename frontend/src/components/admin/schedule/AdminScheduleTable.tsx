@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useState } from "react";
 import {
   Table,
   Tbody,
@@ -32,18 +32,19 @@ export type AdminScheduleTableProps = {
   endDate: Date;
   // The schedule prop should be sorted by date in ascending order.
   shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
-  cancelShift: (shiftId: string, userId: string) => void;
+  removeSignup: (shiftId: string, userId: string) => void;
 };
 
 const AdminScheduleTable = ({
   startDate,
   endDate,
   shifts,
-  cancelShift,
+  removeSignup,
 }: AdminScheduleTableProps): React.ReactElement => {
-  const [currentWeek, setWeek] = React.useState(
+  const [currentWeek, setWeek] = useState<Date>(
     moment(startDate).startOf("week").toDate(),
   );
+
   return (
     <Box
       borderWidth="1px"
@@ -135,6 +136,9 @@ const AdminScheduleTable = ({
                   ) === 0,
             )
             .map((shift) => {
+              const signupsToDisplay = shift.signups.filter(
+                (signup) => signup.status === "CONFIRMED",
+              );
               return (
                 <Fragment
                   key={`${shift.id}-${new Date(
@@ -145,31 +149,28 @@ const AdminScheduleTable = ({
                     key={new Date(shift.startTime).toDateString()}
                     date={new Date(shift.startTime)}
                   />
-                  {shift.signups.filter(
-                    (signup) => signup.status !== "CANCELED",
-                  ).length > 0 ? (
-                    shift.signups.map(
-                      (signup: SignupsAndVolunteerGraphQLResponseDTO, i) =>
-                        signup.status !== "CANCELED" && (
-                          <AdminScheduleTableRow
-                            key={`${signup.volunteer.id}-${i}`}
-                            volunteer={{
-                              name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
-                              userId: signup.volunteer.id,
-                            }}
-                            postingStart={signup.shiftStartTime}
-                            postingEnd={signup.shiftEndTime}
-                            numVolunteers={signup.numVolunteers}
-                            note={signup.note}
-                            shiftId={shift.id}
-                            cancelShift={cancelShift}
-                          />
-                        ),
+                  {signupsToDisplay.length > 0 ? (
+                    signupsToDisplay.map(
+                      (signup: SignupsAndVolunteerGraphQLResponseDTO, i) => (
+                        <AdminScheduleTableRow
+                          key={`${signup.volunteer.id}-${i}`}
+                          volunteer={{
+                            name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
+                            userId: signup.volunteer.id,
+                          }}
+                          postingStart={signup.shiftStartTime}
+                          postingEnd={signup.shiftEndTime}
+                          numVolunteers={signup.numVolunteers}
+                          note={signup.note}
+                          shiftId={shift.id}
+                          removeSignup={removeSignup}
+                        />
+                      ),
                     )
                   ) : (
                     <AdminScheduleTableRow
                       shiftId={shift.id}
-                      cancelShift={cancelShift}
+                      removeSignup={removeSignup}
                     />
                   )}
                 </Fragment>
