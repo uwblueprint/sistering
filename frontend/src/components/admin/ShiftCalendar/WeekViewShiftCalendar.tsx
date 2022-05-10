@@ -47,7 +47,6 @@ const WeekViewShiftCalendar = ({
   startDate,
   endDate,
 }: ShiftCalendarProps): React.ReactElement => {
-
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const openModal = (): void => {
