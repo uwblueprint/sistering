@@ -2,10 +2,7 @@ import React, { useState, useLayoutEffect } from "react";
 import { Box, Container, Flex } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import VolunteerShiftsTable from "../../../volunteer/shifts/VolunteerShiftsTable";
-import {
-  ShiftSignupStatus,
-  ShiftSignupPostingResponseDTO,
-} from "../../../../types/api/ShiftSignupTypes";
+import { ShiftSignupPostingResponseDTO } from "../../../../types/api/ShiftSignupTypes";
 import Navbar from "../../../common/Navbar";
 import {
   VolunteerNavbarTabs,
@@ -13,7 +10,13 @@ import {
 } from "../../../../constants/Tabs";
 import ErrorModal from "../../../common/ErrorModal";
 import { FilterType } from "../../../../types/DateFilterTypes";
-import { dateInRange } from "../../../../utils/DateTimeUtils";
+import {
+  ShiftSignupsQueryInput,
+  ShiftSignupsQueryResponse,
+} from "../../../../types/api/ShiftTypes";
+import AUTHENTICATED_USER_KEY from "../../../../constants/AuthConstants";
+import { AuthenticatedUser } from "../../../../types/AuthTypes";
+import { getLocalStorageObj } from "../../../../utils/LocalStorageUtils";
 
 const SHIFT_SIGNUPS = gql`
   query ShiftSignups($userId: ID!) {
@@ -30,6 +33,9 @@ const SHIFT_SIGNUPS = gql`
 `;
 
 const VolunteerShiftsPage = (): React.ReactElement => {
+  const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
+    AUTHENTICATED_USER_KEY,
+  );
   const error = false; // TODO: replace variable with error from GQL query or mutation
 
   const [shiftSignups, setShiftSignups] = useState<
@@ -41,11 +47,10 @@ const VolunteerShiftsPage = (): React.ReactElement => {
   >([]);
   const [filter, setFilter] = useState<FilterType>("week");
 
-  useQuery(SHIFT_SIGNUPS, {
-    variables: { userId: 2 },
+  useQuery<ShiftSignupsQueryResponse, ShiftSignupsQueryInput>(SHIFT_SIGNUPS, {
+    variables: { userId: currentUser?.id },
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      console.log("data", data);
       setShiftSignups(data.getShiftSignupsForUser);
       setUnfilteredShiftSignups(data.getShiftSignupsForUser);
     },

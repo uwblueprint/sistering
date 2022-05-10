@@ -1,3 +1,4 @@
+import { ShiftSignupPostingResponseDTO } from "./ShiftSignupTypes";
 import {
   SignupsAndVolunteerGraphQLResponseDTO,
   SignupsAndVolunteerResponseDTO,
@@ -42,4 +43,12 @@ export type VolunteerPostingAvailabilitiesDataQueryResponse = {
 export type VolunteerPostingAvailabilitiesDataQueryInput = {
   postingId: string;
   userId?: string;
+};
+
+export type ShiftSignupsQueryInput = {
+  userId?: string;
+};
+
+export type ShiftSignupsQueryResponse = {
+  getShiftSignupsForUser: ShiftSignupPostingResponseDTO[];
 };
