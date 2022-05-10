@@ -21,6 +21,9 @@ const colors = {
     white: "#FFFFFF",
     light: "#F4F4F4",
     dark: "#E7E7E7",
+    gray: {
+      light: "#F3F3F3",
+    },
   },
   text: {
     default: "#333333",

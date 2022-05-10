@@ -1,17 +1,10 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import {
-  Button,
-  Container,
-  HStack,
-  Text,
-  useBoolean,
-  VStack,
-} from "@chakra-ui/react";
+import { Button, Box, HStack, useBoolean, VStack } from "@chakra-ui/react";
 import { gql, useMutation } from "@apollo/client";
 
 import CreatePostingReview from "../../../admin/posting/CreatePostingReview";
-import SideNavBar from "../../../common/SideNavbar";
+import SideNavBarWithTitle from "../../../common/SideNavbarWithTitle";
 import ErrorModal from "../../../common/ErrorModal";
 
 import {
@@ -51,57 +44,69 @@ const CreatePostingReviewPage = (): React.ReactElement => {
   const navigateBack = () => history.push(ADMIN_POSTING_CREATE_SHIFTS_PAGE);
 
   return (
-    <Container maxW="container.xl" p={0}>
+    <Box>
       {createPostingError && <ErrorModal />}
       <HStack alignItems="flex-start" spacing={0}>
-        <VStack alignItems="flex-start" spacing="90px">
-          <Text textStyle="display-medium" pt={10}>
-            Create New Posting
-          </Text>
-          <SideNavBar
-            activeStep={2}
-            labels={["Basic Information", "Time Slots", "Review and Post"]}
-          />
-        </VStack>
+        <SideNavBarWithTitle
+          title="Create New Posting"
+          labels={["Basic Information", "Time Slots", "Review and Post"]}
+          activeStep={2}
+        />
         <VStack alignItems="flex-end">
           <CreatePostingReview />
-          <HStack spacing="16px">
-            <Button variant="link" onClick={navigateBack}>
-              Back
-            </Button>
-            <Button
-              variant="outline"
-              isLoading={createPostingLoading && isDraftClicked}
-              onClick={async () => {
-                setIsDraftClicked.on();
-                await createPosting({
-                  variables: {
-                    posting: { ...postingToCreate, status: "DRAFT" },
-                  },
-                });
-                navigateToHome();
-              }}
+          <Box minH="75px">
+            <Box
+              position="fixed"
+              bgColor="white"
+              minW="100vw"
+              align="end"
+              zIndex={1}
+              bottom={0}
+              left={0}
+              boxShadow="2px -4px 10px 0px #0000001A"
+              py={4}
+              px={24}
             >
-              Save as Draft
-            </Button>
-            <Button
-              isLoading={createPostingLoading && !isDraftClicked}
-              onClick={async () => {
-                setIsDraftClicked.off();
-                await createPosting({
-                  variables: {
-                    posting: { ...postingToCreate, status: "PUBLISHED" },
-                  },
-                });
-                navigateToHome();
-              }}
-            >
-              Post
-            </Button>
-          </HStack>
+              <Button variant="link" onClick={navigateBack} mr="10">
+                Back
+              </Button>
+              <Button
+                variant="outline"
+                w="180px"
+                mr="5"
+                isLoading={createPostingLoading && isDraftClicked}
+                onClick={async () => {
+                  setIsDraftClicked.on();
+                  await createPosting({
+                    variables: {
+                      posting: { ...postingToCreate, status: "DRAFT" },
+                    },
+                  });
+                  navigateToHome();
+                }}
+              >
+                Save as draft
+              </Button>
+              <Button
+                w="180px"
+                isLoading={createPostingLoading && !isDraftClicked}
+                onClick={async () => {
+                  setIsDraftClicked.off();
+                  await createPosting({
+                    variables: {
+                      posting: { ...postingToCreate, status: "PUBLISHED" },
+                    },
+                  });
+                  navigateToHome();
+                }}
+              >
+                Post
+              </Button>
+            </Box>
+          </Box>
         </VStack>
       </HStack>
-    </Container>
+    </Box>
   );
 };
 

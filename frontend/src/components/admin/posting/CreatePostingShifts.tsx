@@ -1,7 +1,7 @@
 import { DateSelectArg } from "@fullcalendar/react";
 import React, { useContext, useEffect, useState } from "react";
 import {
-  Divider,
+  Box,
   Flex,
   HStack,
   VStack,
@@ -11,7 +11,6 @@ import {
   FormControl,
   FormLabel,
   FormErrorMessage,
-  Button,
 } from "@chakra-ui/react";
 
 import FormHeader from "../../common/FormHeader";
@@ -31,6 +30,7 @@ import {
   getPreviousSunday,
   getUTCDateForDateTimeString,
 } from "../../../utils/DateTimeUtils";
+import StickyBackNext from "../../common/StickyBackNext";
 
 type CreatePostingShiftsProps = {
   navigateBack: () => void;
@@ -233,8 +233,8 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
   ];
 
   return (
-    <div>
-      <VStack w="full" spacing={5} alignItems="flex-start" p={10}>
+    <Box px={12}>
+      <VStack w="full" spacing={5} alignItems="flex-start" px={3} py={12}>
         <FormHeader symbol="2" title="Scheduling Time Slots" />
         <VStack spacing={30} alignItems="flex-start" px={2}>
           <Text textStyle="caption">
@@ -333,7 +333,7 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
        * TODO: implement better solution described here
        * https://github.com/fullcalendar/fullcalendar/issues/4684#issuecomment-620787260
        */}
-      <div key={startDate}>
+      <Box key={startDate} pb="20">
         <WeekViewShiftCalendar
           events={events}
           selectedEvent={selectedEvent}
@@ -344,17 +344,9 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...initialDateProps}
         />
-      </div>
-      <Divider mt="104px" mb="18px" />
-      <VStack alignItems="flex-end">
-        <HStack spacing="16px">
-          <Button variant="link" onClick={navigateBack}>
-            Back
-          </Button>
-          <Button onClick={handleNext}>Next</Button>
-        </HStack>
-      </VStack>
-    </div>
+      </Box>
+      <StickyBackNext onBack={navigateBack} onNext={handleNext} />
+    </Box>
   );
 };
 
