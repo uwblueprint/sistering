@@ -1,10 +1,7 @@
 import React from "react";
 import { VStack, Text, Select } from "@chakra-ui/react";
 import { formatTimeHourMinutes } from "../../../utils/DateTimeUtils";
-import {
-  AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
-  ShiftWithSignupAndVolunteerGraphQLResponseDTO,
-} from "../../../types/api/ShiftTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 
 type ShiftTimeHeaderProps = {
   shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
