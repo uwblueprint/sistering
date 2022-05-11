@@ -1,51 +1,56 @@
-import React from "react";
-import { Flex, Box, Container } from "@chakra-ui/react";
+import React, { useState } from "react";
+import { Box, Container, Flex } from "@chakra-ui/react";
+import { gql, useQuery } from "@apollo/client";
 import VolunteerShiftsTable from "../../../volunteer/shifts/VolunteerShiftsTable";
-import { ShiftSignupStatus } from "../../../../types/api/ShiftSignupTypes";
+import { ShiftSignupPostingResponseDTO } from "../../../../types/api/ShiftSignupTypes";
 import Navbar from "../../../common/Navbar";
 import {
   VolunteerNavbarTabs,
   VolunteerPages,
 } from "../../../../constants/Tabs";
 import ErrorModal from "../../../common/ErrorModal";
+import {
+  ShiftSignupsQueryInput,
+  ShiftSignupsQueryResponse,
+} from "../../../../types/api/ShiftTypes";
+import AUTHENTICATED_USER_KEY from "../../../../constants/AuthConstants";
+import { AuthenticatedUser } from "../../../../types/AuthTypes";
+import { getLocalStorageObj } from "../../../../utils/LocalStorageUtils";
 import Loading from "../../../common/Loading";
 
-const upcomingShift = {
-  postingName: "Posting Name",
-  postingLink: "/volunteer/posting/1",
-  startTime: "2022-01-21T11:00:00+00:00",
-  endTime: "2022-01-21T12:00:00+00:00",
-  deadline: "",
-  status: "CONFIRMED" as ShiftSignupStatus,
-};
-
-const pendingShift = {
-  postingName: "Posting Name",
-  postingLink: "/volunteer/posting/2",
-  deadline: "Deadline: Friday, February 17",
-  startTime: "",
-  endTime: "",
-  status: "PUBLISHED" as ShiftSignupStatus,
-};
-
-const mockData = [
-  {
-    date: new Date("2022-01-21T00:00:00+00:00"),
-    shifts: [upcomingShift, pendingShift],
-  },
-  {
-    date: new Date("2022-01-22T00:00:00+00:00"),
-    shifts: [upcomingShift, pendingShift],
-  },
-  {
-    date: new Date("2022-01-23T00:00:00+00:00"),
-    shifts: [upcomingShift, pendingShift],
-  },
-];
+const SHIFT_SIGNUPS = gql`
+  query ShiftSignups($userId: ID!) {
+    getShiftSignupsForUser(userId: $userId) {
+      shiftId
+      shiftStartTime
+      shiftEndTime
+      status
+      postingId
+      postingTitle
+      autoClosingDate
+    }
+  }
+`;
 
 const VolunteerShiftsPage = (): React.ReactElement => {
-  const error = false; // TODO: replace variable with error from GQL query or mutation
-  const loading = false; // TODO: replace with loading from GQL query
+  const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
+    AUTHENTICATED_USER_KEY,
+  );
+  const [shiftSignups, setShiftSignups] = useState<
+    ShiftSignupPostingResponseDTO[]
+  >([]);
+
+  const { error, loading } = useQuery<
+    ShiftSignupsQueryResponse,
+    ShiftSignupsQueryInput
+  >(SHIFT_SIGNUPS, {
+    variables: { userId: currentUser?.id },
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setShiftSignups(data.getShiftSignupsForUser);
+    },
+  });
+
   return (
     <Flex h="100vh" flexFlow="column">
       {error && <ErrorModal />}
@@ -59,7 +64,11 @@ const VolunteerShiftsPage = (): React.ReactElement => {
           backgroundColor="background.white"
           px={0}
         >
-          {loading ? <Loading /> : <VolunteerShiftsTable shifts={mockData} />}
+          {loading ? (
+            <Loading />
+          ) : (
+            <VolunteerShiftsTable shifts={shiftSignups} />
+          )}
         </Container>
       </Box>
     </Flex>
