@@ -54,3 +54,10 @@ export type UpdateShiftSignupRequestDTO = Pick<
   SignupDTO,
   "numVolunteers" | "note" | "status"
 >;
+
+export type AdminSchedulingSignupsAndVolunteerResponseDTO = Omit<
+  SignupDTO,
+  "userId" | "shiftId"
+> & {
+  volunteer: Pick<VolunteerUserResponseDTO, "firstName" | "lastName" | "id">;
+};

@@ -2,8 +2,6 @@ import React, { useContext, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import {
   Avatar,
-  Button,
-  Divider,
   Flex,
   FormControl,
   FormErrorMessage,
@@ -42,6 +40,7 @@ import {
   EmployeeUserResponseDTO,
 } from "../../../types/api/EmployeeTypes";
 import { SkillDTO, SkillResponseDTO } from "../../../types/api/SkillTypes";
+import StickyBackNext from "../../common/StickyBackNext";
 
 type CreatePostingBasicInfoProps = { navigateToNext: () => void };
 type GraphQLTypeName = { __typename: string };
@@ -619,8 +618,7 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
               </FormControl>
             </HStack>
           </VStack>
-          <Divider mt="104px !important" mb="18px" />
-          <Button onClick={handleNext}>Next</Button>
+          <StickyBackNext onNext={handleNext} />
         </VStack>
       </VStack>
     </Flex>

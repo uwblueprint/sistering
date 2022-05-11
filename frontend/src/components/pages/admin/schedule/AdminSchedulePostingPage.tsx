@@ -1,14 +1,14 @@
 import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
 import {
+  AdminSchedulingSignupsAndVolunteerResponseDTO,
   ShiftSignupStatus,
-  SignupsAndVolunteerGraphQLResponseDTO,
 } from "../../../../types/api/SignupTypes";
 import Navbar from "../../../common/Navbar";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
@@ -24,7 +24,7 @@ import {
 } from "../../../../utils/DateTimeUtils";
 
 type AdminScheduleTableDataQueryResponse = {
-  shiftsWithSignupsAndVolunteersByPosting: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
 };
 
 type AdminScheduleTableDataQueryInput = {
@@ -50,6 +50,7 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
       signupStatus: $signupStatus
     ) {
       id
+      postingId
       startTime
       endTime
       signups {
@@ -68,19 +69,34 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
   }
 `;
 
+const SUBMIT_SIGNUPS = gql`
+  mutation VolunteerPostingAvailabilities_SubmitSignups(
+    $upsertDeleteShifts: UpsertDeleteShiftSignupRequestDTO!
+  ) {
+    upsertDeleteShiftSignups(upsertDeleteShifts: $upsertDeleteShifts) {
+      status
+    }
+  }
+`;
+
 const AdminSchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const [shifts, setShifts] = useState<
-    ShiftWithSignupAndVolunteerGraphQLResponseDTO[]
+    AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
-  const [currentlyEditingSignups, setCurrentlyEditingSignups] = useState<
-    SignupsAndVolunteerGraphQLResponseDTO[]
-  >([]);
+  const [
+    currentlyEditingShift,
+    setcurrentlyEditingShift,
+  ] = useState<AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO>();
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
   );
+  const [
+    submitSignups,
+    { loading: submitSignupsLoading, error: submitSignupsError },
+  ] = useMutation(SUBMIT_SIGNUPS);
 
-  const { error } = useQuery<
+  const { error: tableDataQueryError } = useQuery<
     AdminScheduleTableDataQueryResponse,
     AdminScheduleTableDataQueryInput
   >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
@@ -110,11 +126,13 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   };
 
   const handleSidePanelEditClick = (
-    signups: SignupsAndVolunteerGraphQLResponseDTO[],
-  ) => setCurrentlyEditingSignups(signups);
+    shift?: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
+  ) => setcurrentlyEditingShift(shift);
 
   const handleSelectAllSignupsClick = () => {
-    const updatedSignups: SignupsAndVolunteerGraphQLResponseDTO[] = currentlyEditingSignups.map(
+    if (!currentlyEditingShift) return;
+    const signupsCopy = [...currentlyEditingShift.signups];
+    const updatedSignups: AdminSchedulingSignupsAndVolunteerResponseDTO[] = signupsCopy.map(
       (signup) => {
         return {
           ...signup,
@@ -122,26 +140,65 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
         };
       },
     );
-    setCurrentlyEditingSignups(updatedSignups);
+    setcurrentlyEditingShift({
+      ...currentlyEditingShift,
+      signups: updatedSignups,
+    });
   };
 
   const handleSignupCheckboxClick = (
     volunteerId: string,
     isChecked: boolean,
   ) => {
-    const signupIndex = currentlyEditingSignups.findIndex(
+    if (!currentlyEditingShift) return;
+
+    const signupIndex = currentlyEditingShift.signups.findIndex(
       (signup) => signup.volunteer.id === volunteerId,
     );
     if (signupIndex >= 0) {
-      const signupsCopy = cloneDeep(currentlyEditingSignups);
-      signupsCopy[signupIndex].status = isChecked ? "CONFIRMED" : "PENDING";
-      setCurrentlyEditingSignups(signupsCopy);
+      const signupsCopy = [...currentlyEditingShift.signups];
+      const signup = currentlyEditingShift.signups[signupIndex];
+      signupsCopy[signupIndex] = {
+        ...signup,
+        status: isChecked ? "CONFIRMED" : "PENDING",
+      };
+      setcurrentlyEditingShift({
+        ...currentlyEditingShift,
+        signups: signupsCopy,
+      });
     }
+  };
+
+  const handleSidePanelSaveClick = async () => {
+    if (!currentlyEditingShift) return;
+    await submitSignups({
+      variables: {
+        upsertDeleteShifts: {
+          upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
+            shiftId: currentlyEditingShift.id,
+            userId: signup.volunteer.id,
+            note: signup.note,
+            numVolunteers: signup.numVolunteers,
+            status: signup.status,
+          })),
+          deleteShiftSignups: [],
+        },
+      },
+    });
+
+    const shiftsCopy = cloneDeep(shifts);
+    const shiftIndex = shiftsCopy.findIndex(
+      (shift) => shift.id === currentlyEditingShift.id,
+    );
+    shiftsCopy[shiftIndex].signups = [...currentlyEditingShift.signups];
+    setShifts(shiftsCopy);
+
+    setcurrentlyEditingShift(undefined);
   };
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
-      {error && <ErrorModal />}
+      {(tableDataQueryError || submitSignupsError) && <ErrorModal />}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
         tabs={AdminNavbarTabs}
@@ -174,10 +231,12 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel
               shifts={shifts}
-              currentlyEditingSignups={currentlyEditingSignups}
+              currentlyEditingShift={currentlyEditingShift}
               onEditSignupsClick={handleSidePanelEditClick}
               onSelectAllSignupsClick={handleSelectAllSignupsClick}
               onSignupCheckboxClick={handleSignupCheckboxClick}
+              onSaveSignupsClick={handleSidePanelSaveClick}
+              submitSignupsLoading={submitSignupsLoading}
             />
           </Box>
         </Flex>
@@ -191,7 +250,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           minH="100vh"
         >
           <Button
-            onClick={() => console.log("TODO: Back")}
+            onClick={() => setCurrentView(AdminScheduleViews.CalendarView)}
             variant="link"
             mb={4}
             leftIcon={<ChevronLeftIcon />}
@@ -204,6 +263,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             <Button
               onClick={() => {
                 // Submit the selected shifts
+                // eslint-disable-next-line no-console
                 console.log("TODO: Publish");
               }}
             >

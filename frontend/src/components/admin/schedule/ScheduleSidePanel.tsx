@@ -1,42 +1,62 @@
-import React, { useEffect, useState } from "react";
-import { VStack, Box, Text } from "@chakra-ui/react";
+import React, { useState, useEffect } from "react";
+import { VStack, Box, Text, useBoolean } from "@chakra-ui/react";
 import { formatDateStringYear } from "../../../utils/DateTimeUtils";
 
 import ShiftTimeHeader from "./ShiftTimeHeader";
 import NoShiftsPanel from "../../pages/admin/schedule/NoShiftsPanel";
 import AdminScheduleVolunteerTable from "./AdminScheduleVolunteerTable";
-import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
-import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 
 type ScheduleSidePanelProps = {
-  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
-  currentlyEditingSignups: SignupsAndVolunteerGraphQLResponseDTO[];
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  currentlyEditingShift?: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO;
   onEditSignupsClick: (
-    signups: SignupsAndVolunteerGraphQLResponseDTO[],
+    shift?: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
   ) => void;
   onSelectAllSignupsClick: () => void;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
+  onSaveSignupsClick: () => Promise<void>;
+  submitSignupsLoading: boolean;
 };
 
 const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   shifts,
-  currentlyEditingSignups,
+  currentlyEditingShift,
   onEditSignupsClick,
   onSelectAllSignupsClick,
   onSignupCheckboxClick,
+  onSaveSignupsClick,
+  submitSignupsLoading,
 }: ScheduleSidePanelProps): React.ReactElement => {
-  const [selectedShiftId, setSelectedShiftId] = useState<string>(
-    shifts[0] ? shifts[0].id : "",
-  );
   const [
     selectedShift,
     setSelectedShift,
-  ] = useState<ShiftWithSignupAndVolunteerGraphQLResponseDTO>(shifts[0]);
+  ] = useState<AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO>(
+    shifts[0],
+  );
+  const [isEditing, setIsEditing] = useBoolean(false);
+
   useEffect(() => {
+    if (!selectedShift) return;
+    const updatedShift = shifts.find((shift) => shift.id === selectedShift.id);
+    setSelectedShift(updatedShift ?? shifts[0]);
+  }, [shifts, selectedShift]);
+
+  const handleEditSaveButtonClick = async () => {
+    if (!isEditing) {
+      onEditSignupsClick(selectedShift);
+    } else {
+      await onSaveSignupsClick();
+    }
+    setIsEditing.toggle();
+  };
+
+  const handleShiftTimeSelect = (selectedShiftId: string) => {
     setSelectedShift(
       shifts.find((shift) => shift.id === selectedShiftId) || shifts[0],
     );
-  }, [selectedShiftId, shifts]);
+    setIsEditing.off();
+  };
 
   return (
     <VStack
@@ -66,14 +86,16 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
         <>
           <ShiftTimeHeader
             shifts={shifts}
-            onShiftSelected={(shiftId: string) => setSelectedShiftId(shiftId)}
+            onShiftSelected={handleShiftTimeSelect}
           />
           <AdminScheduleVolunteerTable
             signups={selectedShift ? selectedShift.signups : []}
-            currentlyEditingSignups={currentlyEditingSignups}
-            onEditSignupsClick={onEditSignupsClick}
+            currentlyEditingShift={currentlyEditingShift}
             onSelectAllSignupsClick={onSelectAllSignupsClick}
             onSignupCheckboxClick={onSignupCheckboxClick}
+            isEditing={isEditing}
+            onEditSaveClick={handleEditSaveButtonClick}
+            submitSignupsLoading={submitSignupsLoading}
           />
         </>
       ) : (
