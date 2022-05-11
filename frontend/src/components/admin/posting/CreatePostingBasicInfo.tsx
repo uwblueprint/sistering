@@ -301,8 +301,8 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
       title &&
       autoClosingDate &&
       description &&
-      selectedSkills &&
-      selectedEmployees &&
+      selectedSkills.length &&
+      selectedEmployees.length &&
       !Number.isNaN(parseInt(numVolunteers, 10)) &&
       autoClosingDate >= currentDateISOString;
 
