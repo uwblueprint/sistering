@@ -169,17 +169,3 @@ export const getMonthsInRange = (startDate: Date, endDate: Date): Date[] => {
   }
   return monthsInRange;
 };
-
-/*
- * get the earliest date from an array of dates
- */
-export const getEarliestDate = (dates: Date[]): Date => {
-  return dates.reduce((a, b) => (a < b ? a : b));
-};
-
-/**
- * get the latest date from an array of dates
- */
-export const getLatestDate = (dates: Date[]): Date => {
-  return dates.reduce((a, b) => (a > b ? a : b));
-};
