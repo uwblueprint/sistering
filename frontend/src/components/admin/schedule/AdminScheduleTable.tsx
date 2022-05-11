@@ -14,10 +14,7 @@ import AdminScheduleTableDate from "./AdminScheduleTableDate";
 import AdminScheduleTableRow from "./AdminScheduleTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
 import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
-import {
-  AdminSchedulingSignupsAndVolunteerResponseDTO,
-  SignupsAndVolunteerGraphQLResponseDTO,
-} from "../../../types/api/SignupTypes";
+import { AdminSchedulingSignupsAndVolunteerResponseDTO } from "../../../types/api/SignupTypes";
 
 export type AdminScheduleSignup = {
   startTime: Date;

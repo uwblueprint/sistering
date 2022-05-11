@@ -5,6 +5,7 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
 
 import { ChevronLeftIcon } from "@chakra-ui/icons";
+import moment from "moment";
 import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../../types/api/ShiftTypes";
 import {
   AdminSchedulingSignupsAndVolunteerResponseDTO,
@@ -82,8 +83,10 @@ const SUBMIT_SIGNUPS = gql`
 
 const ShiftScheduleCalendar = ({
   shifts,
+  onDayClick,
 }: {
   shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  onDayClick: (calendarDay: Date) => void;
 }) =>
   shifts.length > 0 && (
     <MonthViewShiftCalendar
@@ -96,6 +99,7 @@ const ShiftScheduleCalendar = ({
         };
       })}
       shifts={shifts}
+      onDayClick={onDayClick}
     />
   );
 
@@ -115,6 +119,9 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     submitSignups,
     { loading: submitSignupsLoading, error: submitSignupsError },
   ] = useMutation(SUBMIT_SIGNUPS);
+  const [sidePanelShifts, setSidePanelShifts] = useState<
+    AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
+  >([]);
 
   const { error: tableDataQueryError, loading } = useQuery<
     AdminScheduleTableDataQueryResponse,
@@ -123,8 +130,18 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     variables: {
       postingId: Number(id),
     },
-    onCompleted: (data) =>
-      setShifts(data.shiftsWithSignupsAndVolunteersByPosting),
+    onCompleted: ({ shiftsWithSignupsAndVolunteersByPosting: shiftsData }) => {
+      setShifts(shiftsData);
+
+      if (shiftsData.length) {
+        const firstDay = shiftsData[0]?.startTime;
+        setSidePanelShifts(
+          shiftsData.filter((shift) =>
+            moment(shift.startTime).isSame(moment(firstDay), "day"),
+          ),
+        );
+      }
+    },
     fetchPolicy: "no-cache",
   });
 
@@ -216,6 +233,14 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     setcurrentlyEditingShift(undefined);
   };
 
+  const handleDayClick = (calendarDate: Date) => {
+    setSidePanelShifts(
+      shifts.filter((shift) =>
+        moment(shift.startTime).isSame(moment(calendarDate), "day"),
+      ),
+    );
+  };
+
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
       {(tableDataQueryError || submitSignupsError) && <ErrorModal />}
@@ -234,11 +259,15 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
             />
-            {loading ? <Loading /> : ShiftScheduleCalendar({ shifts })}
+            {loading ? (
+              <Loading />
+            ) : (
+              ShiftScheduleCalendar({ shifts, onDayClick: handleDayClick })
+            )}
           </Box>
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel
-              shifts={shifts}
+              shifts={sidePanelShifts}
               currentlyEditingShift={currentlyEditingShift}
               onEditSignupsClick={handleSidePanelEditClick}
               onSelectAllSignupsClick={handleSelectAllSignupsClick}
