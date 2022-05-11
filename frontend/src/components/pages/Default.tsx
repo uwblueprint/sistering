@@ -11,7 +11,7 @@ import { Role } from "../../types/AuthTypes";
 const Default = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
-  if (authenticatedUser.role === Role.Volunteer) {
+  if (authenticatedUser?.role === Role.Volunteer) {
     return <Redirect to={Routes.VOLUNTEER_POSTINGS_PAGE} />;
   }
 
