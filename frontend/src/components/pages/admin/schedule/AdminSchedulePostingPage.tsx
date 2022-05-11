@@ -19,10 +19,6 @@ import ErrorModal from "../../../common/ErrorModal";
 import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
 import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
-import {
-  getEarliestDate,
-  getLatestDate,
-} from "../../../../utils/DateTimeUtils";
 import Loading from "../../../common/Loading";
 
 type AdminScheduleTableDataQueryResponse = {
@@ -81,6 +77,20 @@ const SUBMIT_SIGNUPS = gql`
   }
 `;
 
+const POSTING = gql`
+  query AdminSchedule_Posting($id: ID!) {
+    posting(id: $id) {
+      title
+      description
+      branch {
+        name
+      }
+      startDate
+      endDate
+    }
+  }
+`;
+
 const ShiftScheduleCalendar = ({
   shifts,
   onDayClick,
@@ -123,7 +133,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
 
-  const { error: tableDataQueryError, loading } = useQuery<
+  const { error: tableDataQueryError, loading: tableDataLoading } = useQuery<
     AdminScheduleTableDataQueryResponse,
     AdminScheduleTableDataQueryInput
   >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
@@ -143,6 +153,15 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
       }
     },
     fetchPolicy: "no-cache",
+  });
+
+  const {
+    error: postingError,
+    loading: postingLoading,
+    data: { posting: postingDetails } = {},
+  } = useQuery(POSTING, {
+    variables: { id },
+    fetchPolicy: "cache-and-network",
   });
 
   // Change status of shift to PENDING
@@ -243,7 +262,9 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
-      {(tableDataQueryError || submitSignupsError) && <ErrorModal />}
+      {(tableDataQueryError || submitSignupsError || postingError) && (
+        <ErrorModal />
+      )}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
         tabs={AdminNavbarTabs}
@@ -251,18 +272,20 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
       {currentView === AdminScheduleViews.CalendarView ? (
         <Flex>
           <Box flex={1}>
-            <AdminSchedulePageHeader branchName="Kitchen" />
+            <AdminSchedulePageHeader
+              branchName={postingDetails?.branch?.name}
+            />
             <AdminPostingScheduleHeader
               postingID={Number(id)}
-              postingName="Posting Name"
+              postingName={postingDetails?.title}
               onReviewClick={() =>
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
             />
-            {loading ? (
+            {tableDataLoading || postingLoading ? (
               <Loading />
             ) : (
-              ShiftScheduleCalendar({ shifts, onDayClick: handleDayClick })
+              ShiftScheduleCalendar({ shifts })
             )}
           </Box>
           <Box w="400px" overflow="hidden">
@@ -295,7 +318,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             Back to editing
           </Button>
           <Flex pb={6}>
-            <Text textStyle="display-medium">Medical Reception Volunteer</Text>
+            <Text textStyle="display-medium">{postingDetails?.title}</Text>
             <Spacer />
             <Button
               onClick={() => {
@@ -307,13 +330,10 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               Publish schedule
             </Button>
           </Flex>
-          {/* TODO: Get start and end date range from start/end of month */}
           {shifts.length > 0 && (
             <AdminScheduleTable
-              startDate={getEarliestDate(
-                shifts.flatMap((shift) => shift.startTime),
-              )}
-              endDate={getLatestDate(shifts.flatMap((shift) => shift.endTime))}
+              startDate={postingDetails?.startDate}
+              endDate={postingDetails?.endDate}
               shifts={shifts.sort()}
               removeSignup={removeSignup}
             />
