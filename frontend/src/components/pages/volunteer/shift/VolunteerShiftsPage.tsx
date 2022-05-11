@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from "react";
+import React, { useState } from "react";
 import { Box, Container, Flex } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import VolunteerShiftsTable from "../../../volunteer/shifts/VolunteerShiftsTable";
@@ -9,7 +9,6 @@ import {
   VolunteerPages,
 } from "../../../../constants/Tabs";
 import ErrorModal from "../../../common/ErrorModal";
-import { FilterType } from "../../../../types/DateFilterTypes";
 import {
   ShiftSignupsQueryInput,
   ShiftSignupsQueryResponse,
@@ -42,45 +41,13 @@ const VolunteerShiftsPage = (): React.ReactElement => {
     ShiftSignupPostingResponseDTO[]
   >([]);
 
-  const [unfilteredShiftSignups, setUnfilteredShiftSignups] = useState<
-    ShiftSignupPostingResponseDTO[]
-  >([]);
-  const [filter, setFilter] = useState<FilterType>("week");
-
   useQuery<ShiftSignupsQueryResponse, ShiftSignupsQueryInput>(SHIFT_SIGNUPS, {
     variables: { userId: currentUser?.id },
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       setShiftSignups(data.getShiftSignupsForUser);
-      setUnfilteredShiftSignups(data.getShiftSignupsForUser);
     },
   });
-
-  // useLayoutEffect(() => {
-  //   let filteredShiftSignups;
-  //   switch (filter) {
-  //     case "month":
-  //       filteredShiftSignups = unfilteredShiftSignups?.filter((shiftSignup) =>
-  //         dateInRange(shiftSignup.shiftStartTime, "month"),
-  //       );
-  //       setShiftSignups(filteredShiftSignups ?? []);
-  //       break;
-  //     case "all":
-  //       setShiftSignups(unfilteredShiftSignups);
-  //       break;
-  //     default:
-  //       filteredShiftSignups = unfilteredShiftSignups?.filter((shiftSignup) =>
-  //         dateInRange(shiftSignup.shiftStartTime, "week"),
-  //       );
-  //       setShiftSignups(filteredShiftSignups ?? []);
-  //       break;
-  //   }
-  // }, [filter, unfilteredShiftSignups]);
-
-  const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const value: FilterType = e.target.value as FilterType;
-    setFilter(value);
-  };
 
   return (
     <Flex h="100vh" flexFlow="column">

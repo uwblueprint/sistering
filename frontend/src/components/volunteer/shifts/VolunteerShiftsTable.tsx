@@ -15,47 +15,51 @@ import {
   Tr,
   Td,
 } from "@chakra-ui/react";
+import moment from "moment";
 import VolunteerShiftsTableRow from "./VolunteerShiftsTableRow";
-import VolunteerShiftsTableDate from "./VolunteerShiftsTableDate";
-import {
-  ShiftSignupStatus,
-  ShiftSignupPostingResponseDTO,
-} from "../../../types/api/ShiftSignupTypes";
-
-type Shift = {
-  startTime: string;
-  endTime: string;
-  postingName: string;
-  postingLink: string;
-  deadline: string;
-  status: ShiftSignupStatus;
-};
-
-type VolunteerDateShifts = {
-  date: Date;
-  shifts: Shift[];
-};
+import { ShiftSignupPostingResponseDTO } from "../../../types/api/ShiftSignupTypes";
+import { FilterType } from "../../../types/DateFilterTypes";
 
 type VolunteerShiftsTableProps = {
   // The schedule prop should be sorted by date in ascending order.
   shifts: ShiftSignupPostingResponseDTO[];
-  // shifts: VolunteerDateShifts[];
 };
 
 const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   shifts,
 }: VolunteerShiftsTableProps) => {
-  const upcomingShifts = shifts.filter((shift) => shift.status === "PUBLISHED");
-  const pendingShifts = shifts.filter(
-    (shift) => shift.status === "PENDING" || shift.status === "CONFIRMED",
-  );
-
+  const [filter, setFilter] = useState<FilterType>("week");
   const [tabIndex, setTabIndex] = useState(0);
+
+  const upcomingShifts = shifts
+    .filter((shift) => shift.status === "PUBLISHED")
+    .filter((shift) => {
+      if (filter === "all") {
+        return true;
+      }
+      return moment().isSame(moment(shift.shiftStartTime), filter);
+    });
+  const pendingShifts = shifts
+    .filter(
+      (shift) => shift.status === "PENDING" || shift.status === "CONFIRMED",
+    )
+    .filter((shift) => {
+      if (filter === "all") {
+        return true;
+      }
+      return moment().isSame(moment(shift.autoClosingDate), filter);
+    });
+
   const [displayShifts, setDisplayShifts] = useState(upcomingShifts);
 
   useEffect(() => {
     setDisplayShifts(tabIndex === 0 ? upcomingShifts : pendingShifts);
-  }, [tabIndex, shifts]);
+  }, [tabIndex, pendingShifts, upcomingShifts]);
+
+  const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value: FilterType = e.target.value as FilterType;
+    setFilter(value);
+  };
 
   return (
     <Box
@@ -74,10 +78,14 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
         </Tabs>
         <HStack>
           <Text>Showing: </Text>
-          <Select width="194px" _hover={{ bgColor: "gray.100" }}>
-            <option>This week</option>
-            <option>This month</option>
-            <option>All shifts</option>
+          <Select
+            width="194px"
+            _hover={{ bgColor: "gray.100" }}
+            onChange={changeFilter}
+          >
+            <option value="week">This week</option>
+            <option value="month">This month</option>
+            <option value="all">All shifts</option>
           </Select>
         </HStack>
       </HStack>
