@@ -285,7 +285,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             {tableDataLoading || postingLoading ? (
               <Loading />
             ) : (
-              ShiftScheduleCalendar({ shifts })
+              ShiftScheduleCalendar({ shifts, onDayClick: handleDayClick })
             )}
           </Box>
           <Box w="400px" overflow="hidden">
