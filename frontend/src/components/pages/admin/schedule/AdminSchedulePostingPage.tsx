@@ -22,6 +22,7 @@ import AdminScheduleTable, {
   TableTestData,
 } from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
+import Loading from "../../../common/Loading";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -94,7 +95,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     { loading: submitSignupsLoading, error: submitSignupsError },
   ] = useMutation(SUBMIT_SIGNUPS);
 
-  const { error: tableDataQueryError } = useQuery<
+  const { error: tableDataQueryError, loading } = useQuery<
     AdminScheduleTableDataQueryResponse,
     AdminScheduleTableDataQueryInput
   >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
@@ -193,7 +194,13 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
             />
-            <MonthViewShiftCalendar events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS} />
+            {loading ? (
+              <Loading />
+            ) : (
+              <MonthViewShiftCalendar
+                events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS}
+              />
+            )}
           </Box>
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel

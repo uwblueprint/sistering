@@ -15,6 +15,7 @@ import {
   VOLUNTEER_POSTING_AVAILABILITIES,
   VOLUNTEER_POSTINGS_PAGE,
 } from "../../../../constants/Routes";
+import Loading from "../../../common/Loading";
 
 const POSTING = gql`
   query VolunteerPostingDetails_Posting($id: ID!) {
@@ -86,12 +87,14 @@ const VolunteerPostingDetails = (): React.ReactElement => {
           centerContent
           borderRadius={10}
         >
-          {postingDetails ? (
+          {loading ? (
+            <Loading />
+          ) : (
             <PostingDetails
               postingDetails={postingDetails}
               footerButtonOnClick={navigateToSubmitAvailabilities}
             />
-          ) : null}
+          )}
         </Container>
       </VStack>
     </Box>
