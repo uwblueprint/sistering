@@ -9,12 +9,13 @@ import { AuthContext } from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 
 const Default = (): React.ReactElement => {
+  const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
   if (authenticatedUser.role === Role.Volunteer) {
     return <Redirect to={Routes.VOLUNTEER_POSTINGS_PAGE} />;
   }
 
-  const history = useHistory();
+
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
       <Text textStyle="display-large">Welcome to Sistering</Text>
