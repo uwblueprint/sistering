@@ -49,3 +49,10 @@ export type SignupsAndVolunteerGraphQLResponseDTO = Pick<
 > & {
   volunteer: Pick<VolunteerUserResponseDTO, "firstName" | "lastName">;
 } & Partial<SignupsAndVolunteerResponseDTO>;
+
+export type AdminSchedulingSignupsAndVolunteerResponseDTO = Omit<
+  SignupDTO,
+  "userId" | "shiftId"
+> & {
+  volunteer: Pick<VolunteerUserResponseDTO, "firstName" | "lastName" | "id">;
+};

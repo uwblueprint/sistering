@@ -16,6 +16,7 @@ import {
 import AUTHENTICATED_USER_KEY from "../../../../constants/AuthConstants";
 import { AuthenticatedUser } from "../../../../types/AuthTypes";
 import { getLocalStorageObj } from "../../../../utils/LocalStorageUtils";
+import Loading from "../../../common/Loading";
 
 const SHIFT_SIGNUPS = gql`
   query ShiftSignups($userId: ID!) {
@@ -35,13 +36,14 @@ const VolunteerShiftsPage = (): React.ReactElement => {
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
     AUTHENTICATED_USER_KEY,
   );
-  const error = false; // TODO: replace variable with error from GQL query or mutation
-
   const [shiftSignups, setShiftSignups] = useState<
     ShiftSignupPostingResponseDTO[]
   >([]);
 
-  useQuery<ShiftSignupsQueryResponse, ShiftSignupsQueryInput>(SHIFT_SIGNUPS, {
+  const { error, loading } = useQuery<
+    ShiftSignupsQueryResponse,
+    ShiftSignupsQueryInput
+  >(SHIFT_SIGNUPS, {
     variables: { userId: currentUser?.id },
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
@@ -62,7 +64,11 @@ const VolunteerShiftsPage = (): React.ReactElement => {
           backgroundColor="background.white"
           px={0}
         >
-          <VolunteerShiftsTable shifts={shiftSignups} />
+          {loading ? (
+            <Loading />
+          ) : (
+            <VolunteerShiftsTable shifts={shiftSignups} />
+          )}
         </Container>
       </Box>
     </Flex>

@@ -1,13 +1,5 @@
 import React, { useState } from "react";
-import {
-  Box,
-  Button,
-  Flex,
-  Spacer,
-  Spinner,
-  Text,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Button, Flex, Spacer, Text, useToast } from "@chakra-ui/react";
 
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Redirect, useHistory, useParams } from "react-router-dom";
@@ -19,6 +11,7 @@ import {
   VolunteerPostingAvailabilitiesDataQueryResponse,
 } from "../../../../types/api/ShiftTypes";
 import ErrorModal from "../../../common/ErrorModal";
+import Loading from "../../../common/Loading";
 import {
   PostingDataQueryInput,
   PostingDataQueryResponse,
@@ -143,6 +136,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
   const [submitSignups] = useMutation<{ submitSignups: SignupResponseDTO }>(
     SUBMIT_SIGNUPS,
   );
+  const isPageLoading = isPostingLoading || isShiftsLoading;
 
   const handleSubmitClick = async () => {
     const graphQLResult = await submitSignups({
@@ -182,11 +176,7 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     }
   };
 
-  if (isPostingLoading || isShiftsLoading) {
-    return <Spinner />;
-  }
-
-  return !(isShiftsLoading || isPostingLoading) && !shiftsByPosting ? (
+  return !isPageLoading && !shiftsByPosting ? (
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" pt={14} px={100} minH="100vh">
@@ -202,23 +192,31 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
       <Flex pb={7}>
         <Text textStyle="display-large">Select your Availability</Text>
         <Spacer />
-        <Button onClick={handleSubmitClick}>Submit</Button>
+        <Button disabled={isPageLoading} onClick={handleSubmitClick}>
+          Submit
+        </Button>
       </Flex>
-      <VolunteerAvailabilityTable
-        postingShifts={
-          shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]
-        }
-        postingStartDate={
-          new Date(Date.parse((postingDetails as PostingResponseDTO).startDate))
-        }
-        postingEndDate={
-          new Date(Date.parse((postingDetails as PostingResponseDTO).endDate))
-        }
-        selectedShifts={shiftSignups}
-        setSelectedShifts={setShiftSignups}
-        deleteSignups={deleteSignups}
-        setDeleteSignups={setDeleteSignups}
-      />
+      {isPageLoading ? (
+        <Loading />
+      ) : (
+        <VolunteerAvailabilityTable
+          postingShifts={
+            shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]
+          }
+          postingStartDate={
+            new Date(
+              Date.parse((postingDetails as PostingResponseDTO).startDate),
+            )
+          }
+          postingEndDate={
+            new Date(Date.parse((postingDetails as PostingResponseDTO).endDate))
+          }
+          selectedShifts={shiftSignups}
+          setSelectedShifts={setShiftSignups}
+          deleteSignups={deleteSignups}
+          setDeleteSignups={setDeleteSignups}
+        />
+      )}
     </Box>
   );
 };

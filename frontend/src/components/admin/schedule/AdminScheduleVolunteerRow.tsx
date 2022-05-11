@@ -59,6 +59,7 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
             aria-label="Person Icon"
             icon={<Image src={PersonIcon} alt="Person Icon" h={4} />}
             // onClick to be changed later to open a panel that displays the volunteer's info
+            // eslint-disable-next-line no-console
             onClick={() => console.log(volunteerID)}
           />
         </HStack>

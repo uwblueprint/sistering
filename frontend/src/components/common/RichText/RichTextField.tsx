@@ -18,6 +18,7 @@ import {
   Image,
   Divider,
   Box,
+  Container,
   IconButton,
 } from "@chakra-ui/react";
 import "draft-js/dist/Draft.css";
@@ -304,7 +305,7 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
   };
 
   return (
-    <VStack alignItems="flex-start">
+    <VStack alignItems="flex-start" w="full">
       <HStack h="32px">
         <Select
           ml="12px"
@@ -400,25 +401,25 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
           ))}
         </ButtonGroup>
       </HStack>
-      <Box
-        w="full"
+      <Container
         borderWidth={editorBorderWidth}
         borderRadius="sm"
         borderColor={editorBorderColor}
-        overflowY="auto"
-        p="12px"
+        p="5px"
+        maxW="container.md"
+        sx={{
+          ...fontSizeObject,
+          ".public-DraftEditorPlaceholder-root": {
+            display: showPlaceHolder,
+            fontSize: `${textSizes[textSize]}px`,
+          },
+          ".public-DraftEditor-content": {
+            overflow: "auto",
+            height: "200px",
+          },
+        }}
       >
-        <Box
-          h="200px"
-          fontSize="16px"
-          sx={{
-            ...fontSizeObject,
-            ".public-DraftEditorPlaceholder-root": {
-              display: showPlaceHolder,
-              fontSize: `${textSizes[textSize]}px`,
-            },
-          }}
-        >
+        <Box>
           <Editor
             placeholder={defaultText}
             editorState={editorState}
@@ -427,7 +428,7 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
             keyBindingFn={keyBindings}
           />
         </Box>
-      </Box>
+      </Container>
     </VStack>
   );
 };
