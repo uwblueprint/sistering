@@ -5,7 +5,7 @@ import { Button, Text } from "@chakra-ui/react";
 import Logout from "../auth/Logout";
 
 import * as Routes from "../../constants/Routes";
-import { AuthContext } from "../../contexts/AuthContext";
+import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 
 const Default = (): React.ReactElement => {
