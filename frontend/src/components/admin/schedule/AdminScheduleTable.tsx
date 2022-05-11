@@ -13,8 +13,11 @@ import moment from "moment";
 import AdminScheduleTableDate from "./AdminScheduleTableDate";
 import AdminScheduleTableRow from "./AdminScheduleTableRow";
 import { getWeekDiff } from "../../../utils/DateTimeUtils";
-import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
-import { SignupsAndVolunteerGraphQLResponseDTO } from "../../../types/api/SignupTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
+import {
+  AdminSchedulingSignupsAndVolunteerResponseDTO,
+  SignupsAndVolunteerGraphQLResponseDTO,
+} from "../../../types/api/SignupTypes";
 
 export type AdminScheduleSignup = {
   startTime: Date;
@@ -31,7 +34,7 @@ export type AdminScheduleTableProps = {
   startDate: Date;
   endDate: Date;
   // The schedule prop should be sorted by date in ascending order.
-  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
   removeSignup: (shiftId: string, userId: string) => void;
 };
 
@@ -151,7 +154,10 @@ const AdminScheduleTable = ({
                   />
                   {signupsToDisplay.length > 0 ? (
                     signupsToDisplay.map(
-                      (signup: SignupsAndVolunteerGraphQLResponseDTO, i) => (
+                      (
+                        signup: AdminSchedulingSignupsAndVolunteerResponseDTO,
+                        i,
+                      ) => (
                         <AdminScheduleTableRow
                           key={`${signup.volunteer.id}-${i}`}
                           volunteer={{

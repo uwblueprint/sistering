@@ -80,6 +80,25 @@ const SUBMIT_SIGNUPS = gql`
   }
 `;
 
+const ShiftScheduleCalendar = ({
+  shifts,
+}: {
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+}) =>
+  shifts.length > 0 && (
+    <MonthViewShiftCalendar
+      events={shifts.map((shift) => {
+        return {
+          id: shift.id,
+          start: new Date(shift.startTime),
+          end: new Date(shift.endTime),
+          groupId: "", // TODO: Add groupId for saved/unsaved
+        };
+      })}
+      shifts={shifts}
+    />
+  );
+
 const AdminSchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const [shifts, setShifts] = useState<
@@ -215,24 +234,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
             />
-            {shifts.length > 0 && (
-              <MonthViewShiftCalendar
-                events={shifts.map((shift) => {
-                  return {
-                    id: shift.id,
-                    start: new Date(shift.startTime),
-                    end: new Date(shift.endTime),
-                    groupId: "", // TODO: Add groupId for saved/unsaved
-                  };
-                })}
-                shifts={shifts}
-            {loading ? (
-              <Loading />
-            ) : (
-              <MonthViewShiftCalendar
-                events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS}
-              />
-            )}
+            {loading ? <Loading /> : ShiftScheduleCalendar({ shifts })}
           </Box>
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel

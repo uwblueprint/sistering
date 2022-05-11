@@ -10,13 +10,13 @@ import { Box } from "@chakra-ui/react";
 import { Event } from "../../../types/CalendarTypes";
 import colors from "../../../theme/colors";
 import "./Calendar.css";
-import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 
 // Events can be passed in any order (does not have to be sorted).
 // AdminShiftCalendar assumes that all events are in the same month.
 type AdminShiftCalendarProps = {
   events: Event[];
-  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
   initialDate: Date;
 };
 

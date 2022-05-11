@@ -2,7 +2,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Select, Spacer } from "@chakra-ui/react";
 import moment from "moment";
 import React, { useEffect } from "react";
-import { ShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 import { MonthEvent } from "../../../types/CalendarTypes";
 import {
   getFirstDayOfMonth,
@@ -13,7 +13,7 @@ import MonthlyViewShiftCalendar from "./MonthlyViewReadOnlyShiftCalendar";
 
 type MonthViewShiftCalendarProps = {
   events: MonthEvent[];
-  shifts: ShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
 };
 
 const MonthViewShiftCalendar = ({
