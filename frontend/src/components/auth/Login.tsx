@@ -8,8 +8,8 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import {
   RESET_PASSWORD_PAGE,
   HOME_PAGE,
-  SIGNUP_PAGE,
 } from "../../constants/Routes";
+
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
@@ -45,10 +45,6 @@ const Login = (): React.ReactElement => {
       login,
     );
     setAuthenticatedUser(user);
-  };
-
-  const onSignUpClick = () => {
-    history.push(SIGNUP_PAGE);
   };
 
   const onForgotPasswordClick = () => {
@@ -101,17 +97,9 @@ const Login = (): React.ReactElement => {
           Forgot Password
         </button>
       </div>
-      <div>
-        <button
-          className="btn btn-primary"
-          type="button"
-          onClick={onSignUpClick}
-        >
-          Sign Up
-        </button>
-      </div>
     </div>
   );
 };
 
 export default Login;
+
