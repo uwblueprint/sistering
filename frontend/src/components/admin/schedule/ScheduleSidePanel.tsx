@@ -37,8 +37,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   const [isEditing, setIsEditing] = useBoolean(false);
 
   useEffect(() => {
-    if (!selectedShift) return;
-    const updatedShift = shifts.find((shift) => shift.id === selectedShift.id);
+    const updatedShift = shifts.find((shift) => shift.id === selectedShift?.id);
     setSelectedShift(updatedShift ?? shifts[0]);
   }, [shifts, selectedShift]);
 

@@ -14,11 +14,13 @@ import MonthlyViewShiftCalendar from "./MonthlyViewReadOnlyShiftCalendar";
 type MonthViewShiftCalendarProps = {
   events: MonthEvent[];
   shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  onDayClick: (calendarDay: Date) => void;
 };
 
 const MonthViewShiftCalendar = ({
   events,
   shifts,
+  onDayClick,
 }: MonthViewShiftCalendarProps): React.ReactElement => {
   const sortEvents = (unsortedEvents: MonthEvent[]): MonthEvent[] => {
     return unsortedEvents.sort((a, b) => {
@@ -112,6 +114,7 @@ const MonthViewShiftCalendar = ({
         events={getEventsInMonth()}
         shifts={shifts}
         initialDate={selectedMonth}
+        onDayClick={onDayClick}
       />
     </Box>
   ) : (
