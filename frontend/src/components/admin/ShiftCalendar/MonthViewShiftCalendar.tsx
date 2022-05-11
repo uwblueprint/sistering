@@ -2,6 +2,7 @@ import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import { Box, Button, Flex, Select, Spacer } from "@chakra-ui/react";
 import moment from "moment";
 import React, { useEffect } from "react";
+import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 import { MonthEvent } from "../../../types/CalendarTypes";
 import {
   getFirstDayOfMonth,
@@ -10,75 +11,14 @@ import {
 } from "../../../utils/DateTimeUtils";
 import MonthlyViewShiftCalendar from "./MonthlyViewReadOnlyShiftCalendar";
 
-export const ADMIN_SHIFT_CALENDAR_TEST_EVENTS: MonthEvent[] = [
-  {
-    id: "1",
-    groupId: "unsaved",
-    start: new Date("2022-03-01 09:00:00 UTC"),
-    end: new Date("2022-03-01 10:00:00 UTC"),
-  },
-  {
-    id: "2",
-    groupId: "unsaved",
-    start: new Date("2022-07-01 10:00:00 UTC"),
-    end: new Date("2022-07-01 11:30:00 UTC"),
-  },
-  {
-    id: "3",
-    groupId: "saved",
-    start: new Date("2022-03-01 15:00:00 UTC"),
-    end: new Date("2022-03-01 17:00:00 UTC"),
-  },
-  {
-    id: "4",
-    groupId: "unsaved",
-    start: new Date("2022-06-02 17:15:00 UTC"),
-    end: new Date("2022-06-02 19:00:00 UTC"),
-  },
-  {
-    id: "5",
-    groupId: "saved",
-    start: new Date("2022-03-02 05:00:00 UTC"),
-    end: new Date("2022-03-02 13:00:00 UTC"),
-  },
-  {
-    id: "6",
-    groupId: "saved",
-    start: new Date("2022-03-14 14:00:00 UTC"),
-    end: new Date("2022-03-14 15:00:00 UTC"),
-  },
-  {
-    id: "7",
-    groupId: "unsaved",
-    start: new Date("2022-04-17 11:00:00 UTC"),
-    end: new Date("2022-04-17 13:00:00 UTC"),
-  },
-  {
-    id: "8",
-    groupId: "saved",
-    start: new Date("2022-07-12 11:00:00 UTC"),
-    end: new Date("2022-07-12 13:00:00 UTC"),
-  },
-  {
-    id: "9",
-    groupId: "saved",
-    start: new Date("2022-04-19 09:00:00 UTC"),
-    end: new Date("2022-04-19 11:00:00 UTC"),
-  },
-  {
-    id: "10",
-    groupId: "saved",
-    start: new Date("2022-06-05 13:00:00 UTC"),
-    end: new Date("2022-06-05 15:00:00 UTC"),
-  },
-];
-
 type MonthViewShiftCalendarProps = {
   events: MonthEvent[];
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
 };
 
 const MonthViewShiftCalendar = ({
   events,
+  shifts,
 }: MonthViewShiftCalendarProps): React.ReactElement => {
   const sortEvents = (unsortedEvents: MonthEvent[]): MonthEvent[] => {
     return unsortedEvents.sort((a, b) => {
@@ -170,6 +110,7 @@ const MonthViewShiftCalendar = ({
       </Flex>
       <MonthlyViewShiftCalendar
         events={getEventsInMonth()}
+        shifts={shifts}
         initialDate={selectedMonth}
       />
     </Box>

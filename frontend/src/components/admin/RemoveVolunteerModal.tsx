@@ -1,3 +1,4 @@
+import { gql, useMutation } from "@apollo/client";
 import {
   Button,
   Modal,
@@ -9,19 +10,77 @@ import {
   Text,
 } from "@chakra-ui/react";
 import React from "react";
+import {
+  ShiftSignupResponseDTO,
+  ShiftSignupStatus,
+} from "../../types/api/SignupTypes";
 
 type RemoveVolunteerModalProps = {
   name: string;
   isOpen: boolean;
+  shiftId: string;
+  userId: string;
+  status: ShiftSignupStatus;
+  numVolunteers: number;
+  note: string;
   onClose(): void;
+  removeSignup: (shiftId: string, userId: string) => void;
 };
+
+const UPDATE_SHIFT_SIGNUP = gql`
+  mutation UpdateShiftSignup(
+    $shiftId: ID!
+    $userId: ID!
+    $update: UpdateShiftSignupRequestDTO!
+  ) {
+    updateShiftSignup(shiftId: $shiftId, userId: $userId, update: $update) {
+      shiftId
+      userId
+      numVolunteers
+      note
+      status
+      shiftStartTime
+      shiftEndTime
+    }
+  }
+`;
 
 const RemoveVolunteerModal = ({
   name = "",
   isOpen = false,
+  shiftId,
+  userId,
+  status,
+  numVolunteers,
+  note,
   onClose = () => {},
+  removeSignup,
 }: RemoveVolunteerModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
+
+  const [updateShiftSignup, { loading }] = useMutation<{
+    shift: ShiftSignupResponseDTO;
+  }>(UPDATE_SHIFT_SIGNUP);
+
+  const submitUpdateRequest = async () => {
+    await updateShiftSignup({
+      variables: {
+        shiftId,
+        userId,
+        update: {
+          numVolunteers,
+          note,
+          status,
+        },
+      },
+    });
+    removeSignup(shiftId, userId);
+  };
+
+  const handleRemoveClick = async () => {
+    await submitUpdateRequest();
+    onClose();
+  };
 
   return (
     <Modal
@@ -52,14 +111,12 @@ const RemoveVolunteerModal = ({
           </Button>
           <Button
             borderRadius="4px"
-            onClick={() => {
-              /* This is where we would add logic to call API endpoint to remove the volunteer */
-              onClose();
-            }}
+            onClick={handleRemoveClick}
             ref={initialRef}
             colorScheme="red"
             textStyle="button-semibold"
             fontWeight={700}
+            isLoading={loading}
           >
             Remove
           </Button>

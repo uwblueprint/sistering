@@ -15,13 +15,13 @@ import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
 import ErrorModal from "../../../common/ErrorModal";
-import MonthViewShiftCalendar, {
-  ADMIN_SHIFT_CALENDAR_TEST_EVENTS,
-} from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
-import AdminScheduleTable, {
-  TableTestData,
-} from "../../../admin/schedule/AdminScheduleTable";
+import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
+import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
+import {
+  getEarliestDate,
+  getLatestDate,
+} from "../../../../utils/DateTimeUtils";
 import Loading from "../../../common/Loading";
 
 type AdminScheduleTableDataQueryResponse = {
@@ -55,6 +55,8 @@ const ADMIN_SCHEDULE_TABLE_DATA_QUERY = gql`
       startTime
       endTime
       signups {
+        shiftStartTime
+        shiftEndTime
         numVolunteers
         note
         status
@@ -78,6 +80,25 @@ const SUBMIT_SIGNUPS = gql`
   }
 `;
 
+const ShiftScheduleCalendar = ({
+  shifts,
+}: {
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+}) =>
+  shifts.length > 0 && (
+    <MonthViewShiftCalendar
+      events={shifts.map((shift) => {
+        return {
+          id: shift.id,
+          start: new Date(shift.startTime),
+          end: new Date(shift.endTime),
+          groupId: "", // TODO: Add groupId for saved/unsaved
+        };
+      })}
+      shifts={shifts}
+    />
+  );
+
 const AdminSchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const [shifts, setShifts] = useState<
@@ -99,11 +120,30 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     AdminScheduleTableDataQueryResponse,
     AdminScheduleTableDataQueryInput
   >(ADMIN_SCHEDULE_TABLE_DATA_QUERY, {
-    variables: { postingId: Number(id) },
+    variables: {
+      postingId: Number(id),
+    },
     onCompleted: (data) =>
       setShifts(data.shiftsWithSignupsAndVolunteersByPosting),
     fetchPolicy: "no-cache",
   });
+
+  // Change status of shift to PENDING
+  const removeSignup = (shiftId: string, userId: string) => {
+    const newShifts = cloneDeep(shifts);
+    for (let i = 0; i < newShifts.length; i += 1) {
+      if (newShifts[i].id === shiftId) {
+        for (let j = 0; j < newShifts[i].signups.length; j += 1) {
+          if (newShifts[i].signups[j].volunteer.id === userId) {
+            newShifts[i].signups[j].status = "PENDING";
+            break;
+          }
+        }
+        break;
+      }
+    }
+    setShifts(newShifts);
+  };
 
   const handleSidePanelEditClick = (
     shift?: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
@@ -194,13 +234,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
             />
-            {loading ? (
-              <Loading />
-            ) : (
-              <MonthViewShiftCalendar
-                events={ADMIN_SHIFT_CALENDAR_TEST_EVENTS}
-              />
-            )}
+            {loading ? <Loading /> : ShiftScheduleCalendar({ shifts })}
           </Box>
           <Box w="400px" overflow="hidden">
             <ScheduleSidePanel
@@ -245,11 +279,16 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             </Button>
           </Flex>
           {/* TODO: Get start and end date range from start/end of month */}
-          <AdminScheduleTable
-            schedule={TableTestData}
-            startDate={new Date(2022, 2, 6)}
-            endDate={new Date(2022, 3, 9)}
-          />
+          {shifts.length > 0 && (
+            <AdminScheduleTable
+              startDate={getEarliestDate(
+                shifts.flatMap((shift) => shift.startTime),
+              )}
+              endDate={getLatestDate(shifts.flatMap((shift) => shift.endTime))}
+              shifts={shifts.sort()}
+              removeSignup={removeSignup}
+            />
+          )}
         </Box>
       )}
     </Flex>
