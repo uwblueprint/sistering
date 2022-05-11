@@ -1,12 +1,19 @@
-import React from "react";
-import { useHistory } from "react-router-dom";
+import React, { useContext } from "react";
+import { Redirect, useHistory } from "react-router-dom";
 import { Button, Text } from "@chakra-ui/react";
 
 import Logout from "../auth/Logout";
 
 import * as Routes from "../../constants/Routes";
+import { AuthContext } from "../../contexts/AuthContext";
+import { Role } from "../../types/AuthTypes";
 
 const Default = (): React.ReactElement => {
+  const { authenticatedUser } = useContext(AuthContext);
+  if (authenticatedUser.role === Role.Volunteer) {
+    return <Redirect to={Routes.VOLUNTEER_POSTINGS_PAGE} />;
+  }
+
   const history = useHistory();
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
