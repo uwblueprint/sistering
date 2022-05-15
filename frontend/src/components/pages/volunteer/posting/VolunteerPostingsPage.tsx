@@ -12,7 +12,10 @@ import {
   PostingResponseDTO,
   PostingStatus,
 } from "../../../../types/api/PostingTypes";
-import { dateInRange } from "../../../../utils/DateTimeUtils";
+import {
+  dateInRange,
+  getUTCDateForDateTimeString,
+} from "../../../../utils/DateTimeUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
 import PostingCard from "../../../volunteer/PostingCard";
@@ -64,7 +67,9 @@ const VolunteerPostingsPage = (): React.ReactElement => {
 
   const { error } = useQuery(POSTINGS, {
     variables: {
-      closingDate: new Date().toISOString().split("T")[0],
+      closingDate: getUTCDateForDateTimeString(new Date().toString())
+        .toISOString()
+        .split("T")[0],
       statuses: ["PUBLISHED" as PostingStatus],
       userId: authenticatedUser?.id,
     },
