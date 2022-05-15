@@ -35,6 +35,8 @@ export const VOLUNTEER_POSTING_DETAILS = "/volunteer/posting/:id";
 
 export const ADMIN_POSTING_DETAILS = "/admin/posting/:id";
 
+export const ADMIN_SCHEDULE_POSTING_NAV = "/admin/schedule/posting";
+
 export const ADMIN_SCHEDULE_POSTING_PAGE = "/admin/schedule/posting/:id";
 
 export const ADMIN_SCHEDULE_POSTING_REVIEW_PAGE =

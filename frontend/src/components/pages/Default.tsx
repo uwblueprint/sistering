@@ -15,7 +15,6 @@ const Default = (): React.ReactElement => {
     return <Redirect to={Routes.VOLUNTEER_POSTINGS_PAGE} />;
   }
 
-
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
       <Text textStyle="display-large">Welcome to Sistering</Text>
