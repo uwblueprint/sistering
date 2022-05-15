@@ -20,6 +20,7 @@ import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthViewShiftC
 import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
 import Loading from "../../../common/Loading";
+import { getUTCDateForDateTimeString } from "../../../../utils/DateTimeUtils";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -103,8 +104,8 @@ const ShiftScheduleCalendar = ({
       events={shifts.map((shift) => {
         return {
           id: shift.id,
-          start: new Date(shift.startTime),
-          end: new Date(shift.endTime),
+          start: getUTCDateForDateTimeString(shift.startTime.toString()),
+          end: getUTCDateForDateTimeString(shift.endTime.toString()),
           groupId: "", // TODO: Add groupId for saved/unsaved
         };
       })}
@@ -255,7 +256,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   const handleDayClick = (calendarDate: Date) => {
     setSidePanelShifts(
       shifts.filter((shift) =>
-        moment(shift.startTime).isSame(moment(calendarDate), "day"),
+        moment.utc(shift.startTime).isSame(moment.utc(calendarDate), "day"),
       ),
     );
   };

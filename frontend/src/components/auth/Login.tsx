@@ -5,10 +5,7 @@ import { gql, useMutation } from "@apollo/client";
 import { Text } from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
-import {
-  RESET_PASSWORD_PAGE,
-  HOME_PAGE,
-} from "../../constants/Routes";
+import { RESET_PASSWORD_PAGE, HOME_PAGE } from "../../constants/Routes";
 
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
@@ -102,4 +99,3 @@ const Login = (): React.ReactElement => {
 };
 
 export default Login;
-

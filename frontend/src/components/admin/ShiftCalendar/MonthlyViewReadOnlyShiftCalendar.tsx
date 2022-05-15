@@ -4,6 +4,7 @@ import FullCalendar, {
   EventContentArg,
   EventInput,
 } from "@fullcalendar/react";
+
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import { Box } from "@chakra-ui/react";
@@ -12,7 +13,6 @@ import { Event } from "../../../types/CalendarTypes";
 import colors from "../../../theme/colors";
 import "./Calendar.css";
 import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
-import { getISOStringDateTime } from "../../../utils/DateTimeUtils";
 
 // Events can be passed in any order (does not have to be sorted).
 // AdminShiftCalendar assumes that all events are in the same month.
@@ -82,9 +82,7 @@ const MonthlyViewShiftCalendar = ({
         displayEventEnd
         dayCellClassNames={(day: DayCellContentArg) => applyCellClasses(day)}
         editable
-        dateClick={({ date }) =>
-          onDayClick(new Date(getISOStringDateTime(date)))
-        }
+        dateClick={({ date }) => onDayClick(date)}
         // eventClick --> Show side panel, TODO in ticket #176
         eventColor={colors.violet}
         eventContent={displayCustomEvent}
