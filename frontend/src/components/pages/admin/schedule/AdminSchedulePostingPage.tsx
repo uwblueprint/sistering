@@ -1,5 +1,5 @@
 import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
@@ -133,6 +133,15 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   const [sidePanelShifts, setSidePanelShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
+  const [selectedDay, setSelectedDay] = useState<Date>();
+
+  useEffect(() => {
+    setSidePanelShifts(
+      shifts.filter((shift) =>
+        moment.utc(shift.startTime).isSame(moment.utc(selectedDay), "day"),
+      ),
+    );
+  }, [shifts, selectedDay]);
 
   const { error: tableDataQueryError, loading: tableDataLoading } = useQuery<
     AdminScheduleTableDataQueryResponse,
@@ -146,6 +155,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
 
       if (shiftsData.length) {
         const firstDay = shiftsData[0]?.startTime;
+        setSelectedDay(firstDay);
         setSidePanelShifts(
           shiftsData.filter((shift) =>
             moment(shift.startTime).isSame(moment(firstDay), "day"),
@@ -226,6 +236,8 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     }
   };
 
+  const handleDayClick = (calendarDate: Date) => setSelectedDay(calendarDate);
+
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
     await submitSignups({
@@ -251,14 +263,6 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     setShifts(shiftsCopy);
 
     setcurrentlyEditingShift(undefined);
-  };
-
-  const handleDayClick = (calendarDate: Date) => {
-    setSidePanelShifts(
-      shifts.filter((shift) =>
-        moment.utc(shift.startTime).isSame(moment.utc(calendarDate), "day"),
-      ),
-    );
   };
 
   return (
