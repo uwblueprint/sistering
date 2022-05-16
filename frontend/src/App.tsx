@@ -6,10 +6,12 @@ import "@fontsource/raleway/600.css";
 import "@fontsource/raleway/700.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 
-import React, { useState, useReducer } from "react";
+import React, { useState, useReducer, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import { ChakraProvider } from "@chakra-ui/react";
 
+import { hotjar } from "react-hotjar";
+import ReactGA from "react-ga";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import ResetPassword from "./components/auth/ResetPassword";
@@ -50,7 +52,19 @@ import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSch
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
 import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/AdminSchedulePostingReviewPage";
 
+ReactGA.initialize(process.env.TRACKING_ID ?? "");
+
 const App = (): React.ReactElement => {
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
+  useEffect(() => {
+    hotjar.initialize(
+      parseInt(process.env.HJID ?? "0", 10),
+      parseInt(process.env.HJSV ?? "0", 10),
+    );
+  }, []);
+
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
     AUTHENTICATED_USER_KEY,
   );
