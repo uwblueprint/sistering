@@ -122,11 +122,8 @@ const VolunteerAvailabilityTable = ({
             .add(day, "days")
             .startOf("day")
             .toDate();
-          const shiftsOfDate = postingShifts.filter(
-            (shift) =>
-              moment(shift.startTime)
-                .startOf("day")
-                .diff(date, "days", false) === 0,
+          const shiftsOfDate = postingShifts.filter((shift) =>
+            moment(shift.startTime).isSame(moment(date), "day"),
           );
 
           return (
@@ -152,7 +149,7 @@ const VolunteerAvailabilityTable = ({
               ) : (
                 shiftsOfDate.map((shift, index) => {
                   return (
-                    <Tr key={`${day}-${index}`}>
+                    <Tr key={`${shift.id}-${day}-${index}`}>
                       <Td p={0}>
                         <VolunteerAvailabilityTableRow
                           shift={shift}
