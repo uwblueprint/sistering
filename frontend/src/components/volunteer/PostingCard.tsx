@@ -25,7 +25,8 @@ type PostingCardProps = {
   autoClosingDate: string;
   branchName: string;
   navigateToDetails: () => void;
-  navigateToSubmitAvailabilities: () => void;
+  navigateToSubmitAvailabilities?: () => void;
+  navigateToAdminSchedule?: () => void;
 };
 
 const PostingCard = ({
@@ -39,6 +40,7 @@ const PostingCard = ({
   branchName,
   navigateToDetails,
   navigateToSubmitAvailabilities,
+  navigateToAdminSchedule,
 }: PostingCardProps): React.ReactElement => {
   return (
     <Box
@@ -86,9 +88,16 @@ const PostingCard = ({
             <Button variant="ghost" onClick={navigateToDetails}>
               View Details
             </Button>
-            <Button variant="solid" onClick={navigateToSubmitAvailabilities}>
-              Submit Availability
-            </Button>
+            {navigateToSubmitAvailabilities && (
+              <Button variant="solid" onClick={navigateToSubmitAvailabilities}>
+                Submit Availability
+              </Button>
+            )}
+            {navigateToAdminSchedule && (
+              <Button variant="solid" onClick={navigateToAdminSchedule}>
+                Edit Schedule
+              </Button>
+            )}
           </ButtonGroup>
         </HStack>
       </VStack>
