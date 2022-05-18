@@ -16,9 +16,11 @@ import {
   Td,
 } from "@chakra-ui/react";
 import moment from "moment";
+import { useHistory } from "react-router-dom";
 import VolunteerShiftsTableRow from "./VolunteerShiftsTableRow";
 import { ShiftSignupPostingResponseDTO } from "../../../types/api/ShiftSignupTypes";
 import { FilterType } from "../../../types/DateFilterTypes";
+import { VOLUNTEER_POSTINGS_PAGE } from "../../../constants/Routes";
 
 type VolunteerShiftsTableProps = {
   // The schedule prop should be sorted by date in ascending order.
@@ -28,6 +30,7 @@ type VolunteerShiftsTableProps = {
 const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   shifts,
 }: VolunteerShiftsTableProps) => {
+  const history = useHistory();
   const [filter, setFilter] = useState<FilterType>("week");
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -97,7 +100,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
               <VolunteerShiftsTableRow
                 key={idx}
                 postingName={shift.postingTitle}
-                postingLink={shift.postingId}
+                postingId={shift.postingId}
                 startTime={shift.shiftStartTime}
                 endTime={shift.shiftEndTime}
                 deadline={shift.autoClosingDate}
@@ -111,7 +114,12 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
                 <Container maxW="container.xl" minH="90vh">
                   <VStack pt="25%">
                     <Text color="text.gray">No shifts to show</Text>
-                    <Button variant="outline">Browse volunteer postings</Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => history.push(VOLUNTEER_POSTINGS_PAGE)}
+                    >
+                      Browse volunteer postings
+                    </Button>
                   </VStack>
                 </Container>
               </Td>
