@@ -23,6 +23,24 @@ const REFRESH_MUTATION = `
   }
 `;
 
+const LOGOUT = `
+  mutation Index_Logout($userId: ID!) {
+    logout(userId: $userId)
+  }
+`;
+
+const logout = async (userId: string) => {
+  const { data: result } = await axios.post(
+    `${process.env.REACT_APP_BACKEND_URL}/graphql`,
+    { query: LOGOUT, variables: { userId } },
+    { withCredentials: true },
+  );
+
+  if (result?.data?.logout === null) {
+    localStorage.removeItem(AUTHENTICATED_USER_KEY);
+  }
+};
+
 const link = createUploadLink({
   uri: `${process.env.REACT_APP_BACKEND_URL}/graphql`,
   credentials: "include",
@@ -44,19 +62,25 @@ const authLink = setContext(async (_, { headers }) => {
       (typeof decodedToken === "string" ||
         decodedToken.exp <= Math.round(new Date().getTime() / 1000))
     ) {
-      const { data } = await axios.post(
-        `${process.env.REACT_APP_BACKEND_URL}/graphql`,
-        { query: REFRESH_MUTATION },
-        { withCredentials: true },
-      );
+      try {
+        const { data } = await axios.post(
+          `${process.env.REACT_APP_BACKEND_URL}/graphql`,
+          { query: REFRESH_MUTATION },
+          { withCredentials: true },
+        );
 
-      const accessToken: string = data.data.refresh;
-      setLocalStorageObjProperty(
-        AUTHENTICATED_USER_KEY,
-        "accessToken",
-        accessToken,
-      );
-      token = accessToken;
+        const accessToken: string = data.data.refresh;
+        setLocalStorageObjProperty(
+          AUTHENTICATED_USER_KEY,
+          "accessToken",
+          accessToken,
+        );
+        token = accessToken;
+      } catch {
+        await logout(
+          String(getLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "id")),
+        );
+      }
     }
   }
   // return the headers to the context so httpLink can read them
