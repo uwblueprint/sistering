@@ -1,6 +1,6 @@
 import React from "react";
 import { Tr, Td, Text, Button } from "@chakra-ui/react";
-import { useHistory } from "react-router-dom";
+import { generatePath, useHistory } from "react-router-dom";
 
 import {
   getElapsedHours,
@@ -8,10 +8,11 @@ import {
   formatDateMonthDay,
 } from "../../../utils/DateTimeUtils";
 import { ShiftSignupStatus } from "../../../types/api/ShiftSignupTypes";
+import { VOLUNTEER_POSTING_DETAILS } from "../../../constants/Routes";
 
 type VolunteerShiftsTableRowProps = {
   postingName: string;
-  postingLink: string;
+  postingId: string;
   startTime: string;
   endTime: string;
   deadline: string;
@@ -19,7 +20,7 @@ type VolunteerShiftsTableRowProps = {
 };
 const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
   postingName,
-  postingLink,
+  postingId,
   startTime,
   endTime,
   deadline,
@@ -60,7 +61,14 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
         </>
       ) : null}
       <Td>
-        <Button variant="link" onClick={() => history.push(postingLink)}>
+        <Button
+          variant="link"
+          onClick={() =>
+            history.push(
+              generatePath(VOLUNTEER_POSTING_DETAILS, { id: postingId }),
+            )
+          }
+        >
           Go To Posting
         </Button>
       </Td>
