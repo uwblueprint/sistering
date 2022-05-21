@@ -10,6 +10,7 @@ import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../.
 import {
   AdminSchedulingSignupsAndVolunteerResponseDTO,
   ShiftSignupStatus,
+  UpsertSignupDTO,
 } from "../../../../types/api/SignupTypes";
 import Navbar from "../../../common/Navbar";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
@@ -265,6 +266,39 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     setcurrentlyEditingShift(undefined);
   };
 
+  const handleOnPublishClick = async () => {
+    const shiftsCopy = cloneDeep(shifts);
+    const publishedSignups: UpsertSignupDTO[] = [];
+    shiftsCopy.forEach((shift, shiftIndex) =>
+      shift.signups.forEach((signup, signupIndex) => {
+        if (signup.status === "CONFIRMED") {
+          publishedSignups.push({
+            shiftId: shift.id,
+            userId: signup.volunteer.id,
+            status: "PUBLISHED",
+            numVolunteers: signup.numVolunteers,
+            note: signup.note,
+          });
+          shiftsCopy[shiftIndex].signups[signupIndex].status = "PUBLISHED";
+        }
+      }),
+    );
+
+    if (publishedSignups.length) {
+      await submitSignups({
+        variables: {
+          upsertDeleteShifts: {
+            upsertShiftSignups: publishedSignups,
+            deleteShiftSignups: [],
+          },
+        },
+      });
+    }
+
+    setShifts(shiftsCopy);
+    setCurrentView(AdminScheduleViews.CalendarView);
+  };
+
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
       {(tableDataQueryError || submitSignupsError || postingError) && (
@@ -325,15 +359,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
           <Flex pb={6}>
             <Text textStyle="display-medium">{postingDetails?.title}</Text>
             <Spacer />
-            <Button
-              onClick={() => {
-                // Submit the selected shifts
-                // eslint-disable-next-line no-console
-                console.log("TODO: Publish");
-              }}
-            >
-              Publish schedule
-            </Button>
+            <Button onClick={handleOnPublishClick}>Publish schedule</Button>
           </Flex>
           {shifts.length > 0 && (
             <AdminScheduleTable

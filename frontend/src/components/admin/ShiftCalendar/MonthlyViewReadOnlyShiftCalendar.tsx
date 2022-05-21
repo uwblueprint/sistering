@@ -42,7 +42,7 @@ const MonthlyViewShiftCalendar = ({
     const shift = shifts.find((currShift) => currShift.id === content.event.id);
     if (shift) {
       const isConfirmed = shift.signups.some(
-        (signup) => signup.status === "CONFIRMED",
+        ({ status }) => status === "CONFIRMED" || status === "PUBLISHED",
       );
       return (
         <>

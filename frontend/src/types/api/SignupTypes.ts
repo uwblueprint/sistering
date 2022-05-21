@@ -61,3 +61,5 @@ export type AdminSchedulingSignupsAndVolunteerResponseDTO = Omit<
 > & {
   volunteer: Pick<VolunteerUserResponseDTO, "firstName" | "lastName" | "id">;
 };
+
+export type UpsertSignupDTO = Omit<SignupDTO, "id">;

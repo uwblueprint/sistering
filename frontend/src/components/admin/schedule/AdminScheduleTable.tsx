@@ -137,7 +137,8 @@ const AdminScheduleTable = ({
             )
             .map((shift) => {
               const signupsToDisplay = shift.signups.filter(
-                (signup) => signup.status === "CONFIRMED",
+                ({ status }) =>
+                  status === "CONFIRMED" || status === "PUBLISHED",
               );
               return (
                 <Fragment
