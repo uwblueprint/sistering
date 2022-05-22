@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { generatePath, Redirect, useHistory } from "react-router-dom";
-import { Box, Button, Text } from "@chakra-ui/react";
+import { Box, Button, Text, Container } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
 import Logout from "../auth/Logout";
@@ -10,6 +10,7 @@ import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 import PostingCard from "../volunteer/PostingCard";
+import NewAccountPage from "./NewAccountPage";
 
 const POSTINGS = gql`
   query Default_postings {
@@ -65,6 +66,9 @@ const Default = (): React.ReactElement => {
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
       <Text textStyle="display-large">Welcome to Sistering</Text>
+      <Container maxW="container.xl">
+        <NewAccountPage />
+      </Container>
       <div className="btn-group" style={{ paddingRight: "10px" }}>
         <Logout />
         <Button
