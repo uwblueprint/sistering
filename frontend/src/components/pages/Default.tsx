@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { generatePath, Redirect, useHistory } from "react-router-dom";
-import { Box, Button, Text, Container } from "@chakra-ui/react";
+import { Box, Button, Text } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
 import Logout from "../auth/Logout";
@@ -10,7 +10,6 @@ import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 import PostingCard from "../volunteer/PostingCard";
-import NewAccountPage from "./NewAccountPage";
 
 const POSTINGS = gql`
   query Default_postings {
