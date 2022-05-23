@@ -66,9 +66,6 @@ const Default = (): React.ReactElement => {
   return (
     <div style={{ textAlign: "center", paddingTop: "20px" }}>
       <Text textStyle="display-large">Welcome to Sistering</Text>
-      <Container maxW="container.xl">
-        <NewAccountPage />
-      </Container>
       <div className="btn-group" style={{ paddingRight: "10px" }}>
         <Logout />
         <Button
