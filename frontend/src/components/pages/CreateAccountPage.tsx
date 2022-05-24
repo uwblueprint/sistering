@@ -1,5 +1,5 @@
 import React from "react";
-import { Text, Button } from "@chakra-ui/react";
+import { Text, Button, Box } from "@chakra-ui/react";
 import { ReactComponent as Logo } from "../../assets/Sistering_Logo.svg";
 
 const CreateAccountPage = (): React.ReactElement => {
@@ -8,7 +8,7 @@ const CreateAccountPage = (): React.ReactElement => {
   };
 
   return (
-    <div
+    <Box
       style={{
         width: "100%",
         display: "flex",
@@ -16,15 +16,15 @@ const CreateAccountPage = (): React.ReactElement => {
         height: "100vh",
       }}
     >
-      <div
+      <Box
         style={{
           backgroundColor: "#fff",
           flexGrow: 4,
         }}
       >
-        <div style={{ maxWidth: "400px", margin: "8vh auto 0 auto" }}>
+        <Box style={{ maxWidth: "400px", margin: "8vh auto 0 auto" }}>
           <Logo />
-          <div style={{ paddingLeft: "43px" }}>
+          <Box style={{ paddingLeft: "43px" }}>
             <Text
               fontSize="xl"
               style={{ fontWeight: "bold", marginBottom: "12px" }}
@@ -38,11 +38,11 @@ const CreateAccountPage = (): React.ReactElement => {
             <Button style={{ color: "#7000DE", width: "100%" }}>
               <Text style={{ color: "#fff" }}>Continue</Text>
             </Button>
-          </div>
-        </div>
-      </div>
-      <div style={{ backgroundColor: "#f4f4f4", flexGrow: 6 }}> </div>
-    </div>
+          </Box>
+        </Box>
+      </Box>
+      <Box style={{ backgroundColor: "#f4f4f4", flexGrow: 6 }}> </Box>
+    </Box>
   );
 };
 

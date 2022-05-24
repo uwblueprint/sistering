@@ -51,6 +51,7 @@ import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShi
 import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSchedulePostingPage";
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
 import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/AdminSchedulePostingReviewPage";
+import CreateAccountPage from "./components/pages/CreateAccountPage";
 
 ReactGA.initialize(process.env.TRACKING_ID ?? "");
 
@@ -102,7 +103,13 @@ const App = (): React.ReactElement => {
                 <Router>
                   <Switch>
                     <Route exact path={Routes.LOGIN_PAGE} component={Login} />
+                    <Route
+                      exact
+                      path={Routes.CREATE_ACCOUNT_PAGE}
+                      component={CreateAccountPage}
+                    />
                     <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
+
                     <Route
                       exact
                       path={Routes.RESET_PASSWORD_PAGE}
