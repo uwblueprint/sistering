@@ -5,6 +5,7 @@ import {
   ModalContent,
   ModalFooter,
   ModalHeader,
+  ModalOverlay,
   Text,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
@@ -14,7 +15,7 @@ type DeleteModalProps = {
   isOpen: boolean;
   body: string;
   onClose(): void;
-  onDelete(): () => void;
+  onDelete(): void;
 };
 
 const DeleteModal = ({
@@ -46,6 +47,7 @@ const DeleteModal = ({
       isCentered
       initialFocusRef={initialRef}
     >
+      <ModalOverlay />
       <ModalContent borderRadius={0} p="10px">
         <ModalHeader py="11px">
           <Text textStyle="body-bold">{title}</Text>
