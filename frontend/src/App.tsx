@@ -109,7 +109,6 @@ const App = (): React.ReactElement => {
                       component={CreateAccountPage}
                     />
                     <Route exact path={Routes.SIGNUP_PAGE} component={Signup} />
-
                     <Route
                       exact
                       path={Routes.RESET_PASSWORD_PAGE}
