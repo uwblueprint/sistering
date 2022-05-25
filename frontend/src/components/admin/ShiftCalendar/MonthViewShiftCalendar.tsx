@@ -29,14 +29,16 @@ const MonthViewShiftCalendar = ({
   };
 
   // Current month to display, indicated by the first day of the month.
-  const [selectedMonth, setSelectedMonth] = React.useState<Date>(new Date());
+  const [selectedMonth, setSelectedMonth] = React.useState<Date>(new Date(0));
   const [sortedEvents, setSortedEvents] = React.useState<MonthEvent[]>([]);
 
   useEffect(() => {
     const sortedEventsList = sortEvents(events);
     setSortedEvents(sortedEventsList);
-    setSelectedMonth(getFirstDayOfMonth(sortedEventsList[0].start));
-  }, [events]);
+    if (moment(selectedMonth).diff(moment(new Date(0)), "days") === 0) {
+      setSelectedMonth(getFirstDayOfMonth(sortedEventsList[0].start));
+    }
+  }, [events, selectedMonth]);
 
   const getEventsInMonth = (): MonthEvent[] => {
     const selectedMonthString = moment(selectedMonth).format("YYYY-MM");
