@@ -52,6 +52,7 @@ import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSch
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
 import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/AdminSchedulePostingReviewPage";
 import CreateAccountPage from "./components/pages/CreateAccountPage";
+import PasswordResetSuccessPage from "./components/auth/PasswordResetSuccess";
 
 ReactGA.initialize(process.env.TRACKING_ID ?? "");
 
@@ -114,6 +115,12 @@ const App = (): React.ReactElement => {
                       path={Routes.RESET_PASSWORD_PAGE}
                       component={ResetPassword}
                     />
+                    <Route
+                      exact
+                      path={Routes.RESET_PASSWORD_SUCCESS_PAGE}
+                      component={PasswordResetSuccessPage}
+                    />
+
                     <Route
                       exact
                       path={Routes.DONE_RESET_PASSWORD_PAGE}
