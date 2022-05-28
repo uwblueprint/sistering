@@ -10,6 +10,8 @@ export const NEW_ACCOUNT_PAGE = "/new-account";
 
 export const RESET_PASSWORD_PAGE = "/reset-password";
 
+export const RESET_PASSWORD_SUCCESS_PAGE = "/password-reset-success";
+
 export const DONE_RESET_PASSWORD_PAGE = "/done-reset-password";
 
 export const NOT_FOUND_PAGE = "/not-found";
