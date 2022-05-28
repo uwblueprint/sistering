@@ -18,7 +18,7 @@ const ProfilePhotoForm = ({
   });
 
   return (
-    <Box>
+    <Box ml={4}>
       <Text>Profile Photo</Text>
       <Flex alignItems="center">
         <Avatar src={profilePhoto} m={3} size="lg" />

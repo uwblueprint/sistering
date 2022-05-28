@@ -1,6 +1,7 @@
-import { Box, Container, Text } from "@chakra-ui/react";
+import { Container, Divider, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import SignupNavbar from "../common/SignupNavbar";
+import AccountForm from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
 
 const NewAccountPage = (): React.ReactElement => {
@@ -8,7 +9,7 @@ const NewAccountPage = (): React.ReactElement => {
   return (
     <>
       <SignupNavbar />
-      <Container maxW="container.xl" align="left">
+      <Container maxW="container.xl" align="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Account Creation
         </Text>
@@ -16,6 +17,8 @@ const NewAccountPage = (): React.ReactElement => {
           profilePhoto={profilePhoto}
           setProfilePhoto={setProfilePhoto}
         />
+        <Divider my={8} />
+        <AccountForm />
       </Container>
     </>
   );
