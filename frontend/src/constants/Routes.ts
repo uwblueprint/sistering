@@ -4,7 +4,9 @@ export const LOGIN_PAGE = "/login";
 
 export const SIGNUP_PAGE = "/signup";
 
-export const CREATE_ACCOUNT_PAGE = "/new-account";
+export const CREATE_ACCOUNT_PAGE = "/create-account";
+
+export const NEW_ACCOUNT_PAGE = "/new-account";
 
 export const RESET_PASSWORD_PAGE = "/reset-password";
 
