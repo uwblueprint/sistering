@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
-import { Box, Button, Image, Input, Text, VStack } from "@chakra-ui/react";
-import Sistering_Logo from "../../assets/Sistering_Logo.svg";
+import { Box, Button, Input, Text } from "@chakra-ui/react";
+import { ReactComponent as Logo } from "../../assets/Sistering_Logo.svg";
 
 import { DONE_RESET_PASSWORD_PAGE } from "../../constants/Routes";
 import ErrorModal from "../common/ErrorModal";
@@ -32,30 +32,45 @@ const ResetPassword = (): React.ReactElement => {
   };
 
   return (
-    <VStack>
+    <Box>
       {error && <ErrorModal />}
-      <Image src={Sistering_Logo} alt="Sistering logo" h={32} />
-      <Text textStyle="display-large">Reset Password</Text>
-      <Text w={300} align="center">
-        Enter the email address associated with your account to reset your
-        password. You may need to check your spam folder.
-      </Text>
-      <Box pt={4}>
-        <Input
-          type="email"
-          value={email}
-          onChange={(event) => setEmail(event.target.value)}
-          placeholder="Email"
-          w={400}
-          bg="gray.50"
-        />
+      <Box width="100%" display="flex" flexDirection="row" height="100vh">
+        <Box backgroundColor="#fff" flexGrow={4}>
+          <Box maxWidth="480px" margin="8vh auto 0 auto">
+            <Logo />
+            <Box marginLeft="43px" marginRight="43px" marginBottom="36px">
+              <Text textStyle="display-large" paddingBottom="24px">
+                Reset Password
+              </Text>
+              <Text
+                w="100%"
+                align="left"
+                textStyle="body-regular"
+                fontSize="14px"
+                paddingBottom="14px"
+              >
+                Enter the email address associated with your account to reset
+                your password. You may need to check your spam folder.
+              </Text>
+              <Box pt={4} paddingBottom="24px">
+                <Input
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="Email"
+                  w="100%"
+                  bg="gray.50"
+                />
+              </Box>
+              <Button width="100%" onClick={onResetPasswordClick}>
+                Send Email
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+        <Box backgroundColor="#f4f4f4" flexGrow={6} />
       </Box>
-      <Box pt={14}>
-        <Button px={10} onClick={onResetPasswordClick}>
-          Send Email
-        </Button>
-      </Box>
-    </VStack>
+    </Box>
   );
 };
 

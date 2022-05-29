@@ -10,13 +10,13 @@ const CreateAccountPage = (): React.ReactElement => {
   return (
     <Box width="100%" display="flex" flexDirection="row" height="100vh">
       <Box backgroundColor="#fff" flexGrow={4}>
-        <Box maxWidth="400px" margin="8vh auto 0 auto">
+        <Box maxWidth="480px" margin="8vh auto 0 auto">
           <Logo />
-          <Box paddingLeft="43px">
-            <Text fontSize="xl" fontWeight="bold" marginBottom="12px">
+          <Box marginLeft="43px" marginRight="43px" marginBottom="36px">
+            <Text textStyle="display-large" marginBottom="12px">
               Welcome to Sistering!
             </Text>
-            <Text marginBottom="24px">
+            <Text marginBottom="24px" textStyle="body-regular">
               Please follow the steps to activate your sistering account. We
               look forward to working with you.
             </Text>
