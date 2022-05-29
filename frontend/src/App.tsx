@@ -54,7 +54,7 @@ import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/Ad
 import CreateAccountPage from "./components/pages/CreateAccountPage";
 import PasswordResetSuccessPage from "./components/auth/PasswordResetSuccess";
 import NewAccountPage from "./components/pages/NewAccountPage";
-import AccountCreatedPage from "./components/AccountCreatedPage";
+import AccountCreatedPage from "./components/pages/AccountCreatedPage";
 
 ReactGA.initialize(process.env.TRACKING_ID ?? "");
 
