@@ -55,6 +55,7 @@ import CreateAccountPage from "./components/pages/CreateAccountPage";
 import PasswordResetSuccessPage from "./components/auth/PasswordResetSuccess";
 import NewAccountPage from "./components/pages/NewAccountPage";
 import AccountCreatedPage from "./components/pages/AccountCreatedPage";
+import AuthNavbar from "./components/auth/AuthNavbar";
 
 ReactGA.initialize(process.env.TRACKING_ID ?? "");
 
@@ -104,6 +105,7 @@ const App = (): React.ReactElement => {
                 value={dispatchPostingContextUpdate}
               >
                 <Router>
+                  {authenticatedUser ? "" : <AuthNavbar />}
                   <Switch>
                     <Route exact path={Routes.LOGIN_PAGE} component={Login} />
                     <Route
