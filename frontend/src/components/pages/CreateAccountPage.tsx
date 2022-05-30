@@ -1,6 +1,6 @@
 import React from "react";
-import { Text, Button, Box } from "@chakra-ui/react";
-import { ReactComponent as Logo } from "../../assets/Sistering_Logo.svg";
+import { Text, Button, Box, Image } from "@chakra-ui/react";
+import logo from "../../assets/Sistering_Logo.svg";
 
 const CreateAccountPage = (): React.ReactElement => {
   const onContinue = () => {
@@ -9,10 +9,10 @@ const CreateAccountPage = (): React.ReactElement => {
 
   return (
     <Box width="100%" display="flex" flexDirection="row" height="100vh">
-      <Box backgroundColor="#fff" flexGrow={4}>
-        <Box maxWidth="480px" margin="8vh auto 0 auto">
-          <Logo />
-          <Box marginLeft="43px" marginRight="43px" marginBottom="36px">
+      <Box backgroundColor="background.white" flexGrow={4}>
+        <Box maxWidth="480px" mt="8vh" mx="auto">
+          <Image src={logo} alt="Sistering logo" h={32} />
+          <Box mx="43px" mb="36px">
             <Text textStyle="display-large" marginBottom="12px">
               Welcome to Sistering!
             </Text>
@@ -20,15 +20,13 @@ const CreateAccountPage = (): React.ReactElement => {
               Please follow the steps to activate your sistering account. We
               look forward to working with you.
             </Text>
-            <Button color="#7000DE" width="100%">
-              <Text color="#fff">Continue</Text>
+            <Button color="violet" width="100%">
+              <Text color="background.white">Continue</Text>
             </Button>
           </Box>
         </Box>
       </Box>
-      <Box backgroundColor="#f4f4f4" flexGrow={6}>
-        {" "}
-      </Box>
+      <Box backgroundColor="background.light" flexGrow={6} />
     </Box>
   );
 };
