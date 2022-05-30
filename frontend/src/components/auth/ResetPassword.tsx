@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { useHistory } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
-import { Box, Button, Input, Text } from "@chakra-ui/react";
-import { ReactComponent as Logo } from "../../assets/Sistering_Logo.svg";
+import { Box, Button, Input, Text, Image } from "@chakra-ui/react";
+import logo from "../../assets/Sistering_Logo.svg";
 
 import { DONE_RESET_PASSWORD_PAGE } from "../../constants/Routes";
 import ErrorModal from "../common/ErrorModal";
@@ -27,7 +27,7 @@ const ResetPassword = (): React.ReactElement => {
       history.push(DONE_RESET_PASSWORD_PAGE);
     } catch (e) {
       /* eslint-disable-next-line no-alert */
-      alert("invalid email");
+      alert("Error: Invalid Email");
     }
   };
 
@@ -35,10 +35,10 @@ const ResetPassword = (): React.ReactElement => {
     <Box>
       {error && <ErrorModal />}
       <Box width="100%" display="flex" flexDirection="row" height="100vh">
-        <Box backgroundColor="#fff" flexGrow={4}>
-          <Box maxWidth="480px" margin="8vh auto 0 auto">
-            <Logo />
-            <Box marginLeft="43px" marginRight="43px" marginBottom="36px">
+        <Box backgroundColor="background.white" flexGrow={4}>
+          <Box maxWidth="480px" mt="8vh" mx="auto">
+            <Image src={logo} alt="Sistering logo" h={32} />
+            <Box mx="43px" mb="36px">
               <Text textStyle="display-large" paddingBottom="24px">
                 Reset Password
               </Text>
@@ -47,7 +47,7 @@ const ResetPassword = (): React.ReactElement => {
                 align="left"
                 textStyle="body-regular"
                 fontSize="14px"
-                paddingBottom="14px"
+                pb="14px"
               >
                 Enter the email address associated with your account to reset
                 your password. You may need to check your spam folder.
@@ -68,7 +68,7 @@ const ResetPassword = (): React.ReactElement => {
             </Box>
           </Box>
         </Box>
-        <Box backgroundColor="#f4f4f4" flexGrow={6} />
+        <Box backgroundColor="background.light" flexGrow={6} />
       </Box>
     </Box>
   );
