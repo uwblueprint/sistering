@@ -22,13 +22,7 @@ const AdminHomepageHeader = ({
   isSuperAdmin: boolean;
 }): React.ReactElement => {
   return (
-    <VStack
-      alignItems="flex-start"
-      px="100px"
-      pt="48px"
-      spacing={0}
-      border="1px"
-    >
+    <VStack alignItems="flex-start" px="100px" pt="48px" spacing={0}>
       <HStack w="full" mb="16px">
         <Text textStyle="display-small-semibold">Volunteer Postings</Text>
         <Spacer />
