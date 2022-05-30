@@ -1,6 +1,6 @@
 import React from "react";
 import { Text, Button, Box, Image } from "@chakra-ui/react";
-import logo from "../../assets/Sistering_Logo.svg";
+import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 
 const CreateAccountPage = (): React.ReactElement => {
   const onContinue = () => {
@@ -11,7 +11,7 @@ const CreateAccountPage = (): React.ReactElement => {
     <Box width="100%" display="flex" flexDirection="row" height="100vh">
       <Box backgroundColor="background.white" flexGrow={4}>
         <Box maxWidth="480px" mt="8vh" mx="auto">
-          <Image src={logo} alt="Sistering logo" h={32} />
+          <Image src={Sistering_Logo} alt="Sistering logo" h={32} />
           <Box mx="43px" mb="36px">
             <Text textStyle="display-large" marginBottom="12px">
               Welcome to Sistering!
