@@ -6,6 +6,7 @@ import ProfilePhotoForm from "../user/ProfilePhotoForm";
 
 const NewAccountPage = (): React.ReactElement => {
   const [profilePhoto, setProfilePhoto] = useState<string>("");
+  const [isAdmin] = useState<boolean>(false);
   return (
     <>
       <SignupNavbar />
@@ -18,7 +19,7 @@ const NewAccountPage = (): React.ReactElement => {
           setProfilePhoto={setProfilePhoto}
         />
         <Divider my={8} />
-        <AccountForm />
+        <AccountForm isAdmin={isAdmin} />
       </Container>
     </>
   );
