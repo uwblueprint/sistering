@@ -19,7 +19,7 @@ const NewAccountPage = (): React.ReactElement => {
           setProfilePhoto={setProfilePhoto}
         />
         <Divider my={8} />
-        <AccountForm isAdmin={isAdmin} />
+        <AccountForm isAdmin={isAdmin} profilePhoto={profilePhoto} />
       </Container>
     </>
   );

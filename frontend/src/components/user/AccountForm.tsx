@@ -20,6 +20,7 @@ import { SkillResponseDTO } from "../../types/api/SkillTypes";
 
 type AccountFormProps = {
   isAdmin: boolean; // False if user is a volunteer
+  profilePhoto: string;
 };
 
 const TEST_SKILLS: SkillResponseDTO[] = [
@@ -38,6 +39,7 @@ const TEST_SKILLS: SkillResponseDTO[] = [
 ];
 
 interface AccountFormValues {
+  profilePhoto: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
@@ -49,7 +51,10 @@ interface AccountFormValues {
   skills: SkillResponseDTO[];
 }
 
-const AccountForm = ({ isAdmin }: AccountFormProps): React.ReactElement => {
+const AccountForm = ({
+  isAdmin,
+  profilePhoto,
+}: AccountFormProps): React.ReactElement => {
   const [agreeToTerms, setAgreeToTerms] = React.useState(false);
 
   const toggleAgreeToTerms = (): void => {
@@ -87,6 +92,7 @@ const AccountForm = ({ isAdmin }: AccountFormProps): React.ReactElement => {
   };
 
   const initialValues: AccountFormValues = {
+    profilePhoto: "",
     firstName: "",
     lastName: "",
     dateOfBirth: "",
@@ -103,8 +109,13 @@ const AccountForm = ({ isAdmin }: AccountFormProps): React.ReactElement => {
       <Formik
         initialValues={initialValues}
         onSubmit={(values) => {
+          const formValues = {
+            ...values,
+            profilePhoto,
+          };
+
           // eslint-disable-next-line no-console
-          console.log(values);
+          console.log(formValues);
 
           // If submitting form for admin, omit the skills field.
 
