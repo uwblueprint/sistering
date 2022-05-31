@@ -6,6 +6,8 @@ export const SIGNUP_PAGE = "/signup";
 
 export const CREATE_ACCOUNT_PAGE = "/create-account";
 
+export const ACCOUNT_CREATED_PAGE = "/account-created";
+
 export const NEW_ACCOUNT_PAGE = "/new-account";
 
 export const ADMIN_HOMEPAGE = "/admin";
