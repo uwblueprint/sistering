@@ -91,6 +91,16 @@ const customTheme = extendTheme(
               textDecoration: "none",
             },
           },
+          menuButton: {
+            color: "text.gray",
+            _hover: {
+              color: "teal",
+            },
+            _active: {
+              color: "teal",
+            },
+            mr: "20px",
+          },
         },
       },
       Table: {

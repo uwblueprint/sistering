@@ -105,7 +105,7 @@ const App = (): React.ReactElement => {
                 value={dispatchPostingContextUpdate}
               >
                 <Router>
-                  {authenticatedUser ? "" : <AuthNavbar />}
+                  {authenticatedUser ? undefined : <AuthNavbar />}
                   <Switch>
                     <Route exact path={Routes.LOGIN_PAGE} component={Login} />
                     <Route
