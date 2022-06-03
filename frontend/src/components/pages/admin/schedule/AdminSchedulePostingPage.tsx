@@ -96,9 +96,13 @@ const POSTING = gql`
 const ShiftScheduleCalendar = ({
   shifts,
   onDayClick,
+  onShiftClick,
 }: {
   shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
   onDayClick: (calendarDay: Date) => void;
+  onShiftClick: (
+    shift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
+  ) => void;
 }) =>
   shifts.length > 0 && (
     <MonthViewShiftCalendar
@@ -112,6 +116,7 @@ const ShiftScheduleCalendar = ({
       })}
       shifts={shifts}
       onDayClick={onDayClick}
+      onShiftClick={onShiftClick}
     />
   );
 
@@ -120,6 +125,12 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
+  const [
+    selectedShift,
+    setSelectedShift,
+  ] = useState<AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO>(
+    shifts[0],
+  );
   const [
     currentlyEditingShift,
     setcurrentlyEditingShift,
@@ -137,12 +148,20 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   const [selectedDay, setSelectedDay] = useState<Date>();
 
   useEffect(() => {
-    setSidePanelShifts(
-      shifts.filter((shift) =>
-        moment.utc(shift.startTime).isSame(moment.utc(selectedDay), "day"),
-      ),
+    const shiftsOfDay = shifts.filter((shift) =>
+      moment.utc(shift.startTime).isSame(moment.utc(selectedDay), "day"),
     );
-  }, [shifts, selectedDay]);
+    setSidePanelShifts(shiftsOfDay);
+    // Set selected shift to first shift if current selected is not in same day
+    if (
+      selectedShift &&
+      !moment
+        .utc(selectedShift.startTime)
+        .isSame(moment.utc(selectedDay), "day")
+    ) {
+      setSelectedShift(shiftsOfDay[0]);
+    }
+  }, [shifts, selectedDay, selectedShift]);
 
   const { error: tableDataQueryError, loading: tableDataLoading } = useQuery<
     AdminScheduleTableDataQueryResponse,
@@ -239,6 +258,10 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
 
   const handleDayClick = (calendarDate: Date) => setSelectedDay(calendarDate);
 
+  const handleShiftClick = (
+    shift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
+  ) => setSelectedShift(shift);
+
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
     await submitSignups({
@@ -324,7 +347,11 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             {tableDataLoading || postingLoading ? (
               <Loading />
             ) : (
-              ShiftScheduleCalendar({ shifts, onDayClick: handleDayClick })
+              ShiftScheduleCalendar({
+                shifts,
+                onDayClick: handleDayClick,
+                onShiftClick: handleShiftClick,
+              })
             )}
           </Box>
           <Box w="400px" overflow="hidden">
@@ -336,6 +363,8 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               onSignupCheckboxClick={handleSignupCheckboxClick}
               onSaveSignupsClick={handleSidePanelSaveClick}
               submitSignupsLoading={submitSignupsLoading}
+              selectedShift={selectedShift}
+              setSelectedShift={setSelectedShift}
             />
           </Box>
         </Flex>

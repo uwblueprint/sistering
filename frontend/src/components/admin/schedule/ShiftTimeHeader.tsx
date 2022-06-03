@@ -6,11 +6,13 @@ import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../.
 type ShiftTimeHeaderProps = {
   shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
   onShiftSelected: (id: string) => void;
+  selectedShift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO;
 };
 
 const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
   shifts,
   onShiftSelected,
+  selectedShift,
 }: ShiftTimeHeaderProps): React.ReactElement => {
   return (
     <VStack
@@ -29,6 +31,7 @@ const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
         size="md"
         textStyle="caption"
         onChange={(e) => onShiftSelected(String(e.target.value))}
+        value={selectedShift?.id ?? shifts[0].id}
       >
         {shifts.map((shift, i) => (
           <option key={i} value={shift.id}>

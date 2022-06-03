@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import { VStack, Box, Text, useBoolean } from "@chakra-ui/react";
 import { formatDateStringYear } from "../../../utils/DateTimeUtils";
 
@@ -17,6 +17,10 @@ type ScheduleSidePanelProps = {
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
   onSaveSignupsClick: () => Promise<void>;
   submitSignupsLoading: boolean;
+  selectedShift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO;
+  setSelectedShift: React.Dispatch<
+    React.SetStateAction<AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO>
+  >;
 };
 
 const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
@@ -27,19 +31,10 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   onSignupCheckboxClick,
   onSaveSignupsClick,
   submitSignupsLoading,
+  selectedShift,
+  setSelectedShift,
 }: ScheduleSidePanelProps): React.ReactElement => {
-  const [
-    selectedShift,
-    setSelectedShift,
-  ] = useState<AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO>(
-    shifts[0],
-  );
   const [isEditing, setIsEditing] = useBoolean(false);
-
-  useEffect(() => {
-    const updatedShift = shifts.find((shift) => shift.id === selectedShift?.id);
-    setSelectedShift(updatedShift ?? shifts[0]);
-  }, [shifts, selectedShift]);
 
   const handleEditSaveButtonClick = async () => {
     if (!isEditing) {
@@ -86,6 +81,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
           <ShiftTimeHeader
             shifts={shifts}
             onShiftSelected={handleShiftTimeSelect}
+            selectedShift={selectedShift}
           />
           <AdminScheduleVolunteerTable
             signups={selectedShift ? selectedShift.signups : []}

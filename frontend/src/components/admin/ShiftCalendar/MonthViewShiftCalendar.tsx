@@ -15,12 +15,16 @@ type MonthViewShiftCalendarProps = {
   events: MonthEvent[];
   shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
   onDayClick: (calendarDay: Date) => void;
+  onShiftClick: (
+    shift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
+  ) => void;
 };
 
 const MonthViewShiftCalendar = ({
   events,
   shifts,
   onDayClick,
+  onShiftClick,
 }: MonthViewShiftCalendarProps): React.ReactElement => {
   const sortEvents = (unsortedEvents: MonthEvent[]): MonthEvent[] => {
     return unsortedEvents.sort((a, b) => {
@@ -117,6 +121,7 @@ const MonthViewShiftCalendar = ({
         shifts={shifts}
         initialDate={selectedMonth}
         onDayClick={onDayClick}
+        onShiftClick={onShiftClick}
       />
     </Box>
   ) : (
