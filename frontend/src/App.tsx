@@ -56,17 +56,19 @@ import PasswordResetSuccessPage from "./components/auth/PasswordResetSuccess";
 import NewAccountPage from "./components/pages/NewAccountPage";
 import AccountCreatedPage from "./components/pages/AccountCreatedPage";
 
-ReactGA.initialize(process.env.TRACKING_ID ?? "");
+// Consts for Hotjar and Google Analytics (this is ok to expose)
+const TRACKING_ID = "G-DF2BP4T8YQ";
+const HJID = "2949419";
+const HSJV = "6";
+
+ReactGA.initialize(TRACKING_ID);
 
 const App = (): React.ReactElement => {
   useEffect(() => {
     ReactGA.pageview(window.location.pathname + window.location.search);
   }, []);
   useEffect(() => {
-    hotjar.initialize(
-      parseInt(process.env.HJID ?? "0", 10),
-      parseInt(process.env.HJSV ?? "0", 10),
-    );
+    hotjar.initialize(parseInt(HJID, 10), parseInt(HSJV, 10));
   }, []);
 
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
