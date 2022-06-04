@@ -7,6 +7,7 @@ import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
+import AuthNavbar from "./AuthNavbar";
 
 const REGISTER = gql`
   mutation Signup_Register(
@@ -58,55 +59,58 @@ const Signup = (): React.ReactElement => {
   }
 
   return (
-    <div style={{ textAlign: "center" }}>
-      <Text textStyle="display-large">Signup</Text>
-      <form>
-        <div>
-          <input
-            type="text"
-            value={firstName}
-            onChange={(event) => setFirstName(event.target.value)}
-            placeholder="first name"
-            style={{ border: "1px solid" }}
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            value={lastName}
-            onChange={(event) => setLastName(event.target.value)}
-            placeholder="last name"
-            style={{ border: "1px solid" }}
-          />
-        </div>
-        <div>
-          <input
-            type="email"
-            value={email}
-            onChange={(event) => setEmail(event.target.value)}
-            placeholder="username@domain.com"
-            style={{ border: "1px solid" }}
-          />
-        </div>
-        <div>
-          <input
-            type="password"
-            value={password}
-            onChange={(event) => setPassword(event.target.value)}
-            placeholder="password"
-            style={{ border: "1px solid" }}
-          />
-        </div>
-        <div>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={onSignupClick}
-          >
-            Sign Up
-          </button>
-        </div>
-      </form>
+    <div>
+      <AuthNavbar />
+      <div style={{ textAlign: "center" }}>
+        <Text textStyle="display-large">Signup</Text>
+        <form>
+          <div>
+            <input
+              type="text"
+              value={firstName}
+              onChange={(event) => setFirstName(event.target.value)}
+              placeholder="first name"
+              style={{ border: "1px solid" }}
+            />
+          </div>
+          <div>
+            <input
+              type="text"
+              value={lastName}
+              onChange={(event) => setLastName(event.target.value)}
+              placeholder="last name"
+              style={{ border: "1px solid" }}
+            />
+          </div>
+          <div>
+            <input
+              type="email"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              placeholder="username@domain.com"
+              style={{ border: "1px solid" }}
+            />
+          </div>
+          <div>
+            <input
+              type="password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              placeholder="password"
+              style={{ border: "1px solid" }}
+            />
+          </div>
+          <div>
+            <button
+              className="btn btn-primary"
+              type="button"
+              onClick={onSignupClick}
+            >
+              Sign Up
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
