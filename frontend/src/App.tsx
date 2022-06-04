@@ -58,8 +58,8 @@ import AccountCreatedPage from "./components/pages/AccountCreatedPage";
 
 // Consts for Hotjar and Google Analytics (this is ok to expose)
 const TRACKING_ID = "G-DF2BP4T8YQ";
-const HJID = "2949419";
-const HSJV = "6";
+const HJID = 2949419;
+const HSJV = 6;
 
 ReactGA.initialize(TRACKING_ID);
 
@@ -68,7 +68,7 @@ const App = (): React.ReactElement => {
     ReactGA.pageview(window.location.pathname + window.location.search);
   }, []);
   useEffect(() => {
-    hotjar.initialize(parseInt(HJID, 10), parseInt(HSJV, 10));
+    hotjar.initialize(HJID, HSJV);
   }, []);
 
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
