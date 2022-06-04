@@ -118,6 +118,7 @@ const WeekViewShiftCalendar = ({
         selectMirror
         selectable={Boolean(startDate && endDate)}
         scrollTime="09:00:00"
+        scrollTimeReset={false}
         slotDuration="00:15:00"
         slotLabelInterval="01:00"
         timeZone="UTC"
