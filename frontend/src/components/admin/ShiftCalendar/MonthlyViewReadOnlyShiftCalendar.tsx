@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import FullCalendar, {
   DayCellContentArg,
+  EventClickArg,
   EventContentArg,
   EventInput,
 } from "@fullcalendar/react";
@@ -21,6 +22,9 @@ type AdminShiftCalendarProps = {
   shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
   initialDate: Date;
   onDayClick: (calendarDay: Date) => void;
+  onShiftClick: (
+    shift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
+  ) => void;
 };
 
 const MonthlyViewShiftCalendar = ({
@@ -28,6 +32,7 @@ const MonthlyViewShiftCalendar = ({
   shifts,
   initialDate,
   onDayClick,
+  onShiftClick,
 }: AdminShiftCalendarProps): React.ReactElement => {
   const calendarRef = React.useRef<FullCalendar>(null);
 
@@ -64,6 +69,14 @@ const MonthlyViewShiftCalendar = ({
     );
   };
 
+  const onEventClick = (click: EventClickArg) => {
+    const shift = shifts.find((currShift) => currShift.id === click.event.id);
+    if (shift) {
+      onDayClick(shift.startTime);
+      onShiftClick(shift);
+    }
+  };
+
   // applyCellClasses is used to compute the day cell background color.
   const applyCellClasses = (day: DayCellContentArg) => {
     // FullCalendar doesn't support retrieving events of a day, so we have to
@@ -83,7 +96,7 @@ const MonthlyViewShiftCalendar = ({
         dayCellClassNames={(day: DayCellContentArg) => applyCellClasses(day)}
         editable
         dateClick={({ date }) => onDayClick(date)}
-        // eventClick --> Show side panel, TODO in ticket #176
+        eventClick={onEventClick}
         eventColor={colors.violet}
         eventContent={displayCustomEvent}
         events={events as EventInput[]}

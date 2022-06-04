@@ -54,18 +54,21 @@ import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/Ad
 import CreateAccountPage from "./components/pages/CreateAccountPage";
 import PasswordResetSuccessPage from "./components/auth/PasswordResetSuccess";
 import NewAccountPage from "./components/pages/NewAccountPage";
+import AccountCreatedPage from "./components/pages/AccountCreatedPage";
 
-ReactGA.initialize(process.env.TRACKING_ID ?? "");
+// Consts for Hotjar and Google Analytics (this is ok to expose)
+const TRACKING_ID = "G-DF2BP4T8YQ";
+const HJID = 2949419;
+const HSJV = 6;
+
+ReactGA.initialize(TRACKING_ID);
 
 const App = (): React.ReactElement => {
   useEffect(() => {
     ReactGA.pageview(window.location.pathname + window.location.search);
   }, []);
   useEffect(() => {
-    hotjar.initialize(
-      parseInt(process.env.HJID ?? "0", 10),
-      parseInt(process.env.HJSV ?? "0", 10),
-    );
+    hotjar.initialize(HJID, HSJV);
   }, []);
 
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
@@ -109,6 +112,11 @@ const App = (): React.ReactElement => {
                       exact
                       path={Routes.CREATE_ACCOUNT_PAGE}
                       component={CreateAccountPage}
+                    />
+                    <Route
+                      exact
+                      path={Routes.ACCOUNT_CREATED_PAGE}
+                      component={AccountCreatedPage}
                     />
                     <Route
                       exact

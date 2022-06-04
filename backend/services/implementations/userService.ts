@@ -214,16 +214,11 @@ class UserService implements IUserService {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      if (signUpMethod === "GOOGLE") {
-        /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-        firebaseUser = await firebaseAdmin.auth().getUser(authId!);
-      } else {
-        // signUpMethod === PASSWORD
-        firebaseUser = await firebaseAdmin.auth().createUser({
-          email: user.email,
-          password: user.password,
-        });
-      }
+      // signUpMethod === PASSWORD
+      firebaseUser = await firebaseAdmin.auth().createUser({
+        email: user.email,
+        password: user.password,
+      });
 
       try {
         newUser = await prisma.user.create({
@@ -551,16 +546,11 @@ class UserService implements IUserService {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      if (signUpMethod === "GOOGLE") {
-        /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-        firebaseUser = await firebaseAdmin.auth().getUser(authId!);
-      } else {
-        // signUpMethod === PASSWORD
-        firebaseUser = await firebaseAdmin.auth().createUser({
-          email: volunteerUser.email,
-          password: volunteerUser.password,
-        });
-      }
+      // signUpMethod === PASSWORD
+      firebaseUser = await firebaseAdmin.auth().createUser({
+        email: volunteerUser.email,
+        password: volunteerUser.password,
+      });
 
       try {
         // nested writes provide transactional guarantees
@@ -956,16 +946,11 @@ class UserService implements IUserService {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      if (signUpMethod === "GOOGLE") {
-        /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-        firebaseUser = await firebaseAdmin.auth().getUser(authId!);
-      } else {
-        // signUpMethod === PASSWORD
-        firebaseUser = await firebaseAdmin.auth().createUser({
-          email: employeeUser.email,
-          password: employeeUser.password,
-        });
-      }
+      // signUpMethod === PASSWORD
+      firebaseUser = await firebaseAdmin.auth().createUser({
+        email: employeeUser.email,
+        password: employeeUser.password,
+      });
 
       try {
         // nested writes provide transactional guarantees
