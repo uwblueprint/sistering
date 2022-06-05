@@ -9,8 +9,15 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
+import { BranchResponseDTO } from "../../types/api/BranchTypes";
 
-const BranchManagerTable = (): React.ReactElement => {
+type BranchManagerTableProps = {
+  branches: BranchResponseDTO[];
+};
+
+const BranchManagerTable = ({
+  branches,
+}: BranchManagerTableProps): React.ReactElement => {
   return (
     <TableContainer
       border="2px"
@@ -19,93 +26,37 @@ const BranchManagerTable = (): React.ReactElement => {
     >
       <Table variant="brand">
         <Tbody>
-          <Tr>
-            <Td>
-              <Tag>Medical Reception</Tag>
-            </Td>
-            <Td textAlign="end">
-              <IconButton
-                aria-label="Edit branch"
-                variant="ghost"
-                _hover={{
-                  bg: "transparent",
-                }}
-                _active={{
-                  bg: "transparent",
-                }}
-                icon={<EditIcon color="text.default" boxSize="24px" />}
-              />
-              <IconButton
-                aria-label="Delete branch"
-                variant="ghost"
-                _hover={{
-                  bg: "transparent",
-                }}
-                _active={{
-                  bg: "transparent",
-                }}
-                icon={<DeleteIcon color="text.default" boxSize="24px" />}
-              />
-            </Td>
-          </Tr>
-          <Tr>
-            <Td>
-              <Tag>Kitchen Prep</Tag>
-            </Td>
-            <Td textAlign="end">
-              <IconButton
-                aria-label="Edit branch"
-                variant="ghost"
-                _hover={{
-                  bg: "transparent",
-                }}
-                _active={{
-                  bg: "transparent",
-                }}
-                icon={<EditIcon color="text.default" boxSize="24px" />}
-              />
-              <IconButton
-                aria-label="Delete branch"
-                variant="ghost"
-                _hover={{
-                  bg: "transparent",
-                }}
-                _active={{
-                  bg: "transparent",
-                }}
-                icon={<DeleteIcon color="text.default" boxSize="24px" />}
-              />
-            </Td>
-          </Tr>
-          <Tr>
-            <Td>
-              <Tag>Coldest Night of the Year</Tag>
-            </Td>
-            <Td textAlign="end">
-              <IconButton
-                aria-label="Edit branch"
-                variant="ghost"
-                _hover={{
-                  bg: "transparent",
-                }}
-                _active={{
-                  bg: "transparent",
-                }}
-                icon={<EditIcon color="text.default" boxSize="24px" />}
-              />
-              <IconButton
-                aria-label="Delete branch"
-                variant="ghost"
-                _hover={{
-                  bg: "transparent",
-                }}
-                _active={{
-                  bg: "transparent",
-                }}
-                icon={<DeleteIcon color="text.default" boxSize="24px" />}
-              />
-            </Td>
-          </Tr>
+          {branches.map((branch) => (
+            <Tr key={Number(branch.id)}>
+              <Td>
+                <Tag>{branch.name}</Tag>
+              </Td>
+              <Td textAlign="end">
+                <IconButton
+                  aria-label="Edit branch"
+                  variant="ghost"
+                  _hover={{
+                    bg: "transparent",
+                  }}
+                  _active={{
+                    bg: "transparent",
+                  }}
+                  icon={<EditIcon color="text.default" boxSize="24px" />}
+                />
+                <IconButton
+                  aria-label="Delete branch"
+                  variant="ghost"
+                  _hover={{
+                    bg: "transparent",
+                  }}
+                  _active={{
+                    bg: "transparent",
+                  }}
+                  icon={<DeleteIcon color="text.default" boxSize="24px" />}
+                />
+              </Td>
+            </Tr>
+          ))}
         </Tbody>
       </Table>
     </TableContainer>

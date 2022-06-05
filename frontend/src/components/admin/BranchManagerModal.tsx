@@ -39,7 +39,13 @@ const BranchManagerModal = ({
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <BranchManagerTable />
+          <BranchManagerTable
+            branches={[
+              { id: "1", name: "Medical Reception" },
+              { id: "2", name: "Kitchen Prep" },
+              { id: "3", name: "Coldest Night of the Year" },
+            ]}
+          />
         </ModalBody>
       </ModalContent>
     </Modal>
