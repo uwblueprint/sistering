@@ -565,7 +565,7 @@ class UserService implements IUserService {
               create: {
                 hireDate: volunteerUser.hireDate,
                 pronouns: volunteerUser.pronouns ?? "",
-                dateOfBirth: volunteerUser.dateOfBirth ?? "",
+                dateOfBirth: volunteerUser.dateOfBirth,
                 branches: {
                   connect: convertToNumberIds(volunteerUser.branches),
                 },
