@@ -63,7 +63,7 @@ const EditModal = ({
             value={value}
             placeholder={value}
             onChange={handleChange}
-            size="md"
+            size="sm"
           />
         </ModalBody>
         <ModalFooter mt="10px" py="6px" px="12px">
@@ -80,7 +80,7 @@ const EditModal = ({
             borderRadius="4px"
             onClick={handleEditClick}
             ref={initialRef}
-            colorScheme="violet"
+            colorScheme="brand"
             textStyle="button-semibold"
             fontWeight={700}
             isLoading={isLoading}
