@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["interactiveTransactions"]
 }
 
@@ -21,15 +21,15 @@ model Entity {
 }
 
 model User {
-  id             Int            @id @default(autoincrement())
-  firstName      String         @map("first_name")
-  lastName       String         @map("last_name")
-  authId         String         @unique @map("auth_id")
-  role           Role
-  phoneNumber    String?        @map("phone_number")
-  employee       Employee?
-  volunteer      Volunteer?
-  signups        Signup[]
+  id          Int        @id @default(autoincrement())
+  firstName   String     @map("first_name")
+  lastName    String     @map("last_name")
+  authId      String     @unique @map("auth_id")
+  role        Role
+  phoneNumber String?    @map("phone_number")
+  employee    Employee?
+  volunteer   Volunteer?
+  signups     Signup[]
 
   @@map("users")
 }
@@ -66,9 +66,9 @@ enum Role {
 }
 
 model Posting {
-  id              Int         @id @default(autoincrement())
-  branchId        Int         @map("branch_id")
-  branch          Branch      @relation(fields: [branchId], references: [id])
+  id              Int           @id @default(autoincrement())
+  branchId        Int           @map("branch_id")
+  branch          Branch        @relation(fields: [branchId], references: [id])
   shifts          Shift[]
   skills          Skill[]
   employees       Employee[]
@@ -76,17 +76,17 @@ model Posting {
   type            PostingType
   status          PostingStatus
   description     String
-  startDate       DateTime    @map("start_date")
-  endDate         DateTime    @map("end_date")
-  autoClosingDate DateTime    @map("auto_closing_date")
-  numVolunteers   Int         @default(1) @map("num_volunteers")
+  startDate       DateTime      @map("start_date")
+  endDate         DateTime      @map("end_date")
+  autoClosingDate DateTime      @map("auto_closing_date")
+  numVolunteers   Int           @default(1) @map("num_volunteers")
 
   @@map("postings")
 }
 
 model Skill {
-  id         Int                @id @default(autoincrement())
-  name       String             @unique
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
   postings   Posting[]
   volunteers Volunteer[]
 
@@ -104,12 +104,12 @@ model Branch {
 }
 
 model Shift {
-  id             Int       @id @default(autoincrement())
-  postingId      Int       @map("posting_id")
-  posting        Posting   @relation(fields: [postingId], references: [id], onDelete: Cascade)
-  startTime      DateTime  @map("start_time")
-  endTime        DateTime  @map("end_time")
-  signups        Signup[]
+  id        Int      @id @default(autoincrement())
+  postingId Int      @map("posting_id")
+  posting   Posting  @relation(fields: [postingId], references: [id], onDelete: Cascade)
+  startTime DateTime @map("start_time")
+  endTime   DateTime @map("end_time")
+  signups   Signup[]
 
   @@map("shifts")
 }
@@ -123,18 +123,18 @@ model Signup {
   numVolunteers Int          @default(1) @map("num_volunteers")
   note          String
 
-  @@map("signups")
   @@id([shiftId, userId])
+  @@map("signups")
 }
 
 model Volunteer {
-  id              Int                       @id
-  user            User                      @relation(fields: [id], references: [id], onDelete: Cascade)
-  branches        Branch[]                   
-  hireDate        DateTime                  @map("hire_date")
-  skills          Skill[]
-  dateOfBirth     DateTime                  @map("date_of_birth")
-  pronouns        String
+  id          Int       @id
+  user        User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  branches    Branch[]
+  hireDate    DateTime  @map("hire_date")
+  skills      Skill[]
+  dateOfBirth DateTime? @map("date_of_birth")
+  pronouns    String
 
   @@map("volunteers")
 }
@@ -145,7 +145,7 @@ model Employee {
   branchId Int       @map("branch_id")
   branch   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
   postings Posting[]
-  title String
+  title    String
 
   @@map("employees")
 }
