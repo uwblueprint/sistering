@@ -4,8 +4,8 @@
 branch=`git symbolic-ref HEAD`
 root_dir=`git rev-parse --show-toplevel`
 # must replace with actual vault_path and default_branch, can run setup.sh
-vault_path="kv/sistering"
-default_branch="main"
+vault_path=""
+default_branch=""
 
 if [ $branch = "refs/heads/${default_branch}" ]; then
     if [ -f "${root_dir}/update_secret_files.py" ]; then
