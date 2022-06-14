@@ -16,11 +16,14 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
+import moment from "moment";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
 
 type AccountFormProps = {
   isAdmin: boolean; // False if user is a volunteer
   profilePhoto: string;
+  onVolunteerCreate: (volunteer: any) => void;
+  onEmployeeCreate: (employee: any) => void;
 };
 
 const TEST_SKILLS: SkillResponseDTO[] = [
@@ -54,6 +57,8 @@ interface AccountFormValues {
 const AccountForm = ({
   isAdmin,
   profilePhoto,
+  onVolunteerCreate,
+  onEmployeeCreate,
 }: AccountFormProps): React.ReactElement => {
   const [agreeToTerms, setAgreeToTerms] = React.useState(false);
 
@@ -309,6 +314,31 @@ const AccountForm = ({
               colorScheme="brand"
               isDisabled={!agreeToTerms}
               type="submit"
+              onClick={
+                isAdmin
+                  ? () =>
+                      onEmployeeCreate({
+                        firstName: values.firstName,
+                        lastName: values.lastName,
+                        email: "email123@gmail.com",
+                        phoneNumber: values.phoneNumber,
+                        password: values.password,
+                        branchId: 0,
+                        title: "",
+                      })
+                  : () =>
+                      onVolunteerCreate({
+                        firstName: values.firstName,
+                        lastName: values.lastName,
+                        email: "johndoe@uwblueprint.org",
+                        password: values.password,
+                        phoneNumber: values.phoneNumber,
+                        hireDate: moment(new Date()).format("YYYY-MM-DD"),
+                        dateOfBirth: values.dateOfBirth,
+                        skills: values.skills.map((skill) => skill.id),
+                        branches: [],
+                      })
+              }
             >
               Create
             </Button>
