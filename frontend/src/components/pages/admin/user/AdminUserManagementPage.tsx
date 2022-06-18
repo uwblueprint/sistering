@@ -1,6 +1,5 @@
 import React, { useState } from "react";
-import { useHistory } from "react-router-dom";
-import { Box, HStack } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import { VolunteerUserResponseDTO } from "../../../../types/api/UserType";
 import { EmployeeUserResponseDTO } from "../../../../types/api/EmployeeTypes";
