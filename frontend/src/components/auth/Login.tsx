@@ -2,7 +2,15 @@ import React, { useContext, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 
 import { gql, useMutation } from "@apollo/client";
-import { Text } from "@chakra-ui/react";
+import {
+  Button,
+  Box,
+  Text,
+  Input,
+  FormControl,
+  FormLabel,
+  Image,
+} from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { RESET_PASSWORD_PAGE, HOME_PAGE } from "../../constants/Routes";
@@ -12,6 +20,8 @@ import { AuthenticatedUser } from "../../types/AuthTypes";
 
 import ErrorModal from "../common/ErrorModal";
 import AuthNavbar from "./AuthNavbar";
+
+import logo from "../../assets/Sistering_Logo.svg";
 
 const LOGIN = gql`
   mutation Login($email: String!, $password: String!) {
@@ -54,51 +64,60 @@ const Login = (): React.ReactElement => {
   }
 
   return (
-    <div>
+    <Box>
       <AuthNavbar />
-      <div style={{ textAlign: "center" }}>
-        {loginError && <ErrorModal />}
-        <Text textStyle="display-large">Login</Text>
-        <form>
-          <div>
-            <input
-              type="email"
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              placeholder="username@domain.com"
-              style={{ border: "1px solid" }}
-            />
-          </div>
-          <div>
-            <input
-              type="password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              placeholder="password"
-              style={{ border: "1px solid" }}
-            />
-          </div>
-          <div>
-            <button
-              className="btn btn-primary"
-              type="button"
-              onClick={onLogInClick}
-            >
-              Log In
-            </button>
-          </div>
-        </form>
-        <div>
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={onForgotPasswordClick}
-          >
-            Forgot Password
-          </button>
-        </div>
-      </div>
-    </div>
+      {loginError && <ErrorModal />}
+      <Box width="100%" display="flex" flexDirection="row" height="100vh">
+        <Box backgroundColor="background.white" flexGrow={4}>
+          <Box maxWidth="480px" mt="8vh" mx="auto">
+            {loginError && <ErrorModal />}
+            <Image src={logo} alt="Sistering logo" h={32} />
+            <Box mx="43px" mb="36px">
+              <Text textStyle="display-large" fontWeight="bold" mb={8}>
+                Sign In
+              </Text>
+              <FormControl alignItems="center">
+                <FormLabel htmlFor="email" fontWeight="bold">
+                  Email
+                </FormLabel>
+                <Input
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(event) => setEmail(event.target.value)}
+                  placeholder="username@domain.com"
+                  mb={5}
+                />
+                <FormLabel htmlFor="email" fontWeight="bold">
+                  Password
+                </FormLabel>
+                <Input
+                  id="password"
+                  type="password"
+                  value={password}
+                  onChange={(event) => setPassword(event.target.value)}
+                  placeholder="password"
+                />
+                <Text
+                  onClick={onForgotPasswordClick}
+                  cursor="pointer"
+                  fontWeight="bold"
+                  color="violet"
+                  float="right"
+                  mt={2}
+                >
+                  Forgot Password?
+                </Text>
+                <Button onClick={onLogInClick} w="100%" mt={10}>
+                  Login
+                </Button>
+              </FormControl>
+            </Box>
+          </Box>
+        </Box>
+        <Box backgroundColor="background.light" flexGrow={6} />
+      </Box>
+    </Box>
   );
 };
 
