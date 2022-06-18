@@ -28,7 +28,7 @@ const USERS = gql`
       }
       branches {
         id
-        nam
+        name
       }
     }
   }
