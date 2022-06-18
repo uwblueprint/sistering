@@ -84,9 +84,7 @@ const Login = (): React.ReactElement => {
                   id="email"
                   type="email"
                   value={email}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    setEmail(event.target.value)
-                  }
+                  onChange={(event) => setEmail(event.target.value)}
                   placeholder="username@domain.com"
                   mb={5}
                 />
@@ -97,16 +95,14 @@ const Login = (): React.ReactElement => {
                   id="password"
                   type="password"
                   value={password}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    setPassword(event.target.value)
-                  }
+                  onChange={(event) => setPassword(event.target.value)}
                   placeholder="password"
                 />
                 <Text
                   onClick={onForgotPasswordClick}
                   cursor="pointer"
                   fontWeight="bold"
-                  color="#7000E6"
+                  color="violet"
                   float="right"
                   mt={2}
                 >
