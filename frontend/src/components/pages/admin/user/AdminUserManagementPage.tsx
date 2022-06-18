@@ -5,6 +5,7 @@ import { gql, useQuery } from "@apollo/client";
 import { VolunteerUserResponseDTO } from "../../../../types/api/UserType";
 import { EmployeeUserResponseDTO } from "../../../../types/api/EmployeeTypes";
 import ErrorModal from "../../../common/ErrorModal";
+import Loading from "../../../common/Loading";
 
 const USERS = gql`
   query AdminUserManagementPage_Users {
@@ -28,7 +29,7 @@ const USERS = gql`
       }
       branches {
         id
-        name
+        nam
       }
     }
   }
@@ -42,17 +43,21 @@ const AdminUserManagementPage = (): React.ReactElement => {
   const [allEmployees, setAllEmployees] = useState<
     EmployeeUserResponseDTO[] | null
   >(null);
-  const { error } = useQuery(USERS, {
+
+  const { loading, error } = useQuery(USERS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      setAllVolunteers(data.postings.employeeUsers);
-      setAllEmployees(data.postings.volunteerUsers);
+      setAllVolunteers(data.employeeUsers);
+      setAllEmployees(data.volunteerUsers);
     },
   });
-  return <Box> {error && <ErrorModal />}</Box>;
+
+  return (
+    <Box>
+      {loading && <Loading />}
+      {error && <ErrorModal />}
+    </Box>
+  );
 };
 
-// const AdminUserManagementPage = (): React.ReactElement => {
-//   return <Box />;
-// };
 export default AdminUserManagementPage;
