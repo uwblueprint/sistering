@@ -14,6 +14,7 @@ type DeleteModalProps = {
   title: string;
   isOpen: boolean;
   body: string;
+  confirmText: string;
   onClose(): void;
   onDelete(): void;
 };
@@ -22,6 +23,7 @@ const DeleteModal = ({
   title,
   isOpen = false,
   body,
+  confirmText,
   onClose = () => {},
   onDelete,
 }: DeleteModalProps): React.ReactElement => {
@@ -74,7 +76,7 @@ const DeleteModal = ({
             fontWeight={700}
             isLoading={isLoading}
           >
-            Delete
+            {confirmText}
           </Button>
         </ModalFooter>
       </ModalContent>
