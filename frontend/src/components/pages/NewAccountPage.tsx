@@ -41,17 +41,11 @@ const NewAccountPage = (): React.ReactElement => {
   const isError = createEmployeeError || createVolunteerError;
 
   const onEmployeeCreate = async (employee: any) => {
-    try {
       await createEmployee({
         variables: {
           employee,
         },
       });
-    } catch (e) {
-      /* eslint-disable-next-line no-alert */
-      alert("Error: Issue with creating employee user");
-      // TODO: Render error modal instead
-    }
   };
 
   const onVolunteerCreate = async (volunteer: any) => {
