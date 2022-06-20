@@ -5,7 +5,12 @@ import { EmployeeUserResponseDTO } from "./EmployeeTypes";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
 
-export type PostingStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+// Draft --> Draft
+// Published && Date > current --> Past
+// Published && Date <= current && shifts.length == 0 --> Unscheduled
+// Published && Date <= current && shifts.length > 0 --> Scheduled
+
+export type PostingStatus = "DRAFT" | "PUBLISHED";
 
 export type PostingDTO = {
   id: string;
