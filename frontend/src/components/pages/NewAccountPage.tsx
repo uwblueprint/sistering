@@ -51,16 +51,11 @@ const NewAccountPage = (): React.ReactElement => {
   };
 
   const onVolunteerCreate = async (volunteer: VolunteerDTO) => {
-    try {
-      await createVolunteer({
-        variables: {
-          volunteer,
-        },
-      });
-    } catch (e) {
-      // TODO: Render error modal instead
-      alert("Error: Issue with creating volunteer user");
-    }
+    await createVolunteer({
+      variables: {
+        volunteer,
+      },
+    });
   };
   return (
     <>
