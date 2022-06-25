@@ -82,23 +82,19 @@ const PostingCard = ({
     >
       <VStack px="40px" py="36px" align="start" spacing="12px">
         <Tag>{branchName}</Tag>
-        <Text textStyle="heading">{title}</Text>
+        <Text noOfLines={1} textStyle="heading">
+          {title}
+        </Text>
         <HStack spacing={4}>
           <Text textStyle="caption" noOfLines={2}>
-            <TimeIcon w={4} pr={1} />
-            {type === "OPPORTUNITY"
-              ? "See posting details"
-              : `${formatTimeHourMinutes(
-                  new Date(eventFirstTime),
-                )} - ${formatTimeHourMinutes(new Date(eventLatestTime))}`}
+            <TimeIcon w={6} pr={2} />
+            See Posting Details
           </Text>
           <Box textStyle="caption">
-            <CalendarIcon w={4} pr={1} />
-            {type === "OPPORTUNITY"
-              ? `${formatDateStringYear(startDate)} - ${formatDateStringYear(
-                  endDate,
-                )}`
-              : formatDateStringYear(startDate)}
+            <CalendarIcon w={6} pr={2} />
+            {`${formatDateStringYear(startDate)} - ${formatDateStringYear(
+              endDate,
+            )}`}
           </Box>
         </HStack>
         <Box textStyle="body-regular" noOfLines={2}>

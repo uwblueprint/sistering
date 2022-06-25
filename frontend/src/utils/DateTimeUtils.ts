@@ -182,3 +182,13 @@ export const isEventPosting = (startDate: Date, endDate: Date): boolean => {
   // this logic to be for Toronto time only
   return moment(startDate).isSame(endDate, "day");
 };
+
+/**
+ * Returns true if the date is in the past
+ * @param date a date string in YYYY-MM-DD format
+ * @returns true if the date is in the past
+ * @returns false if the date is in the future
+ */
+export const isPast = (date: string): boolean => {
+  return moment(date).isBefore(moment().toDate());
+};
