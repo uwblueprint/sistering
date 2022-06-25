@@ -7,12 +7,15 @@ import {
   FormControl,
   FormLabel,
   Input,
+  Link,
+  ListItem,
   Select,
   SimpleGrid,
   Tag,
   TagCloseButton,
   Text,
   Tooltip,
+  UnorderedList,
 } from "@chakra-ui/react";
 import React from "react";
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
@@ -170,12 +173,12 @@ const AccountForm = ({
                   <Tooltip
                     placement="right"
                     label={
-                      <Flex direction="column" p={1}>
-                        <Text>• At least 8 characters </Text>
-                        <Text>• At least one capital letter</Text>
-                        <Text>• At least one number </Text>
-                        <Text>• At least one special character</Text>
-                      </Flex>
+                      <UnorderedList>
+                        <ListItem>At least 8 characters </ListItem>
+                        <ListItem>At least one capital letter</ListItem>
+                        <ListItem>At least one number </ListItem>
+                        <ListItem>At least one special character</ListItem>
+                      </UnorderedList>
                     }
                   >
                     <QuestionOutlineIcon mb={2} boxSize={3} color="gray.500" />
@@ -298,7 +301,12 @@ const AccountForm = ({
             </SimpleGrid>
             <Flex mt={8}>
               <Checkbox onChange={() => toggleAgreeToTerms()}>
-                I have read and agree to the terms and conditions&nbsp;
+                <Link
+                  href="https://firebasestorage.googleapis.com/v0/b/sistering-dev.appspot.com/o/sistering-confidentiality-policy.pdf?alt=media&token=0ce8f2d1-6e6f-4ece-9a4f-5358790b5db6"
+                  target="_blank"
+                >
+                  I have read and agree to the terms and conditions&nbsp;
+                </Link>
                 <Box as="span" color="red">
                   *
                 </Box>
