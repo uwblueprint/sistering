@@ -287,6 +287,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     shiftsCopy[shiftIndex].signups = [...currentlyEditingShift.signups];
     setShifts(shiftsCopy);
 
+    setSelectedShift(currentlyEditingShift);
     setcurrentlyEditingShift(undefined);
   };
 
