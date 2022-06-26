@@ -121,12 +121,6 @@ const ProfileDrawer = ({
               </Flex>
             </Box>
           </DrawerBody>
-          <DrawerFooter>
-            <Button variant="outline" mr={3} onClick={onClose}>
-              Cancel
-            </Button>
-            <Button>Save</Button>
-          </DrawerFooter>
         </DrawerContent>
       </Drawer>
     </>
