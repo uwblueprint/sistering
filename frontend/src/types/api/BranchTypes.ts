@@ -6,3 +6,7 @@ export type BranchDTO = {
 export type BranchRequestDTO = Omit<BranchDTO, "id">;
 
 export type BranchResponseDTO = BranchDTO;
+
+export type BranchQueryResponse = {
+  branches: BranchResponseDTO[];
+};
