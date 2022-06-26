@@ -12,6 +12,8 @@ export type UserDTO = {
   email: string;
   role: Role;
   phoneNumber: string | null;
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
 };
 
 export type PostingDTO = {
