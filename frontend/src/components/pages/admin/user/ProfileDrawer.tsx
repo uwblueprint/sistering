@@ -87,6 +87,8 @@ const ProfileDrawer = ({
                       rightIcon={<ChevronDownIcon />}
                       width="100%"
                       textAlign="left"
+                      _hover={{ bg: colors.background.white }}
+                      _active={{ bg: colors.background.white }}
                     >
                       {selectedBranches.length}{" "}
                       {selectedBranches.length === 1 ? "branch" : "branches"}
