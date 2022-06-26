@@ -20,13 +20,14 @@ import {
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import colors from "../../../../theme/colors";
+import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
 
 type ProfileDrawerProps = {
   isOpen: boolean;
-  branches: string[];
-  selectedBranches: string[];
+  branches: BranchResponseDTO[];
+  selectedBranches: BranchResponseDTO[];
   onClose: () => void;
-  handleBranchMenuItemClicked: (item: string) => void;
+  handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
 };
 
 const ProfileDrawer = ({
@@ -38,10 +39,6 @@ const ProfileDrawer = ({
 }: ProfileDrawerProps): React.ReactElement => {
   const [isEditingBranches, setIsEditingBranches] = useState(false);
 
-  /*
-   * TODO: Edit and save function will likely need to be abstracted
-   *       into their own functions at a later point.
-   */
   const handleEditSaveButtonClicked = () => {
     setIsEditingBranches(!isEditingBranches);
   };
@@ -94,17 +91,21 @@ const ProfileDrawer = ({
                       {selectedBranches.length === 1 ? "branch" : "branches"}
                     </MenuButton>
                     <MenuList>
-                      <MenuOptionGroup title="Branch Access" type="checkbox">
-                        {branches.map((branch, index) => {
+                      <MenuOptionGroup
+                        title="Branch Access"
+                        type="checkbox"
+                        value={selectedBranches.map((branch) => branch.id)}
+                      >
+                        {branches.map((branch) => {
                           return (
                             <MenuItemOption
-                              key={index}
-                              value={branch}
+                              key={branch.id}
+                              value={branch.id}
                               onClick={() =>
                                 handleBranchMenuItemClicked(branch)
                               }
                             >
-                              {branch}
+                              {branch.name}
                             </MenuItemOption>
                           );
                         })}
@@ -112,10 +113,16 @@ const ProfileDrawer = ({
                     </MenuList>
                   </Menu>
                 ) : (
-                  branches.map((branch, index) => {
+                  selectedBranches.map((branch) => {
                     return (
-                      <Tag key={index} size="md" height="32px" mr={4} mb={2}>
-                        {branch}
+                      <Tag
+                        key={branch.id}
+                        size="md"
+                        height="32px"
+                        mr={4}
+                        mb={2}
+                      >
+                        {branch.name}
                       </Tag>
                     );
                   })

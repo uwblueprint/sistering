@@ -6,6 +6,7 @@ import { EmployeeUserResponseDTO } from "../../../../types/api/EmployeeTypes";
 import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
 import ProfileDrawer from "./ProfileDrawer";
+import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
 
 const USERS = gql`
   query AdminUserManagementPage_Users {
@@ -44,15 +45,17 @@ const AdminUserManagementPage = (): React.ReactElement => {
     EmployeeUserResponseDTO[] | null
   >(null);
 
-  const [branches, setBranches] = useState([
-    "branch1",
-    "branch2",
-    "branch3",
-    "branch4",
-    "branch5",
+  const [branches, setBranches] = useState<BranchResponseDTO[]>([
+    { id: "1", name: "branch1" },
+    { id: "2", name: "branch1" },
+    { id: "3", name: "branch3" },
+    { id: "4", name: "branch4" },
+    { id: "5", name: "branch5" },
   ]);
 
-  const [selectedBranches, setSelectedBranches] = useState<string[]>([]);
+  const [selectedBranches, setSelectedBranches] = useState<BranchResponseDTO[]>(
+    [],
+  );
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -64,11 +67,13 @@ const AdminUserManagementPage = (): React.ReactElement => {
     },
   });
 
-  const handleBranchMenuItemClicked = (item: string) => {
-    if (selectedBranches.includes(item)) {
-      setSelectedBranches(selectedBranches.filter((branch) => branch !== item));
+  const handleBranchMenuItemClicked = (clickedBranch: BranchResponseDTO) => {
+    if (selectedBranches.includes(clickedBranch)) {
+      setSelectedBranches(
+        selectedBranches.filter((branch) => branch !== clickedBranch),
+      );
     } else {
-      setSelectedBranches([...selectedBranches, item]);
+      setSelectedBranches([...selectedBranches, clickedBranch]);
     }
   };
 
