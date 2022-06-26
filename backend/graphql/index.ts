@@ -6,8 +6,6 @@ import { merge } from "lodash";
 import {
   isAuthorizedByRole,
   isAuthorizedByUserId,
-  isAuthorizedForCreateShiftSignups,
-  isAuthorizedForUpdateShiftSignups,
 } from "../middlewares/auth";
 import authResolvers from "./resolvers/authResolvers";
 import authType from "./types/authType";
@@ -197,8 +195,6 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
-    createShiftSignups: isAuthorizedForCreateShiftSignups("userId"),
-    updateShiftSignup: isAuthorizedForUpdateShiftSignups("userId"),
     upsertDeleteShiftSignups: authorizedByAdminAndVolunteer(),
   },
 };
