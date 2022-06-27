@@ -777,8 +777,8 @@ class UserService implements IUserService {
                   emergencyContactPhone: oldVolunteerUser!.user
                     .emergencyContactPhone,
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                  emergencyContactEmail: oldVolunteerUser!.user.emergencyContactEmail,
-
+                  emergencyContactEmail: oldVolunteerUser!.user
+                    .emergencyContactEmail,
                 },
               },
             },
@@ -1154,7 +1154,8 @@ class UserService implements IUserService {
                   emergencyContactPhone: oldEmployeeUser!.user
                     .emergencyContactPhone,
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                  emergencyContactEmail: oldEmployeeUser!.user.emergencyContactEmail,
+                  emergencyContactEmail: oldEmployeeUser!.user
+                    .emergencyContactEmail,
                 },
               },
               branch: {
