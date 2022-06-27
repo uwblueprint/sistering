@@ -32,6 +32,7 @@ model User {
   signups               Signup[]
   emergencyContactName  String?    @map("emergency_contact_name")
   emergencyContactPhone String?    @map("emergency_contact_phone")
+  emergencyContactEmail String?    @map("emergency_conatct_email")
 
   @@map("users")
 }

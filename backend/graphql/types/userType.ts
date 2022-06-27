@@ -24,6 +24,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
     pronouns: String
@@ -39,6 +40,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
     pronouns: String
@@ -53,6 +55,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
     branchId: ID!
     title: String!
   }
@@ -66,6 +69,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
   }
 
   input UpdateUserDTO {
@@ -76,6 +80,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
   }
 
   input CreateVolunteerUserDTO {
@@ -85,6 +90,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
     password: String!
     hireDate: Date!
     dateOfBirth: Date
@@ -100,6 +106,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date!
     dateOfBirth: Date
     pronouns: String
@@ -114,6 +121,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
     password: String!
     branchId: ID!
     title: String!
@@ -126,6 +134,7 @@ const userType = gql`
     phoneNumber: String
     emergencyContactName: String
     emergencyContactPhone: String
+    emergencyContactEmail: String
     branchId: ID!
     title: String!
   }

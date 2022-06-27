@@ -84,7 +84,8 @@ class UserService implements IUserService {
       role: user.role,
       phoneNumber: user.phoneNumber,
       emergencyContactName: user.emergencyContactName,
-      emergencyContactPhone: user.emergencyContactPhone
+      emergencyContactPhone: user.emergencyContactPhone,
+      emergencyContactEmail: user.emergencyContactEmail,
     };
   }
 
@@ -116,7 +117,8 @@ class UserService implements IUserService {
       role: user.role,
       phoneNumber: user.phoneNumber,
       emergencyContactName: user.emergencyContactName,
-      emergencyContactPhone: user.emergencyContactPhone
+      emergencyContactPhone: user.emergencyContactPhone,
+      emergencyContactEmail: user.emergencyContactEmail,
     };
   }
 
@@ -199,7 +201,8 @@ class UserService implements IUserService {
             role: user.role,
             phoneNumber: user.phoneNumber,
             emergencyContactName: user.emergencyContactName,
-            emergencyContactPhone: user.emergencyContactPhone
+            emergencyContactPhone: user.emergencyContactPhone,
+            emergencyContactEmail: user.emergencyContactEmail,
           };
         }),
       );
@@ -235,7 +238,8 @@ class UserService implements IUserService {
             role: user.role,
             phoneNumber: user.phoneNumber,
             emergencyContactName: user.emergencyContactName,
-            emergencyContactPhone: user.emergencyContactPhone
+            emergencyContactPhone: user.emergencyContactPhone,
+            emergencyContactEmail: user.emergencyContactEmail,
           },
         });
       } catch (postgresError) {
@@ -266,7 +270,8 @@ class UserService implements IUserService {
       role: newUser.role,
       phoneNumber: newUser.phoneNumber,
       emergencyContactName: newUser.emergencyContactName,
-      emergencyContactPhone: newUser.emergencyContactPhone
+      emergencyContactPhone: newUser.emergencyContactPhone,
+      emergencyContactEmail: newUser.emergencyContactEmail,
     };
   }
 
@@ -290,7 +295,8 @@ class UserService implements IUserService {
             role: user.role,
             phoneNumber: user.phoneNumber,
             emergencyContactName: user.emergencyContactName,
-            emergencyContactPhone: user.emergencyContactPhone
+            emergencyContactPhone: user.emergencyContactPhone,
+            emergencyContactEmail: user.emergencyContactEmail,
           },
         }),
       ]);
@@ -316,7 +322,8 @@ class UserService implements IUserService {
               role: oldUser.role,
               phoneNumber: oldUser.phoneNumber,
               emergencyContactName: oldUser.emergencyContactName,
-              emergencyContactPhone: oldUser.emergencyContactPhone
+              emergencyContactPhone: oldUser.emergencyContactPhone,
+              emergencyContactEmail: oldUser.emergencyContactEmail,
             },
           });
         } catch (postgresError: unknown) {
@@ -344,7 +351,8 @@ class UserService implements IUserService {
       role: user.role,
       phoneNumber: user.phoneNumber,
       emergencyContactName: user.emergencyContactName,
-      emergencyContactPhone: user.emergencyContactPhone
+      emergencyContactPhone: user.emergencyContactPhone,
+      emergencyContactEmail: user.emergencyContactEmail,
     };
   }
 
@@ -368,8 +376,8 @@ class UserService implements IUserService {
               role: deletedUser.role,
               phoneNumber: deletedUser.phoneNumber,
               emergencyContactName: deletedUser.emergencyContactName,
-              emergencyContactPhone: deletedUser.emergencyContactPhone
-
+              emergencyContactPhone: deletedUser.emergencyContactPhone,
+              emergencyContactEmail: deletedUser.emergencyContactEmail,
             },
           });
         } catch (postgresError: unknown) {
@@ -414,7 +422,8 @@ class UserService implements IUserService {
               role: deletedUser.role,
               phoneNumber: deletedUser.phoneNumber,
               emergencyContactName: deletedUser.emergencyContactName,
-              emergencyContactPhone: deletedUser.emergencyContactPhone
+              emergencyContactPhone: deletedUser.emergencyContactPhone,
+              emergencyContactEmail: deletedUser.emergencyContactEmail,
             },
           });
         } catch (postgresError: unknown) {
@@ -464,6 +473,7 @@ class UserService implements IUserService {
         phoneNumber: user.phoneNumber,
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
+        emergencyContactEmail: user.emergencyContactEmail,
         hireDate: volunteer.hireDate,
         dateOfBirth: volunteer.dateOfBirth,
         pronouns: volunteer.pronouns,
@@ -512,6 +522,7 @@ class UserService implements IUserService {
         phoneNumber: user.phoneNumber,
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
+        emergencyContactEmail: user.emergencyContactEmail,
         hireDate: volunteer.hireDate,
         dateOfBirth: volunteer.dateOfBirth,
         pronouns: volunteer.pronouns,
@@ -588,6 +599,7 @@ class UserService implements IUserService {
             phoneNumber: volunteerUser.phoneNumber,
             emergencyContactName: volunteerUser.emergencyContactName,
             emergencyContactPhone: volunteerUser.emergencyContactPhone,
+            emergencyContactEmail: volunteerUser.emergencyContactEmail,
             volunteer: {
               create: {
                 hireDate: volunteerUser.hireDate,
@@ -697,7 +709,7 @@ class UserService implements IUserService {
                 phoneNumber: volunteerUser.phoneNumber,
                 emergencyContactName: volunteerUser.emergencyContactName,
                 emergencyContactPhone: volunteerUser.emergencyContactPhone,
-
+                emergencyContactEmail: volunteerUser.emergencyContactEmail,
               },
             },
           },
@@ -758,8 +770,15 @@ class UserService implements IUserService {
                   role: oldVolunteerUser!.user.role,
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   phoneNumber: oldVolunteerUser!.user.phoneNumber,
-                  emergencyContactName: oldVolunteerUser!.user.emergencyContactName,
-                  emergencyContactPhone: oldVolunteerUser!.user.emergencyContactPhone,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  emergencyContactName: oldVolunteerUser!.user
+                    .emergencyContactName,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  emergencyContactPhone: oldVolunteerUser!.user
+                    .emergencyContactPhone,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  emergencyContactEmail: oldVolunteerUser!.user.emergencyContactEmail,
+
                 },
               },
             },
@@ -812,6 +831,7 @@ class UserService implements IUserService {
               phoneNumber: deletedVolunteerUser.phoneNumber,
               emergencyContactName: deletedVolunteerUser.emergencyContactName,
               emergencyContactPhone: deletedVolunteerUser.emergencyContactPhone,
+              emergencyContactEmail: deletedVolunteerUser.emergencyContactEmail,
               volunteer: {
                 create: {
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
@@ -891,6 +911,7 @@ class UserService implements IUserService {
         phoneNumber: user.phoneNumber,
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
+        emergencyContactEmail: user.emergencyContactEmail,
         branchId: String(employee.branchId),
         title: employee.title,
       };
@@ -930,6 +951,7 @@ class UserService implements IUserService {
         phoneNumber: user.phoneNumber,
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
+        emergencyContactEmail: user.emergencyContactEmail,
         role: user.role,
         branchId: String(employee.branchId),
         title: employee.title,
@@ -1001,6 +1023,7 @@ class UserService implements IUserService {
             phoneNumber: employeeUser.phoneNumber,
             emergencyContactName: employeeUser.emergencyContactName,
             emergencyContactPhone: employeeUser.emergencyContactPhone,
+            emergencyContactEmail: employeeUser.emergencyContactEmail,
             employee: {
               create: {
                 branch: {
@@ -1078,6 +1101,7 @@ class UserService implements IUserService {
                 phoneNumber: employeeUser.phoneNumber,
                 emergencyContactName: employeeUser.emergencyContactName,
                 emergencyContactPhone: employeeUser.emergencyContactPhone,
+                emergencyContactEmail: employeeUser.emergencyContactEmail,
               },
             },
             branch: {
@@ -1123,8 +1147,14 @@ class UserService implements IUserService {
                   role: oldEmployeeUser!.user.role,
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   phoneNumber: oldEmployeeUser!.user.phoneNumber,
-                  emergencyContactName: oldEmployeeUser!.user.emergencyContactName,
-                  emergencyContactPhone: oldEmployeeUser!.user.emergencyContactPhone,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  emergencyContactName: oldEmployeeUser!.user
+                    .emergencyContactName,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  emergencyContactPhone: oldEmployeeUser!.user
+                    .emergencyContactPhone,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  emergencyContactEmail: oldEmployeeUser!.user.emergencyContactEmail,
                 },
               },
               branch: {
@@ -1182,6 +1212,7 @@ class UserService implements IUserService {
               phoneNumber: deletedEmployeeUser.phoneNumber,
               emergencyContactName: deletedEmployeeUser.emergencyContactName,
               emergencyContactPhone: deletedEmployeeUser.emergencyContactPhone,
+              emergencyContactEmail: deletedEmployeeUser.emergencyContactEmail,
               employee: {
                 create: {
                   branch: {
