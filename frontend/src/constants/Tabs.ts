@@ -1,5 +1,5 @@
 import {
-  ADMIN_SCHEDULE_POSTINGS_PAGE,
+  ADMIN_HOMEPAGE,
   ADMIN_USER_MANAGMENT_PAGE,
   VOLUNTEER_SHIFTS_PAGE,
   VOLUNTEER_POSTINGS_PAGE,
@@ -8,7 +8,7 @@ import {
 export const AdminNavbarTabs = [
   {
     name: "Volunteer Postings",
-    route: ADMIN_SCHEDULE_POSTINGS_PAGE,
+    route: ADMIN_HOMEPAGE,
   },
   {
     name: "User Management",
