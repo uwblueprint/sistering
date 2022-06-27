@@ -50,6 +50,28 @@ export type VolunteerDTO = {
   branches: BranchResponseDTO[];
 };
 
+export type CreateVolunteerDTO = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  phoneNumber: string;
+  hireDate: string;
+  dateOfBirth: string | null;
+  skills: string[];
+  branches: BranchResponseDTO[];
+};
+
+export type CreateEmployeeDTO = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+  password: string;
+  branchId: number;
+  title: string;
+};
+
 export type VolunteerUserRequestDTO = UserDTO &
   Omit<VolunteerDTO, "skills" | "branches"> & {
     skills: string[];

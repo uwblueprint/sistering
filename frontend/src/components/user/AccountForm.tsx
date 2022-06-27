@@ -18,12 +18,16 @@ import React from "react";
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import moment from "moment";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
+import {
+  CreateVolunteerDTO,
+  CreateEmployeeDTO,
+} from "../../types/api/UserType";
 
 type AccountFormProps = {
   isAdmin: boolean; // False if user is a volunteer
   profilePhoto: string;
-  onVolunteerCreate: (volunteer: any) => void;
-  onEmployeeCreate: (employee: any) => void;
+  onVolunteerCreate: (volunteer: CreateVolunteerDTO) => void;
+  onEmployeeCreate: (employee: CreateEmployeeDTO) => void;
 };
 
 const TEST_SKILLS: SkillResponseDTO[] = [
