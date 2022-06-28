@@ -149,3 +149,11 @@ model Employee {
 
   @@map("employees")
 }
+
+model UserInvite {
+  pid   String @id @default(uuid())
+  email String @map("email")
+  role  String @map("branch_id")
+
+  @@map("user_invites")
+}
