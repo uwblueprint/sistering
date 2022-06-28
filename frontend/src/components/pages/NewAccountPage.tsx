@@ -7,7 +7,11 @@ import ProfilePhotoForm from "../user/ProfilePhotoForm";
 import Loading from "../common/Loading";
 import ErrorModal from "../common/ErrorModal";
 import { EmployeeUserDTO } from "../../types/api/EmployeeTypes";
-import { VolunteerDTO } from "../../types/api/UserType";
+import {
+  CreateEmployeeDTO,
+  CreateVolunteerDTO,
+  VolunteerDTO,
+} from "../../types/api/UserType";
 
 const CREATE_VOLUNTEER_USER = gql`
   mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
@@ -42,7 +46,7 @@ const NewAccountPage = (): React.ReactElement => {
   }
   const isError = createEmployeeError || createVolunteerError;
 
-  const onEmployeeCreate = async (employee: EmployeeUserDTO) => {
+  const onEmployeeCreate = async (employee: CreateEmployeeDTO) => {
     await createEmployee({
       variables: {
         employee,
@@ -50,7 +54,7 @@ const NewAccountPage = (): React.ReactElement => {
     });
   };
 
-  const onVolunteerCreate = async (volunteer: VolunteerDTO) => {
+  const onVolunteerCreate = async (volunteer: CreateVolunteerDTO) => {
     await createVolunteer({
       variables: {
         volunteer,
