@@ -22,6 +22,9 @@ const userType = gql`
     email: String!
     role: Role!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
     pronouns: String
@@ -35,6 +38,9 @@ const userType = gql`
     lastName: String!
     role: Role!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
     pronouns: String
@@ -47,6 +53,9 @@ const userType = gql`
     email: String!
     role: Role!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     branchId: ID!
     title: String!
   }
@@ -58,6 +67,9 @@ const userType = gql`
     role: Role!
     password: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
   }
 
   input UpdateUserDTO {
@@ -66,6 +78,9 @@ const userType = gql`
     email: String!
     role: Role!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
   }
 
   input CreateVolunteerUserDTO {
@@ -73,6 +88,9 @@ const userType = gql`
     lastName: String!
     email: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     password: String!
     hireDate: Date!
     dateOfBirth: Date
@@ -86,6 +104,9 @@ const userType = gql`
     lastName: String!
     email: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date!
     dateOfBirth: Date
     pronouns: String
@@ -98,6 +119,9 @@ const userType = gql`
     lastName: String!
     email: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     password: String!
     branchId: ID!
     title: String!
@@ -108,6 +132,9 @@ const userType = gql`
     lastName: String!
     email: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     branchId: ID!
     title: String!
   }

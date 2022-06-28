@@ -21,15 +21,18 @@ model Entity {
 }
 
 model User {
-  id          Int        @id @default(autoincrement())
-  firstName   String     @map("first_name")
-  lastName    String     @map("last_name")
-  authId      String     @unique @map("auth_id")
-  role        Role
-  phoneNumber String?    @map("phone_number")
-  employee    Employee?
-  volunteer   Volunteer?
-  signups     Signup[]
+  id                    Int        @id @default(autoincrement())
+  firstName             String     @map("first_name")
+  lastName              String     @map("last_name")
+  authId                String     @unique @map("auth_id")
+  role                  Role
+  phoneNumber           String?    @map("phone_number")
+  employee              Employee?
+  volunteer             Volunteer?
+  signups               Signup[]
+  emergencyContactName  String?    @map("emergency_contact_name")
+  emergencyContactPhone String?    @map("emergency_contact_phone")
+  emergencyContactEmail String?    @map("emergency_conatct_email")
 
   @@map("users")
 }
