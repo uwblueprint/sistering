@@ -64,6 +64,8 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
     setFilter(value);
   };
 
+  const uniquePostingIds = new Set();
+
   return (
     <Box
       bgColor="background.white"
@@ -96,17 +98,25 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       <Table variant="brand">
         <Tbody>
           {displayShifts.length > 0 ? (
-            displayShifts.map((shift, idx) => (
-              <VolunteerShiftsTableRow
-                key={idx}
-                postingName={shift.postingTitle}
-                postingId={shift.postingId}
-                startTime={shift.shiftStartTime}
-                endTime={shift.shiftEndTime}
-                deadline={shift.autoClosingDate}
-                status={shift.status}
-              />
-            ))
+            displayShifts
+              .filter((shift) => {
+                if (uniquePostingIds.has(shift.postingId)) {
+                  return false;
+                }
+                uniquePostingIds.add(shift.postingId);
+                return true;
+              })
+              .map((shift, idx) => (
+                <VolunteerShiftsTableRow
+                  key={idx}
+                  postingName={shift.postingTitle}
+                  postingId={shift.postingId}
+                  startTime={shift.shiftStartTime}
+                  endTime={shift.shiftEndTime}
+                  deadline={shift.autoClosingDate}
+                  status={shift.status}
+                />
+              ))
           ) : (
             // empty state
             <Tr>
