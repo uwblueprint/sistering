@@ -17,7 +17,6 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
-import userResolvers from "../../graphql/resolvers/userResolvers";
 
 const prisma = new PrismaClient();
 
@@ -540,7 +539,7 @@ class UserService implements IUserService {
         pronouns: volunteer.pronouns,
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
-        languages: user.languages
+        languages: user.languages,
       };
     } catch (error: unknown) {
       Logger.error(

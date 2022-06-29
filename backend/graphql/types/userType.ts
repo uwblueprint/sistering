@@ -12,7 +12,7 @@ const userType = gql`
     FRENCH
     ITALIAN
     CHINESE
-    SPANISH 
+    SPANISH
     HINDI
     RUSSIAN
   }
