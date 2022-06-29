@@ -7,6 +7,9 @@ export type EmployeeUserDTO = {
   email: string;
   role: string;
   phoneNumber: string | null;
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
+  emergencyContactEmail: string | null;
   branchId: string;
   title: string;
   languages: Language[];

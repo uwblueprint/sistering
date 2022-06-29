@@ -9,14 +9,14 @@ import {
   Text,
   Input,
 } from "@chakra-ui/react";
-import React, { useState, ChangeEvent } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 
 type EditModalProps = {
   title: string;
   isOpen: boolean;
   content: string;
   onClose(): void;
-  onEdit(): void;
+  onEdit: (editChange: string) => Promise<void>;
 };
 
 const EditModal = ({
@@ -35,16 +35,16 @@ const EditModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const submitEditRequest = async () => {
-    await onEdit();
-  };
-
   const handleEditClick = async () => {
     setIsLoading(true);
-    await submitEditRequest();
+    await onEdit(value);
     setIsLoading(false);
     onClose();
   };
+
+  useEffect(() => {
+    setValue(content);
+  }, [content]);
 
   return (
     <Modal

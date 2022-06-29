@@ -21,6 +21,9 @@ export type UserDTO = {
   role: Role;
   phoneNumber: string | null;
   languages: Language[];
+  emergencyContactName: string | null;
+  emergencyContactPhone: string | null;
+  emergencyContactEmail: string | null;
 };
 
 export type PostingDTO = {
