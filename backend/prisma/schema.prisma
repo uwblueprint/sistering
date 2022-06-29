@@ -30,6 +30,7 @@ model User {
   employee    Employee?
   volunteer   Volunteer?
   signups     Signup[]
+  languages   Language[]
 
   @@map("users")
 }
@@ -63,6 +64,16 @@ enum Role {
   ADMIN
   VOLUNTEER
   EMPLOYEE
+}
+
+enum Language {
+  ENGLISH
+  FRENCH
+  ITALIAN
+  CHINESE
+  SPANISH
+  HINDI
+  RUSSIAN
 }
 
 model Posting {

@@ -17,6 +17,7 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import userResolvers from "../../graphql/resolvers/userResolvers";
 
 const prisma = new PrismaClient();
 
@@ -83,6 +84,7 @@ class UserService implements IUserService {
       email: firebaseUser.email ?? "",
       role: user.role,
       phoneNumber: user.phoneNumber,
+      languages: user.languages,
     };
   }
 
@@ -113,6 +115,7 @@ class UserService implements IUserService {
       email: firebaseUser.email ?? "",
       role: user.role,
       phoneNumber: user.phoneNumber,
+      languages: user.languages,
     };
   }
 
@@ -194,6 +197,7 @@ class UserService implements IUserService {
             email: firebaseUser.email ?? "",
             role: user.role,
             phoneNumber: user.phoneNumber,
+            languages: user.languages,
           };
         }),
       );
@@ -228,6 +232,7 @@ class UserService implements IUserService {
             authId: firebaseUser.uid,
             role: user.role,
             phoneNumber: user.phoneNumber,
+            languages: user.languages,
           },
         });
       } catch (postgresError) {
@@ -257,6 +262,7 @@ class UserService implements IUserService {
       email: firebaseUser.email ?? "",
       role: newUser.role,
       phoneNumber: newUser.phoneNumber,
+      languages: newUser.languages,
     };
   }
 
@@ -279,6 +285,7 @@ class UserService implements IUserService {
             lastName: user.lastName,
             role: user.role,
             phoneNumber: user.phoneNumber,
+            languages: user.languages,
           },
         }),
       ]);
@@ -303,6 +310,7 @@ class UserService implements IUserService {
               lastName: oldUser.lastName,
               role: oldUser.role,
               phoneNumber: oldUser.phoneNumber,
+              languages: oldUser.languages,
             },
           });
         } catch (postgresError: unknown) {
@@ -329,6 +337,7 @@ class UserService implements IUserService {
       email: updatedFirebaseUser.email ?? "",
       role: user.role,
       phoneNumber: user.phoneNumber,
+      languages: user.languages,
     };
   }
 
@@ -351,6 +360,7 @@ class UserService implements IUserService {
               authId: deletedUser.authId,
               role: deletedUser.role,
               phoneNumber: deletedUser.phoneNumber,
+              languages: deletedUser.languages,
             },
           });
         } catch (postgresError: unknown) {
@@ -394,6 +404,7 @@ class UserService implements IUserService {
               authId: deletedUser.authId,
               role: deletedUser.role,
               phoneNumber: deletedUser.phoneNumber,
+              languages: deletedUser.languages,
             },
           });
         } catch (postgresError: unknown) {
@@ -444,6 +455,7 @@ class UserService implements IUserService {
         hireDate: volunteer.hireDate,
         dateOfBirth: volunteer.dateOfBirth,
         pronouns: volunteer.pronouns,
+        languages: user.languages,
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
       };
@@ -492,6 +504,7 @@ class UserService implements IUserService {
         pronouns: volunteer.pronouns,
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
+        languages: user.languages
       };
     } catch (error: unknown) {
       Logger.error(
@@ -524,6 +537,7 @@ class UserService implements IUserService {
             ...volunteer,
             id: String(volunteer.id),
             email: firebaseUser.email ?? "",
+            languages: volunteer.user.languages,
             skills: convertToSkillResponseDTO(volunteer.skills),
             branches: convertToBranchResponseDTO(volunteer.branches),
           };
@@ -561,6 +575,7 @@ class UserService implements IUserService {
             authId: firebaseUser.uid,
             role: "VOLUNTEER",
             phoneNumber: volunteerUser.phoneNumber,
+            languages: volunteerUser.languages,
             volunteer: {
               create: {
                 hireDate: volunteerUser.hireDate,
@@ -668,6 +683,7 @@ class UserService implements IUserService {
                 lastName: volunteerUser.lastName,
                 role: "VOLUNTEER",
                 phoneNumber: volunteerUser.phoneNumber,
+                languages: volunteerUser.languages,
               },
             },
           },
@@ -778,6 +794,7 @@ class UserService implements IUserService {
               authId: deletedVolunteerUser.authId,
               role: deletedVolunteerUser.role,
               phoneNumber: deletedVolunteerUser.phoneNumber,
+              languages: deletedVolunteerUser.languages,
               volunteer: {
                 create: {
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
@@ -855,6 +872,7 @@ class UserService implements IUserService {
         lastName: user.lastName,
         role: user.role,
         phoneNumber: user.phoneNumber,
+        languages: user.languages,
         branchId: String(employee.branchId),
         title: employee.title,
       };
@@ -893,6 +911,7 @@ class UserService implements IUserService {
         lastName: user.lastName,
         phoneNumber: user.phoneNumber,
         role: user.role,
+        languages: user.languages,
         branchId: String(employee.branchId),
         title: employee.title,
       };
