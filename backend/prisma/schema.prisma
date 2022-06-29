@@ -33,6 +33,7 @@ model User {
   emergencyContactName  String?    @map("emergency_contact_name")
   emergencyContactPhone String?    @map("emergency_contact_phone")
   emergencyContactEmail String?    @map("emergency_conatct_email")
+  languages             Language[]
 
   @@map("users")
 }
@@ -66,6 +67,16 @@ enum Role {
   ADMIN
   VOLUNTEER
   EMPLOYEE
+}
+
+enum Language {
+  ENGLISH
+  FRENCH
+  ITALIAN
+  CHINESE
+  SPANISH
+  HINDI
+  RUSSIAN
 }
 
 model Posting {

@@ -1,4 +1,12 @@
 export type Role = "ADMIN" | "VOLUNTEER" | "EMPLOYEE";
+export type Language =
+  | "ENGLISH"
+  | "FRENCH"
+  | "ITALIAN"
+  | "CHINESE"
+  | "SPANISH"
+  | "HINDI"
+  | "RUSSIAN";
 
 export type Token = {
   accessToken: string;
@@ -12,6 +20,7 @@ export type UserDTO = {
   email: string;
   role: Role;
   phoneNumber: string | null;
+  languages: Language[];
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
   emergencyContactEmail: string | null;

@@ -2,6 +2,14 @@ import { BranchResponseDTO } from "./BranchTypes";
 import { SkillResponseDTO } from "./SkillTypes";
 
 export type Role = "ADMIN" | "VOLUNTEER" | "EMPLOYEE";
+export type Language =
+  | "ENGLISH"
+  | "FRENCH"
+  | "ITALIAN"
+  | "CHINESE"
+  | "SPANISH"
+  | "HINDI"
+  | "RUSSIAN";
 
 export type UserDTO = {
   id: string;
@@ -21,6 +29,7 @@ export type VolunteerDTO = {
   pronouns: string | null;
   skills: SkillResponseDTO[];
   branches: BranchResponseDTO[];
+  languages: Language[];
 };
 
 export type CreateVolunteerDTO = {
