@@ -5,27 +5,22 @@ import { generatePath, useHistory } from "react-router-dom";
 import {
   getElapsedHours,
   formatTimeHourMinutes,
-  formatDateMonthDay,
 } from "../../../utils/DateTimeUtils";
-import { ShiftSignupStatus } from "../../../types/api/ShiftSignupTypes";
 import { VOLUNTEER_POSTING_DETAILS } from "../../../constants/Routes";
 
-type VolunteerShiftsTableRowProps = {
+type VolunteerUpcomingShiftsTableRowProps = {
   postingName: string;
   postingId: string;
   startTime: string;
   endTime: string;
-  deadline: string;
-  status: ShiftSignupStatus;
 };
-const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
+
+const VolunteerUpcomingShiftsTableRow: React.FC<VolunteerUpcomingShiftsTableRowProps> = ({
   postingName,
   postingId,
   startTime,
   endTime,
-  deadline,
-  status,
-}: VolunteerShiftsTableRowProps) => {
+}: VolunteerUpcomingShiftsTableRowProps) => {
   const history = useHistory();
 
   const start = new Date(startTime);
@@ -40,26 +35,12 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
 
   return (
     <Tr>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {status === "PUBLISHED" ? (
-        <>
-          <Td>
-            <Text>{`${time} ${duration}`}</Text>
-          </Td>
-          <Td>
-            <Text>{postingName}</Text>
-          </Td>
-        </>
-      ) : status === "CONFIRMED" || status === "PENDING" ? (
-        <>
-          <Td>
-            <Text>{postingName}</Text>
-          </Td>
-          <Td>
-            <Text>Deadline: {formatDateMonthDay(deadline)}</Text>
-          </Td>
-        </>
-      ) : null}
+      <Td>
+        <Text>{`${time} ${duration}`}</Text>
+      </Td>
+      <Td>
+        <Text>{postingName}</Text>
+      </Td>
       <Td>
         <Button
           variant="link"
@@ -76,4 +57,4 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
   );
 };
 
-export default VolunteerShiftsTableRow;
+export default VolunteerUpcomingShiftsTableRow;

@@ -7,6 +7,7 @@ import {
   Button,
   Select,
   Spacer,
+  TableContainer,
 } from "@chakra-ui/react";
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
 import moment from "moment";
@@ -116,72 +117,67 @@ const AdminScheduleTable = ({
           Next week
         </Button>
       </Flex>
-      <Table variant="brand">
-        <colgroup>
-          <col style={{ width: "30%" }} />
-          <col style={{ width: "40%" }} />
-          <col style={{ width: "30%" }} />
-        </colgroup>
-        <Tbody>
-          {shifts
-            .filter(
+      <TableContainer>
+        <Table variant="brand">
+          <colgroup>
+            <col style={{ width: "30%" }} />
+            <col style={{ width: "40%" }} />
+            <col style={{ width: "30%" }} />
+          </colgroup>
+          {Array.from(Array(7).keys()).map((day) => {
+            const date = moment(currentWeek)
+              .startOf("week")
+              .add(day, "days")
+              .startOf("day")
+              .toDate();
+            const shiftsOfDate = shifts.filter(
               (shift) =>
                 moment(shift.startTime)
-                  .add(1, "day")
-                  .endOf("week")
-                  .diff(
-                    moment(currentWeek).add(1, "day").endOf("week"),
-                    "days",
-                    false,
-                  ) === 0,
-            )
-            .map((shift) => {
-              const signupsToDisplay = shift.signups.filter(
-                ({ status }) =>
-                  status === "CONFIRMED" || status === "PUBLISHED",
-              );
-              return (
-                <Fragment
-                  key={`${shift.id}-${new Date(
-                    shift.startTime,
-                  ).toDateString()}`}
-                >
-                  <AdminScheduleTableDate
-                    key={new Date(shift.startTime).toDateString()}
-                    date={new Date(shift.startTime)}
-                  />
-                  {signupsToDisplay.length > 0 ? (
-                    signupsToDisplay.map(
-                      (
-                        signup: AdminSchedulingSignupsAndVolunteerResponseDTO,
-                        i,
-                      ) => (
-                        <AdminScheduleTableRow
-                          key={`${signup.volunteer.id}-${i}`}
-                          volunteer={{
-                            name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
-                            userId: signup.volunteer.id,
-                          }}
-                          postingStart={signup.shiftStartTime}
-                          postingEnd={signup.shiftEndTime}
-                          numVolunteers={signup.numVolunteers}
-                          note={signup.note}
-                          shiftId={shift.id}
-                          removeSignup={removeSignup}
-                        />
-                      ),
-                    )
-                  ) : (
+                  .startOf("day")
+                  .diff(date, "days", false) === 0,
+            );
+            const signupsToDisplay: {
+              signup: AdminSchedulingSignupsAndVolunteerResponseDTO;
+              shiftId: string;
+            }[] = shiftsOfDate.flatMap((shift) => {
+              return shift.signups
+                .filter(
+                  ({ status }) =>
+                    status === "CONFIRMED" || status === "PUBLISHED",
+                )
+                .map((signup) => ({ signup, shiftId: shift.id }));
+            });
+
+            return (
+              <Tbody key={day}>
+                <AdminScheduleTableDate key={date.toDateString()} date={date} />
+                {signupsToDisplay.length > 0 ? (
+                  signupsToDisplay.map(({ signup, shiftId }, i) => (
                     <AdminScheduleTableRow
-                      shiftId={shift.id}
+                      key={`${signup.volunteer.id}-${i}`}
+                      volunteer={{
+                        name: `${signup.volunteer.firstName} ${signup.volunteer.lastName}`,
+                        userId: signup.volunteer.id,
+                      }}
+                      postingStart={signup.shiftStartTime}
+                      postingEnd={signup.shiftEndTime}
+                      numVolunteers={signup.numVolunteers}
+                      note={signup.note}
+                      shiftId={shiftId}
                       removeSignup={removeSignup}
                     />
-                  )}
-                </Fragment>
-              );
-            })}
-        </Tbody>
-      </Table>
+                  ))
+                ) : (
+                  <AdminScheduleTableRow
+                    shiftId="0"
+                    removeSignup={removeSignup}
+                  />
+                )}
+              </Tbody>
+            );
+          })}
+        </Table>
+      </TableContainer>
     </Box>
   );
 };

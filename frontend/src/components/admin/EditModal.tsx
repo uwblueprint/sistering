@@ -7,40 +7,44 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  Input,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useState, ChangeEvent, useEffect } from "react";
 
-type DeleteModalProps = {
+type EditModalProps = {
   title: string;
   isOpen: boolean;
-  body: string;
-  confirmText?: string;
+  content: string;
   onClose(): void;
-  onDelete(): void;
+  onEdit: (editChange: string) => Promise<void>;
 };
 
-const DeleteModal = ({
+const EditModal = ({
   title,
   isOpen = false,
-  body,
-  confirmText = "Delete",
+  content,
   onClose = () => {},
-  onDelete,
-}: DeleteModalProps): React.ReactElement => {
+  onEdit,
+}: EditModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
+
+  const [value, setValue] = useState(content || "");
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setValue(event.target.value);
+  };
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const submitDeleteRequest = async () => {
-    await onDelete();
-  };
-
-  const handleDeleteClick = async () => {
+  const handleEditClick = async () => {
     setIsLoading(true);
-    await submitDeleteRequest();
+    await onEdit(value);
     setIsLoading(false);
     onClose();
   };
+
+  useEffect(() => {
+    setValue(content);
+  }, [content]);
 
   return (
     <Modal
@@ -55,7 +59,12 @@ const DeleteModal = ({
           <Text textStyle="body-bold">{title}</Text>
         </ModalHeader>
         <ModalBody>
-          <Text textStyle="body-regular">{body}</Text>
+          <Input
+            value={value}
+            placeholder={value}
+            onChange={handleChange}
+            size="sm"
+          />
         </ModalBody>
         <ModalFooter mt="10px" py="6px" px="12px">
           <Button
@@ -69,14 +78,14 @@ const DeleteModal = ({
           </Button>
           <Button
             borderRadius="4px"
-            onClick={handleDeleteClick}
+            onClick={handleEditClick}
             ref={initialRef}
-            colorScheme="red"
+            colorScheme="brand"
             textStyle="button-semibold"
             fontWeight={700}
             isLoading={isLoading}
           >
-            {confirmText}
+            Done
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -84,4 +93,4 @@ const DeleteModal = ({
   );
 };
 
-export default DeleteModal;
+export default EditModal;

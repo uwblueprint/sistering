@@ -16,7 +16,6 @@ import Navbar from "../../../common/Navbar";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
-import AdminHomepageHeader from "../../../admin/AdminHomepageHeader";
 import ErrorModal from "../../../common/ErrorModal";
 import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
 import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
@@ -287,6 +286,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     shiftsCopy[shiftIndex].signups = [...currentlyEditingShift.signups];
     setShifts(shiftsCopy);
 
+    setSelectedShift(currentlyEditingShift);
     setcurrentlyEditingShift(undefined);
   };
 
@@ -332,7 +332,6 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
         tabs={AdminNavbarTabs}
       />
-      <AdminHomepageHeader isSuperAdmin={false} />
       {currentView === AdminScheduleViews.CalendarView ? (
         <Flex>
           <Box flex={1}>

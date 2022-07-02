@@ -7,6 +7,16 @@ const userType = gql`
     EMPLOYEE
   }
 
+  enum Language {
+    ENGLISH
+    FRENCH
+    ITALIAN
+    CHINESE
+    SPANISH
+    HINDI
+    RUSSIAN
+  }
+
   type UserDTO {
     id: ID!
     firstName: String!
@@ -22,11 +32,15 @@ const userType = gql`
     email: String!
     role: Role!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
     pronouns: String
     skills: [SkillResponseDTO!]!
     branches: [BranchResponseDTO!]!
+    languages: [Language]!
   }
 
   type VolunteerUserResponseNoSkillsBranchesEmailDTO {
@@ -35,9 +49,13 @@ const userType = gql`
     lastName: String!
     role: Role!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
     pronouns: String
+    languages: [Language]!
   }
 
   type EmployeeUserResponseDTO {
@@ -47,8 +65,12 @@ const userType = gql`
     email: String!
     role: Role!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     branchId: ID!
     title: String!
+    languages: [Language]!
   }
 
   input CreateUserDTO {
@@ -58,6 +80,9 @@ const userType = gql`
     role: Role!
     password: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
   }
 
   input UpdateUserDTO {
@@ -66,6 +91,9 @@ const userType = gql`
     email: String!
     role: Role!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
   }
 
   input CreateVolunteerUserDTO {
@@ -73,12 +101,16 @@ const userType = gql`
     lastName: String!
     email: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     password: String!
     hireDate: Date!
     dateOfBirth: Date
     pronouns: String
     skills: [ID!]!
     branches: [ID!]!
+    languages: [Language]!
   }
 
   input UpdateVolunteerUserDTO {
@@ -86,11 +118,15 @@ const userType = gql`
     lastName: String!
     email: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     hireDate: Date!
     dateOfBirth: Date
     pronouns: String
     skills: [ID!]!
     branches: [ID!]!
+    languages: [Language]!
   }
 
   input CreateEmployeeUserDTO {
@@ -98,9 +134,13 @@ const userType = gql`
     lastName: String!
     email: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     password: String!
     branchId: ID!
     title: String!
+    languages: [Language]!
   }
 
   input UpdateEmployeeUserDTO {
@@ -108,8 +148,12 @@ const userType = gql`
     lastName: String!
     email: String!
     phoneNumber: String
+    emergencyContactName: String
+    emergencyContactPhone: String
+    emergencyContactEmail: String
     branchId: ID!
     title: String!
+    languages: [Language]!
   }
 
   extend type Query {
