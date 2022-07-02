@@ -37,6 +37,7 @@ const AdminScheduleTableRow = ({
             shiftId={shiftId}
             userId={volunteer.userId}
             numVolunteers={numVolunteers}
+            status="CANCELED"
             note={note}
             onClose={() => setIsModalOpen(false)}
             removeSignup={removeSignup}

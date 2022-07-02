@@ -21,6 +21,7 @@ type RemoveVolunteerModalProps = {
   shiftId: string;
   userId: string;
   numVolunteers: number;
+  status: ShiftSignupStatus;
   note: string;
   onClose(): void;
   removeSignup: (shiftId: string, userId: string) => void;
@@ -28,11 +29,9 @@ type RemoveVolunteerModalProps = {
 
 const UPSERT_DELETE_SHIFT_SIGNUP = gql`
   mutation UpsertDeleteShiftSignups(
-    $shiftId: ID!
-    $userId: ID!
-    // $update: UpsertDeleteShiftSignupRequestDTO!
+   $upsertDeleteShifts: UpsertDeleteShiftSignupRequestDTO!
   ) {
-    upsertDeleteShiftSignups(shiftId: $shiftId, userId: $userId) {
+    upsertDeleteShiftSignups(upsertDeleteShifts: $upsertDeleteShifts) {
       shiftId
       userId
       numVolunteers
@@ -50,6 +49,7 @@ const RemoveVolunteerModal = ({
   shiftId,
   userId,
   numVolunteers,
+  status,
   note,
   onClose = () => {},
   removeSignup,
@@ -63,12 +63,12 @@ const RemoveVolunteerModal = ({
   const submitUpdateRequest = async () => {
     await upsertDeleteShiftSignup({
       variables: {
-        shiftId,
-        userId,
-        update: {
-          numVolunteers,
-          note,
-        },
+        upsertDeleteShifts: {
+          upsertShiftSignups: [
+            {shiftId, userId, numVolunteers, note, status}
+          ], 
+          deleteShiftSignups: [],
+        }, 
       },
     });
     removeSignup(shiftId, userId);
