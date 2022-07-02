@@ -30,13 +30,14 @@ const UPSERT_DELETE_SHIFT_SIGNUP = gql`
   mutation UpsertDeleteShiftSignups(
     $shiftId: ID!
     $userId: ID!
-    $update: UpdateShiftSignupRequestDTO!
+    // $update: UpsertDeleteShiftSignupRequestDTO!
   ) {
-    UpsertDeleteShiftSignups(shiftId: $shiftId, userId: $userId, update: $update) {
+    upsertDeleteShiftSignups(shiftId: $shiftId, userId: $userId) {
       shiftId
       userId
       numVolunteers
       note
+      status
       shiftStartTime
       shiftEndTime
     }
