@@ -46,7 +46,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
         return true;
       }
       return moment().isSame(moment(shift.autoClosingDate), filter);
-  });
+    });
 
   const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value: FilterType = e.target.value as FilterType;
