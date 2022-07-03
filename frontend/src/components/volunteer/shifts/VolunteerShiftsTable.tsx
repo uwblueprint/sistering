@@ -11,7 +11,6 @@ import {
   Tbody,
 } from "@chakra-ui/react";
 import moment from "moment";
-import { useHistory } from "react-router-dom";
 import { ShiftSignupPostingResponseDTO } from "../../../types/api/ShiftSignupTypes";
 import { FilterType } from "../../../types/DateFilterTypes";
 import VolunteerUpcomingShiftsTable from "./VolunteerUpcomingShiftsTable";
@@ -26,7 +25,6 @@ type VolunteerShiftsTableProps = {
 const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   shifts,
 }: VolunteerShiftsTableProps) => {
-  const history = useHistory();
   const [filter, setFilter] = useState<FilterType>("week");
   const [isShowUpcomingShifts, setIsShowUpcomingShifts] = useState(true);
 
@@ -38,6 +36,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       }
       return moment().isSame(moment(shift.shiftStartTime), filter);
     });
+
   const pendingShifts = shifts
     .filter(
       (shift) => shift.status === "PENDING" || shift.status === "CONFIRMED",
@@ -47,7 +46,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
         return true;
       }
       return moment().isSame(moment(shift.autoClosingDate), filter);
-    });
+  });
 
   const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value: FilterType = e.target.value as FilterType;
@@ -55,6 +54,14 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   };
 
   const uniquePostingIds = new Set();
+
+  const uniquePostings = pendingShifts.filter((shift) => {
+    if (uniquePostingIds.has(shift.postingId)) {
+      return false;
+    }
+    uniquePostingIds.add(shift.postingId);
+    return true;
+  })
 
   return (
     <Box
@@ -90,21 +97,13 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       ) : !isShowUpcomingShifts && pendingShifts.length > 0 ? (
         <Table variant="brand">
           <Tbody>
-            {pendingShifts
-              .filter((shift) => {
-                if (uniquePostingIds.has(shift.postingId)) {
-                  return false;
-                }
-                uniquePostingIds.add(shift.postingId);
-                return true;
-              })
-              .map((shift, idx) => (
-                <VolunteerPendingShiftsTableRow
-                  key={idx}
-                  postingName={shift.postingTitle}
-                  postingId={shift.postingId}
-                  deadline={shift.autoClosingDate}
-                />
+            {uniquePostings.map((shift, idx) => (
+              <VolunteerPendingShiftsTableRow
+                key={idx}
+                postingName={shift.postingTitle}
+                postingId={shift.postingId}
+                deadline={shift.autoClosingDate}
+              />
               ))}
           </Tbody>
         </Table>
