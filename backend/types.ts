@@ -79,7 +79,6 @@ export type UpdateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id">;
 export type EmployeeUserDTO = {
   id: string;
   branchId: string;
-  title: string;
 };
 
 export type EmployeeUserRequestDTO = UserDTO & EmployeeUserDTO;
