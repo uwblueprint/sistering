@@ -1,5 +1,5 @@
 import React from "react";
-import { Tr, Td, Text, Button, Table, Tbody } from "@chakra-ui/react";
+import { Tr, Td, Text, Button } from "@chakra-ui/react";
 import { generatePath, useHistory } from "react-router-dom";
 
 import { formatDateMonthDay } from "../../../utils/DateTimeUtils";
@@ -19,8 +19,6 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
   const history = useHistory();
 
   return (
-    <Table variant="brand">
-      <Tbody>
         <Tr>
           <Td>
             <Text>{postingName}</Text>
@@ -41,8 +39,6 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
             </Button>
           </Td>
         </Tr>
-      </Tbody>
-    </Table>
   );
 };
 

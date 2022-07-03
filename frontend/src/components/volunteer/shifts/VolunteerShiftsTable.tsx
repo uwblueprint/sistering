@@ -61,7 +61,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
     }
     uniquePostingIds.add(shift.postingId);
     return true;
-  })
+  });
 
   return (
     <Box
