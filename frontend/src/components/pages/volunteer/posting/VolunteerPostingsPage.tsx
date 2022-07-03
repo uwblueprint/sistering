@@ -15,6 +15,7 @@ import {
 import {
   dateInRange,
   getUTCDateForDateTimeString,
+  isEventPosting,
 } from "../../../../utils/DateTimeUtils";
 import { FilterType } from "../../../../types/DateFilterTypes";
 import EmptyPostingCard from "../../../volunteer/EmptyPostingCard";
@@ -28,7 +29,7 @@ import ErrorModal from "../../../common/ErrorModal";
 
 type Posting = Omit<
   PostingResponseDTO,
-  "shifts" | "employees" | "type" | "numVolunteers" | "status"
+  "employees" | "type" | "numVolunteers" | "status"
 >;
 
 const POSTINGS = gql`
@@ -46,6 +47,12 @@ const POSTINGS = gql`
       skills {
         id
         name
+      }
+      shifts {
+        id
+        postingId
+        startTime
+        endTime
       }
       title
       description
@@ -116,19 +123,12 @@ const VolunteerPostingsPage = (): React.ReactElement => {
     setFilter(value);
   };
 
-  // TODO: need to refactor this function based on definition of what is an opportunity / event
-  const isVolunteerOpportunity = (start: string, end: string): boolean => {
-    const startDate = new Date(start);
-    const endDate = new Date(end);
-
-    return endDate.getTime() - startDate.getTime() > 1000 * 60 * 60 * 24;
-  };
-
-  const volunteerOpportunities = postings?.filter((posting) =>
-    isVolunteerOpportunity(posting.startDate, posting.endDate),
+  const volunteerOpportunities = postings?.filter(
+    (posting) =>
+      !isEventPosting(new Date(posting.startDate), new Date(posting.endDate)),
   );
-  const events = postings?.filter(
-    (posting) => !isVolunteerOpportunity(posting.startDate, posting.endDate),
+  const events = postings?.filter((posting) =>
+    isEventPosting(new Date(posting.startDate), new Date(posting.endDate)),
   );
 
   return (
@@ -177,6 +177,8 @@ const VolunteerPostingsPage = (): React.ReactElement => {
                   autoClosingDate={posting.autoClosingDate}
                   description={posting.description}
                   branchName={posting.branch.name}
+                  type="EVENT"
+                  shifts={posting.shifts}
                   navigateToDetails={() => navigateToDetails(posting.id)}
                   navigateToSubmitAvailabilities={() =>
                     navigateToSubmitAvailabilities(posting.id)
@@ -185,7 +187,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
               </Box>
             ))
           ) : (
-            <EmptyPostingCard type="event" />
+            <EmptyPostingCard type="EVENT" />
           )}
           <Text textStyle="display-small-semibold" pb="24px" pt="24px">
             Volunteer Opportunities
@@ -203,6 +205,8 @@ const VolunteerPostingsPage = (): React.ReactElement => {
                   autoClosingDate={posting.autoClosingDate}
                   description={posting.description}
                   branchName={posting.branch.name}
+                  type="OPPORTUNITY"
+                  shifts={posting.shifts}
                   navigateToDetails={() => navigateToDetails(posting.id)}
                   navigateToSubmitAvailabilities={() =>
                     navigateToSubmitAvailabilities(posting.id)
@@ -211,7 +215,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
               </Box>
             ))
           ) : (
-            <EmptyPostingCard type="opportunity" />
+            <EmptyPostingCard type="OPPORTUNITY" />
           )}
         </Box>
       </Box>

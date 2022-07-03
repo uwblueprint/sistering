@@ -10,6 +10,7 @@ import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 import PostingCard from "../volunteer/PostingCard";
+import { isEventPosting } from "../../utils/DateTimeUtils";
 
 const POSTINGS = gql`
   query Default_postings {
@@ -23,6 +24,12 @@ const POSTINGS = gql`
         id
         name
       }
+      shifts {
+        id
+        postingId
+        startTime
+        endTime
+      }
       title
       description
       startDate
@@ -34,7 +41,7 @@ const POSTINGS = gql`
 
 type Posting = Omit<
   PostingResponseDTO,
-  "shifts" | "employees" | "type" | "numVolunteers" | "status"
+  "employees" | "type" | "numVolunteers" | "status"
 >;
 
 const Default = (): React.ReactElement => {
@@ -87,6 +94,15 @@ const Default = (): React.ReactElement => {
             autoClosingDate={posting.autoClosingDate}
             description={posting.description}
             branchName={posting.branch.name}
+            type={
+              isEventPosting(
+                new Date(posting.startDate),
+                new Date(posting.endDate),
+              )
+                ? "EVENT"
+                : "OPPORTUNITY"
+            }
+            shifts={posting.shifts}
             navigateToDetails={() => navigateToDetails(posting.id)}
             navigateToAdminSchedule={() => navigateToAdminSchedule(posting.id)}
           />

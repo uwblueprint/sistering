@@ -1,8 +1,9 @@
 import React from "react";
 import { Text, Box, VStack } from "@chakra-ui/react";
+import { PostingRecurrenceType } from "../../types/PostingTypes";
 
 type EmptyPostingCardProps = {
-  type: "event" | "opportunity";
+  type: PostingRecurrenceType;
 };
 
 const EmptyPostingCard = ({
@@ -24,7 +25,7 @@ const EmptyPostingCard = ({
           color="text.gray"
         >
           There are no{" "}
-          {type === "event" ? "events" : "regular volunteer opportunities"} at
+          {type === "EVENT" ? "events" : "regular volunteer opportunities"} at
           this time. Please check back soon.
         </Text>
       </VStack>
