@@ -226,7 +226,6 @@ const main = async () => {
               branch: {
                 connect: employee.branch,
               },
-              title: employee.title,
             },
           },
         },
