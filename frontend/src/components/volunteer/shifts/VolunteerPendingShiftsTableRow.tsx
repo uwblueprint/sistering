@@ -19,26 +19,26 @@ const VolunteerShiftsTableRow: React.FC<VolunteerShiftsTableRowProps> = ({
   const history = useHistory();
 
   return (
-        <Tr>
-          <Td>
-            <Text>{postingName}</Text>
-          </Td>
-          <Td>
-            <Text>Deadline: {formatDateMonthDay(deadline)}</Text>
-          </Td>
-          <Td>
-            <Button
-              variant="link"
-              onClick={() =>
-                history.push(
-                  generatePath(VOLUNTEER_POSTING_DETAILS, { id: postingId }),
-                )
-              }
-            >
-              Go To Posting
-            </Button>
-          </Td>
-        </Tr>
+    <Tr>
+      <Td>
+        <Text>{postingName}</Text>
+      </Td>
+      <Td>
+        <Text>Deadline: {formatDateMonthDay(deadline)}</Text>
+      </Td>
+      <Td>
+        <Button
+          variant="link"
+          onClick={() =>
+            history.push(
+              generatePath(VOLUNTEER_POSTING_DETAILS, { id: postingId }),
+            )
+          }
+        >
+          Go To Posting
+        </Button>
+      </Td>
+    </Tr>
   );
 };
 
