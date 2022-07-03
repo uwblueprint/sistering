@@ -104,7 +104,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
                 postingId={shift.postingId}
                 deadline={shift.autoClosingDate}
               />
-              ))}
+            ))}
           </Tbody>
         </Table>
       ) : (
