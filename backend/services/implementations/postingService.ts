@@ -11,7 +11,6 @@ import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
   EmployeeUserResponseDTO,
-  PostingRequestDTO,
   PostingResponseDTO,
   PostingStatus,
   PostingType,
@@ -313,11 +312,18 @@ class PostingService implements IPostingService {
 
   async updatePosting(
     postingId: string,
-    posting: PostingRequestDTO,
+    posting: PostingWithShiftsRequestDTO,
   ): Promise<PostingResponseDTO | null> {
     let updateResult: PostingWithRelations;
 
     try {
+      const timeBlocks = this.shiftService.bulkGenerateTimeBlocks({
+        times: posting.times,
+        recurrenceInterval: posting.recurrenceInterval,
+        startDate: posting.startDate,
+        endDate: posting.endDate,
+      });
+
       updateResult = await prisma.posting.update({
         where: { id: Number(postingId) },
         data: {
@@ -335,6 +341,12 @@ class PostingService implements IPostingService {
             connect: posting.employees.map((employeeId: string) => {
               return { id: Number(employeeId) };
             }),
+          },
+          shifts: {
+            set: [],
+            createMany: {
+              data: timeBlocks,
+            },
           },
           title: posting.title,
           type: posting.type,

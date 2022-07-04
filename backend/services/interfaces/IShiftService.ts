@@ -1,7 +1,7 @@
 import { SignupStatus } from "@prisma/client";
 import {
   ShiftBulkRequestDTO,
-  ShiftDataWithoutPostingId,
+  ShiftBulkRequestWithoutPostingId,
   ShiftRequestDTO,
   ShiftResponseDTO,
   ShiftWithSignupAndVolunteerResponseDTO,
@@ -15,7 +15,7 @@ interface IShiftService {
    * @returns an array of TimeBlocks
    * @throws Error if shift validation fails
    */
-  bulkGenerateTimeBlocks(shifts: ShiftDataWithoutPostingId): TimeBlock[];
+  bulkGenerateTimeBlocks(shifts: ShiftBulkRequestWithoutPostingId): TimeBlock[];
   /**
    * Get ShiftDTO associated with id
    * @param id shift's id

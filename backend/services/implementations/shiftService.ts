@@ -13,7 +13,7 @@ import IShiftService from "../interfaces/IShiftService";
 import {
   RecurrenceInterval,
   ShiftBulkRequestDTO,
-  ShiftDataWithoutPostingId,
+  ShiftBulkRequestWithoutPostingId,
   ShiftRequestDTO,
   ShiftResponseDTO,
   ShiftWithSignupAndVolunteerResponseDTO,
@@ -127,7 +127,7 @@ class ShiftService implements IShiftService {
     return [true, ""];
   }
 
-  buildTimeBlocks(shifts: ShiftDataWithoutPostingId): TimeBlock[] {
+  buildTimeBlocks(shifts: ShiftBulkRequestWithoutPostingId): TimeBlock[] {
     const endDate = new Date(shifts.endDate.getTime() + DAY_IN_MILLISECONDS);
 
     const interval = this.getInterval(shifts.recurrenceInterval);
@@ -181,13 +181,16 @@ class ShiftService implements IShiftService {
   }
 
   // This is used to generate shift data when a new posting is created
-  bulkGenerateTimeBlocks(shifts: ShiftDataWithoutPostingId): TimeBlock[] {
+  bulkGenerateTimeBlocks(
+    shifts: ShiftBulkRequestWithoutPostingId,
+  ): TimeBlock[] {
     try {
       const filteredShifts = shifts;
 
-      // Skip shifts that occur before start date
-      filteredShifts.times = shifts.times.filter(
-        (shift) => shift.startTime.getTime() >= shifts.startDate.getTime(),
+      // Skip shifts that are redundant (same start/end times)
+      filteredShifts.times = this.getValidUniqueTimeBlocks(
+        filteredShifts.times,
+        shifts.startDate,
       );
 
       // Check that input times are valid
@@ -204,6 +207,21 @@ class ShiftService implements IShiftService {
       );
       throw error;
     }
+  }
+
+  getValidUniqueTimeBlocks(
+    times: TimeBlock[],
+    earliestTime: Date,
+  ): TimeBlock[] {
+    // Skip shifts that occur before start date
+    const valid = times.filter(
+      (shift) => shift.startTime.getTime() >= earliestTime.getTime(),
+    );
+
+    // Skip redundant shifts
+    return [...new Set(valid.map((time) => JSON.stringify(time)))].map((time) =>
+      JSON.parse(time),
+    );
   }
 
   convertSignupResponeWithUserAndVolunteerToDTO = (

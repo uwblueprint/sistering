@@ -5,7 +5,6 @@ import ShiftService from "../../services/implementations/shiftService";
 import UserService from "../../services/implementations/userService";
 import IUserService from "../../services/interfaces/userService";
 import {
-  PostingRequestDTO,
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
   PostingStatus,
@@ -51,7 +50,7 @@ const postingResolvers = {
     },
     updatePosting: async (
       _parent: undefined,
-      { id, posting }: { id: string; posting: PostingRequestDTO },
+      { id, posting }: { id: string; posting: PostingWithShiftsRequestDTO },
     ): Promise<PostingResponseDTO | null> => {
       return postingService.updatePosting(id, posting);
     },

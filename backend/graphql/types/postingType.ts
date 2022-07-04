@@ -69,7 +69,10 @@ const postingType = gql`
 
   extend type Mutation {
     createPosting(posting: PostingWithShiftsRequestDTO!): PostingResponseDTO!
-    updatePosting(id: ID!, posting: PostingRequestDTO!): PostingResponseDTO!
+    updatePosting(
+      id: ID!
+      posting: PostingWithShiftsRequestDTO!
+    ): PostingResponseDTO!
     deletePosting(id: ID!): ID!
   }
 `;
