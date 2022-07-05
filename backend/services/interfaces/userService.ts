@@ -9,6 +9,7 @@ import {
   CreateEmployeeUserDTO,
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
+  CreateEmailResponse,
 } from "../../types";
 
 interface IUserService {
@@ -92,6 +93,14 @@ interface IUserService {
    * @throws Error if user deletion fails
    */
   deleteUserByEmail(email: string): Promise<void>;
+
+  /**
+   * Creates user invite link to send to user
+   * @param email user's email
+   * @param role role that the user will have
+   * @throws Error if invite creation fails
+   */
+  createUserInvite(email: string, role: Role): Promise<CreateEmailResponse>;
 
   /**
    * Get VolunteerUser associated with id

@@ -1,9 +1,15 @@
+/* eslint-disable class-methods-use-this */
 import * as firebaseAdmin from "firebase-admin";
-import { PrismaClient, User, Skill, Branch } from "@prisma/client";
+import {
+  PrismaClient,
+  User,
+  Skill,
+  Branch,
+  Role as PrismaRole,
+} from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import {
   CreateUserDTO,
-  Role,
   UpdateUserDTO,
   UserDTO,
   VolunteerUserResponseDTO,
@@ -14,6 +20,8 @@ import {
   CreateEmployeeUserDTO,
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
+  CreateEmailResponse,
+  Role,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
@@ -54,7 +62,26 @@ const convertToNumberIds = (ids: string[]): { id: number }[] => {
 };
 
 class UserService implements IUserService {
-  /* eslint-disable class-methods-use-this */
+  // link: `${process.env.DOMAIN}/create-account?token=${userInvite.pid}`
+  async createUserInvite(
+    email: string,
+    role: Role,
+  ): Promise<CreateEmailResponse> {
+    try {
+      const userInvite = await prisma.userInvite.create({
+        data: {
+          email,
+          role,
+        },
+      });
+      return userInvite;
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create user email. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
 
   async getUserById(userId: string): Promise<UserDTO> {
     let user: User | null;
