@@ -50,7 +50,7 @@ export type CreateEmployeeDTO = {
   email: string;
   phoneNumber: string;
   password: string;
-  branchId: number;
+  branches: BranchResponseDTO[];
   title: string;
 };
 
