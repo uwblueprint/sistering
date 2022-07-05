@@ -954,8 +954,8 @@ class UserService implements IUserService {
           employee: {
             include: {
               branches: true,
-            }
-          }
+            },
+          },
         },
       });
 
@@ -1051,7 +1051,7 @@ class UserService implements IUserService {
             employee: {
               create: {
                 branches: {
-                  connect: convertToNumberIds(employeeUser.branches)
+                  connect: convertToNumberIds(employeeUser.branches),
                 },
                 title: employeeUser.title,
               },
@@ -1061,7 +1061,7 @@ class UserService implements IUserService {
             employee: {
               include: {
                 branches: true,
-              }
+              },
             },
           },
         });
@@ -1191,7 +1191,7 @@ class UserService implements IUserService {
               },
               branches: {
                 /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                 connect: oldEmployeeUser!.branches,
+                connect: oldEmployeeUser!.branches,
               },
               /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
               title: oldEmployeeUser!.title,
