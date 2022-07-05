@@ -18,7 +18,7 @@ type ProfileDrawerProps = {
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
 };
 
-const ProfileDrawer = ({
+const MultiUserDrawer = ({
   isOpen,
   branches,
   selectedBranches,
@@ -30,7 +30,7 @@ const ProfileDrawer = ({
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>[User Name]</DrawerHeader>
+        <DrawerHeader>[#] User(s) Selected</DrawerHeader>
         <DrawerBody>
           <BranchSelector
             branches={branches}
@@ -43,4 +43,4 @@ const ProfileDrawer = ({
   );
 };
 
-export default ProfileDrawer;
+export default MultiUserDrawer;
