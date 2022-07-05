@@ -6,7 +6,6 @@ import {
 } from "../../types";
 
 interface IShiftSignupService {
-
   /**
    * Bulk upsert and delete sign ups for shifts
    * @param upsertShiftSignups array of UpsertShiftSignupDTOs for request

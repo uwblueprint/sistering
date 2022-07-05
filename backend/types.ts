@@ -141,7 +141,6 @@ export type ShiftSignupDTO = {
   status: ShiftSignupStatus;
 };
 
-
 export type UpsertShiftSignupDTO = Omit<ShiftSignupDTO, "status"> & {
   status: ShiftSignupStatus | null;
 };

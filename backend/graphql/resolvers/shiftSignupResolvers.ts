@@ -37,7 +37,6 @@ const shiftSignupResolvers = {
     },
   },
   Mutation: {
-
     upsertDeleteShiftSignups: async (
       _parent: undefined,
       {

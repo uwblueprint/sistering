@@ -81,7 +81,6 @@ export const isAuthorizedByUserId = (userIdField: string) => {
   };
 };
 
-
 /* Determine if request for a user-specific resource is authorized based on accessToken
  * validity and if the email that the token was issued to matches the requested email
  * Note: emailField is the name of the request parameter containing the requested email */
