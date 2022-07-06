@@ -20,7 +20,7 @@ import {
   CreateEmployeeUserDTO,
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
-  CreateEmailResponse,
+  CreateUserInviteResponse,
   Role,
 } from "../../types";
 import logger from "../../utilities/logger";
@@ -62,27 +62,6 @@ const convertToNumberIds = (ids: string[]): { id: number }[] => {
 };
 
 class UserService implements IUserService {
-  // link: `${process.env.DOMAIN}/create-account?token=${userInvite.pid}`
-  async createUserInvite(
-    email: string,
-    role: Role,
-  ): Promise<CreateEmailResponse> {
-    try {
-      const userInvite = await prisma.userInvite.create({
-        data: {
-          email,
-          role,
-        },
-      });
-      return userInvite;
-    } catch (error: unknown) {
-      Logger.error(
-        `Failed to create user email. Reason = ${getErrorMessage(error)}`,
-      );
-      throw error;
-    }
-  }
-
   async getUserById(userId: string): Promise<UserDTO> {
     let user: User | null;
     let firebaseUser: firebaseAdmin.auth.UserRecord;
@@ -477,6 +456,29 @@ class UserService implements IUserService {
       }
     } catch (error: unknown) {
       Logger.error(`Failed to delete user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+  }
+
+  // link: `${process.env.DOMAIN}/create-account?token=${userInvite.pid}`
+  async createUserInvite(
+    email: string,
+    role: Role,
+  ): Promise<CreateUserInviteResponse> {
+    try {
+      const userInvite = await prisma.userInvite.create({
+        data: {
+          email,
+          role,
+        },
+      });
+      return {
+        email: userInvite.email,
+        role: userInvite.role.toString() as Role,
+        pid: userInvite.pid,
+      };
+    } catch (error: unknown) {
+      console.log(error);
       throw error;
     }
   }

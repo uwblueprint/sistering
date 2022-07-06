@@ -13,9 +13,9 @@ export type Token = {
   refreshToken: string;
 };
 
-export type CreateEmailResponse = {
+export type CreateUserInviteResponse = {
   email: string;
-  role: string;
+  role: Role;
   pid: string;
 };
 

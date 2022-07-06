@@ -16,7 +16,7 @@ import {
   UpdateEmployeeUserDTO,
   CreateEmployeeUserDTO,
   Role,
-  CreateEmailResponse,
+  CreateUserInviteResponse,
 } from "../../types";
 import { generateCSV } from "../../utilities/CSVUtils";
 
@@ -110,7 +110,7 @@ const userResolvers = {
     createUserInvite: async (
       email: string,
       role: Role,
-    ): Promise<CreateEmailResponse> => {
+    ): Promise<CreateUserInviteResponse> => {
       return userService.createUserInvite(email, role);
     },
 

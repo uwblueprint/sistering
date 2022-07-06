@@ -9,7 +9,7 @@ import {
   CreateEmployeeUserDTO,
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
-  CreateEmailResponse,
+  CreateUserInviteResponse,
 } from "../../types";
 
 interface IUserService {
@@ -100,7 +100,10 @@ interface IUserService {
    * @param role role that the user will have
    * @throws Error if invite creation fails
    */
-  createUserInvite(email: string, role: Role): Promise<CreateEmailResponse>;
+  createUserInvite(
+    email: string,
+    role: Role,
+  ): Promise<CreateUserInviteResponse>;
 
   /**
    * Get VolunteerUser associated with id
