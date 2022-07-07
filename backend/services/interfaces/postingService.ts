@@ -2,6 +2,7 @@ import {
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
   PostingStatus,
+  PostingRequestDTO,
 } from "../../types";
 
 interface IPostingService {
@@ -46,7 +47,7 @@ interface IPostingService {
    */
   updatePosting(
     postingId: string,
-    posting: PostingWithShiftsRequestDTO,
+    posting: PostingRequestDTO,
   ): Promise<PostingResponseDTO | null>;
 
   /**

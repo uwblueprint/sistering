@@ -189,7 +189,7 @@ class ShiftService implements IShiftService {
 
       // Skip shifts that are redundant (same start/end times)
       filteredShifts.times = this.getValidUniqueTimeBlocks(
-        filteredShifts.times,
+        shifts.times,
         shifts.startDate,
       );
 
@@ -211,17 +211,22 @@ class ShiftService implements IShiftService {
 
   getValidUniqueTimeBlocks(
     times: TimeBlock[],
-    earliestTime: Date,
+    earliestDate: Date,
   ): TimeBlock[] {
     // Skip shifts that occur before start date
     const valid = times.filter(
-      (shift) => shift.startTime.getTime() >= earliestTime.getTime(),
+      (shift) => shift.startTime.getTime() >= earliestDate.getTime(),
     );
 
     // Skip redundant shifts
-    return [...new Set(valid.map((time) => JSON.stringify(time)))].map((time) =>
-      JSON.parse(time),
-    );
+    return [...new Set(valid.map((time) => JSON.stringify(time)))]
+      .map((time) => JSON.parse(time))
+      .map(({ startTime, endTime }) => {
+        return {
+          startTime: new Date(startTime),
+          endTime: new Date(endTime),
+        } as TimeBlock;
+      });
   }
 
   convertSignupResponeWithUserAndVolunteerToDTO = (
