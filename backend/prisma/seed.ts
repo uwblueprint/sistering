@@ -37,7 +37,6 @@ const employeeUsers = [
     lastName: "Employee",
     authId: process.env.EMPLOYEE_UID,
     role: Role.EMPLOYEE,
-    title: "Volunteer Coordinator",
     branch: { name: Branches.Kitchen },
   },
   {
@@ -45,7 +44,6 @@ const employeeUsers = [
     lastName: "Employee",
     authId: process.env.EMPLOYEE1_UID,
     role: Role.EMPLOYEE,
-    title: "Volunteer Coordinator",
     branch: { name: Branches.Arts },
   },
 ];
