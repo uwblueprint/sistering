@@ -460,7 +460,6 @@ class UserService implements IUserService {
     }
   }
 
-  // link: `${process.env.DOMAIN}/create-account?token=${userInvite.pid}`
   async createUserInvite(
     email: string,
     role: Role,

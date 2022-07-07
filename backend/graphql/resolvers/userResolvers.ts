@@ -108,8 +108,8 @@ const userResolvers = {
       return userService.deleteUserByEmail(email);
     },
     createUserInvite: async (
-      email: string,
-      role: Role,
+      _parent: undefined,
+      { email, role }: { email: string; role: Role },
     ): Promise<CreateUserInviteResponse> => {
       return userService.createUserInvite(email, role);
     },
