@@ -9,7 +9,6 @@ import Loading from "../../../common/Loading";
 const USERS = gql`
   query AdminUserManagementPage_Users {
     employeeUsers {
-      title
       firstName
       lastName
       email

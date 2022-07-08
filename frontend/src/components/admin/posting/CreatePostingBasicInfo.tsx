@@ -63,7 +63,6 @@ const BRANCHES_SKILLS_EMPLOYEES = gql`
       email
       phoneNumber
       branchId
-      title
     }
   }
 `;

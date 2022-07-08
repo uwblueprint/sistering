@@ -36,7 +36,6 @@ const POSTING = gql`
         firstName
         lastName
         email
-        title
         phoneNumber
       }
       autoClosingDate
