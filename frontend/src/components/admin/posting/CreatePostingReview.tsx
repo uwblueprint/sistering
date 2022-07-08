@@ -81,13 +81,11 @@ const CreatePostingReview = (): React.ReactElement => {
                       lastName,
                       email,
                       phoneNumber,
-                      title: employeeTitle,
                     },
                     i,
                   ) => (
                     <PocCard
                       name={`${firstName} ${lastName}`}
-                      title={employeeTitle}
                       email={email}
                       phoneNumber={phoneNumber ?? "Not available"}
                       key={i}

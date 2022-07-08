@@ -4,14 +4,12 @@ import { EmailIcon, PhoneIcon } from "@chakra-ui/icons";
 
 type PocCardProps = {
   name: string;
-  title: string;
   email: string;
   phoneNumber: string;
 };
 
 const PocCard: React.FC<PocCardProps> = ({
   name,
-  title,
   email,
   phoneNumber,
 }: PocCardProps) => {
@@ -29,9 +27,6 @@ const PocCard: React.FC<PocCardProps> = ({
       <HStack spacing={0} alignItems="baseline">
         <Text textStyle="caption" fontWeight="medium">
           {name}
-        </Text>
-        <Text textStyle="caption" fontSize="14px">
-          &nbsp;– {title}
         </Text>
       </HStack>
       <HStack spacing={4}>
