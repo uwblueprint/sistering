@@ -75,15 +75,7 @@ const CreatePostingReview = (): React.ReactElement => {
               </Text>
               <HStack spacing={6}>
                 {employees.map(
-                  (
-                    {
-                      firstName,
-                      lastName,
-                      email,
-                      phoneNumber,
-                    },
-                    i,
-                  ) => (
+                  ({ firstName, lastName, email, phoneNumber }, i) => (
                     <PocCard
                       name={`${firstName} ${lastName}`}
                       email={email}

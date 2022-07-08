@@ -51,7 +51,6 @@ export type CreateEmployeeDTO = {
   phoneNumber: string;
   password: string;
   branchId: number;
-  title: string;
 };
 
 export type VolunteerUserResponseDTO = UserDTO & VolunteerDTO;
