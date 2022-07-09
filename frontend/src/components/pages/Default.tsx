@@ -17,8 +17,7 @@ import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 import AdminPostingCard, { PostingStatus } from "../admin/AdminPostingCard";
-import { isEventPosting, isPast } from "../../utils/DateTimeUtils";
-import PostingCard from "../volunteer/PostingCard";
+import { isPast } from "../../utils/DateTimeUtils";
 
 const POSTINGS = gql`
   query Default_postings {
@@ -66,11 +65,6 @@ const Default = (): React.ReactElement => {
   if (authenticatedUser?.role === Role.Volunteer) {
     return <Redirect to={Routes.VOLUNTEER_POSTINGS_PAGE} />;
   }
-
-  const navigateToDetails = (id: string) => {
-    const route = generatePath(Routes.ADMIN_POSTING_DETAILS, { id });
-    history.push(route);
-  };
 
   const navigateToAdminSchedule = (id: string) => {
     const route = generatePath(Routes.ADMIN_SCHEDULE_POSTING_PAGE, { id });

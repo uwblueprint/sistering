@@ -13,10 +13,7 @@ import {
 
 import moment from "moment";
 import RichTextDisplay from "../common/RichText/RichTextDisplay";
-import {
-  formatDateStringYear,
-  formatTimeHourMinutes,
-} from "../../utils/DateTimeUtils";
+import { formatDateStringYear } from "../../utils/DateTimeUtils";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
 import { PostingRecurrenceType } from "../../types/PostingTypes";
 import { ShiftDTO } from "../../types/api/ShiftTypes";
