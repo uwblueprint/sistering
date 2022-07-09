@@ -5,7 +5,7 @@ import { EmployeeUserResponseDTO } from "./EmployeeTypes";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
 
-export type PostingStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type PostingStatus = "DRAFT" | "PUBLISHED";
 
 export type PostingDTO = {
   id: string;

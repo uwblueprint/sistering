@@ -9,7 +9,6 @@ const postingType = gql`
   enum PostingStatus {
     DRAFT
     PUBLISHED
-    ARCHIVED
   }
 
   input PostingRequestDTO {

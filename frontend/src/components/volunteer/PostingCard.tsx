@@ -82,7 +82,9 @@ const PostingCard = ({
     >
       <VStack px="40px" py="36px" align="start" spacing="12px">
         <Tag>{branchName}</Tag>
-        <Text textStyle="heading">{title}</Text>
+        <Text noOfLines={1} textStyle="heading">
+          {title}
+        </Text>
         <HStack spacing={4}>
           <Text textStyle="caption" noOfLines={2}>
             <TimeIcon w={4} pr={1} />

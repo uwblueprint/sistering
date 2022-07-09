@@ -212,7 +212,7 @@ export type Letters = "A" | "B" | "C" | "D";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
 
-export type PostingStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type PostingStatus = "DRAFT" | "PUBLISHED";
 
 export type NodemailerConfig = {
   service: "gmail";

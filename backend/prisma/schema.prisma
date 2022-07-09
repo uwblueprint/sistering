@@ -60,7 +60,6 @@ enum PostingType {
 enum PostingStatus {
   DRAFT
   PUBLISHED
-  ARCHIVED
 }
 
 enum Role {
