@@ -343,7 +343,7 @@ const AccountForm = ({
                         email: "email123@gmail.com",
                         phoneNumber: values.phoneNumber,
                         password: values.password,
-                        branchId: 0,
+                        branches: [],
                         title: "",
                       })
                   : () =>

@@ -68,7 +68,7 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
-    branchId: ID!
+    branches: [BranchResponseDTO!]!
     title: String!
     languages: [Language]!
   }
@@ -138,7 +138,7 @@ const userType = gql`
     emergencyContactPhone: String
     emergencyContactEmail: String
     password: String!
-    branchId: ID!
+    branches: [ID!]!
     title: String!
     languages: [Language]!
   }
@@ -151,7 +151,7 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
-    branchId: ID!
+    branches: [ID!]!
     title: String!
     languages: [Language]!
   }
