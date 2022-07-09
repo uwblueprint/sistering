@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TimeIcon, CalendarIcon } from "@chakra-ui/icons";
 import {
   Text,
@@ -11,9 +11,15 @@ import {
   Tag,
 } from "@chakra-ui/react";
 
+import moment from "moment";
 import RichTextDisplay from "../common/RichText/RichTextDisplay";
-import { formatDateStringYear } from "../../utils/DateTimeUtils";
+import {
+  formatDateStringYear,
+  formatTimeHourMinutes,
+} from "../../utils/DateTimeUtils";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
+import { PostingRecurrenceType } from "../../types/PostingTypes";
+import { ShiftDTO } from "../../types/api/ShiftTypes";
 
 type PostingCardProps = {
   id: string;
@@ -24,6 +30,8 @@ type PostingCardProps = {
   endDate: string;
   autoClosingDate: string;
   branchName: string;
+  type: PostingRecurrenceType;
+  shifts: ShiftDTO[];
   navigateToDetails: () => void;
   navigateToSubmitAvailabilities?: () => void;
   navigateToAdminSchedule?: () => void;
@@ -38,10 +46,32 @@ const PostingCard = ({
   endDate,
   autoClosingDate,
   branchName,
+  type,
+  shifts,
   navigateToDetails,
   navigateToSubmitAvailabilities,
   navigateToAdminSchedule,
 }: PostingCardProps): React.ReactElement => {
+  const [eventFirstTime, setEventFirstTime] = useState(new Date(startDate));
+  const [eventLatestTime, setEventLatestTime] = useState(new Date(endDate));
+
+  useEffect(() => {
+    if (type === "EVENT") {
+      const sortedStartTimes = shifts
+        .map((shift) => moment(new Date(shift.startTime)))
+        .sort((a, b) => a.diff(b));
+      const sortedEndTimes = shifts
+        .map((shift) => moment(new Date(shift.endTime)))
+        .sort((a, b) => a.diff(b));
+      if (sortedStartTimes.length > 0) {
+        setEventFirstTime(sortedStartTimes[0].toDate());
+      }
+      if (sortedEndTimes.length > 0) {
+        setEventLatestTime(sortedEndTimes[sortedEndTimes.length - 1].toDate());
+      }
+    }
+  }, [shifts, type]);
+
   return (
     <Box
       bg="white"
@@ -54,16 +84,21 @@ const PostingCard = ({
         <Tag>{branchName}</Tag>
         <Text textStyle="heading">{title}</Text>
         <HStack spacing={4}>
-          {/* TODO: conditionally displaying time for event listings */}
           <Text textStyle="caption" noOfLines={2}>
             <TimeIcon w={4} pr={1} />
-            See Posting Details
+            {type === "OPPORTUNITY"
+              ? "See posting details"
+              : `${formatTimeHourMinutes(
+                  new Date(eventFirstTime),
+                )} - ${formatTimeHourMinutes(new Date(eventLatestTime))}`}
           </Text>
           <Box textStyle="caption">
             <CalendarIcon w={4} pr={1} />
-            {`${formatDateStringYear(startDate)} - ${formatDateStringYear(
-              endDate,
-            )}`}
+            {type === "OPPORTUNITY"
+              ? `${formatDateStringYear(startDate)} - ${formatDateStringYear(
+                  endDate,
+                )}`
+              : formatDateStringYear(startDate)}
           </Box>
         </HStack>
         <Box textStyle="body-regular" noOfLines={2}>

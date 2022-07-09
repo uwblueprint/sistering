@@ -6,11 +6,9 @@ import AccountForm from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
 import Loading from "../common/Loading";
 import ErrorModal from "../common/ErrorModal";
-import { EmployeeUserDTO } from "../../types/api/EmployeeTypes";
 import {
   CreateEmployeeDTO,
   CreateVolunteerDTO,
-  VolunteerDTO,
 } from "../../types/api/UserType";
 
 const CREATE_VOLUNTEER_USER = gql`
