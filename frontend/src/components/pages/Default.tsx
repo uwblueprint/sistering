@@ -102,34 +102,6 @@ const Default = (): React.ReactElement => {
         >
           Create Posting
         </Button>
-        {postings?.map((posting) => (
-          <Box key={posting.id} pb="24px">
-            <PostingCard
-              key={posting.id}
-              id={posting.id}
-              skills={posting.skills}
-              title={posting.title}
-              startDate={posting.startDate}
-              endDate={posting.endDate}
-              autoClosingDate={posting.autoClosingDate}
-              description={posting.description}
-              branchName={posting.branch.name}
-              type={
-                isEventPosting(
-                  new Date(posting.startDate),
-                  new Date(posting.endDate),
-                )
-                  ? "EVENT"
-                  : "OPPORTUNITY"
-              }
-              shifts={posting.shifts}
-              navigateToDetails={() => navigateToDetails(posting.id)}
-              navigateToAdminSchedule={() =>
-                navigateToAdminSchedule(posting.id)
-              }
-            />
-          </Box>
-        ))}
       </ButtonGroup>
       <SimpleGrid columns={2} spacing={4}>
         {authenticatedUser &&
