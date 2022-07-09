@@ -106,7 +106,9 @@ const Default = (): React.ReactElement => {
                 status={getPostingStatus(posting)}
                 role={authenticatedUser.role}
                 id={posting.id}
-                title={posting.title}
+                title={
+                  posting.title === "" ? "Untitled posting" : posting.title
+                }
                 startDate={posting.startDate}
                 endDate={posting.endDate}
                 autoClosingDate={posting.autoClosingDate}
