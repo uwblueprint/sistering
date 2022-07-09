@@ -13,7 +13,10 @@ import {
 
 import moment from "moment";
 import RichTextDisplay from "../common/RichText/RichTextDisplay";
-import { formatDateStringYear } from "../../utils/DateTimeUtils";
+import {
+  formatDateStringYear,
+  formatTimeHourMinutes,
+} from "../../utils/DateTimeUtils";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
 import { PostingRecurrenceType } from "../../types/PostingTypes";
 import { ShiftDTO } from "../../types/api/ShiftTypes";
@@ -84,14 +87,20 @@ const PostingCard = ({
         </Text>
         <HStack spacing={4}>
           <Text textStyle="caption" noOfLines={2}>
-            <TimeIcon w={6} pr={2} />
-            See Posting Details
+            <TimeIcon w={4} pr={1} />
+            {type === "OPPORTUNITY"
+              ? "See posting details"
+              : `${formatTimeHourMinutes(
+                  new Date(eventFirstTime),
+                )} - ${formatTimeHourMinutes(new Date(eventLatestTime))}`}
           </Text>
           <Box textStyle="caption">
-            <CalendarIcon w={6} pr={2} />
-            {`${formatDateStringYear(startDate)} - ${formatDateStringYear(
-              endDate,
-            )}`}
+            <CalendarIcon w={4} pr={1} />
+            {type === "OPPORTUNITY"
+              ? `${formatDateStringYear(startDate)} - ${formatDateStringYear(
+                  endDate,
+                )}`
+              : formatDateStringYear(startDate)}
           </Box>
         </HStack>
         <Box textStyle="body-regular" noOfLines={2}>
