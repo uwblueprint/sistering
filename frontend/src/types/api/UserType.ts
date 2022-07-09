@@ -2,14 +2,18 @@ import { BranchResponseDTO } from "./BranchTypes";
 import { SkillResponseDTO } from "./SkillTypes";
 
 export type Role = "ADMIN" | "VOLUNTEER" | "EMPLOYEE";
-export type Language =
-  | "ENGLISH"
-  | "FRENCH"
-  | "ITALIAN"
-  | "CHINESE"
-  | "SPANISH"
-  | "HINDI"
-  | "RUSSIAN";
+
+export const LANGUAGES = [
+  "ENGLISH",
+  "FRENCH",
+  "ITALIAN",
+  "CHINESE",
+  "SPANISH",
+  "HINDI",
+  "RUSSIAN",
+] as const;
+type LanguageTuple = typeof LANGUAGES;
+export type Language = LanguageTuple[number];
 
 export type UserDTO = {
   id: string;
