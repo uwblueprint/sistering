@@ -27,9 +27,12 @@ import {
   SkillQueryResponse,
 } from "../../types/api/SkillTypes";
 import {
+  LanguageResponseDTO,
+  LanguageQueryResponse,
+} from "../../types/api/LanguageTypes";
+import {
   CreateVolunteerDTO,
   CreateEmployeeDTO,
-  LANGUAGES,
 } from "../../types/api/UserType";
 
 type AccountFormProps = {
@@ -48,6 +51,15 @@ const SKILLS = gql`
   }
 `;
 
+const LANGUAGES = gql`
+  query BranchManagerModal_Languages {
+    languages {
+      id
+      name
+    }
+  }
+`;
+
 interface AccountFormValues {
   profilePhoto: string;
   firstName: string;
@@ -59,6 +71,7 @@ interface AccountFormValues {
   phoneNumber: string;
   emergencyNumber: string;
   skills: SkillResponseDTO[];
+  languages: LanguageResponseDTO[];
 }
 
 const AccountForm = ({
@@ -69,6 +82,7 @@ const AccountForm = ({
 }: AccountFormProps): React.ReactElement => {
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [skills, setSkills] = useState<SkillResponseDTO[]>([]);
+  const [languages, setLanguages] = useState<LanguageResponseDTO[]>([]);
 
   const toggleAgreeToTerms = (): void => {
     setAgreeToTerms(!agreeToTerms);
@@ -78,6 +92,13 @@ const AccountForm = ({
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       setSkills(data.skills);
+    },
+  });
+
+  useQuery<LanguageQueryResponse>(LANGUAGES, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setSkills(data.languages);
     },
   });
 
@@ -111,6 +132,36 @@ const AccountForm = ({
     );
   };
 
+  const selectLanguage = (
+    language: string,
+    currentLanguages: LanguageResponseDTO[],
+    setFieldValue: (field: string, value: LanguageResponseDTO[]) => void,
+  ) => {
+    // If the language is not already selected, add it to the list of languages
+    if (!currentLanguages.some((l) => l.id === language)) {
+      const languageName = languages.find((l) => l.id === language)?.name || "";
+      setFieldValue("languages", [
+        ...currentLanguages,
+        {
+          id: language,
+          name: languageName,
+        },
+      ]);
+    }
+  };
+
+  const deselectLanguage = (
+    language: string,
+    currentLanguages: LanguageResponseDTO[],
+    setFieldValue: (field: string, value: LanguageResponseDTO[]) => void,
+  ) => {
+    // Remove the language from the list of languages
+    setFieldValue(
+      "languages",
+      currentLanguages.filter((l) => l.id !== language),
+    );
+  };
+
   const initialValues: AccountFormValues = {
     profilePhoto: "",
     firstName: "",
@@ -122,6 +173,7 @@ const AccountForm = ({
     phoneNumber: "",
     emergencyNumber: "",
     skills: [],
+    languages: [],
   };
 
   return (
@@ -310,6 +362,76 @@ const AccountForm = ({
                         ))
                       ) : (
                         <Text>No skills selected.</Text>
+                      )}
+                    </Flex>
+                  </Flex>
+                  <FormControl>
+                    <Flex alignItems="center">
+                      <FormLabel htmlFor="password">Languages</FormLabel>
+                      <Tooltip
+                        placement="right"
+                        label={
+                          <Text>
+                            Search and select languages you understand.
+                          </Text>
+                        }
+                      >
+                        <QuestionOutlineIcon
+                          mb={2}
+                          boxSize={3}
+                          color="gray.500"
+                        />
+                      </Tooltip>
+                    </Flex>
+                    <Field
+                      as={Select}
+                      id="languages"
+                      name="languages"
+                      placeholder="Select Languages"
+                      value={0}
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                        selectSkill(
+                          e.target.value,
+                          values.languages,
+                          setFieldValue,
+                        );
+                      }}
+                    >
+                      {languages.map((language) => (
+                        <option key={language.id} value={language.id}>
+                          {language.name}
+                        </option>
+                      ))}
+                    </Field>
+                  </FormControl>
+                  <Flex direction="column">
+                    <Text fontWeight="medium" mb={3}>
+                      Selected Languages
+                    </Text>
+                    <Flex>
+                      {values.languages.length > 0 ? (
+                        values.languages.map((language) => (
+                          <Tag
+                            variant="brand"
+                            key={language.id}
+                            mr={3}
+                            py={1}
+                            px={3}
+                          >
+                            {language.name}
+                            <TagCloseButton
+                              onClick={() =>
+                                deselectLanguage(
+                                  language.id,
+                                  values.languages,
+                                  setFieldValue,
+                                )
+                              }
+                            />
+                          </Tag>
+                        ))
+                      ) : (
+                        <Text>No languages selected.</Text>
                       )}
                     </Flex>
                   </Flex>

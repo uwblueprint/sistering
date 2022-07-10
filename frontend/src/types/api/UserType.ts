@@ -3,7 +3,7 @@ import { SkillResponseDTO } from "./SkillTypes";
 
 export type Role = "ADMIN" | "VOLUNTEER" | "EMPLOYEE";
 
-export const LANGUAGES = [
+export const LANGUAGE_NAMES = [
   "ENGLISH",
   "FRENCH",
   "ITALIAN",
@@ -12,7 +12,7 @@ export const LANGUAGES = [
   "HINDI",
   "RUSSIAN",
 ] as const;
-type LanguageTuple = typeof LANGUAGES;
+type LanguageTuple = typeof LANGUAGE_NAMES;
 export type Language = LanguageTuple[number];
 
 export type UserDTO = {
