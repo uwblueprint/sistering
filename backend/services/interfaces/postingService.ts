@@ -1,8 +1,8 @@
 import {
-  PostingRequestDTO,
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
   PostingStatus,
+  PostingRequestDTO,
 } from "../../types";
 
 interface IPostingService {

@@ -127,7 +127,10 @@ export type ShiftBulkRequestDTO = {
   recurrenceInterval: RecurrenceInterval;
 };
 
-export type ShiftDataWithoutPostingId = Omit<ShiftBulkRequestDTO, "postingId">;
+export type ShiftBulkRequestWithoutPostingId = Omit<
+  ShiftBulkRequestDTO,
+  "postingId"
+>;
 
 export type ShiftResponseDTO = ShiftDTO;
 
