@@ -15,6 +15,8 @@ import {
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
   CreateEmployeeUserDTO,
+  Role,
+  CreateUserInviteResponse,
 } from "../../types";
 import { generateCSV } from "../../utilities/CSVUtils";
 
@@ -44,7 +46,6 @@ const userResolvers = {
       const csv = await generateCSV<UserDTO>({ data: users });
       return csv;
     },
-
     // VolunteerUsers
     volunteerUserById: async (
       _parent: undefined,
@@ -105,6 +106,12 @@ const userResolvers = {
       { email }: { email: string },
     ): Promise<void> => {
       return userService.deleteUserByEmail(email);
+    },
+    createUserInvite: async (
+      _parent: undefined,
+      { email, role }: { email: string; role: Role },
+    ): Promise<CreateUserInviteResponse> => {
+      return userService.createUserInvite(email, role);
     },
 
     // VolunteerUsers

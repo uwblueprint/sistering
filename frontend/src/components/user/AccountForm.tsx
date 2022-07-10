@@ -1,4 +1,5 @@
 import { Formik, Field, Form } from "formik";
+import { gql, useQuery } from "@apollo/client";
 import {
   Box,
   Button,
@@ -17,13 +18,18 @@ import {
   Tooltip,
   UnorderedList,
 } from "@chakra-ui/react";
-import React from "react";
+import React, { useState } from "react";
 import { QuestionOutlineIcon } from "@chakra-ui/icons";
 import moment from "moment";
-import { SkillResponseDTO } from "../../types/api/SkillTypes";
+
+import {
+  SkillResponseDTO,
+  SkillQueryResponse,
+} from "../../types/api/SkillTypes";
 import {
   CreateVolunteerDTO,
   CreateEmployeeDTO,
+  LANGUAGES,
 } from "../../types/api/UserType";
 
 type AccountFormProps = {
@@ -33,20 +39,14 @@ type AccountFormProps = {
   onEmployeeCreate: (employee: CreateEmployeeDTO) => void;
 };
 
-const TEST_SKILLS: SkillResponseDTO[] = [
-  {
-    id: "1",
-    name: "CPR",
-  },
-  {
-    id: "2",
-    name: "First Aid",
-  },
-  {
-    id: "3",
-    name: "Cooking",
-  },
-];
+const SKILLS = gql`
+  query BranchManagerModal_Skills {
+    skills {
+      id
+      name
+    }
+  }
+`;
 
 interface AccountFormValues {
   profilePhoto: string;
@@ -67,11 +67,19 @@ const AccountForm = ({
   onVolunteerCreate,
   onEmployeeCreate,
 }: AccountFormProps): React.ReactElement => {
-  const [agreeToTerms, setAgreeToTerms] = React.useState(false);
+  const [agreeToTerms, setAgreeToTerms] = useState(false);
+  const [skills, setSkills] = useState<SkillResponseDTO[]>([]);
 
   const toggleAgreeToTerms = (): void => {
     setAgreeToTerms(!agreeToTerms);
   };
+
+  useQuery<SkillQueryResponse>(SKILLS, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setSkills(data.skills);
+    },
+  });
 
   const selectSkill = (
     skill: string,
@@ -80,7 +88,7 @@ const AccountForm = ({
   ) => {
     // If the skill is not already selected, add it to the list of skills
     if (!currentSkills.some((s) => s.id === skill)) {
-      const skillName = TEST_SKILLS.find((s) => s.id === skill)?.name || "";
+      const skillName = skills.find((s) => s.id === skill)?.name || "";
       setFieldValue("skills", [
         ...currentSkills,
         {
@@ -267,7 +275,7 @@ const AccountForm = ({
                         );
                       }}
                     >
-                      {TEST_SKILLS.map((skill) => (
+                      {skills.map((skill) => (
                         <option key={skill.id} value={skill.id}>
                           {skill.name}
                         </option>
@@ -335,7 +343,7 @@ const AccountForm = ({
                         email: "email123@gmail.com",
                         phoneNumber: values.phoneNumber,
                         password: values.password,
-                        branchId: 0,
+                        branches: [],
                       })
                   : () =>
                       onVolunteerCreate({

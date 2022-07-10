@@ -68,7 +68,7 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
-    branchId: ID!
+    branches: [BranchResponseDTO!]!
     languages: [Language]!
   }
 
@@ -82,6 +82,12 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
+  }
+
+  type CreateUserInviteResponse {
+    pid: String!
+    email: String!
+    role: Role!
   }
 
   input UpdateUserDTO {
@@ -137,7 +143,7 @@ const userType = gql`
     emergencyContactPhone: String
     emergencyContactEmail: String
     password: String!
-    branchId: ID!
+    branches: [ID!]!
     languages: [Language]!
   }
 
@@ -149,7 +155,7 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
-    branchId: ID!
+    branches: [ID!]!
     languages: [Language]!
   }
 
@@ -171,6 +177,7 @@ const userType = gql`
     updateUser(id: ID!, user: UpdateUserDTO!): UserDTO!
     deleteUserById(id: ID!): ID
     deleteUserByEmail(email: String!): ID
+    createUserInvite(email: String!, role: Role!): CreateUserInviteResponse!
     createVolunteerUser(
       volunteerUser: CreateVolunteerUserDTO!
     ): VolunteerUserResponseDTO!

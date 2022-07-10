@@ -60,7 +60,6 @@ enum PostingType {
 enum PostingStatus {
   DRAFT
   PUBLISHED
-  ARCHIVED
 }
 
 enum Role {
@@ -156,8 +155,7 @@ model Volunteer {
 model Employee {
   id       Int       @id
   user     User      @relation(fields: [id], references: [id], onDelete: Cascade)
-  branchId Int       @map("branch_id")
-  branch   Branch    @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  branches   Branch[]
   postings Posting[]
 
   @@map("employees")
@@ -165,8 +163,8 @@ model Employee {
 
 model UserInvite {
   pid   String @id @default(uuid())
-  email String @map("email")
-  role  String @map("branch_id")
+  email String
+  role  Role
 
   @@map("user_invites")
 }

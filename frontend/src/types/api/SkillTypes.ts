@@ -6,3 +6,7 @@ export type SkillDTO = {
 export type SkillRequestDTO = Omit<SkillDTO, "id">;
 
 export type SkillResponseDTO = SkillDTO;
+
+export type SkillQueryResponse = {
+  skills: SkillResponseDTO[];
+};

@@ -1,4 +1,5 @@
 import { Language } from "./UserType";
+import { BranchResponseDTO } from "./BranchTypes";
 
 export type EmployeeUserDTO = {
   id: string;
@@ -10,7 +11,7 @@ export type EmployeeUserDTO = {
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
   emergencyContactEmail: string | null;
-  branchId: string;
+  branches: BranchResponseDTO[];
   languages: Language[];
 };
 

@@ -1,9 +1,9 @@
+/* eslint-disable class-methods-use-this */
 import * as firebaseAdmin from "firebase-admin";
 import { PrismaClient, User, Skill, Branch } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import {
   CreateUserDTO,
-  Role,
   UpdateUserDTO,
   UserDTO,
   VolunteerUserResponseDTO,
@@ -14,6 +14,8 @@ import {
   CreateEmployeeUserDTO,
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
+  CreateUserInviteResponse,
+  Role,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
@@ -54,8 +56,6 @@ const convertToNumberIds = (ids: string[]): { id: number }[] => {
 };
 
 class UserService implements IUserService {
-  /* eslint-disable class-methods-use-this */
-
   async getUserById(userId: string): Promise<UserDTO> {
     let user: User | null;
     let firebaseUser: firebaseAdmin.auth.UserRecord;
@@ -450,6 +450,30 @@ class UserService implements IUserService {
       }
     } catch (error: unknown) {
       Logger.error(`Failed to delete user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+  }
+
+  async createUserInvite(
+    email: string,
+    role: Role,
+  ): Promise<CreateUserInviteResponse> {
+    try {
+      const userInvite = await prisma.userInvite.create({
+        data: {
+          email,
+          role,
+        },
+      });
+      return {
+        email: userInvite.email,
+        role: userInvite.role.toString() as Role,
+        pid: userInvite.pid,
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create user invite row. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -908,6 +932,7 @@ class UserService implements IUserService {
         where: { id: Number(userId) },
         include: {
           user: true,
+          branches: true,
         },
       });
 
@@ -929,7 +954,7 @@ class UserService implements IUserService {
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
-        branchId: String(employee.branchId),
+        branches: convertToBranchResponseDTO(employee.branches),
       };
     } catch (error: unknown) {
       Logger.error(
@@ -949,7 +974,11 @@ class UserService implements IUserService {
           authId: firebaseUser.uid,
         },
         include: {
-          employee: true,
+          employee: {
+            include: {
+              branches: true,
+            },
+          },
         },
       });
 
@@ -970,7 +999,7 @@ class UserService implements IUserService {
         emergencyContactEmail: user.emergencyContactEmail,
         role: user.role,
         languages: user.languages,
-        branchId: String(employee.branchId),
+        branches: convertToBranchResponseDTO(employee.branches),
       };
     } catch (error: unknown) {
       Logger.error(
@@ -987,6 +1016,7 @@ class UserService implements IUserService {
       const employees = await prisma.employee.findMany({
         include: {
           user: true,
+          branches: true,
         },
       });
       const employeeUsers = await Promise.all(
@@ -1001,7 +1031,7 @@ class UserService implements IUserService {
             ...employee,
             id: String(employee.id),
             email: firebaseUser.email ?? "",
-            branchId: String(employee.branchId),
+            branches: convertToBranchResponseDTO(employee.branches),
           };
         }),
       );
@@ -1042,14 +1072,18 @@ class UserService implements IUserService {
             emergencyContactEmail: employeeUser.emergencyContactEmail,
             employee: {
               create: {
-                branch: {
-                  connect: { id: Number(employeeUser.branchId) },
+                branches: {
+                  connect: convertToNumberIds(employeeUser.branches),
                 },
               },
             },
           },
           include: {
-            employee: true,
+            employee: {
+              include: {
+                branches: true,
+              },
+            },
           },
         });
 
@@ -1060,7 +1094,7 @@ class UserService implements IUserService {
           id: String(newUser.id),
           email: firebaseUser.email ?? "",
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-          branchId: String(employee!.branchId),
+          branches: convertToBranchResponseDTO(employee!.branches),
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
         };
       } catch (postgresError) {
@@ -1100,6 +1134,7 @@ class UserService implements IUserService {
           },
           include: {
             user: true,
+            branches: true,
           },
         }),
         prisma.employee.update({
@@ -1118,11 +1153,13 @@ class UserService implements IUserService {
                 emergencyContactEmail: employeeUser.emergencyContactEmail,
               },
             },
-            branch: {
-              connect: { id: Number(employeeUser.branchId) },
+            branches: {
+              set: [],
+              connect: convertToNumberIds(employeeUser.branches),
             },
           },
           include: {
+            branches: true,
             user: true,
           },
         }),
@@ -1140,7 +1177,7 @@ class UserService implements IUserService {
           ...user,
           id: String(user.id),
           email: updatedFirebaseUser.email ?? "",
-          branchId: String(updatedEmployeeUser.branchId),
+          branches: convertToSkillResponseDTO(updatedEmployeeUser.branches),
         };
       } catch (error: unknown) {
         try {
@@ -1170,9 +1207,9 @@ class UserService implements IUserService {
                     .emergencyContactEmail,
                 },
               },
-              branch: {
+              branches: {
                 /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                connect: { id: Number(oldEmployeeUser!.branchId) },
+                connect: oldEmployeeUser!.branches,
               },
               /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
             },
@@ -1204,6 +1241,7 @@ class UserService implements IUserService {
         include: {
           employee: {
             include: {
+              branches: true,
               postings: true,
             },
           },
@@ -1227,9 +1265,11 @@ class UserService implements IUserService {
               emergencyContactEmail: deletedEmployeeUser.emergencyContactEmail,
               employee: {
                 create: {
-                  branch: {
+                  branches: {
                     /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                    connect: { id: Number(deletedEmployee!.branchId) },
+                    connect: deletedEmployee!.branches.map((p) => {
+                      return { id: Number(p.id) };
+                    }),
                   },
                   postings: {
                     /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */

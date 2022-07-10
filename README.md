@@ -95,7 +95,9 @@ docker exec -it <container-name> /bin/bash -c "yarn test"
 ## Migration
 
 To create a new migration, change the schema.prisma file as required
-and run `prisma migrate dev --name <DESCRIPTIVE_NAME> --create-only`
+and run `npx prisma migrate dev --name <DESCRIPTIVE_NAME> --create-only`
+
+NOTE: You should be running this in the backend docker container cli, not locally. This is because the DB secrets will only be injected in that container
 
 ## Version Control Guide
 

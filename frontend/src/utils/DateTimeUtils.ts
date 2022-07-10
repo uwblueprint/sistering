@@ -8,7 +8,7 @@ import { FilterType } from "../types/DateFilterTypes";
  * @returns corresponding time string string in format hh:mm:(a/p)m
  */
 export const formatTimeHourMinutes = (date: Date): string => {
-  return moment.utc(date).format("h:mm a");
+  return moment.utc(date).format("h:mma");
 };
 
 /**
@@ -168,4 +168,27 @@ export const getMonthsInRange = (startDate: Date, endDate: Date): Date[] => {
     currentMonth = currentMonth.add(1, "month");
   }
   return monthsInRange;
+};
+
+/**
+ * Get whether or not a posting is an event based
+ * on start/end time, should be same day.
+ * @param startDate the start date of the range
+ * @param endDate the end date of the range
+ * @returns whether or not a posting is an event based on start/end time
+ */
+export const isEventPosting = (startDate: Date, endDate: Date): boolean => {
+  // NOTE: We might run into inconsistencies in timezones as we expect
+  // this logic to be for Toronto time only
+  return moment(startDate).isSame(endDate, "day");
+};
+
+/**
+ * Returns true if the date is in the past
+ * @param date a date string in YYYY-MM-DD format
+ * @returns true if the date is in the past
+ * @returns false if the date is in the future
+ */
+export const isPast = (date: string): boolean => {
+  return moment(date).isBefore(moment().toDate());
 };
