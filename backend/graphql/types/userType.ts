@@ -86,7 +86,7 @@ const userType = gql`
   }
 
   type UserInviteResponse {
-    pid: String!
+    uuid: String!
     email: String!
     role: Role!
   }

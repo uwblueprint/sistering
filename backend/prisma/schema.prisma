@@ -163,8 +163,8 @@ model Employee {
 }
 
 model UserInvite {
-  pid   String @id @default(uuid())
-  email String
+  uuid String @id @default(uuid())
+  email String @unique
   role  Role
 
   @@map("user_invites")

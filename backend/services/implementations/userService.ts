@@ -468,7 +468,7 @@ class UserService implements IUserService {
       return {
         email: userInvite.email,
         role: userInvite.role.toString() as Role,
-        pid: userInvite.pid,
+        uuid: userInvite.uuid,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -488,7 +488,7 @@ class UserService implements IUserService {
       return {
         email: userInvite.email,
         role: userInvite.role.toString() as Role,
-        pid: userInvite.pid,
+        uuid: userInvite.uuid,
       };
     } catch (error: unknown) {
       Logger.error(

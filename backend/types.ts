@@ -16,7 +16,7 @@ export type Token = {
 export type UserInviteResponse = {
   email: string;
   role: Role;
-  pid: string;
+  uuid: string;
 };
 
 export type UserDTO = {
