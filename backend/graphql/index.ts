@@ -159,8 +159,6 @@ const graphQLMiddlewares = {
     employeeUserById: authorizedByAdminAndEmployee(),
     employeeUserByEmail: authorizedByAdminAndEmployee(),
     employeeUsers: authorizedByAdmin(),
-    skill: authorizedByAdmin(),
-    skills: authorizedByAdmin(),
     branch: authorizedByAdmin(),
     branches: authorizedByAdmin(),
     getShiftSignupsForUser: authorizedByAdminAndVolunteer(),
