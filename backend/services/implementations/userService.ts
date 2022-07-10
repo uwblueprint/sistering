@@ -1,12 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import * as firebaseAdmin from "firebase-admin";
-import {
-  PrismaClient,
-  User,
-  Skill,
-  Branch,
-  Role as PrismaRole,
-} from "@prisma/client";
+import { PrismaClient, User, Skill, Branch } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import {
   CreateUserDTO,
@@ -477,7 +471,9 @@ class UserService implements IUserService {
         pid: userInvite.pid,
       };
     } catch (error: unknown) {
-      console.log(error);
+      Logger.error(
+        `Failed to create user invite row. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
