@@ -13,7 +13,7 @@ export type Token = {
   refreshToken: string;
 };
 
-export type CreateUserInviteResponse = {
+export type UserInviteResponse = {
   email: string;
   role: Role;
   pid: string;

@@ -85,7 +85,7 @@ const userType = gql`
     emergencyContactEmail: String
   }
 
-  type CreateUserInviteResponse {
+  type UserInviteResponse {
     pid: String!
     email: String!
     role: Role!
@@ -180,7 +180,8 @@ const userType = gql`
     updateUser(id: ID!, user: UpdateUserDTO!): UserDTO!
     deleteUserById(id: ID!): ID
     deleteUserByEmail(email: String!): ID
-    createUserInvite(email: String!, role: Role!): CreateUserInviteResponse!
+    createUserInvite(email: String!, role: Role!): UserInviteResponse!
+    deleteUserInvite(email: String!): UserInviteResponse!
     createVolunteerUser(
       volunteerUser: CreateVolunteerUserDTO!
     ): VolunteerUserResponseDTO!

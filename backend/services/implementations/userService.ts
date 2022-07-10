@@ -14,7 +14,7 @@ import {
   CreateEmployeeUserDTO,
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
-  CreateUserInviteResponse,
+  UserInviteResponse,
   Role,
 } from "../../types";
 import logger from "../../utilities/logger";
@@ -457,7 +457,7 @@ class UserService implements IUserService {
   async createUserInvite(
     email: string,
     role: Role,
-  ): Promise<CreateUserInviteResponse> {
+  ): Promise<UserInviteResponse> {
     try {
       const userInvite = await prisma.userInvite.create({
         data: {
@@ -473,6 +473,26 @@ class UserService implements IUserService {
     } catch (error: unknown) {
       Logger.error(
         `Failed to create user invite row. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async deleteUserInvite(email: string): Promise<UserInviteResponse> {
+    try {
+      const userInvite = await prisma.userInvite.delete({
+        where: {
+          email,
+        },
+      });
+      return {
+        email: userInvite.email,
+        role: userInvite.role.toString() as Role,
+        pid: userInvite.pid,
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to delete user invite row. Reason = ${getErrorMessage(error)}`,
       );
       throw error;
     }

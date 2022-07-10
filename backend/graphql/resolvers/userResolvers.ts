@@ -16,7 +16,7 @@ import {
   UpdateEmployeeUserDTO,
   CreateEmployeeUserDTO,
   Role,
-  CreateUserInviteResponse,
+  UserInviteResponse,
 } from "../../types";
 import { generateCSV } from "../../utilities/CSVUtils";
 
@@ -110,8 +110,14 @@ const userResolvers = {
     createUserInvite: async (
       _parent: undefined,
       { email, role }: { email: string; role: Role },
-    ): Promise<CreateUserInviteResponse> => {
+    ): Promise<UserInviteResponse> => {
       return userService.createUserInvite(email, role);
+    },
+    deleteUserInvite: async (
+      _parent: undefined,
+      { email }: { email: string },
+    ): Promise<UserInviteResponse> => {
+      return userService.deleteUserInvite(email);
     },
 
     // VolunteerUsers
