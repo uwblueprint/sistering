@@ -65,7 +65,6 @@ const PostingDetails = ({
           {postingDetails.employees.map((employee) => (
             <PocCard
               name={`${employee.firstName} ${employee.lastName}`}
-              title={employee.title}
               email={employee.email}
               phoneNumber={employee.phoneNumber ?? "Not available"}
               key={employee.id}

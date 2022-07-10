@@ -37,7 +37,6 @@ const employeeUsers = [
     lastName: "Employee",
     authId: process.env.EMPLOYEE_UID,
     role: Role.EMPLOYEE,
-    title: "Volunteer Coordinator",
     branches: [{ name: Branches.Kitchen }],
   },
   {
@@ -45,7 +44,6 @@ const employeeUsers = [
     lastName: "Employee",
     authId: process.env.EMPLOYEE1_UID,
     role: Role.EMPLOYEE,
-    title: "Volunteer Coordinator",
     branches: [{ name: Branches.Arts }],
   },
 ];
@@ -226,7 +224,6 @@ const main = async () => {
               branches: {
                 connect: employee.branches,
               },
-              title: employee.title,
             },
           },
         },

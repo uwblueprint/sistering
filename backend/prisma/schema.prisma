@@ -157,7 +157,6 @@ model Employee {
   user     User      @relation(fields: [id], references: [id], onDelete: Cascade)
   branches   Branch[]
   postings Posting[]
-  title    String
 
   @@map("employees")
 }

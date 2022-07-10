@@ -11,7 +11,6 @@ import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
 const USERS = gql`
   query AdminUserManagementPage_Users {
     employeeUsers {
-      title
       firstName
       lastName
       email

@@ -955,7 +955,6 @@ class UserService implements IUserService {
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
         branches: convertToBranchResponseDTO(employee.branches),
-        title: employee.title,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -1001,7 +1000,6 @@ class UserService implements IUserService {
         role: user.role,
         languages: user.languages,
         branches: convertToBranchResponseDTO(employee.branches),
-        title: employee.title,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -1077,7 +1075,6 @@ class UserService implements IUserService {
                 branches: {
                   connect: convertToNumberIds(employeeUser.branches),
                 },
-                title: employeeUser.title,
               },
             },
           },
@@ -1099,7 +1096,6 @@ class UserService implements IUserService {
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           branches: convertToBranchResponseDTO(employee!.branches),
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-          title: employee!.title,
         };
       } catch (postgresError) {
         try {
@@ -1161,7 +1157,6 @@ class UserService implements IUserService {
               set: [],
               connect: convertToNumberIds(employeeUser.branches),
             },
-            title: employeeUser.title,
           },
           include: {
             branches: true,
@@ -1183,7 +1178,6 @@ class UserService implements IUserService {
           id: String(user.id),
           email: updatedFirebaseUser.email ?? "",
           branches: convertToSkillResponseDTO(updatedEmployeeUser.branches),
-          title: updatedEmployeeUser.title,
         };
       } catch (error: unknown) {
         try {
@@ -1218,7 +1212,6 @@ class UserService implements IUserService {
                 connect: oldEmployeeUser!.branches,
               },
               /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-              title: oldEmployeeUser!.title,
             },
           });
         } catch (postgresError: unknown) {
@@ -1285,7 +1278,6 @@ class UserService implements IUserService {
                     }),
                   },
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                  title: deletedEmployee!.title,
                 },
               },
             },
