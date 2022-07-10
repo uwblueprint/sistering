@@ -13,6 +13,12 @@ export type Token = {
   refreshToken: string;
 };
 
+export type CreateUserInviteResponse = {
+  email: string;
+  role: Role;
+  pid: string;
+};
+
 export type UserDTO = {
   id: string;
   firstName: string;

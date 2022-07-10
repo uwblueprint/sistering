@@ -1,9 +1,9 @@
+/* eslint-disable class-methods-use-this */
 import * as firebaseAdmin from "firebase-admin";
 import { PrismaClient, User, Skill, Branch } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import {
   CreateUserDTO,
-  Role,
   UpdateUserDTO,
   UserDTO,
   VolunteerUserResponseDTO,
@@ -14,6 +14,8 @@ import {
   CreateEmployeeUserDTO,
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
+  CreateUserInviteResponse,
+  Role,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
@@ -54,8 +56,6 @@ const convertToNumberIds = (ids: string[]): { id: number }[] => {
 };
 
 class UserService implements IUserService {
-  /* eslint-disable class-methods-use-this */
-
   async getUserById(userId: string): Promise<UserDTO> {
     let user: User | null;
     let firebaseUser: firebaseAdmin.auth.UserRecord;
@@ -450,6 +450,30 @@ class UserService implements IUserService {
       }
     } catch (error: unknown) {
       Logger.error(`Failed to delete user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+  }
+
+  async createUserInvite(
+    email: string,
+    role: Role,
+  ): Promise<CreateUserInviteResponse> {
+    try {
+      const userInvite = await prisma.userInvite.create({
+        data: {
+          email,
+          role,
+        },
+      });
+      return {
+        email: userInvite.email,
+        role: userInvite.role.toString() as Role,
+        pid: userInvite.pid,
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create user invite row. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
