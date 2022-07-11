@@ -57,7 +57,7 @@ const BranchManagerModal = ({
   const [createBranch, { error: createBranchError }] = useMutation(
     CREATE_BRANCH,
     {
-      refetchQueries: [{ query: BRANCHES }],
+      refetchQueries: [{ query: BRANCHES }, "AdminHomepageHeader_Branches"],
     },
   );
 

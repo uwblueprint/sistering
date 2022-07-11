@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { gql, useQuery } from "@apollo/client";
 import {
   VStack,
   HStack,
@@ -14,15 +16,35 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { AddIcon, SearchIcon, SettingsIcon } from "@chakra-ui/icons";
-import React from "react";
 import BranchManagerModal from "./BranchManagerModal";
+import {
+  BranchResponseDTO,
+  BranchQueryResponse,
+} from "../../types/api/BranchTypes";
+
+const BRANCHES = gql`
+  query AdminHomepageHeader_Branches {
+    branches {
+      id
+      name
+    }
+  }
+`;
 
 const AdminHomepageHeader = ({
   isSuperAdmin,
 }: {
   isSuperAdmin: boolean;
 }): React.ReactElement => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
+
+  useQuery<BranchQueryResponse>(BRANCHES, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setBranches(data.branches);
+    },
+  });
 
   return (
     <>
@@ -107,7 +129,9 @@ const AdminHomepageHeader = ({
               <Input type="text" placeholder="Search" w="368px" />
             </InputGroup>
             <Select placeholder="All branches">
-              <option value="option1">option1</option>
+              {branches.map((branch) => (
+                <option key={branch.id}>{branch.name}</option>
+              ))}
             </Select>
             <IconButton
               aria-label="Settings"
