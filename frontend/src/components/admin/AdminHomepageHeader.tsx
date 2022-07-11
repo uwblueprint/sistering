@@ -31,11 +31,17 @@ const BRANCHES = gql`
   }
 `;
 
+type AdminHomepageHeaderProps = {
+  isSuperAdmin: boolean;
+  selectStatusTab: (index: number) => void;
+  postingStatusNums: number[]; // [unscheduled, scheduled, past, drafts]
+};
+
 const AdminHomepageHeader = ({
   isSuperAdmin,
-}: {
-  isSuperAdmin: boolean;
-}): React.ReactElement => {
+  selectStatusTab,
+  postingStatusNums,
+}: AdminHomepageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
 
@@ -76,8 +82,9 @@ const AdminHomepageHeader = ({
                     borderColor: "currentColor",
                   }}
                   py="8px"
+                  onClick={() => selectStatusTab(0)}
                 >
-                  Unscheduled (1)
+                  Unscheduled ({postingStatusNums[0]})
                 </Tab>
               )}
               <Tab
@@ -89,8 +96,9 @@ const AdminHomepageHeader = ({
                   borderColor: "currentColor",
                 }}
                 py="8px"
+                onClick={() => selectStatusTab(1)}
               >
-                Scheduled (1)
+                Scheduled ({postingStatusNums[1]})
               </Tab>
               <Tab
                 _hover={{
@@ -101,8 +109,9 @@ const AdminHomepageHeader = ({
                   borderColor: "currentColor",
                 }}
                 py="8px"
+                onClick={() => selectStatusTab(2)}
               >
-                Past (1)
+                Past ({postingStatusNums[2]})
               </Tab>
               {isSuperAdmin && (
                 <Tab
@@ -114,8 +123,9 @@ const AdminHomepageHeader = ({
                     borderColor: "currentColor",
                   }}
                   py="8px"
+                  onClick={() => selectStatusTab(3)}
                 >
-                  Drafts (1)
+                  Drafts ({postingStatusNums[3]})
                 </Tab>
               )}
             </TabList>

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Flex, Box, SimpleGrid } from "@chakra-ui/react";
 import { generatePath, useHistory } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
@@ -52,6 +52,13 @@ const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
   const [postings, setPostings] = useState<Posting[] | null>(null);
+  const [postingsByStatus, setPostingsByStatus] = useState<Posting[][]>([
+    [], // unscheduled => 0
+    [], // scheduled => 1
+    [], // past => 2
+    [], // drafts => 3
+  ]);
+  const [postingStatusIndex, setPostingStatusIndex] = useState<number>(0); // refer to above for index
 
   useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
@@ -75,8 +82,31 @@ const AdminHomepage = (): React.ReactElement => {
     if (posting.shifts.length === 0) {
       return PostingStatus.UNSCHEDULED;
     }
+    postingsByStatus[1].push(posting);
     return PostingStatus.SCHEDULED;
   };
+
+  // update postingsByStatus 2d array
+  useEffect(() => {
+    if (postings) {
+      const sortedPostings: Posting[][] = [[], [], [], []];
+      postings.forEach((posting) => {
+        const postingStatus = getPostingStatus(posting);
+        if (postingStatus === PostingStatus.UNSCHEDULED) {
+          sortedPostings[0].push(posting);
+        }
+        if (postingStatus === PostingStatus.SCHEDULED) {
+          sortedPostings[1].push(posting);
+        }
+        if (postingStatus === PostingStatus.PAST) {
+          sortedPostings[2].push(posting);
+        } else {
+          sortedPostings[3].push(posting);
+        }
+      });
+      setPostingsByStatus(sortedPostings);
+    }
+  }, [postings]);
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
@@ -86,6 +116,10 @@ const AdminHomepage = (): React.ReactElement => {
       />
       <AdminHomepageHeader
         isSuperAdmin={authenticatedUser?.role === Role.Admin}
+        selectStatusTab={setPostingStatusIndex}
+        postingStatusNums={postingsByStatus.map(
+          (postingsArr) => postingsArr.length,
+        )}
       />
       <Box
         flex={1}
@@ -96,7 +130,7 @@ const AdminHomepage = (): React.ReactElement => {
       >
         <SimpleGrid columns={2} spacing={4}>
           {authenticatedUser &&
-            postings?.map((posting) => (
+            postingsByStatus[postingStatusIndex].map((posting) => (
               <Box key={posting.id} pb="24px">
                 <AdminPostingCard
                   key={posting.id}
