@@ -72,9 +72,7 @@ const BranchManagerModal = ({
   useQuery<BranchQueryResponse>(BRANCHES, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      const branchesCopy = cloneDeep(data.branches);
-      branchesCopy.sort((a, b) => Number(a.id) - Number(b.id));
-      setCurrentBranches(branchesCopy);
+      setCurrentBranches(data.branches);
     },
   });
 
