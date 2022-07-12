@@ -19,7 +19,6 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
-import EmailService from "./emailService";
 import IEmailService from "../interfaces/emailService";
 
 const prisma = new PrismaClient();

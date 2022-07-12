@@ -108,6 +108,13 @@ interface IUserService {
   ): Promise<UserInviteResponse>;
 
   /**
+   * Delete user invite link based on invitee email
+   * @param email user's email
+   * @throws Error if invite deletion fails
+   */
+  deleteUserInvite(email: string): Promise<UserInviteResponse>;
+
+  /**
    * Get VolunteerUser associated with id
    * @param id VolunteerUser's id
    * @returns a VolunteerUserResponseDTO with VolunteerUser's information
