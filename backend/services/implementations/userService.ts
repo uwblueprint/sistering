@@ -19,6 +19,8 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import EmailService from "./emailService";
+import IEmailService from "../interfaces/emailService";
 
 const prisma = new PrismaClient();
 
@@ -457,6 +459,7 @@ class UserService implements IUserService {
   async createUserInvite(
     email: string,
     role: Role,
+    emailService: IEmailService,
   ): Promise<UserInviteResponse> {
     try {
       const userInvite = await prisma.userInvite.create({
@@ -465,6 +468,18 @@ class UserService implements IUserService {
           role,
         },
       });
+
+      const SUBJECT = "Invitation to Sistering Platform";
+      const htmlBody = `
+<h3>Hello,</h3>
+<br/>
+<h3>You have received a user invite to join the Sistering volunteer platform. Please click the following link to set up your account. This link is only valid for 2 weeks.<h3/>
+<br/>
+<h3><a href="localhost:3000/create-account?token=${userInvite.pid}">Create Account<a/><h3/>
+`;
+      // send email here:
+      await emailService.sendEmail(email, SUBJECT, htmlBody);
+
       return {
         email: userInvite.email,
         role: userInvite.role.toString() as Role,
@@ -472,7 +487,9 @@ class UserService implements IUserService {
       };
     } catch (error: unknown) {
       Logger.error(
-        `Failed to create user invite row. Reason = ${getErrorMessage(error)}`,
+        `Issue with either creating user invite row or sending email. Reason = ${getErrorMessage(
+          error,
+        )}`,
       );
       throw error;
     }

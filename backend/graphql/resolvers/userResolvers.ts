@@ -111,7 +111,7 @@ const userResolvers = {
       _parent: undefined,
       { email, role }: { email: string; role: Role },
     ): Promise<UserInviteResponse> => {
-      return userService.createUserInvite(email, role);
+      return userService.createUserInvite(email, role, emailService);
     },
     deleteUserInvite: async (
       _parent: undefined,
