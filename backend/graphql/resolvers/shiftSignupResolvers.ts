@@ -2,9 +2,7 @@ import { SignupStatus } from "@prisma/client";
 import ShiftSignupService from "../../services/implementations/shiftSignupService";
 import IShiftSignupService from "../../services/interfaces/shiftSignupService";
 import {
-  CreateShiftSignupDTO,
   ShiftSignupResponseDTO,
-  UpdateShiftSignupRequestDTO,
   UpsertDeleteShiftSignupsRequestDTO,
 } from "../../types";
 
@@ -39,28 +37,6 @@ const shiftSignupResolvers = {
     },
   },
   Mutation: {
-    createShiftSignups: async (
-      _parent: undefined,
-      { shifts }: { shifts: CreateShiftSignupDTO[] },
-    ): Promise<ShiftSignupResponseDTO[]> => {
-      return shiftSignupService.createShiftSignups(shifts);
-    },
-
-    updateShiftSignup: async (
-      _parent: undefined,
-      {
-        shiftId,
-        userId,
-        update,
-      }: {
-        shiftId: string;
-        userId: string;
-        update: UpdateShiftSignupRequestDTO;
-      },
-    ): Promise<ShiftSignupResponseDTO> => {
-      return shiftSignupService.updateShiftSignup(shiftId, userId, update);
-    },
-
     upsertDeleteShiftSignups: async (
       _parent: undefined,
       {

@@ -3,12 +3,7 @@ import { GraphQLScalarType, Kind } from "graphql";
 import { applyMiddleware } from "graphql-middleware";
 import { merge } from "lodash";
 
-import {
-  isAuthorizedByRole,
-  isAuthorizedByUserId,
-  isAuthorizedForCreateShiftSignups,
-  isAuthorizedForUpdateShiftSignups,
-} from "../middlewares/auth";
+import { isAuthorizedByRole, isAuthorizedByUserId } from "../middlewares/auth";
 import authResolvers from "./resolvers/authResolvers";
 import authType from "./types/authType";
 import entityResolvers from "./resolvers/entityResolvers";
@@ -196,8 +191,6 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
-    createShiftSignups: isAuthorizedForCreateShiftSignups("userId"),
-    updateShiftSignup: isAuthorizedForUpdateShiftSignups("userId"),
     upsertDeleteShiftSignups: authorizedByAdminAndVolunteer(),
   },
 };
