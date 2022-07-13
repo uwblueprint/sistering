@@ -7,6 +7,7 @@ import { AuthDTO, Role, Token } from "../../types";
 import FirebaseRestClient from "../../utilities/firebaseRestClient";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import { passwordResetTemplate } from "../../utilities/templateUtils";
 
 const Logger = logger(__filename);
 
@@ -77,15 +78,7 @@ class AuthService implements IAuthService {
       const resetLink = await firebaseAdmin
         .auth()
         .generatePasswordResetLink(email);
-      const emailBody = `
-      Hello,
-      <br><br>
-      We have received a password reset request for your account.
-      Please click the following link to reset it.
-      <strong>This link is only valid for 1 hour.</strong>
-      <br><br>
-      <a href=${resetLink}>Reset Password</a>`;
-
+      const emailBody = passwordResetTemplate(resetLink);
       this.emailService.sendEmail(email, "Your Password Reset Link", emailBody);
     } catch (error: unknown) {
       Logger.error(
