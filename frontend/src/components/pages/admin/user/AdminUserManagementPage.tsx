@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Button, useDisclosure } from "@chakra-ui/react";
+import { Box, Button, Table, Tbody, useDisclosure } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 import { VolunteerUserResponseDTO } from "../../../../types/api/UserType";
 import { EmployeeUserResponseDTO } from "../../../../types/api/EmployeeTypes";
@@ -7,11 +7,11 @@ import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
 import ProfileDrawer from "./ProfileDrawer";
 import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
+import UserManagementTableRow from "../../../admin/users/UserManagementTableRow";
 
 const USERS = gql`
   query AdminUserManagementPage_Users {
     employeeUsers {
-      title
       firstName
       lastName
       email
@@ -78,18 +78,47 @@ const AdminUserManagementPage = (): React.ReactElement => {
   };
 
   return (
-    <Box>
-      <Button onClick={onOpen}>Open</Button>
-      <ProfileDrawer
-        isOpen={isOpen}
-        branches={branches}
-        selectedBranches={selectedBranches}
-        onClose={onClose}
-        handleBranchMenuItemClicked={handleBranchMenuItemClicked}
-      />
-      {loading && <Loading />}
-      {error && <ErrorModal />}
-    </Box>
+    <>
+      <Box>
+        <Button onClick={onOpen}>Open</Button>
+        <ProfileDrawer
+          isOpen={isOpen}
+          branches={branches}
+          selectedBranches={selectedBranches}
+          onClose={onClose}
+          handleBranchMenuItemClicked={handleBranchMenuItemClicked}
+        />
+        {loading && <Loading />}
+        {error && <ErrorModal />}
+      </Box>
+
+      {/* Temp */}
+      <Table variant="brand">
+        <Tbody>
+          <UserManagementTableRow
+            firstName="Amanda"
+            lastName="Du"
+            pronouns="She/Her"
+            email="atdu@uwblueprint.org"
+            phoneNumber="123-456-7890"
+          />
+          <UserManagementTableRow
+            firstName="Amanda"
+            lastName="Du"
+            pronouns="She/Her"
+            email="atdu@uwblueprint.org"
+            phoneNumber="123-456-7890"
+          />
+          <UserManagementTableRow
+            firstName="Amanda"
+            lastName="Du"
+            pronouns="She/Her"
+            email="atdu@uwblueprint.org"
+            phoneNumber="123-456-7890"
+          />
+        </Tbody>
+      </Table>
+    </>
   );
 };
 
