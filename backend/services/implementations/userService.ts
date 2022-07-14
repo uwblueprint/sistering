@@ -474,7 +474,7 @@ class UserService implements IUserService {
 <br/>
 <h3>You have received a user invite to join the Sistering volunteer platform. Please click the following link to set up your account. This link is only valid for 2 weeks.<h3/>
 <br/>
-<h3><a href="localhost:3000/create-account?token=${userInvite.pid}">Create Account<a/><h3/>
+<a href="http://localhost:3000/create-account?token=${userInvite.uuid}">Create Account</a>
 `;
       // send email here:
       await emailService.sendEmail(email, SUBJECT, htmlBody);
