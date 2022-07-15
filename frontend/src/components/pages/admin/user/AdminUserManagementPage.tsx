@@ -93,31 +93,33 @@ const AdminUserManagementPage = (): React.ReactElement => {
       </Box>
 
       {/* Temp */}
-      <Table variant="brand">
-        <Tbody>
-          <UserManagementTableRow
-            firstName="Amanda"
-            lastName="Du"
-            pronouns="She/Her"
-            email="atdu@uwblueprint.org"
-            phoneNumber="123-456-7890"
-          />
-          <UserManagementTableRow
-            firstName="Amanda"
-            lastName="Du"
-            pronouns="She/Her"
-            email="atdu@uwblueprint.org"
-            phoneNumber="123-456-7890"
-          />
-          <UserManagementTableRow
-            firstName="Amanda"
-            lastName="Du"
-            pronouns="She/Her"
-            email="atdu@uwblueprint.org"
-            phoneNumber="123-456-7890"
-          />
-        </Tbody>
-      </Table>
+      <Box m={20} border="1px" borderRadius="md" borderColor="gray.200">
+        <Table variant="brand">
+          <Tbody>
+            <UserManagementTableRow
+              firstName="Amanda"
+              lastName="Du"
+              pronouns="She/Her"
+              email="atdu@uwblueprint.org"
+              phoneNumber="123-456-7890"
+            />
+            <UserManagementTableRow
+              firstName="Amanda"
+              lastName="Du"
+              pronouns="She/Her"
+              email="atdu@uwblueprint.org"
+              phoneNumber="123-456-7890"
+            />
+            <UserManagementTableRow
+              firstName="Amanda"
+              lastName="Du"
+              pronouns="She/Her"
+              email="atdu@uwblueprint.org"
+              phoneNumber="123-456-7890"
+            />
+          </Tbody>
+        </Table>
+      </Box>
     </>
   );
 };

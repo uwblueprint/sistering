@@ -1,4 +1,4 @@
-import { Checkbox, Icon, Tr, Td, Text, Button } from "@chakra-ui/react";
+import { Box, Checkbox, Icon, Tr, Td, Th, Text, Tooltip, Button } from "@chakra-ui/react";
 import { CheckIcon } from "@chakra-ui/icons";
 import { MdMoreHoriz } from "react-icons/md"
 import React from "react";
@@ -28,10 +28,16 @@ const UserManagementTableRow = ({
   phoneNumber
 }: UserManagementTableRowProps): React.ReactElement => {
 
+  const [checked, setChecked] = React.useState(false)
+
   return (
-    <Tr>
-      <Td>
-        <Checkbox/>
+    <Tr bgColor={checked ? "purple.50" : undefined}>
+      <Td mr={0} pr={0}>
+        <Box position="relative">
+          <Checkbox position="absolute" top={0} bottom={0} onChange={() => setChecked(!checked)}
+/>
+        </Box>
+
       </Td>
       <Td>
         <Text>{firstName}</Text>
@@ -48,8 +54,12 @@ const UserManagementTableRow = ({
       <Td>
         <Text>{phoneNumber}</Text>
       </Td>
-      <Td>
-        <Icon as={MdMoreHoriz} />
+      <Td textAlign="right">
+        <Tooltip label='View details' placement='bottom-start'>
+          <span>
+            <Icon as={MdMoreHoriz} w={6} h={6} />
+          </span>
+        </Tooltip>
       </Td>  
     </Tr>
   );
