@@ -92,7 +92,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
         {error && <ErrorModal />}
       </Box>
 
-      {/* Temp */}
+      {/* Temporary table for testing #453, please remove later */}
       <Box m={20} border="1px" borderRadius="md" borderColor="gray.200">
         <Table variant="brand">
           <Tbody>
@@ -102,6 +102,8 @@ const AdminUserManagementPage = (): React.ReactElement => {
               pronouns="She/Her"
               email="atdu@uwblueprint.org"
               phoneNumber="123-456-7890"
+              checked={false}
+              onCheck={() => (console.log("checkbox toggled"))}
             />
             <UserManagementTableRow
               firstName="Amanda"
@@ -109,6 +111,8 @@ const AdminUserManagementPage = (): React.ReactElement => {
               pronouns="She/Her"
               email="atdu@uwblueprint.org"
               phoneNumber="123-456-7890"
+              checked
+              onCheck={() => (console.log("checkbox toggled"))}
             />
             <UserManagementTableRow
               firstName="Amanda"
@@ -116,6 +120,8 @@ const AdminUserManagementPage = (): React.ReactElement => {
               pronouns="She/Her"
               email="atdu@uwblueprint.org"
               phoneNumber="123-456-7890"
+              checked={false}
+              onCheck={() => (console.log("checkbox toggled"))}
             />
           </Tbody>
         </Table>

@@ -1,16 +1,7 @@
-import { Box, Checkbox, Icon, Tr, Td, Th, Text, Tooltip, Button } from "@chakra-ui/react";
-import { CheckIcon } from "@chakra-ui/icons";
+import { Box, Checkbox, Icon, Tr, Td, Text, Tooltip, useDisclosure } from "@chakra-ui/react";
 import { MdMoreHoriz } from "react-icons/md"
 import React from "react";
-import {
-  formatTimeHourMinutes,
-  getElapsedHours,
-} from "../../../utils/DateTimeUtils";
-import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../types/api/ShiftTypes";
-import {
-  DeleteSignupRequest,
-  SignupRequest,
-} from "../../../types/api/SignupTypes";
+import ProfileDrawer from "./ProfileDrawer";
 
 type UserManagementTableRowProps = {
   firstName: string;
@@ -18,6 +9,8 @@ type UserManagementTableRowProps = {
   pronouns: string;
   email: string;
   phoneNumber: string;
+  checked: boolean;
+  onCheck: (params: any) => any;
 };
 
 const UserManagementTableRow = ({
@@ -25,19 +18,19 @@ const UserManagementTableRow = ({
   lastName,
   pronouns,
   email,
-  phoneNumber
+  phoneNumber,
+  checked,
+  onCheck,
 }: UserManagementTableRowProps): React.ReactElement => {
 
-  const [checked, setChecked] = React.useState(false)
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Tr bgColor={checked ? "purple.50" : undefined}>
       <Td mr={0} pr={0}>
         <Box position="relative">
-          <Checkbox position="absolute" top={0} bottom={0} onChange={() => setChecked(!checked)}
-/>
+          <Checkbox position="absolute" top={0} bottom={0} onChange={onCheck}/>
         </Box>
-
       </Td>
       <Td>
         <Text>{firstName}</Text>
@@ -55,14 +48,18 @@ const UserManagementTableRow = ({
         <Text>{phoneNumber}</Text>
       </Td>
       <Td textAlign="right">
-        <Tooltip label='View details' placement='bottom-start'>
+        <Tooltip label="View details" placement="bottom-start">
           <span>
-            <Icon as={MdMoreHoriz} w={6} h={6} />
+            <Icon as={MdMoreHoriz} w={6} h={6} onClick={onOpen} cursor="pointer"/>
+            <ProfileDrawer
+              isOpen={isOpen}
+              onClose={onClose}
+            />
           </span>
         </Tooltip>
       </Td>  
     </Tr>
-  );
+  ); 
 };
 
 export default UserManagementTableRow;
