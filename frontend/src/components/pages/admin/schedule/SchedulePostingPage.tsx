@@ -1,5 +1,5 @@
 import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
@@ -22,6 +22,8 @@ import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
 import Loading from "../../../common/Loading";
 import { getUTCDateForDateTimeString } from "../../../../utils/DateTimeUtils";
+import AuthContext from "../../../../contexts/AuthContext";
+import { Role } from "../../../../types/AuthTypes";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -120,8 +122,11 @@ const ShiftScheduleCalendar = ({
     />
   );
 
-const AdminSchedulePostingPage = (): React.ReactElement => {
+// TODO: Make a read only variant depending on role == EMPLOYEE
+// TODO: employee variant? We need to make this page available to employee otherwise
+const SchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
+  const { authenticatedUser } = useContext(AuthContext);
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -323,6 +328,9 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     setCurrentView(AdminScheduleViews.CalendarView);
   };
 
+  // TODO: Or posting is a "past" posting, ie; end date is in the past
+  const isReadOnly = authenticatedUser && authenticatedUser.role !== Role.Admin;
+
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
       {(tableDataQueryError || submitSignupsError || postingError) && (
@@ -338,6 +346,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             <AdminSchedulePageHeader
               branchName={postingDetails?.branch?.name}
             />
+            {/* // TODO: Here in header, pass edit */}
             <AdminPostingScheduleHeader
               postingID={Number(id)}
               postingName={postingDetails?.title}
@@ -356,6 +365,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             )}
           </Box>
           <Box w="400px" overflow="hidden">
+            {/* // TODO: Here in header, pass edit */}
             <ScheduleSidePanel
               shifts={sidePanelShifts}
               currentlyEditingShift={currentlyEditingShift}
@@ -405,4 +415,4 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   );
 };
 
-export default AdminSchedulePostingPage;
+export default SchedulePostingPage;

@@ -189,6 +189,6 @@ export const isEventPosting = (startDate: Date, endDate: Date): boolean => {
  * @returns true if the date is in the past
  * @returns false if the date is in the future
  */
-export const isPast = (date: string): boolean => {
+export const isPast = (date: Date): boolean => {
   return moment(date).isBefore(moment().toDate());
 };

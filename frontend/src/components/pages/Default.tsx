@@ -15,9 +15,11 @@ import Logout from "../auth/Logout";
 import * as Routes from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
+import AdminPostingCard from "../admin/AdminPostingCard";
+import getPostingFilterStatus from "../../utils/TypeUtils";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
-import AdminPostingCard, { PostingStatus } from "../admin/AdminPostingCard";
-import { isPast } from "../../utils/DateTimeUtils";
+
+type SimplePostingResponseDTO = Omit<PostingResponseDTO, "employees" | "type">;
 
 const POSTINGS = gql`
   query Default_postings {
@@ -48,12 +50,12 @@ const POSTINGS = gql`
   }
 `;
 
-type Posting = Omit<PostingResponseDTO, "employees" | "type">;
-
 const Default = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
-  const [postings, setPostings] = useState<Posting[] | null>(null);
+  const [postings, setPostings] = useState<SimplePostingResponseDTO[] | null>(
+    null,
+  );
 
   useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
@@ -69,19 +71,6 @@ const Default = (): React.ReactElement => {
   const navigateToAdminSchedule = (id: string) => {
     const route = generatePath(Routes.ADMIN_SCHEDULE_POSTING_PAGE, { id });
     history.push(route);
-  };
-
-  const getPostingStatus = (posting: Posting): PostingStatus => {
-    if (posting.status === "DRAFT") {
-      return PostingStatus.DRAFT;
-    }
-    if (isPast(posting.autoClosingDate)) {
-      return PostingStatus.PAST;
-    }
-    if (posting.shifts.length === 0) {
-      return PostingStatus.UNSCHEDULED;
-    }
-    return PostingStatus.SCHEDULED;
   };
 
   return (
@@ -103,7 +92,11 @@ const Default = (): React.ReactElement => {
             <Box key={posting.id} pb="24px">
               <AdminPostingCard
                 key={posting.id}
-                status={getPostingStatus(posting)}
+                status={getPostingFilterStatus(
+                  posting.status,
+                  new Date(posting.endDate),
+                  posting.shifts,
+                )}
                 role={authenticatedUser.role}
                 id={posting.id}
                 title={
