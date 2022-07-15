@@ -101,11 +101,7 @@ interface IUserService {
    * @param role role that the user will have
    * @throws Error if invite creation fails
    */
-  createUserInvite(
-    email: string,
-    role: Role,
-    emailService: IEmailService,
-  ): Promise<UserInviteResponse>;
+  createUserInvite(email: string, role: Role): Promise<UserInviteResponse>;
 
   /**
    * Delete user invite link based on invitee email

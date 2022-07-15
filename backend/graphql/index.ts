@@ -167,7 +167,7 @@ const graphQLMiddlewares = {
     updateUser: authorizedByAdmin(),
     deleteUserById: authorizedByAdmin(),
     deleteUserByEmail: authorizedByAdmin(),
-    createUserInvite: authorizedByAllRoles(),
+    createUserInvite: authorizedByAdmin(),
     createVolunteerUser: authorizedByAdminAndVolunteer(),
     updateVolunteerUserById: authorizedByAdminAndVolunteer(),
     deleteVolunteerUserById: authorizedByAdmin(),
