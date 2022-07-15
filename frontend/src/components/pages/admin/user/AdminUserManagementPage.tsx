@@ -77,6 +77,11 @@ const AdminUserManagementPage = (): React.ReactElement => {
     }
   };
 
+  // Temporary state for user management row checkboxes in testing #453.
+  const [row1Checked, setRow1Checked] = useState(false);
+  const [row2Checked, setRow2Checked] = useState(false);
+  const [row3Checked, setRow3Checked] = useState(false);
+
   return (
     <>
       <Box>
@@ -92,36 +97,36 @@ const AdminUserManagementPage = (): React.ReactElement => {
         {error && <ErrorModal />}
       </Box>
 
-      {/* Temporary table for testing #453, please remove later */}
+      {/* Temporary table for testing #453, please remove later. */}
       <Box m={20} border="1px" borderRadius="md" borderColor="gray.200">
         <Table variant="brand">
           <Tbody>
             <UserManagementTableRow
               firstName="Amanda"
-              lastName="Du"
+              lastName="Du 1"
               pronouns="She/Her"
               email="atdu@uwblueprint.org"
               phoneNumber="123-456-7890"
-              checked={false}
-              onCheck={() => (console.log("checkbox toggled"))}
+              checked={row1Checked}
+              onCheck={() => setRow1Checked(!row1Checked)}
             />
             <UserManagementTableRow
               firstName="Amanda"
-              lastName="Du"
+              lastName="Du 2"
               pronouns="She/Her"
               email="atdu@uwblueprint.org"
               phoneNumber="123-456-7890"
-              checked
-              onCheck={() => (console.log("checkbox toggled"))}
+              checked={row2Checked}
+              onCheck={() => setRow2Checked(!row2Checked)}
             />
             <UserManagementTableRow
               firstName="Amanda"
-              lastName="Du"
+              lastName="Du 3"
               pronouns="She/Her"
               email="atdu@uwblueprint.org"
               phoneNumber="123-456-7890"
-              checked={false}
-              onCheck={() => (console.log("checkbox toggled"))}
+              checked={row3Checked}
+              onCheck={() => setRow3Checked(!row3Checked)}
             />
           </Tbody>
         </Table>

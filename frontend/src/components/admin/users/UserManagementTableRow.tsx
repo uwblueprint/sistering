@@ -1,5 +1,14 @@
-import { Box, Checkbox, Icon, Tr, Td, Text, Tooltip, useDisclosure } from "@chakra-ui/react";
-import { MdMoreHoriz } from "react-icons/md"
+import {
+  Box,
+  Checkbox,
+  Icon,
+  Tr,
+  Td,
+  Text,
+  Tooltip,
+  useDisclosure,
+} from "@chakra-ui/react";
+import { MdMoreHoriz } from "react-icons/md";
 import React from "react";
 import ProfileDrawer from "./ProfileDrawer";
 
@@ -22,14 +31,14 @@ const UserManagementTableRow = ({
   checked,
   onCheck,
 }: UserManagementTableRowProps): React.ReactElement => {
-
+  // For the ProfileDrawer.
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <Tr bgColor={checked ? "purple.50" : undefined}>
       <Td mr={0} pr={0}>
         <Box position="relative">
-          <Checkbox position="absolute" top={0} bottom={0} onChange={onCheck}/>
+          <Checkbox position="absolute" top={0} bottom={0} onChange={onCheck} />
         </Box>
       </Td>
       <Td>
@@ -50,18 +59,24 @@ const UserManagementTableRow = ({
       <Td textAlign="right">
         <Tooltip label="View details" placement="bottom-start">
           <span>
-            <Icon as={MdMoreHoriz} w={6} h={6} onClick={onOpen} cursor="pointer"/>
+            <Icon
+              as={MdMoreHoriz}
+              w={6}
+              h={6}
+              onClick={onOpen}
+              cursor="pointer"
+            />
             <ProfileDrawer
               isOpen={isOpen}
               onClose={onClose}
+              firstName={firstName}
+              lastName={lastName}
             />
           </span>
         </Tooltip>
-      </Td>  
+      </Td>
     </Tr>
-  ); 
+  );
 };
 
 export default UserManagementTableRow;
-
-
