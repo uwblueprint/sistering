@@ -34,6 +34,8 @@ export const VOLUNTEER_POSTINGS_PAGE = "/volunteer/postings";
 
 export const VOLUNTEER_SHIFTS_PAGE = "/volunteer/shifts";
 
+export const ADMIN_CREATE_POSTING_PAGE = "/admin/posting/create";
+
 export const ADMIN_POSTING_CREATE_BASIC_INFO_PAGE =
   "/admin/posting/create/basic-info";
 
