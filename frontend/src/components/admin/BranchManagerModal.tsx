@@ -14,7 +14,6 @@ import {
   useBoolean,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import cloneDeep from "lodash.clonedeep";
 
 import BranchManagerTable from "./BranchManagerTable";
 import EditModal from "./EditModal";
@@ -72,9 +71,7 @@ const BranchManagerModal = ({
   useQuery<BranchQueryResponse>(BRANCHES, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      const branchesCopy = cloneDeep(data.branches);
-      branchesCopy.sort((a, b) => Number(a.id) - Number(b.id));
-      setCurrentBranches(branchesCopy);
+      setCurrentBranches(data.branches);
     },
   });
 
