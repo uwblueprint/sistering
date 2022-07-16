@@ -472,9 +472,7 @@ class UserService implements IUserService {
       };
     } catch (error: unknown) {
       Logger.error(
-        `Issue with either creating user invite row. Reason = ${getErrorMessage(
-          error,
-        )}`,
+        `Failed to create user invite row. Reason = ${getErrorMessage(error)}`,
       );
       throw error;
     }
