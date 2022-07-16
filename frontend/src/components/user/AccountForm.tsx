@@ -14,6 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import moment from "moment";
 
+import { useHistory } from "react-router-dom";
 import {
   SkillResponseDTO,
   SkillQueryResponse,
@@ -100,6 +101,7 @@ const AccountForm = ({
   onVolunteerEdit,
   onEmployeeEdit,
 }: AccountFormProps): React.ReactElement => {
+  const history = useHistory();
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [skills, setSkills] = useState<SkillResponseDTO[]>([]);
   const [languages, setLanguages] = useState<LanguageResponseDTO[]>([]);
@@ -404,27 +406,39 @@ const AccountForm = ({
                 }
               />
             </SimpleGrid>
+            {mode === AccountFormMode.CREATE && (
+              <Flex mt={8}>
+                <Checkbox onChange={() => toggleAgreeToTerms()}>
+                  <Link
+                    href="https://firebasestorage.googleapis.com/v0/b/sistering-dev.appspot.com/o/sistering-confidentiality-policy.pdf?alt=media&token=0ce8f2d1-6e6f-4ece-9a4f-5358790b5db6"
+                    target="_blank"
+                  >
+                    I have read and agree to the terms and conditions&nbsp;
+                  </Link>
+                  <Box as="span" color="red">
+                    *
+                  </Box>
+                </Checkbox>
+              </Flex>
+            )}
             <Flex mt={8}>
-              <Checkbox onChange={() => toggleAgreeToTerms()}>
-                <Link
-                  href="https://firebasestorage.googleapis.com/v0/b/sistering-dev.appspot.com/o/sistering-confidentiality-policy.pdf?alt=media&token=0ce8f2d1-6e6f-4ece-9a4f-5358790b5db6"
-                  target="_blank"
+              {mode === AccountFormMode.EDIT && (
+                <Button
+                  mr={4}
+                  colorScheme="gray"
+                  onClick={() => history.goBack()}
                 >
-                  I have read and agree to the terms and conditions&nbsp;
-                </Link>
-                <Box as="span" color="red">
-                  *
-                </Box>
-              </Checkbox>
+                  Cancel
+                </Button>
+              )}
+              <Button
+                colorScheme="brand"
+                isDisabled={mode === AccountFormMode.CREATE && !agreeToTerms}
+                type="submit"
+              >
+                {mode === AccountFormMode.CREATE ? "Create" : "Save Changes"}
+              </Button>
             </Flex>
-            <Button
-              mt={4}
-              colorScheme="brand"
-              isDisabled={!agreeToTerms}
-              type="submit"
-            >
-              {mode === AccountFormMode.CREATE ? "Create" : "Edit"}
-            </Button>
           </Form>
         )}
       </Formik>
