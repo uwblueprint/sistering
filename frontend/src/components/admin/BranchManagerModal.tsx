@@ -14,7 +14,6 @@ import {
   useBoolean,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
-import cloneDeep from "lodash.clonedeep";
 
 import BranchManagerTable from "./BranchManagerTable";
 import EditModal from "./EditModal";
