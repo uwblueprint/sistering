@@ -91,20 +91,23 @@ const AdminScheduleVolunteerTable = ({
         </Flex>
       </VStack>
       <VStack w="full" spacing={0} overflow="auto">
-        {signupsToDisplay.map((signup, i) => (
-          <AdminScheduleVolunteerRow
-            key={i}
-            volunteerID={signup.volunteer.id}
-            volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
-            note={signup.note}
-            isConfirmed={
-              signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
-            }
-            isDisabled={!isEditing}
-            onSignupCheckboxClick={onSignupCheckboxClick}
-            isReadOnly={isReadOnly}
-          />
-        ))}
+        {signupsToDisplay.map((signup, i) => {
+          const isSignupConfirmed =
+            signup.status === "CONFIRMED" || signup.status === "PUBLISHED";
+
+          return isReadOnly && !isSignupConfirmed ? undefined : (
+            <AdminScheduleVolunteerRow
+              key={i}
+              volunteerID={signup.volunteer.id}
+              volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
+              note={signup.note}
+              isConfirmed={isSignupConfirmed}
+              isDisabled={!isEditing}
+              onSignupCheckboxClick={onSignupCheckboxClick}
+              isReadOnly={isReadOnly}
+            />
+          );
+        })}
       </VStack>
     </VStack>
   );
