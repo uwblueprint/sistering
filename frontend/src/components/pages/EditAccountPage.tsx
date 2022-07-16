@@ -1,6 +1,7 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { Container, Divider, Text } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
+import moment from "moment";
 import {
   UpdateEmployeeUserDTO,
   UpdateVolunteerUserDTO,
@@ -16,30 +17,6 @@ import ProfilePhotoForm from "../user/ProfilePhotoForm";
 import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 
-const VOLUNTEER_BY_ID = gql`
-  query VolunteerUserById($id: ID!) {
-    volunteerUserById(id: $id) {
-      id
-      firstName
-      lastName
-      email
-      phoneNumber
-      emergencyContactPhone
-      hireDate
-      dateOfBirth
-      skills {
-        id
-        name
-      }
-      languages
-      branches {
-        id
-        name
-      }
-    }
-  }
-`;
-
 const EMPLOYEE_BY_ID = gql`
   query EmployeeUserById($id: ID!) {
     employeeUserById(id: $id) {
@@ -49,6 +26,31 @@ const EMPLOYEE_BY_ID = gql`
       email
       phoneNumber
       emergencyContactPhone
+      languages
+      branches {
+        id
+        name
+      }
+    }
+  }
+`;
+
+const VOLUNTEER_BY_ID = gql`
+  query VolunteerUserById($id: ID!) {
+    volunteerUserById(id: $id) {
+      id
+      firstName
+      lastName
+      email
+      dateOfBirth
+      pronouns
+      phoneNumber
+      emergencyContactPhone
+      hireDate
+      skills {
+        id
+        name
+      }
       languages
       branches {
         id
@@ -99,11 +101,30 @@ const EditAccountPage = (): React.ReactElement => {
   const [
     editEmployee,
     { loading: editEmployeeLoading, error: editEmployeeError },
-  ] = useMutation(UPDATE_EMPLOYEE_USER);
+  ] = useMutation(UPDATE_EMPLOYEE_USER, {
+    refetchQueries: [
+      {
+        query: EMPLOYEE_BY_ID,
+        variables: {
+          id: authenticatedUser?.id,
+        },
+      },
+    ],
+  });
+
   const [
     editVolunteer,
     { loading: editVolunteerLoading, error: editVolunteerError },
-  ] = useMutation(UPDATE_VOLUNTEER_USER);
+  ] = useMutation(UPDATE_VOLUNTEER_USER, {
+    refetchQueries: [
+      {
+        query: VOLUNTEER_BY_ID,
+        variables: {
+          id: authenticatedUser?.id,
+        },
+      },
+    ],
+  });
 
   if (editEmployeeLoading || editVolunteerLoading) {
     return <Loading />;
@@ -131,8 +152,6 @@ const EditAccountPage = (): React.ReactElement => {
     });
   };
 
-  console.log(user);
-
   return (
     <>
       <SignupNavbar />
@@ -154,10 +173,12 @@ const EditAccountPage = (): React.ReactElement => {
             firstName={user?.firstName}
             lastName={user?.lastName}
             email={user?.email}
+            dateOfBirth={moment(user?.dateOfBirth).format("YYYY-MM-DD")}
+            pronouns={user?.pronouns}
             phoneNumber={user?.phoneNumber}
             emergencyNumber={user?.emergencyContactPhone}
             prevLanguages={user?.languages?.map((language, i) => ({
-              id: i.toString(),
+              id: String(i + 1),
               name: language,
             }))}
             onEmployeeEdit={onEmployeeEdit}

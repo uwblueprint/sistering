@@ -72,10 +72,10 @@ const SelectorField = ({
         <Text fontWeight="medium" mb={3}>
           Selected {label}
         </Text>
-        <Flex>
+        <Flex wrap="wrap">
           {values.length > 0 ? (
             values.map((value) => (
-              <Tag variant="brand" key={value.id} mr={3} py={1} px={3}>
+              <Tag variant="brand" key={value.id} mb={2} mr={3} py={1} px={3}>
                 {value.name}
                 <TagCloseButton onClick={() => onDeselect(value.id)} />
               </Tag>

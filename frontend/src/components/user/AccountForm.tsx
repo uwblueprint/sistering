@@ -144,7 +144,7 @@ const AccountForm = ({
   useEffect(() => {
     const newLanguages: LanguageResponseDTO[] = LANGUAGES.map(
       (language, i) => ({
-        id: (i + 1).toString(),
+        id: String(i + 1),
         name: language,
       }),
     );
@@ -240,7 +240,7 @@ const AccountForm = ({
           emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
           hireDate: new Date(),
-          dateOfBirth: moment(values.dateOfBirth, "YYYY-MM-DD").toDate(),
+          dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
           languages: values.languages.map(
             (language) => LANGUAGES[Number(language.id) - 1],
@@ -278,7 +278,7 @@ const AccountForm = ({
           emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
           hireDate: new Date(),
-          dateOfBirth: moment(values.dateOfBirth, "YYYY-MM-DD").toDate(),
+          dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
           languages: values.languages.map(
             (language) => LANGUAGES[Number(language.id) - 1],
