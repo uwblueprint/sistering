@@ -143,12 +143,6 @@ const App = (): React.ReactElement => {
 
                     <PrivateRoute
                       exact
-                      path={Routes.EDIT_ACCOUNT_PAGE}
-                      component={EditAccountPage}
-                    />
-
-                    <PrivateRoute
-                      exact
                       path={Routes.ADMIN_HOMEPAGE}
                       component={AdminHomepage}
                     />
