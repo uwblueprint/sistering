@@ -32,7 +32,7 @@ export type UserDTO = {
 export type VolunteerDTO = {
   id: string;
   hireDate: Date;
-  dateOfBirth: string | null;
+  dateOfBirth: Date | null;
   pronouns: string | null;
   skills: SkillResponseDTO[];
 };
