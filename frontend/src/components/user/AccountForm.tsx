@@ -49,6 +49,7 @@ type AccountFormProps = {
   profilePhoto: string;
   firstName?: string;
   lastName?: string;
+  email: string;
   dateOfBirth?: string | null;
   pronouns?: string | null;
   phoneNumber?: string | null;
@@ -87,6 +88,7 @@ const AccountForm = ({
   profilePhoto, // TODO: Integrate Profile Picture into form submittion
   firstName,
   lastName,
+  email,
   dateOfBirth,
   pronouns,
   phoneNumber,
@@ -215,7 +217,7 @@ const AccountForm = ({
         onEmployeeCreate({
           firstName: values.firstName,
           lastName: values.lastName,
-          email: "email123@gmail.com",
+          email,
           phoneNumber: values.phoneNumber,
           emergencyContactEmail: "",
           emergencyContactName: "",
@@ -230,7 +232,7 @@ const AccountForm = ({
         onVolunteerCreate({
           firstName: values.firstName,
           lastName: values.lastName,
-          email: "johndoe@uwblueprint.org",
+          email,
           password: values.password,
           phoneNumber: values.phoneNumber,
           pronouns: values.pronouns,
@@ -255,7 +257,7 @@ const AccountForm = ({
         onEmployeeEdit({
           firstName: values.firstName,
           lastName: values.lastName,
-          email: "email123@gmail.com",
+          email,
           phoneNumber: values.phoneNumber,
           emergencyContactEmail: "",
           emergencyContactName: "",
@@ -269,7 +271,7 @@ const AccountForm = ({
         onVolunteerEdit({
           firstName: values.firstName,
           lastName: values.lastName,
-          email: "johndoe@uwblueprint.org",
+          email,
           phoneNumber: values.phoneNumber,
           pronouns: values.pronouns,
           emergencyContactEmail: "",

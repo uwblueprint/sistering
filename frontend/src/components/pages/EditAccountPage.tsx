@@ -153,6 +153,7 @@ const EditAccountPage = (): React.ReactElement => {
             profilePhoto={profilePhoto}
             firstName={user?.firstName}
             lastName={user?.lastName}
+            email={user?.email}
             phoneNumber={user?.phoneNumber}
             emergencyNumber={user?.emergencyContactPhone}
             prevLanguages={user?.languages?.map((language, i) => ({

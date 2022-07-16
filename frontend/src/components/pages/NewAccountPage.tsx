@@ -76,6 +76,7 @@ const NewAccountPage = (): React.ReactElement => {
         <AccountForm
           mode={AccountFormMode.CREATE}
           isAdmin={isAdmin}
+          email="testemail123@domain.com"
           profilePhoto={profilePhoto}
           onEmployeeCreate={onEmployeeCreate}
           onVolunteerCreate={onVolunteerCreate}
