@@ -13,7 +13,7 @@ import ErrorModal from "../../common/ErrorModal";
 import { AdminNavbarTabs, AdminPages } from "../../../constants/Tabs";
 import { Role } from "../../../types/AuthTypes";
 import { PostingResponseDTO } from "../../../types/api/PostingTypes";
-import getPostingFilterStatus from "../../../utils/TypeUtils";
+import { getPostingFilterStatus } from "../../../utils/TypeUtils";
 import { PostingFilterStatus } from "../../../types/PostingTypes";
 
 type SimplePostingResponseDTO = Omit<PostingResponseDTO, "employees" | "type">;

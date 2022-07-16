@@ -13,6 +13,7 @@ type AdminScheduleVolunteerTableProps = {
   isEditing: boolean;
   onEditSaveClick: () => void;
   submitSignupsLoading: boolean;
+  isReadOnly: boolean;
 };
 
 const AdminScheduleVolunteerTable = ({
@@ -23,6 +24,7 @@ const AdminScheduleVolunteerTable = ({
   isEditing,
   onEditSaveClick,
   submitSignupsLoading,
+  isReadOnly,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [signupsToDisplay, setSignupsToDisplay] = useState<
     AdminSchedulingSignupsAndVolunteerResponseDTO[]
@@ -54,30 +56,34 @@ const AdminScheduleVolunteerTable = ({
         <Flex w="full" alignItems="center">
           <Text textStyle="body-bold">Available Volunteers</Text>
           <Spacer />
-          <Button
-            variant="outline"
-            w="64px"
-            h="24px"
-            px="18px"
-            fontSize="12px"
-            lineHeight="100%"
-            onClick={onEditSaveClick}
-            isLoading={submitSignupsLoading}
-          >
-            {isEditing ? "Save" : "Edit"}
-          </Button>
+          {isReadOnly ? undefined : (
+            <Button
+              variant="outline"
+              w="64px"
+              h="24px"
+              px="18px"
+              fontSize="12px"
+              lineHeight="100%"
+              onClick={onEditSaveClick}
+              isLoading={submitSignupsLoading}
+            >
+              {isEditing ? "Save" : "Edit"}
+            </Button>
+          )}
         </Flex>
         <Flex w="full" alignItems="center">
-          <Text
-            textStyle="button-semibold"
-            fontSize="12px"
-            color="violet"
-            textDecor="underline"
-            cursor="pointer"
-            onClick={onSelectAllSignupsClick}
-          >
-            Select All
-          </Text>
+          {isReadOnly ? undefined : (
+            <Text
+              textStyle="button-semibold"
+              fontSize="12px"
+              color="violet"
+              textDecor="underline"
+              cursor="pointer"
+              onClick={onSelectAllSignupsClick}
+            >
+              Select All
+            </Text>
+          )}
           <Spacer />
           <Text textStyle="caption" fontSize="12px">
             Volunteers per shift: {signups[0] ? signups[0].numVolunteers : ""}
@@ -96,6 +102,7 @@ const AdminScheduleVolunteerTable = ({
             }
             isDisabled={!isEditing}
             onSignupCheckboxClick={onSignupCheckboxClick}
+            isReadOnly={isReadOnly}
           />
         ))}
       </VStack>

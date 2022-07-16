@@ -16,7 +16,7 @@ import * as Routes from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 import AdminPostingCard from "../admin/AdminPostingCard";
-import getPostingFilterStatus from "../../utils/TypeUtils";
+import { getPostingFilterStatus } from "../../utils/TypeUtils";
 import { PostingResponseDTO } from "../../types/api/PostingTypes";
 
 type SimplePostingResponseDTO = Omit<PostingResponseDTO, "employees" | "type">;

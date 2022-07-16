@@ -24,6 +24,8 @@ import Loading from "../../../common/Loading";
 import { getUTCDateForDateTimeString } from "../../../../utils/DateTimeUtils";
 import AuthContext from "../../../../contexts/AuthContext";
 import { Role } from "../../../../types/AuthTypes";
+import { getRealPostingFilterStatus } from "../../../../utils/TypeUtils";
+import { PostingFilterStatus } from "../../../../types/PostingTypes";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -91,6 +93,7 @@ const POSTING = gql`
       }
       startDate
       endDate
+      status
     }
   }
 `;
@@ -122,8 +125,6 @@ const ShiftScheduleCalendar = ({
     />
   );
 
-// TODO: Make a read only variant depending on role == EMPLOYEE
-// TODO: employee variant? We need to make this page available to employee otherwise
 const SchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const { authenticatedUser } = useContext(AuthContext);
@@ -328,8 +329,15 @@ const SchedulePostingPage = (): React.ReactElement => {
     setCurrentView(AdminScheduleViews.CalendarView);
   };
 
-  // TODO: Or posting is a "past" posting, ie; end date is in the past
-  const isReadOnly = authenticatedUser && authenticatedUser.role !== Role.Admin;
+  const isReadOnly =
+    (authenticatedUser && authenticatedUser.role !== Role.Admin) ||
+    getRealPostingFilterStatus(
+      postingDetails?.status,
+      new Date(postingDetails?.endDate),
+      shifts.flatMap((shift) =>
+        shift.signups.flatMap((signup) => signup.status),
+      ),
+    ) === PostingFilterStatus.PAST;
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
@@ -346,13 +354,13 @@ const SchedulePostingPage = (): React.ReactElement => {
             <AdminSchedulePageHeader
               branchName={postingDetails?.branch?.name}
             />
-            {/* // TODO: Here in header, pass edit */}
             <AdminPostingScheduleHeader
               postingID={Number(id)}
               postingName={postingDetails?.title}
               onReviewClick={() =>
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
+              isReadOnly={isReadOnly}
             />
             {tableDataLoading || postingLoading ? (
               <Loading />
@@ -365,7 +373,6 @@ const SchedulePostingPage = (): React.ReactElement => {
             )}
           </Box>
           <Box w="400px" overflow="hidden">
-            {/* // TODO: Here in header, pass edit */}
             <ScheduleSidePanel
               shifts={sidePanelShifts}
               currentlyEditingShift={currentlyEditingShift}
@@ -376,6 +383,7 @@ const SchedulePostingPage = (): React.ReactElement => {
               submitSignupsLoading={submitSignupsLoading}
               selectedShift={selectedShift}
               setSelectedShift={setSelectedShift}
+              isReadOnly={isReadOnly}
             />
           </Box>
         </Flex>
