@@ -19,6 +19,8 @@ type UserManagementTableRowProps = {
   email: string;
   phoneNumber: string;
   checked: boolean;
+
+  // TODO: Replace param type
   onCheck: (params: any) => any;
 };
 
@@ -58,7 +60,7 @@ const UserManagementTableRow = ({
       </Td>
       <Td textAlign="right">
         <Tooltip label="View details" placement="bottom-start">
-          <span>
+          <Box as="span">
             <Icon
               as={MdMoreHoriz}
               w={6}
@@ -66,14 +68,14 @@ const UserManagementTableRow = ({
               onClick={onOpen}
               cursor="pointer"
             />
-            <ProfileDrawer
-              isOpen={isOpen}
-              onClose={onClose}
-              firstName={firstName}
-              lastName={lastName}
-            />
-          </span>
+          </Box>
         </Tooltip>
+        <ProfileDrawer
+          isOpen={isOpen}
+          onClose={onClose}
+          firstName={firstName}
+          lastName={lastName}
+        />
       </Td>
     </Tr>
   );
