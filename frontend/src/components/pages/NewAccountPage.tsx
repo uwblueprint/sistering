@@ -76,7 +76,7 @@ const NewAccountPage = (): React.ReactElement => {
         <AccountForm
           mode={AccountFormMode.CREATE}
           isAdmin={isAdmin}
-          email="testemail123@domain.com"
+          email="testemail123@domain.com" // TODO: Replace with firebase email
           profilePhoto={profilePhoto}
           onEmployeeCreate={onEmployeeCreate}
           onVolunteerCreate={onVolunteerCreate}
