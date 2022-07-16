@@ -1147,43 +1147,42 @@ class UserService implements IUserService {
     let updatedFirebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      const [oldEmployeeUser, updatedEmployeeUser] = await prisma.$transaction([
-        prisma.employee.findUnique({
-          where: {
-            id: Number(userId),
-          },
-          include: {
-            user: true,
-            branches: true,
-          },
-        }),
-        prisma.employee.update({
-          where: {
-            id: Number(userId),
-          },
-          data: {
-            user: {
-              update: {
-                firstName: employeeUser.firstName,
-                lastName: employeeUser.lastName,
-                role: "EMPLOYEE",
-                phoneNumber: employeeUser.phoneNumber,
-                emergencyContactName: employeeUser.emergencyContactName,
-                emergencyContactPhone: employeeUser.emergencyContactPhone,
-                emergencyContactEmail: employeeUser.emergencyContactEmail,
-              },
-            },
-            branches: {
-              set: [],
-              connect: convertToNumberIds(employeeUser.branches),
+      const oldEmployeeUser = await prisma.employee.findUnique({
+        where: {
+          id: Number(userId),
+        },
+        include: {
+          user: true,
+          branches: true,
+        },
+      });
+      const updatedEmployeeUser = await prisma.employee.update({
+        where: {
+          id: Number(userId),
+        },
+        data: {
+          user: {
+            update: {
+              firstName: employeeUser.firstName,
+              lastName: employeeUser.lastName,
+              role: oldEmployeeUser?.user.role,
+              phoneNumber: employeeUser.phoneNumber,
+              emergencyContactName: employeeUser.emergencyContactName,
+              emergencyContactPhone: employeeUser.emergencyContactPhone,
+              emergencyContactEmail: employeeUser.emergencyContactEmail,
+              languages: employeeUser.languages,
             },
           },
-          include: {
-            branches: true,
-            user: true,
+          branches: {
+            set: [],
+            connect: convertToNumberIds(employeeUser.branches),
           },
-        }),
-      ]);
+        },
+        include: {
+          branches: true,
+          user: true,
+        },
+      });
       try {
         updatedFirebaseUser = await firebaseAdmin
           .auth()

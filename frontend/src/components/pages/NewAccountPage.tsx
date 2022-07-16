@@ -2,26 +2,26 @@ import { Container, Divider, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import SignupNavbar from "../common/SignupNavbar";
-import AccountForm from "../user/AccountForm";
+import AccountForm, { AccountFormMode } from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
 import Loading from "../common/Loading";
 import ErrorModal from "../common/ErrorModal";
 import {
-  CreateEmployeeDTO,
-  CreateVolunteerDTO,
+  CreateEmployeeUserDTO,
+  CreateVolunteerUserDTO,
 } from "../../types/api/UserType";
 
-const CREATE_VOLUNTEER_USER = gql`
-  mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
-    createVolunteerUser(volunteerUser: $volunteer) {
+const CREATE_EMPLOYEE_USER = gql`
+  mutation CreateEmployeeUser($employee: CreateEmployeeUserDTO!) {
+    createEmployeeUser(employeeUser: $employee) {
       id
     }
   }
 `;
 
-const CREATE_EMPLOYEE_USER = gql`
-  mutation CreateEmployeeUser($employee: CreateEmployeeUserDTO!) {
-    createEmployeeUser(employeeUser: $employee) {
+const CREATE_VOLUNTEER_USER = gql`
+  mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
+    createVolunteerUser(volunteerUser: $volunteer) {
       id
     }
   }
@@ -44,7 +44,7 @@ const NewAccountPage = (): React.ReactElement => {
   }
   const isError = createEmployeeError || createVolunteerError;
 
-  const onEmployeeCreate = async (employee: CreateEmployeeDTO) => {
+  const onEmployeeCreate = async (employee: CreateEmployeeUserDTO) => {
     await createEmployee({
       variables: {
         employee,
@@ -52,13 +52,14 @@ const NewAccountPage = (): React.ReactElement => {
     });
   };
 
-  const onVolunteerCreate = async (volunteer: CreateVolunteerDTO) => {
+  const onVolunteerCreate = async (volunteer: CreateVolunteerUserDTO) => {
     await createVolunteer({
       variables: {
         volunteer,
       },
     });
   };
+
   return (
     <>
       <SignupNavbar />
@@ -73,7 +74,9 @@ const NewAccountPage = (): React.ReactElement => {
         />
         <Divider my={8} />
         <AccountForm
+          mode={AccountFormMode.CREATE}
           isAdmin={isAdmin}
+          email="testemail123@domain.com" // TODO: Replace with firebase email
           profilePhoto={profilePhoto}
           onEmployeeCreate={onEmployeeCreate}
           onVolunteerCreate={onVolunteerCreate}
