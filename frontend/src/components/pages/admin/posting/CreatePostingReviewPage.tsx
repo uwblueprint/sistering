@@ -7,10 +7,7 @@ import CreatePostingReview from "../../../admin/posting/CreatePostingReview";
 import SideNavBarWithTitle from "../../../common/SideNavbarWithTitle";
 import ErrorModal from "../../../common/ErrorModal";
 
-import {
-  ADMIN_POSTING_CREATE_SHIFTS_PAGE,
-  HOME_PAGE,
-} from "../../../../constants/Routes";
+import { HOME_PAGE } from "../../../../constants/Routes";
 import PostingContext from "../../../../contexts/admin/PostingContext";
 
 const CREATE_POSTING = gql`
@@ -23,7 +20,13 @@ const CREATE_POSTING = gql`
   }
 `;
 
-const CreatePostingReviewPage = (): React.ReactElement => {
+type CreatePostingPageProps = {
+  navigateBack: () => void;
+};
+
+const CreatePostingReviewPage = ({
+  navigateBack,
+}: CreatePostingPageProps): React.ReactElement => {
   const { branch, skills, employees, ...rest } = useContext(PostingContext);
   const [
     createPosting,
@@ -41,7 +44,6 @@ const CreatePostingReviewPage = (): React.ReactElement => {
 
   const history = useHistory();
   const navigateToHome = () => history.push(HOME_PAGE);
-  const navigateBack = () => history.push(ADMIN_POSTING_CREATE_SHIFTS_PAGE);
 
   return (
     <Box>

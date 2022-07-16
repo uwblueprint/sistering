@@ -5,10 +5,10 @@ import ShiftService from "../../services/implementations/shiftService";
 import UserService from "../../services/implementations/userService";
 import IUserService from "../../services/interfaces/userService";
 import {
-  PostingRequestDTO,
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
   PostingStatus,
+  PostingRequestDTO,
 } from "../../types";
 
 const userService: IUserService = new UserService();

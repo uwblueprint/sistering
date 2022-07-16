@@ -344,7 +344,6 @@ const AccountForm = ({
                         phoneNumber: values.phoneNumber,
                         password: values.password,
                         branches: [],
-                        title: "",
                       })
                   : () =>
                       onVolunteerCreate({

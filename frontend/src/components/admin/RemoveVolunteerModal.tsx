@@ -20,20 +20,18 @@ type RemoveVolunteerModalProps = {
   isOpen: boolean;
   shiftId: string;
   userId: string;
-  status: ShiftSignupStatus;
   numVolunteers: number;
+  status: ShiftSignupStatus;
   note: string;
   onClose(): void;
   removeSignup: (shiftId: string, userId: string) => void;
 };
 
-const UPDATE_SHIFT_SIGNUP = gql`
-  mutation UpdateShiftSignup(
-    $shiftId: ID!
-    $userId: ID!
-    $update: UpdateShiftSignupRequestDTO!
+const UPSERT_DELETE_SHIFT_SIGNUP = gql`
+  mutation UpsertDeleteShiftSignups(
+    $upsertDeleteShifts: UpsertDeleteShiftSignupRequestDTO!
   ) {
-    updateShiftSignup(shiftId: $shiftId, userId: $userId, update: $update) {
+    upsertDeleteShiftSignups(upsertDeleteShifts: $upsertDeleteShifts) {
       shiftId
       userId
       numVolunteers
@@ -50,27 +48,26 @@ const RemoveVolunteerModal = ({
   isOpen = false,
   shiftId,
   userId,
-  status,
   numVolunteers,
+  status,
   note,
   onClose = () => {},
   removeSignup,
 }: RemoveVolunteerModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
 
-  const [updateShiftSignup, { loading }] = useMutation<{
+  const [upsertDeleteShiftSignup, { loading }] = useMutation<{
     shift: ShiftSignupResponseDTO;
-  }>(UPDATE_SHIFT_SIGNUP);
+  }>(UPSERT_DELETE_SHIFT_SIGNUP);
 
   const submitUpdateRequest = async () => {
-    await updateShiftSignup({
+    await upsertDeleteShiftSignup({
       variables: {
-        shiftId,
-        userId,
-        update: {
-          numVolunteers,
-          note,
-          status,
+        upsertDeleteShifts: {
+          upsertShiftSignups: [
+            { shiftId, userId, numVolunteers, note, status },
+          ],
+          deleteShiftSignups: [],
         },
       },
     });

@@ -1,9 +1,9 @@
+/* eslint-disable class-methods-use-this */
 import * as firebaseAdmin from "firebase-admin";
 import { PrismaClient, User, Skill, Branch } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import {
   CreateUserDTO,
-  Role,
   UpdateUserDTO,
   UserDTO,
   VolunteerUserResponseDTO,
@@ -14,6 +14,8 @@ import {
   CreateEmployeeUserDTO,
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
+  UserInviteResponse,
+  Role,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
@@ -54,8 +56,6 @@ const convertToNumberIds = (ids: string[]): { id: number }[] => {
 };
 
 class UserService implements IUserService {
-  /* eslint-disable class-methods-use-this */
-
   async getUserById(userId: string): Promise<UserDTO> {
     let user: User | null;
     let firebaseUser: firebaseAdmin.auth.UserRecord;
@@ -450,6 +450,50 @@ class UserService implements IUserService {
       }
     } catch (error: unknown) {
       Logger.error(`Failed to delete user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+  }
+
+  async createUserInvite(
+    email: string,
+    role: Role,
+  ): Promise<UserInviteResponse> {
+    try {
+      const userInvite = await prisma.userInvite.create({
+        data: {
+          email,
+          role,
+        },
+      });
+      return {
+        email: userInvite.email,
+        role: userInvite.role.toString() as Role,
+        uuid: userInvite.uuid,
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to create user invite row. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async deleteUserInvite(email: string): Promise<UserInviteResponse> {
+    try {
+      const userInvite = await prisma.userInvite.delete({
+        where: {
+          email,
+        },
+      });
+      return {
+        email: userInvite.email,
+        role: userInvite.role.toString() as Role,
+        uuid: userInvite.uuid,
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to delete user invite row. Reason = ${getErrorMessage(error)}`,
+      );
       throw error;
     }
   }
@@ -931,7 +975,6 @@ class UserService implements IUserService {
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
         branches: convertToBranchResponseDTO(employee.branches),
-        title: employee.title,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -977,7 +1020,6 @@ class UserService implements IUserService {
         role: user.role,
         languages: user.languages,
         branches: convertToBranchResponseDTO(employee.branches),
-        title: employee.title,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -1053,7 +1095,6 @@ class UserService implements IUserService {
                 branches: {
                   connect: convertToNumberIds(employeeUser.branches),
                 },
-                title: employeeUser.title,
               },
             },
           },
@@ -1075,7 +1116,6 @@ class UserService implements IUserService {
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           branches: convertToBranchResponseDTO(employee!.branches),
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-          title: employee!.title,
         };
       } catch (postgresError) {
         try {
@@ -1137,7 +1177,6 @@ class UserService implements IUserService {
               set: [],
               connect: convertToNumberIds(employeeUser.branches),
             },
-            title: employeeUser.title,
           },
           include: {
             branches: true,
@@ -1159,7 +1198,6 @@ class UserService implements IUserService {
           id: String(user.id),
           email: updatedFirebaseUser.email ?? "",
           branches: convertToSkillResponseDTO(updatedEmployeeUser.branches),
-          title: updatedEmployeeUser.title,
         };
       } catch (error: unknown) {
         try {
@@ -1194,7 +1232,6 @@ class UserService implements IUserService {
                 connect: oldEmployeeUser!.branches,
               },
               /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-              title: oldEmployeeUser!.title,
             },
           });
         } catch (postgresError: unknown) {
@@ -1261,7 +1298,6 @@ class UserService implements IUserService {
                     }),
                   },
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                  title: deletedEmployee!.title,
                 },
               },
             },

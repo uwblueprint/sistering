@@ -15,8 +15,14 @@ import {
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
   CreateEmployeeUserDTO,
+  Role,
+  UserInviteResponse,
 } from "../../types";
 import { generateCSV } from "../../utilities/CSVUtils";
+import {
+  adminAccountCreationInviteTemplate,
+  volunteerAccountCreationInviteTemplate,
+} from "../../utilities/templateUtils";
 
 const userService: IUserService = new UserService();
 const emailService: IEmailService = new EmailService(nodemailerConfig);
@@ -44,7 +50,6 @@ const userResolvers = {
       const csv = await generateCSV<UserDTO>({ data: users });
       return csv;
     },
-
     // VolunteerUsers
     volunteerUserById: async (
       _parent: undefined,
@@ -105,6 +110,35 @@ const userResolvers = {
       { email }: { email: string },
     ): Promise<void> => {
       return userService.deleteUserByEmail(email);
+    },
+    createUserInvite: async (
+      _parent: undefined,
+      { email, role }: { email: string; role: Role },
+    ): Promise<UserInviteResponse> => {
+      const results = await userService.createUserInvite(email, role);
+      let subject: string;
+      let htmlBody: string;
+
+      if (role === "VOLUNTEER") {
+        htmlBody = volunteerAccountCreationInviteTemplate(
+          `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
+        );
+        subject = "Welcome to Your Volunteer Account";
+      } else {
+        htmlBody = adminAccountCreationInviteTemplate(
+          `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
+        );
+        subject = "Welcome to Your Admin Account";
+      }
+
+      await emailService.sendEmail(email, subject, htmlBody);
+      return results;
+    },
+    deleteUserInvite: async (
+      _parent: undefined,
+      { email }: { email: string },
+    ): Promise<UserInviteResponse> => {
+      return userService.deleteUserInvite(email);
     },
 
     // VolunteerUsers

@@ -39,9 +39,6 @@ import SampleContextDispatcherContext from "./contexts/SampleContextDispatcherCo
 import EditTeamInfoPage from "./components/pages/EditTeamPage";
 import HooksDemo from "./components/pages/HooksDemo";
 import VolunteerPostingsPage from "./components/pages/volunteer/posting/VolunteerPostingsPage";
-import CreatePostingBasicInfoPage from "./components/pages/admin/posting/CreatePostingBasicInfoPage";
-import CreatePostingShiftsPage from "./components/pages/admin/posting/CreatePostingShiftsPage";
-import CreatePostingReviewPage from "./components/pages/admin/posting/CreatePostingReviewPage";
 import VolunteerPostingDetails from "./components/pages/volunteer/posting/VolunteerPostingDetails";
 import AdminPostingDetails from "./components/pages/admin/posting/AdminPostingDetails";
 
@@ -55,8 +52,9 @@ import CreateAccountPage from "./components/pages/CreateAccountPage";
 import PasswordResetSuccessPage from "./components/auth/PasswordResetSuccess";
 import NewAccountPage from "./components/pages/NewAccountPage";
 import AccountCreatedPage from "./components/pages/AccountCreatedPage";
-import AdminHomepageComponent from "./components/pages/admin/AdminHomepage";
+import AdminHomepage from "./components/pages/admin/AdminHomepage";
 import AdminUserManagementPage from "./components/pages/admin/user/AdminUserManagementPage";
+import CreatePostingPage from "./components/pages/admin/posting/CreatePostingPage";
 
 // Consts for Hotjar and Google Analytics (this is ok to expose)
 const TRACKING_ID = "G-DF2BP4T8YQ";
@@ -140,7 +138,7 @@ const App = (): React.ReactElement => {
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_HOMEPAGE}
-                      component={AdminHomepageComponent}
+                      component={AdminHomepage}
                     />
 
                     <Route
@@ -192,21 +190,9 @@ const App = (): React.ReactElement => {
                     />
                     <PrivateRoute
                       exact
-                      path={Routes.ADMIN_POSTING_CREATE_BASIC_INFO_PAGE}
+                      path={Routes.ADMIN_CREATE_POSTING_PAGE}
                       authorizedRoles={[Role.Admin]}
-                      component={CreatePostingBasicInfoPage}
-                    />
-                    <PrivateRoute
-                      exact
-                      path={Routes.ADMIN_POSTING_CREATE_SHIFTS_PAGE}
-                      authorizedRoles={[Role.Admin]}
-                      component={CreatePostingShiftsPage}
-                    />
-                    <PrivateRoute
-                      exact
-                      path={Routes.ADMIN_POSTING_CREATE_REVIEW_PAGE}
-                      authorizedRoles={[Role.Admin]}
-                      component={CreatePostingReviewPage}
+                      component={CreatePostingPage}
                     />
                     <PrivateRoute
                       exact

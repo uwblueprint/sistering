@@ -13,6 +13,12 @@ export type Token = {
   refreshToken: string;
 };
 
+export type UserInviteResponse = {
+  email: string;
+  role: Role;
+  uuid: string;
+};
+
 export type UserDTO = {
   id: string;
   firstName: string;
@@ -78,7 +84,6 @@ export type UpdateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id">;
 
 export type EmployeeUserDTO = {
   id: string;
-  title: string;
 };
 
 export type EmployeeUserRequestDTO = UserDTO &
@@ -127,7 +132,10 @@ export type ShiftBulkRequestDTO = {
   recurrenceInterval: RecurrenceInterval;
 };
 
-export type ShiftDataWithoutPostingId = Omit<ShiftBulkRequestDTO, "postingId">;
+export type ShiftBulkRequestWithoutPostingId = Omit<
+  ShiftBulkRequestDTO,
+  "postingId"
+>;
 
 export type ShiftResponseDTO = ShiftDTO;
 
@@ -158,9 +166,7 @@ export type ShiftSignupDTO = {
   status: ShiftSignupStatus;
 };
 
-export type CreateShiftSignupDTO = Omit<ShiftSignupDTO, "status">;
-
-export type UpsertShiftSignupDTO = CreateShiftSignupDTO & {
+export type UpsertShiftSignupDTO = Omit<ShiftSignupDTO, "status"> & {
   status: ShiftSignupStatus | null;
 };
 
@@ -212,7 +218,7 @@ export type Letters = "A" | "B" | "C" | "D";
 
 export type PostingType = "INDIVIDUAL" | "GROUP";
 
-export type PostingStatus = "DRAFT" | "PUBLISHED" | "ARCHIVED";
+export type PostingStatus = "DRAFT" | "PUBLISHED";
 
 export type NodemailerConfig = {
   service: "gmail";

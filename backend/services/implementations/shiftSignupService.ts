@@ -3,10 +3,8 @@ import { Prisma, Shift } from ".prisma/client";
 
 import IShiftSignupService from "../interfaces/shiftSignupService";
 import {
-  CreateShiftSignupDTO,
   DeleteShiftSignupDTO,
   ShiftSignupResponseDTO,
-  UpdateShiftSignupRequestDTO,
   UpsertShiftSignupDTO,
 } from "../../types";
 import logger from "../../utilities/logger";
@@ -115,63 +113,6 @@ class ShiftSignupService implements IShiftSignupService {
     } catch (error: unknown) {
       Logger.error(
         `Failed to query shift signups. Reason = ${getErrorMessage(error)}`,
-      );
-      throw error;
-    }
-  }
-
-  async createShiftSignups(
-    shiftSignups: CreateShiftSignupDTO[],
-  ): Promise<ShiftSignupResponseDTO[]> {
-    try {
-      const newShiftSignups = await prisma.$transaction(
-        shiftSignups.map((shiftSignup) =>
-          prisma.signup.create({
-            data: {
-              ...shiftSignup,
-              shiftId: Number(shiftSignup.shiftId),
-              userId: Number(shiftSignup.userId),
-              status: SignupStatus.PENDING,
-            },
-            include: {
-              shift: true,
-            },
-          }),
-        ),
-      );
-      return newShiftSignups.map((newShiftSignup) =>
-        this.convertSignupResponseToDTO(newShiftSignup, newShiftSignup.shift),
-      );
-    } catch (error: unknown) {
-      Logger.error(
-        `Failed to create shift signup. Reason = ${getErrorMessage(error)}`,
-      );
-      throw error;
-    }
-  }
-
-  async updateShiftSignup(
-    shiftId: string,
-    userId: string,
-    shiftSignup: UpdateShiftSignupRequestDTO,
-  ): Promise<ShiftSignupResponseDTO> {
-    try {
-      const updateResult = await prisma.signup.update({
-        where: {
-          shiftId_userId: {
-            shiftId: Number(shiftId),
-            userId: Number(userId),
-          },
-        },
-        data: shiftSignup,
-        include: {
-          shift: true,
-        },
-      });
-      return this.convertSignupResponseToDTO(updateResult, updateResult.shift);
-    } catch (error: unknown) {
-      Logger.error(
-        `Failed to update shift signup. Reason = ${getErrorMessage(error)}`,
       );
       throw error;
     }
