@@ -7,8 +7,8 @@ import ProfilePhotoForm from "../user/ProfilePhotoForm";
 import Loading from "../common/Loading";
 import ErrorModal from "../common/ErrorModal";
 import {
-  CreateEmployeeDTO,
-  CreateVolunteerDTO,
+  CreateEmployeeUserDTO,
+  CreateVolunteerUserDTO,
 } from "../../types/api/UserType";
 
 const CREATE_EMPLOYEE_USER = gql`
@@ -44,7 +44,7 @@ const NewAccountPage = (): React.ReactElement => {
   }
   const isError = createEmployeeError || createVolunteerError;
 
-  const onEmployeeCreate = async (employee: CreateEmployeeDTO) => {
+  const onEmployeeCreate = async (employee: CreateEmployeeUserDTO) => {
     await createEmployee({
       variables: {
         employee,
@@ -52,7 +52,7 @@ const NewAccountPage = (): React.ReactElement => {
     });
   };
 
-  const onVolunteerCreate = async (volunteer: CreateVolunteerDTO) => {
+  const onVolunteerCreate = async (volunteer: CreateVolunteerUserDTO) => {
     await createVolunteer({
       variables: {
         volunteer,

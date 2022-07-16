@@ -2,8 +2,8 @@ import { gql, useMutation, useQuery } from "@apollo/client";
 import { Container, Divider, Text } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import {
-  EditEmployeeDTO,
-  EditVolunteerDTO,
+  UpdateEmployeeUserDTO,
+  UpdateVolunteerUserDTO,
   EmployeeUserResponseDTO,
   VolunteerUserResponseDTO,
 } from "../../types/api/UserType";
@@ -110,7 +110,7 @@ const EditAccountPage = (): React.ReactElement => {
   }
   const isError = editEmployeeError || editVolunteerError;
 
-  const onEmployeeEdit = async (employee: EditEmployeeDTO) => {
+  const onEmployeeEdit = async (employee: UpdateEmployeeUserDTO) => {
     await editEmployee({
       variables: {
         id: user?.id,
@@ -119,7 +119,7 @@ const EditAccountPage = (): React.ReactElement => {
     });
   };
 
-  const onVolunteerEdit = async (volunteer: EditVolunteerDTO) => {
+  const onVolunteerEdit = async (volunteer: UpdateVolunteerUserDTO) => {
     await editVolunteer({
       variables: {
         id: user?.id,

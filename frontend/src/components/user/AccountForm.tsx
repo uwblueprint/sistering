@@ -19,11 +19,11 @@ import {
   SkillQueryResponse,
 } from "../../types/api/SkillTypes";
 import {
-  CreateVolunteerDTO,
-  CreateEmployeeDTO,
+  CreateEmployeeUserDTO,
+  CreateVolunteerUserDTO,
   LANGUAGES,
-  EditVolunteerDTO,
-  EditEmployeeDTO,
+  UpdateEmployeeUserDTO,
+  UpdateVolunteerUserDTO,
 } from "../../types/api/UserType";
 import TextField from "./fields/TextField";
 import SelectorField from "./fields/SelectorField";
@@ -55,10 +55,10 @@ type AccountFormProps = {
   emergencyNumber?: string | null;
   prevSkills?: SkillResponseDTO[];
   prevLanguages?: LanguageResponseDTO[];
-  onEmployeeCreate?: (employee: CreateEmployeeDTO) => void;
-  onVolunteerCreate?: (volunteer: CreateVolunteerDTO) => void;
-  onEmployeeEdit?: (employee: EditEmployeeDTO) => void;
-  onVolunteerEdit?: (volunteer: EditVolunteerDTO) => void;
+  onEmployeeCreate?: (employee: CreateEmployeeUserDTO) => void;
+  onVolunteerCreate?: (volunteer: CreateVolunteerUserDTO) => void;
+  onEmployeeEdit?: (employee: UpdateEmployeeUserDTO) => void;
+  onVolunteerEdit?: (volunteer: UpdateVolunteerUserDTO) => void;
 };
 
 type CreateAccountFormValues = {
@@ -217,9 +217,13 @@ const AccountForm = ({
           lastName: values.lastName,
           email: "email123@gmail.com",
           phoneNumber: values.phoneNumber,
+          emergencyContactEmail: "",
+          emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
           password: values.password,
-          languages: values.languages.map((language) => language.name),
+          languages: values.languages.map(
+            (language) => LANGUAGES[Number(language.id) - 1],
+          ),
           branches: [],
         });
       } else {
@@ -229,11 +233,16 @@ const AccountForm = ({
           email: "johndoe@uwblueprint.org",
           password: values.password,
           phoneNumber: values.phoneNumber,
+          pronouns: values.pronouns,
+          emergencyContactEmail: "",
+          emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
-          hireDate: moment(new Date()).format("YYYY-MM-DD"),
-          dateOfBirth: values.dateOfBirth,
+          hireDate: new Date(),
+          dateOfBirth: moment(values.dateOfBirth, "YYYY-MM-DD").toDate(),
           skills: values.skills.map((skill) => skill.id),
-          languages: values.languages.map((language) => language.name),
+          languages: values.languages.map(
+            (language) => LANGUAGES[Number(language.id) - 1],
+          ),
           branches: [],
         });
       }
@@ -248,8 +257,12 @@ const AccountForm = ({
           lastName: values.lastName,
           email: "email123@gmail.com",
           phoneNumber: values.phoneNumber,
+          emergencyContactEmail: "",
+          emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
-          languages: values.languages.map((language) => language.name),
+          languages: values.languages.map(
+            (language) => LANGUAGES[Number(language.id) - 1],
+          ),
           branches: [],
         });
       } else {
@@ -258,10 +271,16 @@ const AccountForm = ({
           lastName: values.lastName,
           email: "johndoe@uwblueprint.org",
           phoneNumber: values.phoneNumber,
+          pronouns: values.pronouns,
+          emergencyContactEmail: "",
+          emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
-          dateOfBirth: values.dateOfBirth,
+          hireDate: new Date(),
+          dateOfBirth: moment(values.dateOfBirth, "YYYY-MM-DD").toDate(),
           skills: values.skills.map((skill) => skill.id),
-          languages: values.languages.map((language) => language.name),
+          languages: values.languages.map(
+            (language) => LANGUAGES[Number(language.id) - 1],
+          ),
           branches: [],
         });
       }
@@ -300,6 +319,7 @@ const AccountForm = ({
                 id="dateOfBirth"
                 label="Date of Birth"
                 placeholder="Date of Birth"
+                type="date"
                 isRequired
               />
               <TextField
