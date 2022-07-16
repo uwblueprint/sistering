@@ -59,7 +59,7 @@ const EMPLOYEE_BY_ID = gql`
 `;
 
 const UPDATE_EMPLOYEE_USER = gql`
-  mutation UpdateEmployeeUser($id: ID!, $employee: UpdateVolunteerUserDTO!) {
+  mutation UpdateEmployeeUser($id: ID!, $employee: UpdateEmployeeUserDTO!) {
     updateEmployeeUserById(id: $id, employeeUser: $employee) {
       id
     }
