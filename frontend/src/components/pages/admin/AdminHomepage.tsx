@@ -48,6 +48,19 @@ const POSTINGS = gql`
   }
 `;
 
+const getPostingStatus = (posting: Posting): PostingStatus => {
+  if (posting.status === "DRAFT") {
+    return PostingStatus.DRAFT;
+  }
+  if (isPast(posting.autoClosingDate)) {
+    return PostingStatus.PAST;
+  }
+  if (posting.shifts.length === 0) {
+    return PostingStatus.UNSCHEDULED;
+  }
+  return PostingStatus.SCHEDULED;
+};
+
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
@@ -70,20 +83,6 @@ const AdminHomepage = (): React.ReactElement => {
   const navigateToAdminSchedule = (id: string) => {
     const route = generatePath(Routes.ADMIN_SCHEDULE_POSTING_PAGE, { id });
     history.push(route);
-  };
-
-  const getPostingStatus = (posting: Posting): PostingStatus => {
-    if (posting.status === "DRAFT") {
-      return PostingStatus.DRAFT;
-    }
-    if (isPast(posting.autoClosingDate)) {
-      return PostingStatus.PAST;
-    }
-    if (posting.shifts.length === 0) {
-      return PostingStatus.UNSCHEDULED;
-    }
-    postingsByStatus[1].push(posting);
-    return PostingStatus.SCHEDULED;
   };
 
   // update postingsByStatus 2d array
