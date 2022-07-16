@@ -50,14 +50,20 @@ const BranchManagerTable = ({
   const [updateBranch, { error: updateBranchError }] = useMutation(
     UPDATE_BRANCH,
     {
-      refetchQueries: ["BranchManagerModal_Branches"],
+      refetchQueries: [
+        "BranchManagerModal_Branches",
+        "AdminHomepageHeader_Branches",
+      ],
     },
   );
 
   const [deleteBranch, { error: deleteBranchError }] = useMutation(
     DELETE_BRANCH,
     {
-      refetchQueries: ["BranchManagerModal_Branches"],
+      refetchQueries: [
+        "BranchManagerModal_Branches",
+        "AdminHomepageHeader_Branches",
+      ],
     },
   );
 

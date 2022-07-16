@@ -55,7 +55,7 @@ import CreateAccountPage from "./components/pages/CreateAccountPage";
 import PasswordResetSuccessPage from "./components/auth/PasswordResetSuccess";
 import NewAccountPage from "./components/pages/NewAccountPage";
 import AccountCreatedPage from "./components/pages/AccountCreatedPage";
-import AdminHomepageComponent from "./components/pages/admin/AdminHomepage";
+import AdminHomepage from "./components/pages/admin/AdminHomepage";
 import AdminUserManagementPage from "./components/pages/admin/user/AdminUserManagementPage";
 
 // Consts for Hotjar and Google Analytics (this is ok to expose)
@@ -140,7 +140,7 @@ const App = (): React.ReactElement => {
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_HOMEPAGE}
-                      component={AdminHomepageComponent}
+                      component={AdminHomepage}
                     />
 
                     <Route

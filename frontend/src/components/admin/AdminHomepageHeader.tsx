@@ -1,3 +1,5 @@
+import React, { useState } from "react";
+import { gql, useQuery } from "@apollo/client";
 import {
   VStack,
   HStack,
@@ -14,15 +16,41 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { AddIcon, SearchIcon, SettingsIcon } from "@chakra-ui/icons";
-import React from "react";
 import BranchManagerModal from "./BranchManagerModal";
+import {
+  BranchResponseDTO,
+  BranchQueryResponse,
+} from "../../types/api/BranchTypes";
+
+const BRANCHES = gql`
+  query AdminHomepageHeader_Branches {
+    branches {
+      id
+      name
+    }
+  }
+`;
+
+type AdminHomepageHeaderProps = {
+  isSuperAdmin: boolean;
+  selectStatusTab: (index: number) => void;
+  postingStatusNums: number[]; // [unscheduled, scheduled, past, drafts]
+};
 
 const AdminHomepageHeader = ({
   isSuperAdmin,
-}: {
-  isSuperAdmin: boolean;
-}): React.ReactElement => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  selectStatusTab,
+  postingStatusNums,
+}: AdminHomepageHeaderProps): React.ReactElement => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
+
+  useQuery<BranchQueryResponse>(BRANCHES, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setBranches(data.branches);
+    },
+  });
 
   return (
     <>
@@ -54,8 +82,9 @@ const AdminHomepageHeader = ({
                     borderColor: "currentColor",
                   }}
                   py="8px"
+                  onClick={() => selectStatusTab(0)}
                 >
-                  Unscheduled (1)
+                  Unscheduled ({postingStatusNums[0]})
                 </Tab>
               )}
               <Tab
@@ -67,8 +96,9 @@ const AdminHomepageHeader = ({
                   borderColor: "currentColor",
                 }}
                 py="8px"
+                onClick={() => selectStatusTab(1)}
               >
-                Scheduled (1)
+                Scheduled ({postingStatusNums[1]})
               </Tab>
               <Tab
                 _hover={{
@@ -79,8 +109,9 @@ const AdminHomepageHeader = ({
                   borderColor: "currentColor",
                 }}
                 py="8px"
+                onClick={() => selectStatusTab(2)}
               >
-                Past (1)
+                Past ({postingStatusNums[2]})
               </Tab>
               {isSuperAdmin && (
                 <Tab
@@ -92,8 +123,9 @@ const AdminHomepageHeader = ({
                     borderColor: "currentColor",
                   }}
                   py="8px"
+                  onClick={() => selectStatusTab(3)}
                 >
-                  Drafts (1)
+                  Drafts ({postingStatusNums[3]})
                 </Tab>
               )}
             </TabList>
@@ -107,7 +139,9 @@ const AdminHomepageHeader = ({
               <Input type="text" placeholder="Search" w="368px" />
             </InputGroup>
             <Select placeholder="All branches">
-              <option value="option1">option1</option>
+              {branches.map((branch) => (
+                <option key={branch.id}>{branch.name}</option>
+              ))}
             </Select>
             <IconButton
               aria-label="Settings"
