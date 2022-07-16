@@ -11,7 +11,6 @@ import {
   UpdateEmployeeUserDTO,
   UserInviteResponse,
 } from "../../types";
-import IEmailService from "./emailService";
 
 interface IUserService {
   /**
