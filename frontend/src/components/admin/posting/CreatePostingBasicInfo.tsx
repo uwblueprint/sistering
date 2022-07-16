@@ -62,7 +62,10 @@ const BRANCHES_SKILLS_EMPLOYEES = gql`
       lastName
       email
       phoneNumber
-      branchId
+      branches {
+        id
+        name
+      }
     }
   }
 `;

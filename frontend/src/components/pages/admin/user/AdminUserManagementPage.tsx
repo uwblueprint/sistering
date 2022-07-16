@@ -16,7 +16,10 @@ const USERS = gql`
       lastName
       email
       phoneNumber
-      branchId
+      branches {
+        id
+        name
+      }
     }
     volunteerUsers {
       firstName
