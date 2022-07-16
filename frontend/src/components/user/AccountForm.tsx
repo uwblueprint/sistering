@@ -219,7 +219,7 @@ const AccountForm = ({
           phoneNumber: values.phoneNumber,
           emergencyContactPhone: values.emergencyNumber,
           password: values.password,
-          languages: values.languages.map((language) => language.id),
+          languages: values.languages.map((language) => language.name),
           branches: [],
         });
       } else {
@@ -233,7 +233,7 @@ const AccountForm = ({
           hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: values.dateOfBirth,
           skills: values.skills.map((skill) => skill.id),
-          languages: values.languages.map((language) => language.id),
+          languages: values.languages.map((language) => language.name),
           branches: [],
         });
       }
@@ -249,7 +249,7 @@ const AccountForm = ({
           email: "email123@gmail.com",
           phoneNumber: values.phoneNumber,
           emergencyContactPhone: values.emergencyNumber,
-          languages: values.languages.map((language) => language.id),
+          languages: values.languages.map((language) => language.name),
           branches: [],
         });
       } else {
@@ -261,7 +261,7 @@ const AccountForm = ({
           emergencyContactPhone: values.emergencyNumber,
           dateOfBirth: values.dateOfBirth,
           skills: values.skills.map((skill) => skill.id),
-          languages: values.languages.map((language) => language.id),
+          languages: values.languages.map((language) => language.name),
           branches: [],
         });
       }
@@ -401,7 +401,7 @@ const AccountForm = ({
               isDisabled={!agreeToTerms}
               type="submit"
             >
-              Create
+              {mode === AccountFormMode.CREATE ? "Create" : "Edit"}
             </Button>
           </Form>
         )}

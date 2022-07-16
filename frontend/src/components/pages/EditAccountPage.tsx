@@ -25,6 +25,7 @@ const VOLUNTEER_BY_ID = gql`
       email
       phoneNumber
       emergencyContactPhone
+      hireDate
       dateOfBirth
       skills {
         id
@@ -57,17 +58,17 @@ const EMPLOYEE_BY_ID = gql`
   }
 `;
 
-const EDIT_EMPLOYEE_USER = gql`
-  mutation CreateEmployeeUser($employee: CreateEmployeeUserDTO!) {
-    updateEmployeeUserById(employeeUser: $employee) {
+const UPDATE_EMPLOYEE_USER = gql`
+  mutation UpdateEmployeeUser($id: ID!, $employee: UpdateVolunteerUserDTO!) {
+    updateEmployeeUserById(id: $id, employeeUser: $employee) {
       id
     }
   }
 `;
 
-const EDIT_VOLUNTEER_USER = gql`
-  mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
-    updateVolunteerUserById(volunteerUser: $volunteer) {
+const UPDATE_VOLUNTEER_USER = gql`
+  mutation UpdateVolunteerUser($id: ID!, $volunteer: UpdateVolunteerUserDTO!) {
+    updateVolunteerUserById(id: $id, volunteerUser: $volunteer) {
       id
     }
   }
@@ -90,7 +91,7 @@ const EditAccountPage = (): React.ReactElement => {
         id: authenticatedUser?.id,
       },
       onCompleted: (data) => {
-        setUser(data.employeeUserById);
+        setUser(data.employeeUserById || data.volunteerUserById);
       },
     },
   );
@@ -98,11 +99,11 @@ const EditAccountPage = (): React.ReactElement => {
   const [
     editEmployee,
     { loading: editEmployeeLoading, error: editEmployeeError },
-  ] = useMutation(EDIT_EMPLOYEE_USER);
+  ] = useMutation(UPDATE_EMPLOYEE_USER);
   const [
     editVolunteer,
     { loading: editVolunteerLoading, error: editVolunteerError },
-  ] = useMutation(EDIT_VOLUNTEER_USER);
+  ] = useMutation(UPDATE_VOLUNTEER_USER);
 
   if (editEmployeeLoading || editVolunteerLoading) {
     return <Loading />;
@@ -112,6 +113,7 @@ const EditAccountPage = (): React.ReactElement => {
   const onEmployeeEdit = async (employee: EditEmployeeDTO) => {
     await editEmployee({
       variables: {
+        id: user?.id,
         employee,
       },
     });
@@ -120,10 +122,16 @@ const EditAccountPage = (): React.ReactElement => {
   const onVolunteerEdit = async (volunteer: EditVolunteerDTO) => {
     await editVolunteer({
       variables: {
-        volunteer,
+        id: user?.id,
+        volunteer: {
+          ...volunteer,
+          hireDate: user?.hireDate,
+        },
       },
     });
   };
+
+  console.log(user);
 
   return (
     <>
@@ -141,7 +149,7 @@ const EditAccountPage = (): React.ReactElement => {
         {user && (
           <AccountForm
             mode={AccountFormMode.EDIT}
-            isAdmin
+            isAdmin={authenticatedUser?.role !== Role.Volunteer}
             profilePhoto={profilePhoto}
             firstName={user?.firstName}
             lastName={user?.lastName}
