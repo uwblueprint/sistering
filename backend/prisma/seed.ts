@@ -198,6 +198,9 @@ const main = async () => {
           lastName: user.lastName,
           authId: user.authId,
           role: user.role,
+          employee: {
+            create: {},
+          },
         },
       });
     }),
