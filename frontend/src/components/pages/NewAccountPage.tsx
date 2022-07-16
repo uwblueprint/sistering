@@ -2,7 +2,7 @@ import { Container, Divider, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import SignupNavbar from "../common/SignupNavbar";
-import AccountForm, { AccountFormMode } from "../user/AccountForm";
+import AccountForm from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
 import Loading from "../common/Loading";
 import ErrorModal from "../common/ErrorModal";
@@ -11,17 +11,17 @@ import {
   CreateVolunteerDTO,
 } from "../../types/api/UserType";
 
-const CREATE_EMPLOYEE_USER = gql`
-  mutation CreateEmployeeUser($employee: CreateEmployeeUserDTO!) {
-    createEmployeeUser(employeeUser: $employee) {
+const CREATE_VOLUNTEER_USER = gql`
+  mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
+    createVolunteerUser(volunteerUser: $volunteer) {
       id
     }
   }
 `;
 
-const CREATE_VOLUNTEER_USER = gql`
-  mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
-    createVolunteerUser(volunteerUser: $volunteer) {
+const CREATE_EMPLOYEE_USER = gql`
+  mutation CreateEmployeeUser($employee: CreateEmployeeUserDTO!) {
+    createEmployeeUser(employeeUser: $employee) {
       id
     }
   }
@@ -59,7 +59,6 @@ const NewAccountPage = (): React.ReactElement => {
       },
     });
   };
-
   return (
     <>
       <SignupNavbar />
@@ -74,7 +73,6 @@ const NewAccountPage = (): React.ReactElement => {
         />
         <Divider my={8} />
         <AccountForm
-          mode={AccountFormMode.CREATE}
           isAdmin={isAdmin}
           profilePhoto={profilePhoto}
           onEmployeeCreate={onEmployeeCreate}

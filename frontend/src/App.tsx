@@ -55,7 +55,6 @@ import AccountCreatedPage from "./components/pages/AccountCreatedPage";
 import AdminHomepage from "./components/pages/admin/AdminHomepage";
 import AdminUserManagementPage from "./components/pages/admin/user/AdminUserManagementPage";
 import CreatePostingPage from "./components/pages/admin/posting/CreatePostingPage";
-import EditAccountPage from "./components/pages/EditAccountPage";
 
 // Consts for Hotjar and Google Analytics (this is ok to expose)
 const TRACKING_ID = "G-DF2BP4T8YQ";
@@ -135,27 +134,17 @@ const App = (): React.ReactElement => {
                       path={Routes.RESET_PASSWORD_SUCCESS_PAGE}
                       component={PasswordResetSuccessPage}
                     />
-                    <Route
-                      exact
-                      path={Routes.DONE_RESET_PASSWORD_PAGE}
-                      component={DoneResetPassword}
-                    />
-
-                    <PrivateRoute
-                      exact
-                      path={Routes.EDIT_ACCOUNT_PAGE}
-                      component={EditAccountPage}
-                    />
 
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_HOMEPAGE}
                       component={AdminHomepage}
                     />
-                    <PrivateRoute
+
+                    <Route
                       exact
-                      path={Routes.EDIT_ACCOUNT_PAGE}
-                      component={EditAccountPage}
+                      path={Routes.DONE_RESET_PASSWORD_PAGE}
+                      component={DoneResetPassword}
                     />
                     <PrivateRoute
                       exact
