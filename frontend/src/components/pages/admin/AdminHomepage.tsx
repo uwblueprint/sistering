@@ -8,6 +8,8 @@ import * as Routes from "../../../constants/Routes";
 import Navbar from "../../common/Navbar";
 import AdminHomepageHeader from "../../admin/AdminHomepageHeader";
 import AdminPostingCard from "../../admin/AdminPostingCard";
+import Loading from "../../common/Loading";
+import ErrorModal from "../../common/ErrorModal";
 import { AdminNavbarTabs, AdminPages } from "../../../constants/Tabs";
 import { Role } from "../../../types/AuthTypes";
 import { PostingResponseDTO } from "../../../types/api/PostingTypes";
@@ -73,7 +75,7 @@ const AdminHomepage = (): React.ReactElement => {
   ]);
   const [postingStatusIndex, setPostingStatusIndex] = useState<number>(0); // refer to above for index
 
-  useQuery(POSTINGS, {
+  const { loading, error } = useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       setPostings(data.postings);
@@ -93,11 +95,9 @@ const AdminHomepage = (): React.ReactElement => {
         const postingStatus = getPostingStatus(posting);
         if (postingStatus === PostingStatus.UNSCHEDULED) {
           sortedPostings[0].push(posting);
-        }
-        if (postingStatus === PostingStatus.SCHEDULED) {
+        } else if (postingStatus === PostingStatus.SCHEDULED) {
           sortedPostings[1].push(posting);
-        }
-        if (postingStatus === PostingStatus.PAST) {
+        } else if (postingStatus === PostingStatus.PAST) {
           sortedPostings[2].push(posting);
         } else {
           sortedPostings[3].push(posting);
@@ -108,49 +108,53 @@ const AdminHomepage = (): React.ReactElement => {
   }, [postings]);
 
   return (
-    <Flex flexFlow="column" width="100%" height="100vh">
-      <Navbar
-        defaultIndex={Number(AdminPages.AdminSchedulePosting)}
-        tabs={AdminNavbarTabs}
-      />
-      <AdminHomepageHeader
-        isSuperAdmin={authenticatedUser?.role === Role.Admin}
-        selectStatusTab={setPostingStatusIndex}
-        postingStatusNums={postingsByStatus.map(
-          (postingsArr) => postingsArr.length,
-        )}
-      />
-      <Box
-        flex={1}
-        backgroundColor="background.light"
-        width="100%"
-        px="100px"
-        pt="32px"
-      >
-        <SimpleGrid columns={2} spacing={4}>
-          {authenticatedUser &&
-            postingsByStatus[postingStatusIndex].map((posting) => (
-              <Box key={posting.id} pb="24px">
-                <AdminPostingCard
-                  key={posting.id}
-                  status={getPostingStatus(posting)}
-                  role={authenticatedUser.role}
-                  id={posting.id}
-                  title={posting.title}
-                  startDate={posting.startDate}
-                  endDate={posting.endDate}
-                  autoClosingDate={posting.autoClosingDate}
-                  branchName={posting.branch.name}
-                  numVolunteers={posting.numVolunteers}
-                  navigateToAdminSchedule={() =>
-                    navigateToAdminSchedule(posting.id)
-                  }
-                />
-              </Box>
-            ))}
-        </SimpleGrid>
-      </Box>
-    </Flex>
+    <>
+      {loading && <Loading />}
+      {error && <ErrorModal />}
+      <Flex flexFlow="column" width="100%" height="100vh">
+        <Navbar
+          defaultIndex={Number(AdminPages.AdminSchedulePosting)}
+          tabs={AdminNavbarTabs}
+        />
+        <AdminHomepageHeader
+          isSuperAdmin={authenticatedUser?.role === Role.Admin}
+          selectStatusTab={setPostingStatusIndex}
+          postingStatusNums={postingsByStatus.map(
+            (postingsArr) => postingsArr.length,
+          )}
+        />
+        <Box
+          flex={1}
+          backgroundColor="background.light"
+          width="100%"
+          px="100px"
+          pt="32px"
+        >
+          <SimpleGrid columns={2} spacing={4}>
+            {authenticatedUser &&
+              postingsByStatus[postingStatusIndex].map((posting) => (
+                <Box key={posting.id} pb="24px">
+                  <AdminPostingCard
+                    key={posting.id}
+                    status={getPostingStatus(posting)}
+                    role={authenticatedUser.role}
+                    id={posting.id}
+                    title={posting.title}
+                    startDate={posting.startDate}
+                    endDate={posting.endDate}
+                    autoClosingDate={posting.autoClosingDate}
+                    branchName={posting.branch.name}
+                    numVolunteers={posting.numVolunteers}
+                    navigateToAdminSchedule={() =>
+                      navigateToAdminSchedule(posting.id)
+                    }
+                  />
+                </Box>
+              ))}
+          </SimpleGrid>
+        </Box>
+      </Flex>
+    </>
   );
 };
 
