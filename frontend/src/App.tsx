@@ -144,6 +144,7 @@ const App = (): React.ReactElement => {
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_HOMEPAGE}
+                      authorizedRoles={[Role.Admin]}
                       component={AdminHomepage}
                     />
                     <PrivateRoute

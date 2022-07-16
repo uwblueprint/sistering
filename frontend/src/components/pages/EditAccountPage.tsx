@@ -7,6 +7,7 @@ import {
   UpdateVolunteerUserDTO,
   EmployeeUserResponseDTO,
   VolunteerUserResponseDTO,
+  LANGUAGES,
 } from "../../types/api/UserType";
 import ErrorModal from "../common/ErrorModal";
 import Loading from "../common/Loading";
@@ -78,6 +79,7 @@ const UPDATE_VOLUNTEER_USER = gql`
 const EditAccountPage = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
 
+  const [key, setKey] = useState<number>(0); // Used to force a re-render
   const [user, setUser] = useState<
     (EmployeeUserResponseDTO & VolunteerUserResponseDTO) | null
   >(null);
@@ -94,6 +96,7 @@ const EditAccountPage = (): React.ReactElement => {
       },
       onCompleted: (data) => {
         setUser(data.employeeUserById || data.volunteerUserById);
+        setKey(key + 1);
       },
     },
   );
@@ -102,7 +105,7 @@ const EditAccountPage = (): React.ReactElement => {
     editEmployee,
     { loading: editEmployeeLoading, error: editEmployeeError },
   ] = useMutation(UPDATE_EMPLOYEE_USER, {
-    refetchQueries: [
+    refetchQueries: () => [
       {
         query: EMPLOYEE_BY_ID,
         variables: {
@@ -110,13 +113,14 @@ const EditAccountPage = (): React.ReactElement => {
         },
       },
     ],
+    awaitRefetchQueries: true,
   });
 
   const [
     editVolunteer,
     { loading: editVolunteerLoading, error: editVolunteerError },
   ] = useMutation(UPDATE_VOLUNTEER_USER, {
-    refetchQueries: [
+    refetchQueries: () => [
       {
         query: VOLUNTEER_BY_ID,
         variables: {
@@ -124,6 +128,7 @@ const EditAccountPage = (): React.ReactElement => {
         },
       },
     ],
+    awaitRefetchQueries: true,
   });
 
   if (editEmployeeLoading || editVolunteerLoading) {
@@ -167,6 +172,7 @@ const EditAccountPage = (): React.ReactElement => {
         <Divider my={8} />
         {user && (
           <AccountForm
+            key={key}
             mode={AccountFormMode.EDIT}
             isAdmin={authenticatedUser?.role !== Role.Volunteer}
             profilePhoto={profilePhoto}
@@ -177,10 +183,11 @@ const EditAccountPage = (): React.ReactElement => {
             pronouns={user?.pronouns}
             phoneNumber={user?.phoneNumber}
             emergencyNumber={user?.emergencyContactPhone}
-            prevLanguages={user?.languages?.map((language, i) => ({
-              id: String(i + 1),
+            prevLanguages={user?.languages?.map((language) => ({
+              id: String(LANGUAGES.indexOf(language) + 1),
               name: language,
             }))}
+            prevSkills={user?.skills}
             onEmployeeEdit={onEmployeeEdit}
             onVolunteerEdit={onVolunteerEdit}
           />
