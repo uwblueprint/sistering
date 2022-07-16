@@ -19,6 +19,10 @@ import {
   UserInviteResponse,
 } from "../../types";
 import { generateCSV } from "../../utilities/CSVUtils";
+import {
+  adminAccountCreationInviteTemplate,
+  volunteerAccountCreationInviteTemplate,
+} from "../../utilities/templateUtils";
 
 const userService: IUserService = new UserService();
 const emailService: IEmailService = new EmailService(nodemailerConfig);
@@ -111,7 +115,24 @@ const userResolvers = {
       _parent: undefined,
       { email, role }: { email: string; role: Role },
     ): Promise<UserInviteResponse> => {
-      return userService.createUserInvite(email, role);
+      const results = await userService.createUserInvite(email, role);
+      let subject: string;
+      let htmlBody: string;
+
+      if (role === "VOLUNTEER") {
+        htmlBody = volunteerAccountCreationInviteTemplate(
+          `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
+        );
+        subject = "Welcome to Your Volunteer Account";
+      } else {
+        htmlBody = adminAccountCreationInviteTemplate(
+          `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
+        );
+        subject = "Welcome to Your Admin Account";
+      }
+
+      await emailService.sendEmail(email, subject, htmlBody);
+      return results;
     },
     deleteUserInvite: async (
       _parent: undefined,
