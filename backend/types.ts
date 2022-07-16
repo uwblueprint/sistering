@@ -78,6 +78,7 @@ export type VolunteerUserResponseDTO = UserDTO & VolunteerDTO;
 
 export type CreateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id"> & {
   password: string;
+  token: string;
 };
 
 export type UpdateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id">;
@@ -98,6 +99,7 @@ export type EmployeeUserResponseDTO = UserDTO &
 
 export type CreateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id"> & {
   password: string;
+  token: string;
 };
 
 export type UpdateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id">;

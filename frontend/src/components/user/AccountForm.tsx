@@ -75,6 +75,7 @@ type CreateAccountFormValues = {
   emergencyNumber: string;
   skills: SkillResponseDTO[];
   languages: LanguageResponseDTO[];
+  token: string | null;
 };
 
 type EditAccountFormValues = Omit<
@@ -106,6 +107,9 @@ const AccountForm = ({
   const [skills, setSkills] = useState<SkillResponseDTO[]>([]);
   const [languages, setLanguages] = useState<LanguageResponseDTO[]>([]);
 
+  const queryParams = new URLSearchParams(window.location.search);
+  const token = queryParams.get("token");
+
   const createInitialValues: CreateAccountFormValues = {
     profilePhoto,
     firstName: "",
@@ -118,6 +122,7 @@ const AccountForm = ({
     emergencyNumber: "",
     skills: [],
     languages: [],
+    token,
   };
 
   const editInitialValues: EditAccountFormValues = {
@@ -130,6 +135,7 @@ const AccountForm = ({
     emergencyNumber: emergencyNumber || "",
     skills: prevSkills || [],
     languages: prevLanguages || [],
+    token,
   };
 
   const toggleAgreeToTerms = (): void => {
@@ -199,251 +205,253 @@ const AccountForm = ({
         },
       ]);
     }
-  };
 
-  const deselectLanguage = (
-    language: string,
-    currentLanguages: LanguageResponseDTO[],
-    setFieldValue: (field: string, value: LanguageResponseDTO[]) => void,
-  ) => {
-    // Remove the language from the list of languages
-    setFieldValue(
-      "languages",
-      currentLanguages.filter((l) => l.id !== language),
-    );
-  };
+    const deselectLanguage = (
+      language: string,
+      currentLanguages: LanguageResponseDTO[],
+      setFieldValue: (field: string, value: LanguageResponseDTO[]) => void,
+    ) => {
+      // Remove the language from the list of languages
+      setFieldValue(
+        "languages",
+        currentLanguages.filter((l) => l.id !== language),
+      );
+    };
 
-  const createAccount = (values: CreateAccountFormValues): void => {
-    if (onVolunteerCreate && onEmployeeCreate) {
-      if (isAdmin) {
-        onEmployeeCreate({
-          firstName: values.firstName,
-          lastName: values.lastName,
-          email,
-          phoneNumber: values.phoneNumber,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
-          emergencyContactPhone: values.emergencyNumber,
-          password: values.password,
-          languages: values.languages.map(
-            (language) => LANGUAGES[Number(language.id) - 1],
-          ),
-          branches: [],
-        });
-      } else {
-        onVolunteerCreate({
-          firstName: values.firstName,
-          lastName: values.lastName,
-          email,
-          password: values.password,
-          phoneNumber: values.phoneNumber,
-          pronouns: values.pronouns,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
-          emergencyContactPhone: values.emergencyNumber,
-          hireDate: new Date(),
-          dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
-          skills: values.skills.map((skill) => skill.id),
-          languages: values.languages.map(
-            (language) => LANGUAGES[Number(language.id) - 1],
-          ),
-          branches: [],
-        });
-      }
-    }
-  };
-
-  const editAccount = (values: EditAccountFormValues): void => {
-    if (onVolunteerEdit && onEmployeeEdit) {
-      if (isAdmin) {
-        onEmployeeEdit({
-          firstName: values.firstName,
-          lastName: values.lastName,
-          email,
-          phoneNumber: values.phoneNumber,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
-          emergencyContactPhone: values.emergencyNumber,
-          languages: values.languages.map(
-            (language) => LANGUAGES[Number(language.id) - 1],
-          ),
-          branches: [],
-        });
-      } else {
-        onVolunteerEdit({
-          firstName: values.firstName,
-          lastName: values.lastName,
-          email,
-          phoneNumber: values.phoneNumber,
-          pronouns: values.pronouns,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
-          emergencyContactPhone: values.emergencyNumber,
-          hireDate: new Date(),
-          dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
-          skills: values.skills.map((skill) => skill.id),
-          languages: values.languages.map(
-            (language) => LANGUAGES[Number(language.id) - 1],
-          ),
-          branches: [],
-        });
-      }
-    }
-  };
-
-  return (
-    <Box my={12}>
-      <Formik
-        initialValues={
-          mode === AccountFormMode.CREATE
-            ? createInitialValues
-            : editInitialValues
+    const createAccount = (values: CreateAccountFormValues): void => {
+      if (onVolunteerCreate && onEmployeeCreate) {
+        if (isAdmin) {
+          onEmployeeCreate({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email,
+            phoneNumber: values.phoneNumber,
+            emergencyContactEmail: "",
+            emergencyContactName: "",
+            emergencyContactPhone: values.emergencyNumber,
+            password: values.password,
+            languages: values.languages.map(
+              (language) => LANGUAGES[Number(language.id) - 1],
+            ),
+            branches: [],
+            token: values.token,
+          });
+        } else {
+          onVolunteerCreate({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email,
+            password: values.password,
+            phoneNumber: values.phoneNumber,
+            pronouns: values.pronouns,
+            emergencyContactEmail: "",
+            emergencyContactName: "",
+            emergencyContactPhone: values.emergencyNumber,
+            hireDate: new Date(),
+            dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
+            skills: values.skills.map((skill) => skill.id),
+            languages: values.languages.map(
+              (language) => LANGUAGES[Number(language.id) - 1],
+            ),
+            branches: [],
+            token: values.token,
+          });
         }
-        onSubmit={
-          mode === AccountFormMode.CREATE
-            ? (values) => createAccount(values as CreateAccountFormValues)
-            : (values) => editAccount(values as EditAccountFormValues)
+      }
+    };
+
+    const editAccount = (values: EditAccountFormValues): void => {
+      if (onVolunteerEdit && onEmployeeEdit) {
+        if (isAdmin) {
+          onEmployeeEdit({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email,
+            phoneNumber: values.phoneNumber,
+            emergencyContactEmail: "",
+            emergencyContactName: "",
+            emergencyContactPhone: values.emergencyNumber,
+            languages: values.languages.map(
+              (language) => LANGUAGES[Number(language.id) - 1],
+            ),
+            branches: [],
+          });
+        } else {
+          onVolunteerEdit({
+            firstName: values.firstName,
+            lastName: values.lastName,
+            email,
+            phoneNumber: values.phoneNumber,
+            pronouns: values.pronouns,
+            emergencyContactEmail: "",
+            emergencyContactName: "",
+            emergencyContactPhone: values.emergencyNumber,
+            hireDate: new Date(),
+            dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
+            skills: values.skills.map((skill) => skill.id),
+            languages: values.languages.map(
+              (language) => LANGUAGES[Number(language.id) - 1],
+            ),
+            branches: [],
+          });
         }
-      >
-        {({ values, setFieldValue }) => (
-          <Form>
-            <SimpleGrid columns={2} spacing={10}>
-              <TextField
-                id="firstName"
-                label="First Name"
-                placeholder="First Name"
-              />
-              <TextField
-                id="lastName"
-                label="Last Name"
-                placeholder="Last Name"
-                isRequired
-              />
-              <TextField
-                id="dateOfBirth"
-                label="Date of Birth"
-                placeholder="Date of Birth"
-                type="date"
-                isRequired
-              />
-              <TextField
-                id="pronouns"
-                label="Pronouns"
-                placeholder="She/Her, He/Him, They/Them, etc."
-                isRequired
-              />
-              {mode === AccountFormMode.CREATE && (
-                <>
-                  <TextField
-                    id="password"
-                    label="Password"
-                    placeholder="Password"
-                    type="password"
-                    tooltip={
-                      <UnorderedList>
-                        <ListItem>At least 8 characters </ListItem>
-                        <ListItem>At least one capital letter</ListItem>
-                        <ListItem>At least one number </ListItem>
-                        <ListItem>At least one special character</ListItem>
-                      </UnorderedList>
+      }
+    };
+
+    return (
+      <Box my={12}>
+        <Formik
+          initialValues={
+            mode === AccountFormMode.CREATE
+              ? createInitialValues
+              : editInitialValues
+          }
+          onSubmit={
+            mode === AccountFormMode.CREATE
+              ? (values) => createAccount(values as CreateAccountFormValues)
+              : (values) => editAccount(values as EditAccountFormValues)
+          }
+        >
+          {({ values, setFieldValue }) => (
+            <Form>
+              <SimpleGrid columns={2} spacing={10}>
+                <TextField
+                  id="firstName"
+                  label="First Name"
+                  placeholder="First Name"
+                />
+                <TextField
+                  id="lastName"
+                  label="Last Name"
+                  placeholder="Last Name"
+                  isRequired
+                />
+                <TextField
+                  id="dateOfBirth"
+                  label="Date of Birth"
+                  placeholder="Date of Birth"
+                  type="date"
+                  isRequired
+                />
+                <TextField
+                  id="pronouns"
+                  label="Pronouns"
+                  placeholder="She/Her, He/Him, They/Them, etc."
+                  isRequired
+                />
+                {mode === AccountFormMode.CREATE && (
+                  <>
+                    <TextField
+                      id="password"
+                      label="Password"
+                      placeholder="Password"
+                      type="password"
+                      tooltip={
+                        <UnorderedList>
+                          <ListItem>At least 8 characters </ListItem>
+                          <ListItem>At least one capital letter</ListItem>
+                          <ListItem>At least one number </ListItem>
+                          <ListItem>At least one special character</ListItem>
+                        </UnorderedList>
+                      }
+                      isRequired
+                    />
+                    <TextField
+                      id="passwordConfirm"
+                      label="Confirm Password"
+                      placeholder="Confirm Password"
+                      type="password"
+                      isRequired
+                    />
+                  </>
+                )}
+                <TextField
+                  id="phoneNumber"
+                  label="Phone Number"
+                  placeholder="(123) 456-7890"
+                  type="tel"
+                  isRequired
+                />
+                <TextField
+                  id="emergencyNumber"
+                  label="Emergency Contact Phone Number"
+                  placeholder="(123) 456-7890"
+                  type="tel"
+                  isRequired
+                />
+                {/* Volunteer fields */}
+                {!isAdmin && (
+                  <SelectorField
+                    id="skills"
+                    label="Skills"
+                    values={values.skills}
+                    options={skills}
+                    placeholder="Select Skills"
+                    tooltip={<Text>Search and select skills you have.</Text>}
+                    onSelect={(skill) =>
+                      selectSkill(skill, values.skills, setFieldValue)
                     }
-                    isRequired
+                    onDeselect={(skill) =>
+                      deselectSkill(skill, values.skills, setFieldValue)
+                    }
                   />
-                  <TextField
-                    id="passwordConfirm"
-                    label="Confirm Password"
-                    placeholder="Confirm Password"
-                    type="password"
-                    isRequired
-                  />
-                </>
-              )}
-              <TextField
-                id="phoneNumber"
-                label="Phone Number"
-                placeholder="(123) 456-7890"
-                type="tel"
-                isRequired
-              />
-              <TextField
-                id="emergencyNumber"
-                label="Emergency Contact Phone Number"
-                placeholder="(123) 456-7890"
-                type="tel"
-                isRequired
-              />
-              {/* Volunteer fields */}
-              {!isAdmin && (
+                )}
                 <SelectorField
-                  id="skills"
-                  label="Skills"
-                  values={values.skills}
-                  options={skills}
-                  placeholder="Select Skills"
-                  tooltip={<Text>Search and select skills you have.</Text>}
-                  onSelect={(skill) =>
-                    selectSkill(skill, values.skills, setFieldValue)
+                  id="languages"
+                  label="Languages"
+                  values={values.languages}
+                  options={languages}
+                  placeholder="Select Languages"
+                  tooltip={
+                    <Text>Search and select languages you understand.</Text>
                   }
-                  onDeselect={(skill) =>
-                    deselectSkill(skill, values.skills, setFieldValue)
+                  onSelect={(language) =>
+                    selectLanguage(language, values.languages, setFieldValue)
+                  }
+                  onDeselect={(language) =>
+                    deselectLanguage(language, values.languages, setFieldValue)
                   }
                 />
+              </SimpleGrid>
+              {mode === AccountFormMode.CREATE && (
+                <Flex mt={8}>
+                  <Checkbox onChange={() => toggleAgreeToTerms()}>
+                    <Link
+                      href="https://firebasestorage.googleapis.com/v0/b/sistering-dev.appspot.com/o/sistering-confidentiality-policy.pdf?alt=media&token=0ce8f2d1-6e6f-4ece-9a4f-5358790b5db6"
+                      target="_blank"
+                    >
+                      I have read and agree to the terms and conditions&nbsp;
+                    </Link>
+                    <Box as="span" color="red">
+                      *
+                    </Box>
+                  </Checkbox>
+                </Flex>
               )}
-              <SelectorField
-                id="languages"
-                label="Languages"
-                values={values.languages}
-                options={languages}
-                placeholder="Select Languages"
-                tooltip={
-                  <Text>Search and select languages you understand.</Text>
-                }
-                onSelect={(language) =>
-                  selectLanguage(language, values.languages, setFieldValue)
-                }
-                onDeselect={(language) =>
-                  deselectLanguage(language, values.languages, setFieldValue)
-                }
-              />
-            </SimpleGrid>
-            {mode === AccountFormMode.CREATE && (
               <Flex mt={8}>
-                <Checkbox onChange={() => toggleAgreeToTerms()}>
-                  <Link
-                    href="https://firebasestorage.googleapis.com/v0/b/sistering-dev.appspot.com/o/sistering-confidentiality-policy.pdf?alt=media&token=0ce8f2d1-6e6f-4ece-9a4f-5358790b5db6"
-                    target="_blank"
+                {mode === AccountFormMode.EDIT && (
+                  <Button
+                    mr={4}
+                    colorScheme="gray"
+                    onClick={() => history.goBack()}
                   >
-                    I have read and agree to the terms and conditions&nbsp;
-                  </Link>
-                  <Box as="span" color="red">
-                    *
-                  </Box>
-                </Checkbox>
-              </Flex>
-            )}
-            <Flex mt={8}>
-              {mode === AccountFormMode.EDIT && (
+                    Cancel
+                  </Button>
+                )}
                 <Button
-                  mr={4}
-                  colorScheme="gray"
-                  onClick={() => history.goBack()}
+                  colorScheme="brand"
+                  isDisabled={mode === AccountFormMode.CREATE && !agreeToTerms}
+                  type="submit"
                 >
-                  Cancel
+                  {mode === AccountFormMode.CREATE ? "Create" : "Save Changes"}
                 </Button>
-              )}
-              <Button
-                colorScheme="brand"
-                isDisabled={mode === AccountFormMode.CREATE && !agreeToTerms}
-                type="submit"
-              >
-                {mode === AccountFormMode.CREATE ? "Create" : "Save Changes"}
-              </Button>
-            </Flex>
-          </Form>
-        )}
-      </Formik>
-    </Box>
-  );
+              </Flex>
+            </Form>
+          )}
+        </Formik>
+      </Box>
+    );
+  };
 };
 
 export default AccountForm;

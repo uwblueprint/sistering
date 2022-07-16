@@ -11,9 +11,16 @@ import {
   CreateVolunteerUserDTO,
 } from "../../types/api/UserType";
 
+<<<<<<< HEAD
 const CREATE_EMPLOYEE_USER = gql`
   mutation CreateEmployeeUser($employee: CreateEmployeeUserDTO!) {
     createEmployeeUser(employeeUser: $employee) {
+=======
+// inject uuid into these gql stuff here:
+const CREATE_VOLUNTEER_USER = gql`
+  mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
+    createVolunteerUser(volunteerUser: $volunteer) {
+>>>>>>> cc42d23 (initial implementation of task (grabbed token from query, implemented into form variables, went through flow for createEmployee and createVolunteer resolvers - including deletion of user invite rows if mutations of creating user does not return err)
       id
     }
   }
@@ -23,6 +30,14 @@ const CREATE_VOLUNTEER_USER = gql`
   mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
     createVolunteerUser(volunteerUser: $volunteer) {
       id
+    }
+  }
+`;
+
+const DELETE_USER_INVITE = gql`
+  mutation DeleteUserInvite($email: String!) {
+    deleteUserInvite(email: $email) {
+      uuid
     }
   }
 `;
@@ -39,25 +54,63 @@ const NewAccountPage = (): React.ReactElement => {
     { loading: createVolunteerLoading, error: createVolunteerError },
   ] = useMutation(CREATE_VOLUNTEER_USER);
 
+  const [deleteUserInvite, { error: deleteUserInviteError }] = useMutation(
+    DELETE_USER_INVITE,
+  );
+
   if (createEmployeeLoading || createVolunteerLoading) {
     return <Loading />;
   }
   const isError = createEmployeeError || createVolunteerError;
 
+<<<<<<< HEAD
   const onEmployeeCreate = async (employee: CreateEmployeeUserDTO) => {
     await createEmployee({
+=======
+  const onEmployeeCreate = async (employee: CreateEmployeeDTO) => {
+    const response = await createEmployee({
+>>>>>>> cc42d23 (initial implementation of task (grabbed token from query, implemented into form variables, went through flow for createEmployee and createVolunteer resolvers - including deletion of user invite rows if mutations of creating user does not return err)
       variables: {
         employee,
       },
     });
+
+    if (!createEmployeeError) {
+      await deleteUserInvite({
+        variables: {
+          email: response.email,
+        },
+      });
+    }
+
+    if (!deleteUserInviteError) {
+      console.log("SUCCESS!");
+    }
   };
 
+<<<<<<< HEAD
   const onVolunteerCreate = async (volunteer: CreateVolunteerUserDTO) => {
     await createVolunteer({
+=======
+  const onVolunteerCreate = async (volunteer: CreateVolunteerDTO) => {
+    const response = await createVolunteer({
+>>>>>>> cc42d23 (initial implementation of task (grabbed token from query, implemented into form variables, went through flow for createEmployee and createVolunteer resolvers - including deletion of user invite rows if mutations of creating user does not return err)
       variables: {
         volunteer,
       },
     });
+
+    if (!createVolunteerError) {
+      await deleteUserInvite({
+        variables: {
+          email: response.email,
+        },
+      });
+    }
+
+    if (!deleteUserInviteError) {
+      console.log("SUCCESS!");
+    }
   };
 
   return (

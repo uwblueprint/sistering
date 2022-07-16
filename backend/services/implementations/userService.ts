@@ -639,6 +639,30 @@ class UserService implements IUserService {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
+      const userInvite = await prisma.userInvite.findUnique({
+        where: {
+          uuid: volunteerUser.token,
+        },
+      });
+
+      if (userInvite == null) {
+        // not found
+        throw new Error(
+          "Failed to get user invite with token - user is not allowed to create an account",
+        );
+      } else if (userInvite.role !== "VOLUNTEER") {
+        throw new Error(
+          "User invite with associated token does not have matching role - cannot create account",
+        );
+      }
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to check user invite. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+
+    try {
       // signUpMethod === PASSWORD
       firebaseUser = await firebaseAdmin.auth().createUser({
         email: volunteerUser.email,
@@ -1070,6 +1094,30 @@ class UserService implements IUserService {
     signUpMethod = "PASSWORD",
   ): Promise<EmployeeUserResponseDTO> {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
+
+    try {
+      const userInvite = await prisma.userInvite.findUnique({
+        where: {
+          uuid: employeeUser.token,
+        },
+      });
+
+      if (userInvite == null) {
+        // not found
+        throw new Error(
+          "Failed to get user invite with token - user is not allowed to create account",
+        );
+      } else if (userInvite.role !== "EMPLOYEE") {
+        throw new Error(
+          "User invite with associated token does not have matching role - cannot create account",
+        );
+      }
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to check user invite. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
 
     try {
       // signUpMethod === PASSWORD
