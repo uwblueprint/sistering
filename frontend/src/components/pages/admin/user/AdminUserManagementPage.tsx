@@ -1,12 +1,5 @@
 import React, { useState } from "react";
-import {
-  Flex,
-  Box,
-  Button,
-  Table,
-  Tbody,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { Flex, Box, Table, Tbody, useDisclosure } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
 import ErrorModal from "../../../common/ErrorModal";
