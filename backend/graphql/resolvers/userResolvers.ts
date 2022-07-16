@@ -116,20 +116,22 @@ const userResolvers = {
       { email, role }: { email: string; role: Role },
     ): Promise<UserInviteResponse> => {
       const results = await userService.createUserInvite(email, role);
-      const SUBJECT = `Welcome to your ${role} account!`;
-
+      let subject: string;
       let htmlBody: string;
-      if (results.role === "VOLUNTEER") {
+
+      if (role === "VOLUNTEER") {
         htmlBody = volunteerAccountCreationInviteTemplate(
           `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
         );
+        subject = "Welcome to Your Volunteer Account";
       } else {
         htmlBody = adminAccountCreationInviteTemplate(
           `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
         );
+        subject = "Welcome to Your Admin Account";
       }
 
-      await emailService.sendEmail(email, SUBJECT, htmlBody);
+      await emailService.sendEmail(email, subject, htmlBody);
       return results;
     },
     deleteUserInvite: async (
