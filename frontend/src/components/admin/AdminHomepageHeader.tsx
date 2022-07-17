@@ -1,5 +1,4 @@
-import React, { Dispatch, useState } from "react";
-import { gql, useQuery } from "@apollo/client";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import {
   VStack,
   HStack,
@@ -16,27 +15,18 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { AddIcon, SearchIcon, SettingsIcon } from "@chakra-ui/icons";
+import { useHistory } from "react-router-dom";
 import BranchManagerModal from "./BranchManagerModal";
-import {
-  BranchResponseDTO,
-  BranchQueryResponse,
-} from "../../types/api/BranchTypes";
-
-const BRANCHES = gql`
-  query AdminHomepageHeader_Branches {
-    branches {
-      id
-      name
-    }
-  }
-`;
+import { BranchResponseDTO } from "../../types/api/BranchTypes";
 
 type AdminHomepageHeaderProps = {
   isSuperAdmin: boolean;
   selectStatusTab: (index: number) => void;
   postingStatusNums: number[]; // [unscheduled, scheduled, past, drafts]
   searchFilter: string;
-  setSearchFilter: Dispatch<React.SetStateAction<string>>;
+  setSearchFilter: Dispatch<SetStateAction<string>>;
+  branches: BranchResponseDTO[];
+  setBranchFilter: Dispatch<SetStateAction<BranchResponseDTO | undefined>>;
 };
 
 const AdminHomepageHeader = ({
@@ -45,16 +35,11 @@ const AdminHomepageHeader = ({
   postingStatusNums,
   searchFilter,
   setSearchFilter,
+  branches,
+  setBranchFilter,
 }: AdminHomepageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
-
-  useQuery<BranchQueryResponse>(BRANCHES, {
-    fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      setBranches(data.branches);
-    },
-  });
+  const history = useHistory();
 
   return (
     <>
@@ -67,7 +52,7 @@ const AdminHomepageHeader = ({
           <Text textStyle="display-small-semibold">Volunteer Postings</Text>
           <Spacer />
           {isSuperAdmin && (
-            <Button>
+            <Button onClick={() => history.push("/admin/posting/create")}>
               <AddIcon boxSize={3} mr={3} />
               Create new posting
             </Button>
@@ -148,9 +133,19 @@ const AdminHomepageHeader = ({
                 onChange={(event) => setSearchFilter(event.target.value)}
               />
             </InputGroup>
-            <Select placeholder="All branches">
+            {/* // TODO: This should actually filter  */}
+            <Select
+              placeholder="All branches"
+              onChange={(event) =>
+                setBranchFilter(
+                  branches.find((branch) => branch.id === event.target.value),
+                )
+              }
+            >
               {branches.map((branch) => (
-                <option key={branch.id}>{branch.name}</option>
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
               ))}
             </Select>
             <IconButton
