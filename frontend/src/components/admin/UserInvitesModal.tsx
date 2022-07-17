@@ -33,6 +33,7 @@ const UserInvitesModal = ({
           <ModalBody overflow="auto">
             <UserInvitesTable
               invites={[
+                // TODO: populate with invitations query
                 {
                   email: "admin@email",
                   createdAt: new Date(),
