@@ -55,6 +55,7 @@ const postingType = gql`
     endDate: Date!
     autoClosingDate: Date!
     numVolunteers: Int!
+    isScheduled: Boolean!
   }
 
   extend type Query {

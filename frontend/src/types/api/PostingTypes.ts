@@ -37,6 +37,7 @@ export type PostingResponseDTO = Omit<
   shifts: ShiftResponseDTO[];
   skills: SkillResponseDTO[];
   employees: EmployeeUserResponseDTO[];
+  isScheduled: boolean;
 };
 
 export type PostingDataQueryResponse = {
