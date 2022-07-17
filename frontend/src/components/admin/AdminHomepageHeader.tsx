@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, useState } from "react";
 import { gql, useQuery } from "@apollo/client";
 import {
   VStack,
@@ -35,12 +35,16 @@ type AdminHomepageHeaderProps = {
   isSuperAdmin: boolean;
   selectStatusTab: (index: number) => void;
   postingStatusNums: number[]; // [unscheduled, scheduled, past, drafts]
+  searchFilter: string;
+  setSearchFilter: Dispatch<React.SetStateAction<string>>;
 };
 
 const AdminHomepageHeader = ({
   isSuperAdmin,
   selectStatusTab,
   postingStatusNums,
+  searchFilter,
+  setSearchFilter,
 }: AdminHomepageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
@@ -136,7 +140,13 @@ const AdminHomepageHeader = ({
               <InputLeftElement pointerEvents="none">
                 <SearchIcon color="gray.300" />
               </InputLeftElement>
-              <Input type="text" placeholder="Search" w="368px" />
+              <Input
+                type="text"
+                placeholder="Search"
+                w="368px"
+                value={searchFilter}
+                onChange={(event) => setSearchFilter(event.target.value)}
+              />
             </InputGroup>
             <Select placeholder="All branches">
               {branches.map((branch) => (
