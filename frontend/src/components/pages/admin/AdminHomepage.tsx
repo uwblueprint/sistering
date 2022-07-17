@@ -59,6 +59,7 @@ const AdminHomepage = (): React.ReactElement => {
     [], // drafts => 3
   ]);
   const [postingStatusIndex, setPostingStatusIndex] = useState<number>(0); // refer to above for index
+  const [searchFilter, setSearchFilter] = useState<string>("");
 
   const { loading, error } = useQuery(POSTINGS, {
     fetchPolicy: "cache-and-network",
@@ -111,6 +112,8 @@ const AdminHomepage = (): React.ReactElement => {
           postingStatusNums={postingsByStatus.map(
             (postingsArr) => postingsArr.length,
           )}
+          searchFilter={searchFilter}
+          setSearchFilter={setSearchFilter}
         />
         <Box
           flex={1}
@@ -121,29 +124,35 @@ const AdminHomepage = (): React.ReactElement => {
         >
           <SimpleGrid columns={2} spacing={4}>
             {authenticatedUser &&
-              postingsByStatus[postingStatusIndex].map((posting) => (
-                <Box key={posting.id} pb="24px">
-                  <AdminPostingCard
-                    key={posting.id}
-                    status={getPostingFilterStatus(
-                      posting.status,
-                      new Date(posting.endDate),
-                      posting.shifts,
-                    )}
-                    role={authenticatedUser.role}
-                    id={posting.id}
-                    title={posting.title}
-                    startDate={posting.startDate}
-                    endDate={posting.endDate}
-                    autoClosingDate={posting.autoClosingDate}
-                    branchName={posting.branch.name}
-                    numVolunteers={posting.numVolunteers}
-                    navigateToAdminSchedule={() =>
-                      navigateToAdminSchedule(posting.id)
-                    }
-                  />
-                </Box>
-              ))}
+              postingsByStatus[postingStatusIndex]
+                .filter((posting) =>
+                  posting.title
+                    .toLowerCase()
+                    .includes(searchFilter.toLowerCase()),
+                )
+                .map((posting) => (
+                  <Box key={posting.id} pb="24px">
+                    <AdminPostingCard
+                      key={posting.id}
+                      status={getPostingFilterStatus(
+                        posting.status,
+                        new Date(posting.endDate),
+                        posting.shifts,
+                      )}
+                      role={authenticatedUser.role}
+                      id={posting.id}
+                      title={posting.title}
+                      startDate={posting.startDate}
+                      endDate={posting.endDate}
+                      autoClosingDate={posting.autoClosingDate}
+                      branchName={posting.branch.name}
+                      numVolunteers={posting.numVolunteers}
+                      navigateToAdminSchedule={() =>
+                        navigateToAdminSchedule(posting.id)
+                      }
+                    />
+                  </Box>
+                ))}
           </SimpleGrid>
         </Box>
       </Flex>
