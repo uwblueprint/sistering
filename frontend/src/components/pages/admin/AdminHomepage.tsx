@@ -44,6 +44,7 @@ const POSTINGS = gql`
       numVolunteers
       autoClosingDate
       status
+      isScheduled
     }
   }
 `;
@@ -82,7 +83,6 @@ const filterAdminPosting = (
 };
 
 // TODO: hook up edit - do I need to create a new page? - we can probably follow up on this ticket
-// TODO: move this to / and change perms for employees
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
@@ -165,7 +165,7 @@ const AdminHomepage = (): React.ReactElement => {
         const postingStatus = getPostingFilterStatus(
           posting.status,
           new Date(posting.endDate),
-          posting.shifts,
+          posting.isScheduled,
         );
         if (postingStatus === PostingFilterStatus.UNSCHEDULED) {
           sortedPostings[0].push(posting);
@@ -223,7 +223,7 @@ const AdminHomepage = (): React.ReactElement => {
                       status={getPostingFilterStatus(
                         posting.status,
                         new Date(posting.endDate),
-                        posting.shifts,
+                        posting.isScheduled,
                       )}
                       role={authenticatedUser.role}
                       id={posting.id}
