@@ -78,7 +78,7 @@ const NewAccountPage = (): React.ReactElement => {
     if (!createEmployeeError) {
       await deleteUserInvite({
         variables: {
-          email: response.email,
+          email: response.data.createEmployee.email,
         },
       });
     }
@@ -103,7 +103,7 @@ const NewAccountPage = (): React.ReactElement => {
     if (!createVolunteerError) {
       await deleteUserInvite({
         variables: {
-          email: response.email,
+          email: response.data.createVolunteer.email,
         },
       });
     }

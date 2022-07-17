@@ -121,12 +121,12 @@ const userResolvers = {
 
       if (role === "VOLUNTEER") {
         htmlBody = volunteerAccountCreationInviteTemplate(
-          `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
+          `http://localhost:3000/create-account?token=${results.uuid}`,
         );
         subject = "Welcome to Your Volunteer Account";
       } else {
         htmlBody = adminAccountCreationInviteTemplate(
-          `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
+          `http://localhost:3000/create-account?token=${results.uuid}`,
         );
         subject = "Welcome to Your Admin Account";
       }
