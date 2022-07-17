@@ -61,6 +61,12 @@ const postingResolvers = {
     ): Promise<string> => {
       return postingService.deletePosting(id);
     },
+    duplicatePosting: async (
+      _parent: undefined,
+      { id }: { id: string },
+    ): Promise<string> => {
+      return postingService.duplicatePosting(id);
+    },
   },
 };
 

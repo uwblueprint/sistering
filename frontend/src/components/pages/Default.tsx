@@ -91,6 +91,10 @@ const Default = (): React.ReactElement => {
           postings?.map((posting) => (
             <Box key={posting.id} pb="24px">
               <AdminPostingCard
+                // eslint-disable-next-line no-alert
+                onDuplicate={() => alert("please visit admin homepage")}
+                // eslint-disable-next-line no-alert
+                onDelete={() => alert("please visit admin homepage")}
                 key={posting.id}
                 status={getPostingFilterStatus(
                   posting.status,

@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Flex, Box, SimpleGrid } from "@chakra-ui/react";
 import { generatePath, useHistory } from "react-router-dom";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import AuthContext from "../../../contexts/AuthContext";
 import * as Routes from "../../../constants/Routes";
 
@@ -57,6 +57,18 @@ const BRANCHES = gql`
   }
 `;
 
+const DUPLICATE_POSTING = gql`
+  mutation AdminHomepage_DuplicatePosting($postingId: ID!) {
+    duplicatePosting(id: $postingId)
+  }
+`;
+
+const DELETE_POSTING = gql`
+  mutation AdminHomepage_DeletePosting($postingId: ID!) {
+    deletePosting(id: $postingId)
+  }
+`;
+
 const filterAdminPosting = (
   postings: SimplePostingResponseDTO[],
   searchFilter: string,
@@ -69,10 +81,8 @@ const filterAdminPosting = (
   );
 };
 
-// TODO: hook up create new posting page
-// TODO: hook up make duplicate - make dup in draft mode
-// TODO: hook up delete posting action - what can I actually delete?
-// TODO: hook up edit - do I need to create a new page?
+// TODO: hook up edit - do I need to create a new page? - we can probably follow up on this ticket
+// TODO: move this to / and change perms for employees
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
@@ -113,6 +123,40 @@ const AdminHomepage = (): React.ReactElement => {
     },
   });
 
+  const [duplicatePosting] = useMutation(DUPLICATE_POSTING, {
+    refetchQueries: () => [
+      {
+        query: POSTINGS,
+      },
+    ],
+    awaitRefetchQueries: true,
+  });
+
+  const [deletePosting] = useMutation(DELETE_POSTING, {
+    refetchQueries: () => [
+      {
+        query: POSTINGS,
+      },
+    ],
+    awaitRefetchQueries: true,
+  });
+
+  const duplicatePostingById = async (postingId: string) => {
+    await duplicatePosting({
+      variables: {
+        postingId,
+      },
+    });
+  };
+
+  const deletePostingById = async (postingId: string) => {
+    await deletePosting({
+      variables: {
+        postingId,
+      },
+    });
+  };
+
   // update postingsByStatus 2d array
   useEffect(() => {
     if (postings) {
@@ -139,7 +183,6 @@ const AdminHomepage = (): React.ReactElement => {
 
   return (
     <>
-      {loading && <Loading />}
       {error && <ErrorModal />}
       <Flex flexFlow="column" width="100%" height="100vh">
         <Navbar
@@ -164,36 +207,42 @@ const AdminHomepage = (): React.ReactElement => {
           px="100px"
           pt="32px"
         >
-          <SimpleGrid columns={2} spacing={4}>
-            {authenticatedUser &&
-              filterAdminPosting(
-                postingsByStatus[postingStatusIndex],
-                searchFilter,
-                branchFilter,
-              ).map((posting) => (
-                <Box key={posting.id} pb="24px">
-                  <AdminPostingCard
-                    key={posting.id}
-                    status={getPostingFilterStatus(
-                      posting.status,
-                      new Date(posting.endDate),
-                      posting.shifts,
-                    )}
-                    role={authenticatedUser.role}
-                    id={posting.id}
-                    title={posting.title}
-                    startDate={posting.startDate}
-                    endDate={posting.endDate}
-                    autoClosingDate={posting.autoClosingDate}
-                    branchName={posting.branch.name}
-                    numVolunteers={posting.numVolunteers}
-                    navigateToAdminSchedule={() =>
-                      navigateToAdminSchedule(posting.id)
-                    }
-                  />
-                </Box>
-              ))}
-          </SimpleGrid>
+          {loading ? (
+            <Loading />
+          ) : (
+            <SimpleGrid columns={2} spacing={4}>
+              {authenticatedUser &&
+                filterAdminPosting(
+                  postingsByStatus[postingStatusIndex],
+                  searchFilter,
+                  branchFilter,
+                ).map((posting) => (
+                  <Box key={posting.id} pb="24px">
+                    <AdminPostingCard
+                      key={posting.id}
+                      status={getPostingFilterStatus(
+                        posting.status,
+                        new Date(posting.endDate),
+                        posting.shifts,
+                      )}
+                      role={authenticatedUser.role}
+                      id={posting.id}
+                      title={posting.title}
+                      startDate={posting.startDate}
+                      endDate={posting.endDate}
+                      autoClosingDate={posting.autoClosingDate}
+                      branchName={posting.branch.name}
+                      numVolunteers={posting.numVolunteers}
+                      navigateToAdminSchedule={() =>
+                        navigateToAdminSchedule(posting.id)
+                      }
+                      onDuplicate={() => duplicatePostingById(posting.id)}
+                      onDelete={() => deletePostingById(posting.id)}
+                    />
+                  </Box>
+                ))}
+            </SimpleGrid>
+          )}
         </Box>
       </Flex>
     </>
