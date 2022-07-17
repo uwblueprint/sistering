@@ -11,8 +11,14 @@ const AdminScheduleTableDate = ({
 }: AdminScheduleTableDateProps): React.ReactElement => {
   return (
     <Tr>
-      <Th colSpan={3}>
-        <Text>{formatDateStringYear(date.toUTCString())}</Text>
+      <Th
+        colSpan={3}
+        bg="background.light"
+        _first={{ borderTop: "2px", borderColor: "background.dark" }}
+      >
+        <Text textStyle="body-regular" fontWeight="bold">
+          {formatDateStringYear(date.toUTCString())}
+        </Text>
       </Th>
     </Tr>
   );
