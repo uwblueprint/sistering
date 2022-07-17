@@ -70,6 +70,7 @@ const postingType = gql`
     createPosting(posting: PostingWithShiftsRequestDTO!): PostingResponseDTO!
     updatePosting(id: ID!, posting: PostingRequestDTO!): PostingResponseDTO!
     deletePosting(id: ID!): ID!
+    duplicatePosting(id: ID!): ID!
   }
 `;
 

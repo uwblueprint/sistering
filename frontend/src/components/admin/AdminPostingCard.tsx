@@ -33,6 +33,8 @@ type AdminPostingCardProps = {
   branchName: string;
   numVolunteers: number;
   navigateToAdminSchedule?: () => void;
+  onDuplicate: () => void;
+  onDelete: () => void;
 };
 
 const AdminPostingCard = ({
@@ -46,6 +48,8 @@ const AdminPostingCard = ({
   branchName,
   numVolunteers,
   navigateToAdminSchedule,
+  onDuplicate,
+  onDelete,
 }: AdminPostingCardProps): React.ReactElement => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
 
@@ -57,7 +61,7 @@ const AdminPostingCard = ({
         body={`Are you sure you want to delete "${title}"?`}
         onClose={() => setIsDeleteModalOpen(false)}
         onDelete={() => {
-          // TODO: delete posting
+          onDelete();
           setIsDeleteModalOpen(false);
         }}
       />
@@ -81,7 +85,7 @@ const AdminPostingCard = ({
                 />
                 <MenuList shadow="md">
                   <MenuItem>Edit</MenuItem>
-                  <MenuItem>Make a copy</MenuItem>
+                  <MenuItem onClick={onDuplicate}>Make a copy</MenuItem>
                   <MenuItem onClick={() => setIsDeleteModalOpen(true)}>
                     Delete
                   </MenuItem>
@@ -133,9 +137,8 @@ const AdminPostingCard = ({
             status === PostingFilterStatus.UNSCHEDULED ? (
               <Button
                 variant="ghost"
-                disabled={
-                  status === PostingFilterStatus.DRAFT
-                } /* TODO: Link to review registrants page */
+                disabled={status === PostingFilterStatus.DRAFT}
+                onClick={navigateToAdminSchedule}
               >
                 Review Registrants
               </Button>

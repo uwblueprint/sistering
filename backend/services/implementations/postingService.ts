@@ -5,6 +5,7 @@ import {
   Employee,
   Branch,
   Shift,
+  PostingStatus as PrismaPostingStatus,
 } from "@prisma/client";
 import IPostingService from "../interfaces/postingService";
 import IUserService from "../interfaces/userService";
@@ -389,6 +390,65 @@ class PostingService implements IPostingService {
     } catch (error: unknown) {
       Logger.error(
         `Failed to delete posting. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async duplicatePosting(postingId: string): Promise<string> {
+    try {
+      // get posting along with its postings
+      const targetPosting = await prisma.posting.findUnique({
+        where: { id: Number(postingId) },
+        include: {
+          shifts: true,
+          employees: true,
+          skills: true,
+        },
+      });
+      if (targetPosting === null) {
+        throw new Error(`Target posting with ${postingId} not found`);
+      }
+
+      // create duplicate posting
+      const duplicatePosting = await prisma.posting.create({
+        data: {
+          branch: {
+            connect: { id: targetPosting.branchId },
+          },
+          skills: {
+            connect: targetPosting.skills.map((skill) => {
+              return { id: skill.id };
+            }),
+          },
+          employees: {
+            connect: targetPosting.employees.map((employee) => {
+              return { id: employee.id };
+            }),
+          },
+          shifts: {
+            createMany: {
+              data:
+                targetPosting.shifts.map((shift) => {
+                  return { startTime: shift.startTime, endTime: shift.endTime };
+                }) ?? [],
+            },
+          },
+          title: `Copy of ${targetPosting.title}`,
+          type: targetPosting.type,
+          status: PrismaPostingStatus.DRAFT,
+          description: targetPosting.description,
+          startDate: targetPosting.startDate,
+          endDate: targetPosting.endDate,
+          autoClosingDate: targetPosting.autoClosingDate,
+          numVolunteers: targetPosting.numVolunteers,
+        },
+      });
+
+      return String(duplicatePosting.id);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to duplicate posting. Reason = ${getErrorMessage(error)}`,
       );
       throw error;
     }
