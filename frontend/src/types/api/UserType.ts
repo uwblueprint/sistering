@@ -31,7 +31,7 @@ export type UserDTO = {
 
 export type VolunteerDTO = {
   id: string;
-  hireDate: Date;
+  hireDate: string;
   dateOfBirth: string | null;
   pronouns: string | null;
   skills: SkillResponseDTO[];
@@ -48,7 +48,7 @@ export type VolunteerUserResponseDTO = UserDTO & VolunteerDTO;
 export type CreateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id"> & {
   password: string;
   phoneNumber: string;
-  hireDate: Date;
+  hireDate: string;
   dateOfBirth: string | null;
   skills: string[];
   branches: BranchResponseDTO[];

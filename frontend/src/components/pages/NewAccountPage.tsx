@@ -1,6 +1,6 @@
 import { Container, Divider, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
-import { gql, useMutation } from "@apollo/client";
+import { gql, useMutation, useQuery } from "@apollo/client";
 import SignupNavbar from "../common/SignupNavbar";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
@@ -11,16 +11,9 @@ import {
   CreateVolunteerUserDTO,
 } from "../../types/api/UserType";
 
-<<<<<<< HEAD
 const CREATE_EMPLOYEE_USER = gql`
   mutation CreateEmployeeUser($employee: CreateEmployeeUserDTO!) {
     createEmployeeUser(employeeUser: $employee) {
-=======
-// inject uuid into these gql stuff here:
-const CREATE_VOLUNTEER_USER = gql`
-  mutation CreateVolunteerUser($volunteer: CreateVolunteerUserDTO!) {
-    createVolunteerUser(volunteerUser: $volunteer) {
->>>>>>> cc42d23 (initial implementation of task (grabbed token from query, implemented into form variables, went through flow for createEmployee and createVolunteer resolvers - including deletion of user invite rows if mutations of creating user does not return err)
       id
     }
   }
@@ -58,27 +51,32 @@ const NewAccountPage = (): React.ReactElement => {
     DELETE_USER_INVITE,
   );
 
+  const queryParams = new URLSearchParams(window.location.search);
+  const token = queryParams.get("token");
+
+  const GET_USER_INVITE = gql`
+    query GetUserInvite($uuid: string!) {
+      file(fileUUID: $fileUUID)
+    }
+  `;
+
   if (createEmployeeLoading || createVolunteerLoading) {
     return <Loading />;
   }
   const isError = createEmployeeError || createVolunteerError;
 
-<<<<<<< HEAD
   const onEmployeeCreate = async (employee: CreateEmployeeUserDTO) => {
-    await createEmployee({
-=======
-  const onEmployeeCreate = async (employee: CreateEmployeeDTO) => {
     const response = await createEmployee({
->>>>>>> cc42d23 (initial implementation of task (grabbed token from query, implemented into form variables, went through flow for createEmployee and createVolunteer resolvers - including deletion of user invite rows if mutations of creating user does not return err)
       variables: {
         employee,
       },
     });
+    console.log(response);
 
     if (!createEmployeeError) {
       await deleteUserInvite({
         variables: {
-          email: response.data.createEmployee.email,
+          email: response.data.createEmployeeUser.email,
         },
       });
     }
@@ -88,13 +86,8 @@ const NewAccountPage = (): React.ReactElement => {
     }
   };
 
-<<<<<<< HEAD
   const onVolunteerCreate = async (volunteer: CreateVolunteerUserDTO) => {
-    await createVolunteer({
-=======
-  const onVolunteerCreate = async (volunteer: CreateVolunteerDTO) => {
     const response = await createVolunteer({
->>>>>>> cc42d23 (initial implementation of task (grabbed token from query, implemented into form variables, went through flow for createEmployee and createVolunteer resolvers - including deletion of user invite rows if mutations of creating user does not return err)
       variables: {
         volunteer,
       },
@@ -103,10 +96,11 @@ const NewAccountPage = (): React.ReactElement => {
     if (!createVolunteerError) {
       await deleteUserInvite({
         variables: {
-          email: response.data.createVolunteer.email,
+          email: response.data.createVolunteerUser.email,
         },
       });
     }
+    console.log(response);
 
     if (!deleteUserInviteError) {
       console.log("SUCCESS!");
