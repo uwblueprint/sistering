@@ -166,6 +166,7 @@ const userType = gql`
     userByEmail(email: String!): UserDTO!
     users: [UserDTO!]!
     usersCSV: String!
+    getUserInvite(uuid: String!): UserInviteResponse!
     volunteerUserById(id: ID!): VolunteerUserResponseDTO!
     volunteerUserByEmail(email: String!): VolunteerUserResponseDTO!
     volunteerUsers: [VolunteerUserResponseDTO!]!

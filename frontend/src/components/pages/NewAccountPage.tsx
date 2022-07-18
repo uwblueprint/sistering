@@ -9,6 +9,7 @@ import ErrorModal from "../common/ErrorModal";
 import {
   CreateEmployeeUserDTO,
   CreateVolunteerUserDTO,
+  UserInviteResponseDTO,
 } from "../../types/api/UserType";
 
 const CREATE_EMPLOYEE_USER = gql`
@@ -35,9 +36,23 @@ const DELETE_USER_INVITE = gql`
   }
 `;
 
+const GET_USER_INVITE = gql`
+  query GetUserInvite($uuid: String!) {
+    getUserInvite(uuid: $uuid) {
+      uuid
+      email
+      role
+    }
+  }
+`;
+
+type GetUserInviteResponse = {
+  getUserInvite: UserInviteResponseDTO;
+};
+
 const NewAccountPage = (): React.ReactElement => {
   const [profilePhoto, setProfilePhoto] = useState<string>("");
-  const [isAdmin] = useState<boolean>(false);
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [
     createEmployee,
     { loading: createEmployeeLoading, error: createEmployeeError },
@@ -51,14 +66,23 @@ const NewAccountPage = (): React.ReactElement => {
     DELETE_USER_INVITE,
   );
 
+  const [userInvite, setUserInvite] = useState<UserInviteResponseDTO>();
+
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token");
 
-  const GET_USER_INVITE = gql`
-    query GetUserInvite($uuid: string!) {
-      file(fileUUID: $fileUUID)
-    }
-  `;
+  useQuery<GetUserInviteResponse>(GET_USER_INVITE, {
+    fetchPolicy: "cache-and-network",
+    variables: {
+      uuid: token,
+    },
+    onCompleted: (data) => {
+      setUserInvite(data.getUserInvite);
+      if (userInvite?.role === "EMPLOYEE") {
+        setIsAdmin(true);
+      }
+    },
+  });
 
   if (createEmployeeLoading || createVolunteerLoading) {
     return <Loading />;
@@ -96,7 +120,7 @@ const NewAccountPage = (): React.ReactElement => {
     if (!createVolunteerError) {
       await deleteUserInvite({
         variables: {
-          email: response.data.createVolunteerUser.email,
+          email: userInvite?.email,
         },
       });
     }
@@ -123,7 +147,7 @@ const NewAccountPage = (): React.ReactElement => {
         <AccountForm
           mode={AccountFormMode.CREATE}
           isAdmin={isAdmin}
-          email="testemail123@domain.com" // TODO: Replace with firebase email
+          email={userInvite?.email} // TODO: Replace with firebase email
           profilePhoto={profilePhoto}
           onEmployeeCreate={onEmployeeCreate}
           onVolunteerCreate={onVolunteerCreate}

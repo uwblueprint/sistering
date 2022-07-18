@@ -1,3 +1,4 @@
+import { UserInvite } from "@prisma/client";
 import nodemailerConfig from "../../nodemailer.config";
 import AuthService from "../../services/implementations/authService";
 import EmailService from "../../services/implementations/emailService";
@@ -49,6 +50,12 @@ const userResolvers = {
       const users = await userService.getUsers();
       const csv = await generateCSV<UserDTO>({ data: users });
       return csv;
+    },
+    getUserInvite: async (
+      _parent: undefined,
+      { uuid }: { uuid: string },
+    ): Promise<UserInviteResponse> => {
+      return userService.getUserInvite(uuid);
     },
     // VolunteerUsers
     volunteerUserById: async (

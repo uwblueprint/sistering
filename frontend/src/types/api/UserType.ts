@@ -19,7 +19,7 @@ export type UserDTO = {
   id: string;
   firstName: string;
   lastName: string;
-  email: string;
+  email: string | undefined;
   role: Role;
   phoneNumber: string | null;
   languages: Language[];
@@ -75,3 +75,9 @@ export type CreateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id"> & {
 };
 
 export type UpdateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id">;
+
+export type UserInviteResponseDTO = {
+  uuid: string;
+  role: Role;
+  email: string;
+};

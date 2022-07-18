@@ -454,6 +454,34 @@ class UserService implements IUserService {
     }
   }
 
+  async getUserInvite(uuid: string): Promise<UserInviteResponse> {
+    try {
+      const userInvite = await prisma.userInvite.findUnique({
+        where: {
+          uuid,
+        },
+      });
+
+      if (userInvite == null) {
+        // not found
+        throw new Error(
+          "Failed to get user invite with token - user is not allowed to create an account",
+        );
+      }
+
+      return {
+        uuid: userInvite.uuid,
+        role: userInvite.role.toString() as Role,
+        email: userInvite.email,
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get user invite. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
   async createUserInvite(
     email: string,
     role: Role,

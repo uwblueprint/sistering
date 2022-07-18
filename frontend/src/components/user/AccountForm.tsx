@@ -25,6 +25,7 @@ import {
   LANGUAGES,
   UpdateEmployeeUserDTO,
   UpdateVolunteerUserDTO,
+  Role,
 } from "../../types/api/UserType";
 import TextField from "./fields/TextField";
 import SelectorField from "./fields/SelectorField";
@@ -50,7 +51,7 @@ type AccountFormProps = {
   profilePhoto: string;
   firstName?: string;
   lastName?: string;
-  email: string;
+  email?: string;
   dateOfBirth?: string | null;
   pronouns?: string | null;
   phoneNumber?: string | null;

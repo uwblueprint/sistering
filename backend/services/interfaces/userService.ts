@@ -95,6 +95,13 @@ interface IUserService {
   deleteUserByEmail(email: string): Promise<void>;
 
   /**
+   * Gets user invite by uuid
+   * @param uuid user's token used to create an account
+   * @throws Error if get user invite fails
+   */
+  getUserInvite(uuid: string): Promise<UserInviteResponse>;
+
+  /**
    * Creates user invite link to send to user
    * @param email user's email
    * @param role role that the user will have
