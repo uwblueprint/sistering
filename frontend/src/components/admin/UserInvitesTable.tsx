@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Tabs,
   TabList,
@@ -18,6 +18,7 @@ import {
   formatDateMonthYear,
   formatTimeHourMinutes,
 } from "../../utils/DateTimeUtils";
+import { Role } from "../../types/AuthTypes";
 
 type UserInvitesTableProps = {
   invites: UserInviteDTO[];
@@ -26,6 +27,7 @@ type UserInvitesTableProps = {
 const UserInvitesTable = ({
   invites,
 }: UserInvitesTableProps): React.ReactElement => {
+  const [selectedTab, setSelectedTab] = useState(Role.Volunteer);
   return (
     <TableContainer
       border="2px"
@@ -43,6 +45,7 @@ const UserInvitesTable = ({
               borderColor: "currentColor",
             }}
             py="8px"
+            onClick={() => setSelectedTab(Role.Volunteer)}
           >
             Volunteers
           </Tab>
@@ -55,6 +58,7 @@ const UserInvitesTable = ({
               borderColor: "currentColor",
             }}
             py="8px"
+            onClick={() => setSelectedTab(Role.Admin)}
           >
             Admins
           </Tab>
@@ -70,26 +74,28 @@ const UserInvitesTable = ({
           </Tr>
         </Thead>
         <Tbody>
-          {invites.map((invite, i) => (
-            <Tr key={i}>
-              <Td>{invite.email}</Td>
-              <Td>{formatDateMonthYear(invite.createdAt)}</Td>
-              <Td>{formatTimeHourMinutes(invite.createdAt)}</Td>
-              <Td textAlign="end">
-                <IconButton
-                  aria-label="Cancel invite"
-                  variant="ghost"
-                  _hover={{
-                    bg: "transparent",
-                  }}
-                  _active={{
-                    bg: "transparent",
-                  }}
-                  icon={<CloseIcon color="text.default" boxSize="13px" />}
-                />
-              </Td>
-            </Tr>
-          ))}
+          {invites
+            .filter((invite) => invite.role === selectedTab)
+            .map((invite, i) => (
+              <Tr key={i}>
+                <Td>{invite.email}</Td>
+                <Td>{formatDateMonthYear(invite.createdAt)}</Td>
+                <Td>{formatTimeHourMinutes(invite.createdAt)}</Td>
+                <Td textAlign="end">
+                  <IconButton
+                    aria-label="Cancel invite"
+                    variant="ghost"
+                    _hover={{
+                      bg: "transparent",
+                    }}
+                    _active={{
+                      bg: "transparent",
+                    }}
+                    icon={<CloseIcon color="text.default" boxSize="13px" />}
+                  />
+                </Td>
+              </Tr>
+            ))}
         </Tbody>
       </Table>
     </TableContainer>
