@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Button, Box, HStack, useBoolean, VStack } from "@chakra-ui/react";
 import { gql, useMutation } from "@apollo/client";
 
-import CreatePostingReview from "../../../admin/posting/CreatePostingReview";
+import PostingFormReview from "../../../admin/posting/PostingFormReview";
 import SideNavBarWithTitle from "../../../common/SideNavbarWithTitle";
 import ErrorModal from "../../../common/ErrorModal";
 
@@ -20,14 +20,21 @@ const CREATE_POSTING = gql`
   }
 `;
 
-type CreatePostingPageProps = {
+type PostingFormPageProps = {
   navigateBack: () => void;
+  isEdit?: boolean;
+  steps: string[];
 };
 
-const CreatePostingReviewPage = ({
+// TODO: we need to just make this a posting review page, with 2 modes
+const PostingFormReviewPage = ({
   navigateBack,
-}: CreatePostingPageProps): React.ReactElement => {
+  isEdit = false,
+  steps,
+}: PostingFormPageProps): React.ReactElement => {
   const { branch, skills, employees, ...rest } = useContext(PostingContext);
+
+  // TODO: add edit mutation here as well
   const [
     createPosting,
     { loading: createPostingLoading, error: createPostingError },
@@ -51,11 +58,11 @@ const CreatePostingReviewPage = ({
       <HStack alignItems="flex-start" spacing={0}>
         <SideNavBarWithTitle
           title="Create New Posting"
-          labels={["Basic Information", "Time Slots", "Review and Post"]}
+          labels={steps}
           activeStep={2}
         />
         <VStack alignItems="flex-end">
-          <CreatePostingReview />
+          <PostingFormReview />
           <Box minH="75px">
             <Box
               position="fixed"
@@ -79,6 +86,7 @@ const CreatePostingReviewPage = ({
                 isLoading={createPostingLoading && isDraftClicked}
                 onClick={async () => {
                   setIsDraftClicked.on();
+                  // TODO: this should depend on form mode
                   await createPosting({
                     variables: {
                       posting: { ...postingToCreate, status: "DRAFT" },
@@ -94,6 +102,7 @@ const CreatePostingReviewPage = ({
                 isLoading={createPostingLoading && !isDraftClicked}
                 onClick={async () => {
                   setIsDraftClicked.off();
+                  // TODO: this should depend on form mode
                   await createPosting({
                     variables: {
                       posting: { ...postingToCreate, status: "PUBLISHED" },
@@ -112,4 +121,4 @@ const CreatePostingReviewPage = ({
   );
 };
 
-export default CreatePostingReviewPage;
+export default PostingFormReviewPage;

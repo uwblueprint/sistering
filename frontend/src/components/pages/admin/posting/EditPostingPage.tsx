@@ -1,0 +1,163 @@
+import { gql, useQuery } from "@apollo/client";
+import React, { useContext, useState } from "react";
+import { useParams } from "react-router-dom";
+import PostingContextDispatcherContext from "../../../../contexts/admin/PostingContextDispatcherContext";
+import {
+  PostingDataQueryInput,
+  PostingDataQueryResponse,
+} from "../../../../types/api/PostingTypes";
+import ErrorModal from "../../../common/ErrorModal";
+import Loading from "../../../common/Loading";
+import PostingFormBasicInfoPage from "./PostingFormBasicInfoPage";
+import PostingFormReviewPage from "./PostingFormReviewPage";
+import PostingFormShiftsPage from "./PostingFormShiftsPage";
+
+// TODO: this can be extracted to common
+export enum PostingPageStep {
+  BasicInfo,
+  Shifts,
+  ReviewAndPost,
+}
+
+export const defaultSteps = [
+  "Basic Information",
+  "Time Slots",
+  "Review and Post",
+];
+const nonDraftEditSteps = ["Basic Information", "Review and Post"];
+
+// TODO: we also need info about all the shifts
+const POSTING = gql`
+  query EditPostingForm_Posting($id: ID!) {
+    posting(id: $id) {
+      title
+      description
+      status
+      branch {
+        id
+        name
+      }
+      shifts {
+        startTime
+        endTime
+      }
+      startDate
+      endDate
+      numVolunteers
+      skills {
+        id
+        name
+      }
+      employees {
+        id
+        firstName
+        lastName
+        email
+        phoneNumber
+      }
+      autoClosingDate
+    }
+  }
+`;
+
+const EditPostingPage = (): React.ReactElement => {
+  // TODO: should take query param of posting id and use it to query
+  const { id } = useParams<{ id: string }>();
+  const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
+
+  const [step, setStep] = React.useState<PostingPageStep>(
+    PostingPageStep.BasicInfo,
+  );
+
+  const [isDraft, setIsDraft] = useState(false);
+
+  const { error: postingError, loading: isPostingLoading } = useQuery<
+    PostingDataQueryResponse,
+    PostingDataQueryInput
+  >(POSTING, {
+    variables: { id },
+    fetchPolicy: "cache-and-network",
+    onCompleted: ({ posting }) => {
+      setIsDraft(posting.status === "DRAFT");
+      // TODO: on load, we want to dispatch all actions here
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_TITLE",
+        value: posting.title,
+      });
+    },
+  });
+
+  // These navigate depends on draft vs non-draft edits
+  const navigateToNext = () => {
+    switch (step) {
+      case PostingPageStep.BasicInfo:
+        setStep(
+          isDraft ? PostingPageStep.Shifts : PostingPageStep.ReviewAndPost,
+        );
+        break;
+      case PostingPageStep.Shifts:
+        setStep(PostingPageStep.ReviewAndPost);
+        break;
+      case PostingPageStep.ReviewAndPost:
+        break;
+      default:
+        break;
+    }
+  };
+
+  const navigateBack = () => {
+    switch (step) {
+      case PostingPageStep.BasicInfo:
+        break;
+      case PostingPageStep.Shifts:
+        setStep(PostingPageStep.BasicInfo);
+        break;
+      case PostingPageStep.ReviewAndPost:
+        setStep(isDraft ? PostingPageStep.Shifts : PostingPageStep.BasicInfo);
+        break;
+      default:
+        break;
+    }
+  };
+
+  if (isPostingLoading) {
+    return <Loading />;
+  }
+  if (postingError) {
+    return <ErrorModal />;
+  }
+
+  // TODO: we should query data, write to context, and then continue.
+  // TODO: Change forms to take optional data from for init data to use if context is empty
+  // TODO: For the review page, if on edit mode, use mutation instead
+  switch (step) {
+    case PostingPageStep.BasicInfo:
+      return (
+        <PostingFormBasicInfoPage
+          navigateToNext={navigateToNext}
+          steps={!isDraft ? nonDraftEditSteps : defaultSteps}
+        />
+      );
+    case PostingPageStep.Shifts:
+      // This will only be rendered if our posting is a draft
+      return (
+        <PostingFormShiftsPage
+          navigateToNext={navigateToNext}
+          navigateBack={navigateBack}
+          steps={defaultSteps}
+        />
+      );
+    case PostingPageStep.ReviewAndPost:
+      return (
+        <PostingFormReviewPage
+          navigateBack={navigateBack}
+          steps={!isDraft ? nonDraftEditSteps : defaultSteps}
+          isEdit
+        />
+      );
+    default:
+      return <>Unknown step</>;
+  }
+};
+
+export default EditPostingPage;

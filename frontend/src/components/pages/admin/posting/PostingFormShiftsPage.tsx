@@ -1,27 +1,29 @@
 import React from "react";
 import { Box, HStack } from "@chakra-ui/react";
 
-import CreatePostingShifts from "../../../admin/posting/CreatePostingShifts";
+import PostingFormShifts from "../../../admin/posting/PostingFormShifts";
 import SideNavBarWithTitle from "../../../common/SideNavbarWithTitle";
 
-type CreatePostingPageProps = {
+type PostingFormPageProps = {
   navigateToNext: () => void;
   navigateBack: () => void;
+  steps: string[];
 };
 
-const CreatePostingShiftsPage = ({
+const PostingFormShiftsPage = ({
   navigateToNext,
   navigateBack,
-}: CreatePostingPageProps): React.ReactElement => {
+  steps,
+}: PostingFormPageProps): React.ReactElement => {
   return (
     <Box>
       <HStack alignItems="flex-start" spacing={0}>
         <SideNavBarWithTitle
           title="Create New Posting"
-          labels={["Basic Information", "Time Slots", "Review and Post"]}
+          labels={steps}
           activeStep={1}
         />
-        <CreatePostingShifts
+        <PostingFormShifts
           navigateBack={navigateBack}
           navigateToNext={navigateToNext}
         />
@@ -30,4 +32,4 @@ const CreatePostingShiftsPage = ({
   );
 };
 
-export default CreatePostingShiftsPage;
+export default PostingFormShiftsPage;

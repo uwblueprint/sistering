@@ -42,7 +42,7 @@ import {
 import { SkillDTO, SkillResponseDTO } from "../../../types/api/SkillTypes";
 import StickyBackNext from "../../common/StickyBackNext";
 
-type CreatePostingBasicInfoProps = { navigateToNext: () => void };
+type PostingFormBasicInfoProps = { navigateToNext: () => void };
 type GraphQLTypeName = { __typename: string };
 type Option = { id: string; name: string };
 
@@ -72,9 +72,9 @@ const BRANCHES_SKILLS_EMPLOYEES = gql`
 
 const ERROR_MESSAGE_HEIGHT = "35px";
 
-const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
+const PostingFormBasicInfo: React.FC<PostingFormBasicInfoProps> = ({
   navigateToNext,
-}: CreatePostingBasicInfoProps): React.ReactElement => {
+}: PostingFormBasicInfoProps): React.ReactElement => {
   const {
     branch: branchFromCtx,
     skills: skillsFromCtx,
@@ -628,4 +628,4 @@ const CreatePostingBasicInfo: React.FC<CreatePostingBasicInfoProps> = ({
   // #endregion
 };
 
-export default CreatePostingBasicInfo;
+export default PostingFormBasicInfo;

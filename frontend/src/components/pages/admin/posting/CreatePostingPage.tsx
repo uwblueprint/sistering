@@ -1,28 +1,23 @@
 import React from "react";
-import CreatePostingBasicInfoPage from "./CreatePostingBasicInfoPage";
-import CreatePostingReviewPage from "./CreatePostingReviewPage";
-import CreatePostingShiftsPage from "./CreatePostingShiftsPage";
-
-enum CreatePostingPageStep {
-  BasicInfo,
-  Shifts,
-  ReviewAndPost,
-}
+import { defaultSteps, PostingPageStep } from "./EditPostingPage";
+import PostingFormBasicInfoPage from "./PostingFormBasicInfoPage";
+import PostingFormReviewPage from "./PostingFormReviewPage";
+import PostingFormShiftsPage from "./PostingFormShiftsPage";
 
 const CreatePostingPage = (): React.ReactElement => {
-  const [step, setStep] = React.useState<CreatePostingPageStep>(
-    CreatePostingPageStep.BasicInfo,
+  const [step, setStep] = React.useState<PostingPageStep>(
+    PostingPageStep.BasicInfo,
   );
 
   const navigateToNext = () => {
     switch (step) {
-      case CreatePostingPageStep.BasicInfo:
-        setStep(CreatePostingPageStep.Shifts);
+      case PostingPageStep.BasicInfo:
+        setStep(PostingPageStep.Shifts);
         break;
-      case CreatePostingPageStep.Shifts:
-        setStep(CreatePostingPageStep.ReviewAndPost);
+      case PostingPageStep.Shifts:
+        setStep(PostingPageStep.ReviewAndPost);
         break;
-      case CreatePostingPageStep.ReviewAndPost:
+      case PostingPageStep.ReviewAndPost:
         break;
       default:
         break;
@@ -31,13 +26,13 @@ const CreatePostingPage = (): React.ReactElement => {
 
   const navigateBack = () => {
     switch (step) {
-      case CreatePostingPageStep.BasicInfo:
+      case PostingPageStep.BasicInfo:
         break;
-      case CreatePostingPageStep.Shifts:
-        setStep(CreatePostingPageStep.BasicInfo);
+      case PostingPageStep.Shifts:
+        setStep(PostingPageStep.BasicInfo);
         break;
-      case CreatePostingPageStep.ReviewAndPost:
-        setStep(CreatePostingPageStep.Shifts);
+      case PostingPageStep.ReviewAndPost:
+        setStep(PostingPageStep.Shifts);
         break;
       default:
         break;
@@ -45,17 +40,28 @@ const CreatePostingPage = (): React.ReactElement => {
   };
 
   switch (step) {
-    case CreatePostingPageStep.BasicInfo:
-      return <CreatePostingBasicInfoPage navigateToNext={navigateToNext} />;
-    case CreatePostingPageStep.Shifts:
+    case PostingPageStep.BasicInfo:
       return (
-        <CreatePostingShiftsPage
+        <PostingFormBasicInfoPage
           navigateToNext={navigateToNext}
-          navigateBack={navigateBack}
+          steps={defaultSteps}
         />
       );
-    case CreatePostingPageStep.ReviewAndPost:
-      return <CreatePostingReviewPage navigateBack={navigateBack} />;
+    case PostingPageStep.Shifts:
+      return (
+        <PostingFormShiftsPage
+          navigateToNext={navigateToNext}
+          navigateBack={navigateBack}
+          steps={defaultSteps}
+        />
+      );
+    case PostingPageStep.ReviewAndPost:
+      return (
+        <PostingFormReviewPage
+          navigateBack={navigateBack}
+          steps={defaultSteps}
+        />
+      );
     default:
       return <>Unknown step</>;
   }

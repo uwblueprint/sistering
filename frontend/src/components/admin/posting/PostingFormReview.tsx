@@ -26,7 +26,7 @@ import {
   getWeekday,
 } from "../../../utils/DateTimeUtils";
 
-const CreatePostingReview = (): React.ReactElement => {
+const PostingFormReview = (): React.ReactElement => {
   const {
     branch,
     skills,
@@ -135,4 +135,4 @@ const CreatePostingReview = (): React.ReactElement => {
   );
 };
 
-export default CreatePostingReview;
+export default PostingFormReview;

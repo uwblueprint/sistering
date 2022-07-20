@@ -1,28 +1,30 @@
 import React from "react";
 import { Box, HStack } from "@chakra-ui/react";
 
-import CreatePostingBasicInfo from "../../../admin/posting/CreatePostingBasicInfo";
+import PostingFormBasicInfo from "../../../admin/posting/PostingFormBasicInfo";
 import SideNavBarWithTitle from "../../../common/SideNavbarWithTitle";
 
-type CreatePostingPageProps = {
+type PostingFormPageProps = {
   navigateToNext: () => void;
+  steps: string[];
 };
 
-const CreatePostingBasicInfoPage = ({
+const PostingFormBasicInfoPage = ({
   navigateToNext,
-}: CreatePostingPageProps): React.ReactElement => {
+  steps,
+}: PostingFormPageProps): React.ReactElement => {
   return (
     <Box>
       <HStack alignItems="flex-start" spacing={0}>
         <SideNavBarWithTitle
           title="Create New Posting"
-          labels={["Basic Information", "Time Slots", "Review and Post"]}
+          labels={steps}
           activeStep={0}
         />
-        <CreatePostingBasicInfo navigateToNext={navigateToNext} />
+        <PostingFormBasicInfo navigateToNext={navigateToNext} />
       </HStack>
     </Box>
   );
 };
 
-export default CreatePostingBasicInfoPage;
+export default PostingFormBasicInfoPage;
