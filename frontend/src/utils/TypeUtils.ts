@@ -1,12 +1,11 @@
-import { ShiftDTO } from "../types/api/ShiftTypes";
-import { ShiftSignupStatus } from "../types/api/SignupTypes";
+import { ShiftSignupStatus } from "../types/api/ShiftSignupTypes";
 import { PostingFilterStatus, PostingStatus } from "../types/PostingTypes";
 import { isPast } from "./DateTimeUtils";
 
 export function getPostingFilterStatus(
   status: PostingStatus,
   endDate: Date,
-  shiftsWithSignups: ShiftDTO[],
+  isScheduled: boolean,
 ): PostingFilterStatus {
   if (status === "DRAFT") {
     return PostingFilterStatus.DRAFT;
@@ -14,26 +13,20 @@ export function getPostingFilterStatus(
   if (isPast(endDate)) {
     return PostingFilterStatus.PAST;
   }
-  // TODO: Fix to return this when >1 of the shifts signup is published
-  if (shiftsWithSignups.length === 0) {
-    return PostingFilterStatus.UNSCHEDULED;
+  if (isScheduled) {
+    return PostingFilterStatus.SCHEDULED;
   }
-  return PostingFilterStatus.SCHEDULED;
+  return PostingFilterStatus.UNSCHEDULED;
 }
 
-export function getRealPostingFilterStatus(
+export function getPostingFilterStatusBySignupStatuses(
   status: PostingStatus,
   endDate: Date,
   signupStatuses: ShiftSignupStatus[],
 ): PostingFilterStatus {
-  if (status === "DRAFT") {
-    return PostingFilterStatus.DRAFT;
-  }
-  if (isPast(endDate)) {
-    return PostingFilterStatus.PAST;
-  }
-  if (signupStatuses.some((signupStatus) => signupStatus === "PUBLISHED")) {
-    return PostingFilterStatus.UNSCHEDULED;
-  }
-  return PostingFilterStatus.SCHEDULED;
+  return getPostingFilterStatus(
+    status,
+    endDate,
+    signupStatuses.some((signupStatus) => signupStatus === "PUBLISHED"),
+  );
 }

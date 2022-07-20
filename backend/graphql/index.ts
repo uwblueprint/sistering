@@ -185,6 +185,7 @@ const graphQLMiddlewares = {
     createPosting: authorizedByAdmin(),
     updatePosting: authorizedByAdmin(),
     deletePosting: authorizedByAdmin(),
+    duplicatePosting: authorizedByAdmin(),
     createSkill: authorizedByAdmin(),
     updateSkill: authorizedByAdmin(),
     deleteSkill: authorizedByAdmin(),

@@ -24,7 +24,7 @@ import Loading from "../../../common/Loading";
 import { getUTCDateForDateTimeString } from "../../../../utils/DateTimeUtils";
 import AuthContext from "../../../../contexts/AuthContext";
 import { Role } from "../../../../types/AuthTypes";
-import { getRealPostingFilterStatus } from "../../../../utils/TypeUtils";
+import { getPostingFilterStatusBySignupStatuses } from "../../../../utils/TypeUtils";
 import { PostingFilterStatus } from "../../../../types/PostingTypes";
 
 type AdminScheduleTableDataQueryResponse = {
@@ -331,7 +331,7 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   const isReadOnly =
     (authenticatedUser && authenticatedUser.role !== Role.Admin) ||
-    getRealPostingFilterStatus(
+    getPostingFilterStatusBySignupStatuses(
       postingDetails?.status,
       new Date(postingDetails?.endDate),
       shifts.flatMap((shift) =>
