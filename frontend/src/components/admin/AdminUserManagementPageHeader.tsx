@@ -20,9 +20,9 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { AddIcon, EmailIcon, SearchIcon } from "@chakra-ui/icons";
-import BranchManagerModal from "./BranchManagerModal";
 import AddAdminModal from "./AddAdminModal";
 import AddVolunteerModal from "./AddVolunteerModal";
+import UserInvitesModal from "./UserInvitesModal";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 
 type AdminUserManagementPageHeaderProps = {
@@ -49,7 +49,7 @@ const AdminUserManagementPageHeader = ({
 
   return (
     <>
-      <BranchManagerModal
+      <UserInvitesModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
@@ -60,8 +60,8 @@ const AdminUserManagementPageHeader = ({
           <Button variant="outline" onClick={onOpenProfileDrawer}>
             Edit Branch Access
           </Button>
-          <Button>
-            <EmailIcon boxSize={3} mr={3} />
+          <Button onClick={() => setIsModalOpen(true)}>
+            <EmailIcon boxSize={4} mr={3} />
             Invitations
           </Button>
           <Menu>

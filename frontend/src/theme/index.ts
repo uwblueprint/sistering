@@ -112,18 +112,12 @@ const customTheme = extendTheme(
               overflow: "hidden",
             },
             th: {
-              ...textStyles["body-regular"],
-              fontWeight: "bold",
+              ...textStyles["button-semibold"],
               textTransform: "inherit",
               letterSpacing: "inherit",
-              backgroundColor: "background.light",
               borderBottom: "2px",
               borderColor: "background.dark",
               borderCollapse: "collapse",
-              _first: {
-                borderTop: "2px",
-                borderColor: "background.dark",
-              },
             },
             td: {
               borderBottom: "2px",
