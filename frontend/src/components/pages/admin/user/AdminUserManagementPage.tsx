@@ -5,10 +5,16 @@ import {
   Button,
   TableContainer,
   Table,
+  Thead,
   Tbody,
+  Tr,
+  Th,
   useDisclosure,
   useToast,
+  chakra,
 } from "@chakra-ui/react";
+import { useTable, useSortBy, Column } from "react-table";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import { gql, useQuery } from "@apollo/client";
 
 import ErrorModal from "../../../common/ErrorModal";
@@ -84,6 +90,11 @@ const AdminUserManagementPage = (): React.ReactElement => {
   const [selectedBranches, setSelectedBranches] = useState<BranchResponseDTO[]>(
     [],
   );
+
+  const [userManagementTableTab, setUserManagementTableTab] = useState<number>(
+    0,
+  );
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
@@ -117,6 +128,54 @@ const AdminUserManagementPage = (): React.ReactElement => {
     },
   });
 
+  const data = React.useMemo(
+    () => [
+      {
+        fromUnit: "inches",
+        toUnit: "millimetres (mm)",
+        factor: 25.4,
+      },
+      {
+        fromUnit: "feet",
+        toUnit: "centimetres (cm)",
+        factor: 30.48,
+      },
+      {
+        fromUnit: "yards",
+        toUnit: "metres (m)",
+        factor: 0.91444,
+      },
+    ],
+    [],
+  );
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "To convert",
+        accessor: "fromUnit" as const,
+      },
+      {
+        Header: "Into",
+        accessor: "toUnit" as const,
+      },
+      {
+        Header: "Multiply by",
+        accessor: "factor" as const,
+        isNumeric: true,
+      },
+    ],
+    [],
+  );
+
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    rows,
+    prepareRow,
+  } = useTable({ columns, data }, useSortBy);
+
   return (
     <>
       <ProfileDrawer
@@ -146,6 +205,21 @@ const AdminUserManagementPage = (): React.ReactElement => {
         >
           <TableContainer border="1px" borderRadius="md" borderColor="gray.200">
             <Table variant="brand">
+              <Thead>
+                {headerGroups.map((headerGroup) => (
+                  <Tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <Th
+                        {...header.getHeaderProps(
+                          header.getSortByToggleProps(),
+                        )}
+                      >
+                        {header.render("Header")}
+                      </Th>
+                    ))}
+                  </Tr>
+                ))}
+              </Thead>
               <Tbody>
                 <UserManagementTableRow
                   firstName="Amanda"
