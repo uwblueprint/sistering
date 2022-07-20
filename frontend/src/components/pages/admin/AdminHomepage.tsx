@@ -13,16 +13,10 @@ import ErrorModal from "../../common/ErrorModal";
 import { AdminNavbarTabs, AdminPages } from "../../../constants/Tabs";
 import { Role } from "../../../types/AuthTypes";
 import { PostingResponseDTO } from "../../../types/api/PostingTypes";
-import { isPast } from "../../../utils/DateTimeUtils";
+import { getPostingFilterStatus } from "../../../utils/TypeUtils";
+import { PostingFilterStatus } from "../../../types/PostingTypes";
 
-type Posting = Omit<PostingResponseDTO, "employees" | "type">;
-
-enum PostingStatus {
-  DRAFT = "DRAFT",
-  SCHEDULED = "SCHEDULED",
-  UNSCHEDULED = "UNSCHEDULED",
-  PAST = "PAST",
-}
+type SimplePostingResponseDTO = Omit<PostingResponseDTO, "employees" | "type">;
 
 const POSTINGS = gql`
   query AdminHomepage_postings {
@@ -50,24 +44,15 @@ const POSTINGS = gql`
   }
 `;
 
-const getPostingStatus = (posting: Posting): PostingStatus => {
-  if (posting.status === "DRAFT") {
-    return PostingStatus.DRAFT;
-  }
-  if (isPast(posting.autoClosingDate)) {
-    return PostingStatus.PAST;
-  }
-  if (posting.shifts.length === 0) {
-    return PostingStatus.UNSCHEDULED;
-  }
-  return PostingStatus.SCHEDULED;
-};
-
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
-  const [postings, setPostings] = useState<Posting[] | null>(null);
-  const [postingsByStatus, setPostingsByStatus] = useState<Posting[][]>([
+  const [postings, setPostings] = useState<SimplePostingResponseDTO[] | null>(
+    null,
+  );
+  const [postingsByStatus, setPostingsByStatus] = useState<
+    SimplePostingResponseDTO[][]
+  >([
     [], // unscheduled => 0
     [], // scheduled => 1
     [], // past => 2
@@ -90,14 +75,18 @@ const AdminHomepage = (): React.ReactElement => {
   // update postingsByStatus 2d array
   useEffect(() => {
     if (postings) {
-      const sortedPostings: Posting[][] = [[], [], [], []];
+      const sortedPostings: SimplePostingResponseDTO[][] = [[], [], [], []];
       postings.forEach((posting) => {
-        const postingStatus = getPostingStatus(posting);
-        if (postingStatus === PostingStatus.UNSCHEDULED) {
+        const postingStatus = getPostingFilterStatus(
+          posting.status,
+          new Date(posting.endDate),
+          posting.shifts,
+        );
+        if (postingStatus === PostingFilterStatus.UNSCHEDULED) {
           sortedPostings[0].push(posting);
-        } else if (postingStatus === PostingStatus.SCHEDULED) {
+        } else if (postingStatus === PostingFilterStatus.SCHEDULED) {
           sortedPostings[1].push(posting);
-        } else if (postingStatus === PostingStatus.PAST) {
+        } else if (postingStatus === PostingFilterStatus.PAST) {
           sortedPostings[2].push(posting);
         } else {
           sortedPostings[3].push(posting);
@@ -136,7 +125,11 @@ const AdminHomepage = (): React.ReactElement => {
                 <Box key={posting.id} pb="24px">
                   <AdminPostingCard
                     key={posting.id}
-                    status={getPostingStatus(posting)}
+                    status={getPostingFilterStatus(
+                      posting.status,
+                      new Date(posting.endDate),
+                      posting.shifts,
+                    )}
                     role={authenticatedUser.role}
                     id={posting.id}
                     title={posting.title}

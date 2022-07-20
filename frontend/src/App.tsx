@@ -45,7 +45,7 @@ import AdminPostingDetails from "./components/pages/admin/posting/AdminPostingDe
 import customTheme from "./theme";
 import { AuthenticatedUser, Role } from "./types/AuthTypes";
 import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
-import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSchedulePostingPage";
+import SchedulePostingPage from "./components/pages/admin/schedule/SchedulePostingPage";
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
 import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/AdminSchedulePostingReviewPage";
 import CreateAccountPage from "./components/pages/CreateAccountPage";
@@ -221,8 +221,8 @@ const App = (): React.ReactElement => {
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
-                      authorizedRoles={[Role.Admin]}
-                      component={AdminSchedulePostingPage}
+                      authorizedRoles={[Role.Admin, Role.Employee]}
+                      component={SchedulePostingPage}
                     />
                     <PrivateRoute
                       exact

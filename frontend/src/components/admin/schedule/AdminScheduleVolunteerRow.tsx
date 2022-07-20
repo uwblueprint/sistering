@@ -17,6 +17,7 @@ type AdminScheduleVolunteerRowProps = {
   isConfirmed: boolean;
   isDisabled: boolean;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
+  isReadOnly: boolean;
 };
 
 const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
@@ -26,6 +27,7 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
   isConfirmed,
   isDisabled,
   onSignupCheckboxClick,
+  isReadOnly,
 }: AdminScheduleVolunteerRowProps): React.ReactElement => {
   return (
     <Box
@@ -34,22 +36,24 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
       pr="20px"
       pb={note === "" ? "4px" : "12px"}
       pt="4px"
-      bg={isConfirmed ? "purple.50" : "white"}
+      bg={isConfirmed && !isReadOnly ? "purple.50" : "white"}
       borderBottom="1px"
       borderColor="background.dark"
     >
       <VStack alignItems="flex-start" spacing={0} w="full">
         <HStack alignItems="center" justifyContent="space-between" w="full">
           <HStack spacing={2}>
-            <Checkbox
-              isChecked={isConfirmed}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-                onSignupCheckboxClick(volunteerID, e.target.checked)
-              }
-              alignItems="center"
-              mb={0}
-              isDisabled={isDisabled}
-            />
+            {isReadOnly ? undefined : (
+              <Checkbox
+                isChecked={isConfirmed}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  onSignupCheckboxClick(volunteerID, e.target.checked)
+                }
+                alignItems="center"
+                mb={0}
+                isDisabled={isDisabled}
+              />
+            )}
             <Text textStyle="body-regular" fontSize="14px" fontWeight="600">
               {volunteerName}
             </Text>
