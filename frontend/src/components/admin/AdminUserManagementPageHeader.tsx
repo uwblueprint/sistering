@@ -17,9 +17,12 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { AddIcon, EmailIcon, SearchIcon } from "@chakra-ui/icons";
 import BranchManagerModal from "./BranchManagerModal";
+import AddAdminModal from "./AddAdminModal";
+import AddVolunteerModal from "./AddVolunteerModal";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 
 type AdminUserManagementPageHeaderProps = {
@@ -32,6 +35,17 @@ const AdminUserManagementPageHeader = ({
   onOpenProfileDrawer,
 }: AdminUserManagementPageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const {
+    isOpen: isOpenForVolunteer,
+    onOpen: onOpenForVolunteer,
+    onClose: onCloseForVolunteer,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenForEmployee,
+    onOpen: onOpenForEmployee,
+    onClose: onCloseForEmployee,
+  } = useDisclosure();
 
   return (
     <>
@@ -57,12 +71,28 @@ const AdminUserManagementPageHeader = ({
               icon={<AddIcon boxSize={3} />}
             />
             <MenuList>
-              <MenuItem textStyle="caption" fontWeight="medium">
+              <MenuItem
+                textStyle="caption"
+                fontWeight="medium"
+                onClick={onOpenForVolunteer}
+              >
                 Add new volunteer
               </MenuItem>
-              <MenuItem textStyle="caption" fontWeight="medium">
+              <AddVolunteerModal
+                isOpen={isOpenForVolunteer}
+                onClose={onCloseForVolunteer}
+              />
+              <MenuItem
+                textStyle="caption"
+                fontWeight="medium"
+                onClick={onOpenForEmployee}
+              >
                 Add new administrator
               </MenuItem>
+              <AddAdminModal
+                isOpen={isOpenForEmployee}
+                onClose={onCloseForEmployee}
+              />
             </MenuList>
           </Menu>
         </HStack>

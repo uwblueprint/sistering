@@ -1,6 +1,7 @@
 import { Container, Divider, Text } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
+import { useHistory } from "react-router-dom";
 import SignupNavbar from "../common/SignupNavbar";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
@@ -68,6 +69,8 @@ const NewAccountPage = (): React.ReactElement => {
 
   const [userInvite, setUserInvite] = useState<UserInviteResponseDTO>();
 
+  const history = useHistory();
+
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token");
 
@@ -90,28 +93,25 @@ const NewAccountPage = (): React.ReactElement => {
   const isError = createEmployeeError || createVolunteerError;
 
   const onEmployeeCreate = async (employee: CreateEmployeeUserDTO) => {
-    const response = await createEmployee({
+    await createEmployee({
       variables: {
         employee,
       },
     });
-    console.log(response);
 
     if (!createEmployeeError) {
       await deleteUserInvite({
         variables: {
-          email: response.data.createEmployeeUser.email,
+          email: userInvite?.email,
         },
       });
     }
 
-    if (!deleteUserInviteError) {
-      console.log("SUCCESS!");
-    }
+    history.push("/account-created");
   };
 
   const onVolunteerCreate = async (volunteer: CreateVolunteerUserDTO) => {
-    const response = await createVolunteer({
+    await createVolunteer({
       variables: {
         volunteer,
       },
@@ -124,11 +124,8 @@ const NewAccountPage = (): React.ReactElement => {
         },
       });
     }
-    console.log(response);
 
-    if (!deleteUserInviteError) {
-      console.log("SUCCESS!");
-    }
+    history.push("/account-created");
   };
 
   return (
