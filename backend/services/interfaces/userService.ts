@@ -105,7 +105,7 @@ interface IUserService {
    * Creates user invite link to send to user
    * @param email user's email
    * @param role role that the user will have
-   * @throws Error if invite creation fails
+   * @throws Error if invite creation fails or invite is invalid (past 2 weeks limit)
    */
   createUserInvite(email: string, role: Role): Promise<UserInviteResponse>;
 
