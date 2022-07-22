@@ -18,12 +18,15 @@ import {
   PostingStatus,
   PostingType,
   PostingWithShiftsRequestDTO,
+  RecurrenceInterval,
   ShiftResponseDTO,
   SkillResponseDTO,
+  TimeBlock,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
 import IShiftService from "../interfaces/IShiftService";
+import { getInterval } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -102,6 +105,45 @@ const isPostingScheduledBySignups = (signups: Signup[]): boolean => {
     .some((signupStatus) => signupStatus === "PUBLISHED");
 };
 
+const intervalFromTimeBlocks = (blocks: TimeBlock[]): RecurrenceInterval => {
+  if (blocks.length < 2) {
+    return "NONE";
+  }
+
+  const sortedBlocks = blocks.sort(
+    (a, b) => a.startTime.getTime() - b.endTime.getTime(),
+  );
+  const first = sortedBlocks[0];
+
+  const weeklyInterval = getInterval("WEEKLY");
+  const biWeeklyInterval = getInterval("BIWEEKLY");
+  const monthlyInterval = getInterval("MONTHLY");
+
+  let result: RecurrenceInterval = "NONE";
+
+  sortedBlocks.slice(1).every((block) => {
+    switch (block.startTime.getTime() - first.startTime.getTime()) {
+      case weeklyInterval:
+        result = "WEEKLY";
+        break;
+      case biWeeklyInterval:
+        result = "BIWEEKLY";
+        break;
+      case monthlyInterval:
+        result = "MONTHLY";
+        break;
+      default:
+        break;
+    }
+    if (result !== "NONE") {
+      return false;
+    }
+    return true;
+  });
+
+  return result;
+};
+
 class PostingService implements IPostingService {
   shiftService: IShiftService;
 
@@ -176,6 +218,7 @@ class PostingService implements IPostingService {
         isScheduled: isPostingScheduledBySignups(
           posting.shifts.flatMap((shift) => shift.signups),
         ),
+        recurrenceInterval: intervalFromTimeBlocks(posting.shifts),
       };
     } catch (error: unknown) {
       Logger.error(`Failed to get posting. Reason = ${getErrorMessage(error)}`);
@@ -240,6 +283,7 @@ class PostingService implements IPostingService {
               isScheduled: isPostingScheduledBySignups(
                 posting.shifts.flatMap((shift) => shift.signups),
               ),
+              recurrenceInterval: intervalFromTimeBlocks(posting.shifts),
             };
           }),
         );
@@ -327,9 +371,11 @@ class PostingService implements IPostingService {
       autoClosingDate: newPosting.autoClosingDate,
       numVolunteers: newPosting.numVolunteers,
       isScheduled: false, // New posting is not scheduled
+      recurrenceInterval: posting.recurrenceInterval,
     };
   }
 
+  // TODO: Ideally, this should take in recurrence interval and apply it if shift still in draft
   async updatePosting(
     postingId: string,
     posting: PostingRequestDTO,
@@ -395,6 +441,7 @@ class PostingService implements IPostingService {
         isScheduled: isPostingScheduledBySignups(
           updateResult.shifts.flatMap((shift) => shift.signups),
         ),
+        recurrenceInterval: intervalFromTimeBlocks(updateResult.shifts),
       };
     } catch (error: unknown) {
       Logger.error(

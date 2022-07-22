@@ -61,6 +61,7 @@ const POSTING = gql`
         phoneNumber
       }
       autoClosingDate
+      recurrenceInterval
     }
   }
 `;
@@ -68,16 +69,7 @@ const POSTING = gql`
 const EditPostingPage = (): React.ReactElement => {
   // TODO: should take query param of posting id and use it to query
   const { id } = useParams<{ id: string }>();
-  const {
-    branch: branchFromCtx,
-    skills: skillsFromCtx,
-    employees: employeesFromCtx,
-    title: titleFromCtx,
-    description: descriptionFromCtx,
-    autoClosingDate: autoClosingDateFromCtx,
-    numVolunteers: numVolunteersFromCtx,
-    times,
-  } = useContext(PostingContext);
+  const { title: titleFromCtx } = useContext(PostingContext);
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
 
   const [step, setStep] = React.useState<PostingPageStep>(
@@ -131,13 +123,10 @@ const EditPostingPage = (): React.ReactElement => {
         type: "ADMIN_POSTING_EDIT_END_DATE",
         value: posting.endDate,
       });
-      // TODO: We need to determine this via reverse eng
-      // We find 2 subsequent shift of same day of week, and find try finding it until end date
-      // It would make sense to return this field in the backend
-      // dispatchPostingUpdate({
-      //   type: "ADMIN_POSTING_EDIT_RECURRENCE_INTERVAL",
-      //   value: interval as RecurrenceInterval,
-      // });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_RECURRENCE_INTERVAL",
+        value: posting.recurrenceInterval,
+      });
       dispatchPostingUpdate({
         type: "ADMIN_POSTING_EDIT_TIMES",
         value: posting.shifts.map((shift) => {
@@ -189,8 +178,6 @@ const EditPostingPage = (): React.ReactElement => {
   if (postingError) {
     return <ErrorModal />;
   }
-
-  console.log(times);
 
   // TODO: we should query data, write to context, and then continue.
   // TODO: Change forms to take optional data from for init data to use if context is empty

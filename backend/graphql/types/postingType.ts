@@ -56,6 +56,7 @@ const postingType = gql`
     autoClosingDate: Date!
     numVolunteers: Int!
     isScheduled: Boolean!
+    recurrenceInterval: RecurrenceInterval!
   }
 
   extend type Query {
