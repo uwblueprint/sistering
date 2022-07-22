@@ -6,6 +6,7 @@ import {
   SimpleGrid,
   Stack,
   Table,
+  Box,
   Tag,
   Tbody,
   Text,
@@ -65,9 +66,9 @@ const PostingFormReview = (): React.ReactElement => {
               <Text textStyle="subheading" color="text.gray" mt={3}>
                 Description
               </Text>
-              <Text textStyle="caption">
+              <Box textStyle="caption">
                 <RichTextDisplay>{description}</RichTextDisplay>
-              </Text>
+              </Box>
             </Stack>
             <Stack spacing={4}>
               <Text textStyle="subheading" color="text.gray" mt={5}>

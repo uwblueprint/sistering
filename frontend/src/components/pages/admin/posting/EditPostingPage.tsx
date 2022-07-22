@@ -1,16 +1,21 @@
 import { gql, useQuery } from "@apollo/client";
 import React, { useContext, useState } from "react";
 import { useParams } from "react-router-dom";
+import PostingContext from "../../../../contexts/admin/PostingContext";
 import PostingContextDispatcherContext from "../../../../contexts/admin/PostingContextDispatcherContext";
 import {
   PostingDataQueryInput,
   PostingDataQueryResponse,
 } from "../../../../types/api/PostingTypes";
+import { Shift } from "../../../../types/PostingContextTypes";
+import { getISOStringDateTime } from "../../../../utils/DateTimeUtils";
 import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
 import PostingFormBasicInfoPage from "./PostingFormBasicInfoPage";
 import PostingFormReviewPage from "./PostingFormReviewPage";
 import PostingFormShiftsPage from "./PostingFormShiftsPage";
+
+const EDIT_POSTING_TITLE = "Edit Existing Posting";
 
 // TODO: this can be extracted to common
 export enum PostingPageStep {
@@ -63,6 +68,16 @@ const POSTING = gql`
 const EditPostingPage = (): React.ReactElement => {
   // TODO: should take query param of posting id and use it to query
   const { id } = useParams<{ id: string }>();
+  const {
+    branch: branchFromCtx,
+    skills: skillsFromCtx,
+    employees: employeesFromCtx,
+    title: titleFromCtx,
+    description: descriptionFromCtx,
+    autoClosingDate: autoClosingDateFromCtx,
+    numVolunteers: numVolunteersFromCtx,
+    times,
+  } = useContext(PostingContext);
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
 
   const [step, setStep] = React.useState<PostingPageStep>(
@@ -83,6 +98,54 @@ const EditPostingPage = (): React.ReactElement => {
       dispatchPostingUpdate({
         type: "ADMIN_POSTING_EDIT_TITLE",
         value: posting.title,
+      });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_NUM_VOLUNTEERS",
+        value: posting.numVolunteers,
+      });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_BRANCH",
+        value: posting.branch,
+      });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_AUTO_CLOSING_DATE",
+        value: posting.autoClosingDate,
+      });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_DESCRIPTION",
+        value: posting.description,
+      });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_SKILLS",
+        value: posting.skills,
+      });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_EMPLOYEES",
+        value: posting.employees,
+      });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_START_DATE",
+        value: posting.startDate,
+      });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_END_DATE",
+        value: posting.endDate,
+      });
+      // TODO: We need to determine this via reverse eng
+      // We find 2 subsequent shift of same day of week, and find try finding it until end date
+      // It would make sense to return this field in the backend
+      // dispatchPostingUpdate({
+      //   type: "ADMIN_POSTING_EDIT_RECURRENCE_INTERVAL",
+      //   value: interval as RecurrenceInterval,
+      // });
+      dispatchPostingUpdate({
+        type: "ADMIN_POSTING_EDIT_TIMES",
+        value: posting.shifts.map((shift) => {
+          return {
+            startTime: getISOStringDateTime(new Date(shift.startTime)),
+            endTime: getISOStringDateTime(new Date(shift.endTime)),
+          } as Shift;
+        }),
       });
     },
   });
@@ -120,12 +183,14 @@ const EditPostingPage = (): React.ReactElement => {
     }
   };
 
-  if (isPostingLoading) {
+  if (isPostingLoading || titleFromCtx.length < 1) {
     return <Loading />;
   }
   if (postingError) {
     return <ErrorModal />;
   }
+
+  console.log(times);
 
   // TODO: we should query data, write to context, and then continue.
   // TODO: Change forms to take optional data from for init data to use if context is empty
@@ -136,6 +201,7 @@ const EditPostingPage = (): React.ReactElement => {
         <PostingFormBasicInfoPage
           navigateToNext={navigateToNext}
           steps={!isDraft ? nonDraftEditSteps : defaultSteps}
+          title={EDIT_POSTING_TITLE}
         />
       );
     case PostingPageStep.Shifts:
@@ -145,6 +211,7 @@ const EditPostingPage = (): React.ReactElement => {
           navigateToNext={navigateToNext}
           navigateBack={navigateBack}
           steps={defaultSteps}
+          title={EDIT_POSTING_TITLE}
         />
       );
     case PostingPageStep.ReviewAndPost:
@@ -153,6 +220,7 @@ const EditPostingPage = (): React.ReactElement => {
           navigateBack={navigateBack}
           steps={!isDraft ? nonDraftEditSteps : defaultSteps}
           isEdit
+          title={EDIT_POSTING_TITLE}
         />
       );
     default:

@@ -20,10 +20,14 @@ const CREATE_POSTING = gql`
   }
 `;
 
+// TODO: we need to update posting and create new shifts separately
+// Can we change upsert such that it clears all shifts and recreates them?
+
 type PostingFormPageProps = {
   navigateBack: () => void;
   isEdit?: boolean;
   steps: string[];
+  title: string;
 };
 
 // TODO: we need to just make this a posting review page, with 2 modes
@@ -31,6 +35,7 @@ const PostingFormReviewPage = ({
   navigateBack,
   isEdit = false,
   steps,
+  title,
 }: PostingFormPageProps): React.ReactElement => {
   const { branch, skills, employees, ...rest } = useContext(PostingContext);
 
@@ -56,11 +61,7 @@ const PostingFormReviewPage = ({
     <Box>
       {createPostingError && <ErrorModal />}
       <HStack alignItems="flex-start" spacing={0}>
-        <SideNavBarWithTitle
-          title="Create New Posting"
-          labels={steps}
-          activeStep={2}
-        />
+        <SideNavBarWithTitle title={title} labels={steps} activeStep={2} />
         <VStack alignItems="flex-end">
           <PostingFormReview />
           <Box minH="75px">

@@ -4,6 +4,8 @@ import PostingFormBasicInfoPage from "./PostingFormBasicInfoPage";
 import PostingFormReviewPage from "./PostingFormReviewPage";
 import PostingFormShiftsPage from "./PostingFormShiftsPage";
 
+const CREATE_POSTING_TITLE = "Create New Posting";
+
 const CreatePostingPage = (): React.ReactElement => {
   const [step, setStep] = React.useState<PostingPageStep>(
     PostingPageStep.BasicInfo,
@@ -45,6 +47,7 @@ const CreatePostingPage = (): React.ReactElement => {
         <PostingFormBasicInfoPage
           navigateToNext={navigateToNext}
           steps={defaultSteps}
+          title={CREATE_POSTING_TITLE}
         />
       );
     case PostingPageStep.Shifts:
@@ -53,6 +56,7 @@ const CreatePostingPage = (): React.ReactElement => {
           navigateToNext={navigateToNext}
           navigateBack={navigateBack}
           steps={defaultSteps}
+          title={CREATE_POSTING_TITLE}
         />
       );
     case PostingPageStep.ReviewAndPost:
@@ -60,6 +64,7 @@ const CreatePostingPage = (): React.ReactElement => {
         <PostingFormReviewPage
           navigateBack={navigateBack}
           steps={defaultSteps}
+          title={CREATE_POSTING_TITLE}
         />
       );
     default:
