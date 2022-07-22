@@ -14,6 +14,10 @@ type AdminScheduleVolunteerTableProps = {
   onEditSaveClick: () => void;
   submitSignupsLoading: boolean;
   isReadOnly: boolean;
+  onVolunteerProfileClick: (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => void;
 };
 
 const AdminScheduleVolunteerTable = ({
@@ -25,6 +29,7 @@ const AdminScheduleVolunteerTable = ({
   onEditSaveClick,
   submitSignupsLoading,
   isReadOnly,
+  onVolunteerProfileClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [signupsToDisplay, setSignupsToDisplay] = useState<
     AdminSchedulingSignupsAndVolunteerResponseDTO[]
@@ -91,10 +96,12 @@ const AdminScheduleVolunteerTable = ({
         </Flex>
       </VStack>
       <VStack w="full" spacing={0} overflow="auto">
+
+
         {signupsToDisplay.map((signup, i) => {
           const isSignupConfirmed =
             signup.status === "CONFIRMED" || signup.status === "PUBLISHED";
-
+          
           return isReadOnly && !isSignupConfirmed ? undefined : (
             <AdminScheduleVolunteerRow
               key={i}
@@ -105,6 +112,7 @@ const AdminScheduleVolunteerTable = ({
               isDisabled={!isEditing}
               onSignupCheckboxClick={onSignupCheckboxClick}
               isReadOnly={isReadOnly}
+              onVolunteerProfileClick={onVolunteerProfileClick}
             />
           );
         })}

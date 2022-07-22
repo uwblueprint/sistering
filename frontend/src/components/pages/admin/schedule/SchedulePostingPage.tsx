@@ -20,6 +20,7 @@ import ErrorModal from "../../../common/ErrorModal";
 import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
 import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
+import VolunteerSidePanel from "../../../admin/schedule/volunteersidepanel/VolunteerSidePanel";
 import Loading from "../../../common/Loading";
 import { getUTCDateForDateTimeString } from "../../../../utils/DateTimeUtils";
 import AuthContext from "../../../../contexts/AuthContext";
@@ -144,6 +145,9 @@ const SchedulePostingPage = (): React.ReactElement => {
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
   );
+  const [displayVolunteerSidePanel, setDisplayVolunteerSidePanel] = useState(
+    false,
+  );
   const [
     submitSignups,
     { loading: submitSignupsLoading, error: submitSignupsError },
@@ -262,11 +266,17 @@ const SchedulePostingPage = (): React.ReactElement => {
     }
   };
 
-  const handleDayClick = (calendarDate: Date) => setSelectedDay(calendarDate);
+  const handleDayClick = (calendarDate: Date) => {
+    setSelectedDay(calendarDate);
+    setDisplayVolunteerSidePanel(false);
+  };
 
   const handleShiftClick = (
     shift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
-  ) => setSelectedShift(shift);
+  ) => {
+    setSelectedShift(shift);
+    setDisplayVolunteerSidePanel(false);
+  };
 
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
@@ -339,6 +349,16 @@ const SchedulePostingPage = (): React.ReactElement => {
       ),
     ) === PostingFilterStatus.PAST;
 
+    const [volunteerId, setVolunteerId] = useState("");
+
+    const handleVolunteerProfileClick = (
+      isDisplayingVolunteer: boolean,
+      userId: string,
+    ) => {
+      setDisplayVolunteerSidePanel(isDisplayingVolunteer);
+      setVolunteerId(userId);
+    };
+
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
       {(tableDataQueryError || submitSignupsError || postingError) && (
@@ -373,18 +393,26 @@ const SchedulePostingPage = (): React.ReactElement => {
             )}
           </Box>
           <Box w="400px" overflow="hidden">
-            <ScheduleSidePanel
-              shifts={sidePanelShifts}
-              currentlyEditingShift={currentlyEditingShift}
-              onEditSignupsClick={handleSidePanelEditClick}
-              onSelectAllSignupsClick={handleSelectAllSignupsClick}
-              onSignupCheckboxClick={handleSignupCheckboxClick}
-              onSaveSignupsClick={handleSidePanelSaveClick}
-              submitSignupsLoading={submitSignupsLoading}
-              selectedShift={selectedShift}
-              setSelectedShift={setSelectedShift}
-              isReadOnly={isReadOnly}
-            />
+            {displayVolunteerSidePanel ? (
+              <VolunteerSidePanel
+                onVolunteerProfileClick={handleVolunteerProfileClick}
+                volunteerId={volunteerId}
+              />
+            ) : (
+              <ScheduleSidePanel
+                shifts={sidePanelShifts}
+                currentlyEditingShift={currentlyEditingShift}
+                onEditSignupsClick={handleSidePanelEditClick}
+                onSelectAllSignupsClick={handleSelectAllSignupsClick}
+                onSignupCheckboxClick={handleSignupCheckboxClick}
+                onSaveSignupsClick={handleSidePanelSaveClick}
+                submitSignupsLoading={submitSignupsLoading}
+                selectedShift={selectedShift}
+                setSelectedShift={setSelectedShift}
+                isReadOnly={isReadOnly}
+                onVolunteerProfileClick={handleVolunteerProfileClick}
+              />
+            )}
           </Box>
         </Flex>
       ) : (
