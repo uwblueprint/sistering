@@ -55,6 +55,7 @@ const postingType = gql`
     endDate: Date!
     autoClosingDate: Date!
     numVolunteers: Int!
+    isScheduled: Boolean!
   }
 
   extend type Query {
@@ -70,6 +71,7 @@ const postingType = gql`
     createPosting(posting: PostingWithShiftsRequestDTO!): PostingResponseDTO!
     updatePosting(id: ID!, posting: PostingRequestDTO!): PostingResponseDTO!
     deletePosting(id: ID!): ID!
+    duplicatePosting(id: ID!): ID!
   }
 `;
 

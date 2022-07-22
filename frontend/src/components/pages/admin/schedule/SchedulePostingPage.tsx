@@ -1,5 +1,5 @@
 import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
@@ -22,6 +22,10 @@ import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
 import Loading from "../../../common/Loading";
 import { getUTCDateForDateTimeString } from "../../../../utils/DateTimeUtils";
+import AuthContext from "../../../../contexts/AuthContext";
+import { Role } from "../../../../types/AuthTypes";
+import { getPostingFilterStatusBySignupStatuses } from "../../../../utils/TypeUtils";
+import { PostingFilterStatus } from "../../../../types/PostingTypes";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -89,6 +93,7 @@ const POSTING = gql`
       }
       startDate
       endDate
+      status
     }
   }
 `;
@@ -120,8 +125,9 @@ const ShiftScheduleCalendar = ({
     />
   );
 
-const AdminSchedulePostingPage = (): React.ReactElement => {
+const SchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
+  const { authenticatedUser } = useContext(AuthContext);
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -323,6 +329,16 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     setCurrentView(AdminScheduleViews.CalendarView);
   };
 
+  const isReadOnly =
+    (authenticatedUser && authenticatedUser.role !== Role.Admin) ||
+    getPostingFilterStatusBySignupStatuses(
+      postingDetails?.status,
+      new Date(postingDetails?.endDate),
+      shifts.flatMap((shift) =>
+        shift.signups.flatMap((signup) => signup.status),
+      ),
+    ) === PostingFilterStatus.PAST;
+
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
       {(tableDataQueryError || submitSignupsError || postingError) && (
@@ -344,6 +360,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               onReviewClick={() =>
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
+              isReadOnly={isReadOnly}
             />
             {tableDataLoading || postingLoading ? (
               <Loading />
@@ -366,6 +383,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               submitSignupsLoading={submitSignupsLoading}
               selectedShift={selectedShift}
               setSelectedShift={setSelectedShift}
+              isReadOnly={isReadOnly}
             />
           </Box>
         </Flex>
@@ -405,4 +423,4 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   );
 };
 
-export default AdminSchedulePostingPage;
+export default SchedulePostingPage;

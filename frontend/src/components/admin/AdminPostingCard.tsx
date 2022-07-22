@@ -20,16 +20,10 @@ import {
 import { formatDateStringYear } from "../../utils/DateTimeUtils";
 import { Role } from "../../types/AuthTypes";
 import DeleteModal from "./DeleteModal";
-
-export enum PostingStatus {
-  DRAFT = "DRAFT",
-  SCHEDULED = "SCHEDULED",
-  UNSCHEDULED = "UNSCHEDULED",
-  PAST = "PAST",
-}
+import { PostingFilterStatus } from "../../types/PostingTypes";
 
 type AdminPostingCardProps = {
-  status: PostingStatus;
+  status: PostingFilterStatus;
   id: string;
   role: Role;
   title: string;
@@ -39,6 +33,8 @@ type AdminPostingCardProps = {
   branchName: string;
   numVolunteers: number;
   navigateToAdminSchedule?: () => void;
+  onDuplicate: () => void;
+  onDelete: () => void;
 };
 
 const AdminPostingCard = ({
@@ -52,6 +48,8 @@ const AdminPostingCard = ({
   branchName,
   numVolunteers,
   navigateToAdminSchedule,
+  onDuplicate,
+  onDelete,
 }: AdminPostingCardProps): React.ReactElement => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
 
@@ -63,7 +61,7 @@ const AdminPostingCard = ({
         body={`Are you sure you want to delete "${title}"?`}
         onClose={() => setIsDeleteModalOpen(false)}
         onDelete={() => {
-          // TODO: delete posting
+          onDelete();
           setIsDeleteModalOpen(false);
         }}
       />
@@ -87,7 +85,7 @@ const AdminPostingCard = ({
                 />
                 <MenuList shadow="md">
                   <MenuItem>Edit</MenuItem>
-                  <MenuItem>Make a copy</MenuItem>
+                  <MenuItem onClick={onDuplicate}>Make a copy</MenuItem>
                   <MenuItem onClick={() => setIsDeleteModalOpen(true)}>
                     Delete
                   </MenuItem>
@@ -96,7 +94,7 @@ const AdminPostingCard = ({
             )}
           </HStack>
           <Text noOfLines={1} textStyle="heading">
-            {status === PostingStatus.DRAFT && (
+            {status === PostingFilterStatus.DRAFT && (
               <Box as="span" mr={1} color="red">
                 [DRAFT]
               </Box>
@@ -106,7 +104,7 @@ const AdminPostingCard = ({
           <HStack spacing={4}>
             <Box textStyle="caption">
               <CalendarIcon w={6} pr={2} />
-              {(startDate && endDate) || status === PostingStatus.DRAFT
+              {(startDate && endDate) || status === PostingFilterStatus.DRAFT
                 ? `${formatDateStringYear(startDate)} - ${formatDateStringYear(
                     endDate,
                   )}`
@@ -116,7 +114,7 @@ const AdminPostingCard = ({
           <HStack>
             <Box textStyle="caption">
               <Icon as={BsPeopleFill} w={6} pr={2} />
-              {status === PostingStatus.DRAFT
+              {status === PostingFilterStatus.DRAFT
                 ? "Not accepting registrants"
                 : `${numVolunteers} volunteers`}
             </Box>
@@ -127,7 +125,7 @@ const AdminPostingCard = ({
           <HStack justifyContent="space-between" w="100%">
             <Text textStyle="caption" color="text.gray">
               Deadline:{" "}
-              {status === PostingStatus.PAST ? (
+              {status === PostingFilterStatus.PAST ? (
                 <Box as="span" color="red">
                   Closed
                 </Box>
@@ -135,13 +133,12 @@ const AdminPostingCard = ({
                 formatDateStringYear(autoClosingDate)
               )}
             </Text>
-            {status === PostingStatus.DRAFT ||
-            status === PostingStatus.UNSCHEDULED ? (
+            {status === PostingFilterStatus.DRAFT ||
+            status === PostingFilterStatus.UNSCHEDULED ? (
               <Button
                 variant="ghost"
-                disabled={
-                  status === PostingStatus.DRAFT
-                } /* TODO: Link to review registrants page */
+                disabled={status === PostingFilterStatus.DRAFT}
+                onClick={navigateToAdminSchedule}
               >
                 Review Registrants
               </Button>
