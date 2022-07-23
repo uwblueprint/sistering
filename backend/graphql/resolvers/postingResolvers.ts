@@ -51,7 +51,7 @@ const postingResolvers = {
     },
     updatePosting: async (
       _parent: undefined,
-      { id, posting }: { id: string; posting: PostingRequestDTO },
+      { id, posting }: { id: string; posting: PostingWithShiftsRequestDTO },
     ): Promise<PostingResponseDTO | null> => {
       return postingService.updatePosting(id, posting);
     },

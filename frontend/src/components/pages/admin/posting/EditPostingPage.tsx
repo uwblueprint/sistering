@@ -207,6 +207,8 @@ const EditPostingPage = (): React.ReactElement => {
           navigateBack={navigateBack}
           steps={!isDraft ? nonDraftEditSteps : defaultSteps}
           isEdit
+          isEditingDraftPosting={isDraft}
+          editPostingId={id}
           title={EDIT_POSTING_TITLE}
         />
       );

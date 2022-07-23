@@ -375,10 +375,9 @@ class PostingService implements IPostingService {
     };
   }
 
-  // TODO: Ideally, this should take in recurrence interval and apply it if shift still in draft
   async updatePosting(
     postingId: string,
-    posting: PostingRequestDTO,
+    posting: PostingWithShiftsRequestDTO,
   ): Promise<PostingResponseDTO | null> {
     try {
       const updateResult = await prisma.posting.update({
@@ -424,10 +423,49 @@ class PostingService implements IPostingService {
         updateResult.employees,
       );
 
+      let shiftFromDrafts = null;
+
+      if (updateResult.status === "DRAFT") {
+        const timeBlocks = this.shiftService.bulkGenerateTimeBlocks({
+          times: posting.times,
+          recurrenceInterval: posting.recurrenceInterval,
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+        });
+
+        // We delete all of our shifts and recreate them
+        await prisma.shift.deleteMany({
+          where: {
+            postingId: updateResult.id,
+          },
+        });
+        shiftFromDrafts = await prisma.posting.update({
+          where: {
+            id: updateResult.id,
+          },
+          data: {
+            shifts: {
+              createMany: {
+                data: timeBlocks,
+              },
+            },
+          },
+          include: {
+            shifts: {
+              include: {
+                signups: true,
+              },
+            },
+          },
+        });
+      }
+
       return {
         id: String(updateResult.id),
         branch: convertToBranchResponseDTO(updateResult.branch),
-        shifts: convertToShiftResponseDTO(updateResult.shifts),
+        shifts: convertToShiftResponseDTO(
+          shiftFromDrafts?.shifts ?? updateResult.shifts,
+        ),
         skills: convertToSkillResponseDTO(updateResult.skills),
         employees: employeeUsers,
         title: updateResult.title,
