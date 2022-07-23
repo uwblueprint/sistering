@@ -23,11 +23,17 @@ const VolunteerSkillsSection: React.FC<VolunteerSkillsSectionProps> = ({
     >
       <Text textStyle="body-bold">Skills</Text>
       <Box>
-        {skills?.map((skill) => (
-          <Tag key={skill.name} variant="outline" mr={2} mt={2}>
-            {skill.name}
-          </Tag>
-        ))}
+        {skills.length > 0 ? (
+          skills?.map((skill) => (
+            <Tag key={skill.name} variant="outline" mr={2} mt={2}>
+              {skill.name}
+            </Tag>
+          ))
+        ) : (
+          <Text textStyle="body-regular" fontSize="14px">
+            No skills listed.
+          </Text>
+        )}
       </Box>
     </VStack>
   );

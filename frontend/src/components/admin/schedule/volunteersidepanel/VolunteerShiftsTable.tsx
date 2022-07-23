@@ -32,7 +32,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
         borderBottom="1px"
         borderColor="background.dark"
       >
-        <Text textStyle="body-bold">Requested Shifts</Text>=
+        <Text textStyle="body-bold">Requested Shifts</Text>
       </VStack>
 
       <VStack w="full" spacing={0} overflow="auto">
