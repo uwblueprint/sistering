@@ -200,8 +200,10 @@ const AdminUserManagementPage = (): React.ReactElement => {
               <Thead>
                 {headerGroups.map((headerGroup) => (
                   <Tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
+                    {headerGroup.headers.map((header, index) => (
                       <Th
+                        key={index}
+                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...header.getHeaderProps(
                           header.getSortByToggleProps(),
                         )}
