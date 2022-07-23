@@ -85,6 +85,9 @@ const NewAccountPage = (): React.ReactElement => {
         setIsAdmin(true);
       }
     },
+    onError: () => {
+      history.push("/login");
+    },
   });
 
   if (createEmployeeLoading || createVolunteerLoading) {
@@ -107,7 +110,9 @@ const NewAccountPage = (): React.ReactElement => {
       });
     }
 
-    history.push("/account-created");
+    if (!deleteUserInviteError) {
+      history.push("/account-created");
+    }
   };
 
   const onVolunteerCreate = async (volunteer: CreateVolunteerUserDTO) => {
@@ -125,7 +130,9 @@ const NewAccountPage = (): React.ReactElement => {
       });
     }
 
-    history.push("/account-created");
+    if (!deleteUserInviteError) {
+      history.push("/account-created");
+    }
   };
 
   return (
@@ -144,7 +151,7 @@ const NewAccountPage = (): React.ReactElement => {
         <AccountForm
           mode={AccountFormMode.CREATE}
           isAdmin={isAdmin}
-          email={userInvite?.email} // TODO: Replace with firebase email
+          email={userInvite?.email}
           profilePhoto={profilePhoto}
           onEmployeeCreate={onEmployeeCreate}
           onVolunteerCreate={onVolunteerCreate}

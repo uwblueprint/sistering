@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import React, { useState, ChangeEvent } from "react";
 import { gql, useMutation } from "@apollo/client";
+import ErrorModal from "../common/ErrorModal";
 
 type AddUserModalProps = {
   isOpen: boolean;
@@ -48,10 +49,6 @@ const AddAdminModal = ({
         email: userEmail,
       },
     });
-
-    if (createUserInviteError) {
-      console.log("Error with creating volunteer");
-    }
     // run graphql mutation to create user invite with email value
   };
 
@@ -70,6 +67,7 @@ const AddAdminModal = ({
       initialFocusRef={initialRef}
     >
       <ModalOverlay />
+      {createUserInviteError && <ErrorModal />}
       <ModalContent borderRadius={0} p="10px">
         <ModalHeader py="11px">
           <Text textStyle="body-bold">Add New Admin</Text>

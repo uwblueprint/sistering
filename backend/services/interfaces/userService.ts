@@ -97,7 +97,7 @@ interface IUserService {
   /**
    * Gets user invite by uuid
    * @param uuid user's token used to create an account
-   * @throws Error if get user invite fails
+   * @throws Error if get user invite fails or user invite is invalid
    */
   getUserInvite(uuid: string): Promise<UserInviteResponse>;
 

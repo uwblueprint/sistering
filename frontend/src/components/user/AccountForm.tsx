@@ -25,7 +25,6 @@ import {
   LANGUAGES,
   UpdateEmployeeUserDTO,
   UpdateVolunteerUserDTO,
-  Role,
 } from "../../types/api/UserType";
 import TextField from "./fields/TextField";
 import SelectorField from "./fields/SelectorField";
@@ -220,17 +219,6 @@ const AccountForm = ({
     );
   };
 
-  const formatDate = (date: Date) => {
-    let month = `${date.getMonth() + 1}`;
-    let day = `${date.getDate()}`;
-    const year = date.getFullYear();
-
-    if (month.length < 2) month = `0${month}`;
-    if (day.length < 2) day = `0${day}`;
-
-    return [year, month, day].join("-");
-  };
-
   const createAccount = (values: CreateAccountFormValues): void => {
     if (onVolunteerCreate && onEmployeeCreate) {
       if (isAdmin) {
@@ -260,7 +248,7 @@ const AccountForm = ({
           emergencyContactEmail: "",
           emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
-          hireDate: formatDate(new Date()),
+          hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
           languages: values.languages.map(
@@ -299,7 +287,7 @@ const AccountForm = ({
           emergencyContactEmail: "",
           emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
-          hireDate: formatDate(new Date()),
+          hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
           languages: values.languages.map(

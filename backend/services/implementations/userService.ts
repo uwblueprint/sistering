@@ -19,6 +19,7 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import { getWeekDiff } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -462,11 +463,26 @@ class UserService implements IUserService {
         },
       });
 
-      if (userInvite == null) {
+      if (userInvite === null) {
         // not found
         throw new Error(
-          "Failed to get user invite with token - user is not allowed to create an account",
+          "Failed to get user invite with token. Reason = user is not allowed to create an account",
         );
+      }
+
+      if (getWeekDiff(userInvite.createdAt, new Date()) >= 2) {
+        const resultsFromDeletion = await this.deleteUserInvite(
+          userInvite.email,
+        );
+        if (resultsFromDeletion != null) {
+          throw new Error(
+            "Failed to allow user to create account. Reason = User Invite age exceeded accepted time period (2 weeks), user invite has been removed",
+          );
+        } else {
+          throw new Error(
+            "Failed to allow user to create account. Reason = User Invite age exceeded accepted time period (2 weeks), attempted to remove user invite but error occurred",
+          );
+        }
       }
 
       return {
@@ -673,7 +689,7 @@ class UserService implements IUserService {
         },
       });
 
-      if (userInvite == null) {
+      if (userInvite === null) {
         // not found
         throw new Error(
           "Failed to get user invite with token - user is not allowed to create an account",
@@ -1130,7 +1146,7 @@ class UserService implements IUserService {
         },
       });
 
-      if (userInvite == null) {
+      if (userInvite === null) {
         // not found
         throw new Error(
           "Failed to get user invite with token - user is not allowed to create account",

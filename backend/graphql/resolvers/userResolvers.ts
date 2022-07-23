@@ -1,4 +1,3 @@
-import { UserInvite } from "@prisma/client";
 import nodemailerConfig from "../../nodemailer.config";
 import AuthService from "../../services/implementations/authService";
 import EmailService from "../../services/implementations/emailService";
@@ -128,12 +127,12 @@ const userResolvers = {
 
       if (role === "VOLUNTEER") {
         htmlBody = volunteerAccountCreationInviteTemplate(
-          `http://localhost:3000/create-account?token=${results.uuid}`,
+          `${process.env.SITE_URL}/create-account?token=${results.uuid}`,
         );
         subject = "Welcome to Your Volunteer Account";
       } else {
         htmlBody = adminAccountCreationInviteTemplate(
-          `http://localhost:3000/create-account?token=${results.uuid}`,
+          `${process.env.SITE_URL}/create-account?token=${results.uuid}`,
         );
         subject = "Welcome to Your Admin Account";
       }
