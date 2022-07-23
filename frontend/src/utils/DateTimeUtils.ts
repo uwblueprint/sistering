@@ -12,6 +12,14 @@ export const formatTimeHourMinutes = (date: Date): string => {
 };
 
 /**
+ * @param {Date} date
+ * @returns corresponding time string string in format DD/MM/YY
+ */
+export const formatDateMonthYear = (date: Date): string => {
+  return moment(date).format("DD/MM/YY");
+};
+
+/**
  *
  * @param {Date} start
  * @param {Date} end

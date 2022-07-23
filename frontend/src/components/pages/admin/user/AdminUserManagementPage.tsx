@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import {
   Flex,
   Box,
+  Button,
+  TableContainer,
   Table,
   Tbody,
   useDisclosure,
   useToast,
-  Button,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
@@ -135,7 +136,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
           px="100px"
           pt="32px"
         >
-          <Box m={20} border="1px" borderRadius="md" borderColor="gray.200">
+          <TableContainer border="1px" borderRadius="md" borderColor="gray.200">
             <Table variant="brand">
               <Tbody>
                 <UserManagementTableRow
@@ -167,7 +168,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
                 />
               </Tbody>
             </Table>
-          </Box>
+          </TableContainer>
           <Button
             onClick={() =>
               toast({
