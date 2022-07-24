@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+/* eslint-disable react/jsx-props-no-spreading */
+import React, { HTMLProps, useState } from "react";
 import {
   Flex,
   Box,
   Button,
+  Checkbox,
   TableContainer,
   Table,
   Thead,
   Tbody,
   Tr,
   Th,
+  Td,
   useDisclosure,
   useToast,
   chakra,
+  CheckboxProps,
 } from "@chakra-ui/react";
 import { useTable, useSortBy, Column } from "react-table";
 import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
@@ -22,7 +28,9 @@ import Loading from "../../../common/Loading";
 import ProfileDrawer from "./ProfileDrawer";
 import UserManagementTableRow from "../../../admin/users/UserManagementTableRow";
 import Navbar from "../../../common/Navbar";
-import AdminUserManagementPageHeader from "../../../admin/AdminUserManagementPageHeader";
+import AdminUserManagementPageHeader, {
+  AdminUserManagementTableTab,
+} from "../../../admin/AdminUserManagementPageHeader";
 
 import { VolunteerUserResponseDTO } from "../../../../types/api/UserType";
 import { EmployeeUserResponseDTO } from "../../../../types/api/EmployeeTypes";
@@ -71,29 +79,48 @@ const BRANCHES = gql`
   }
 `;
 
+function IndeterminateCheckbox({
+  indeterminate,
+  ...rest
+}: { indeterminate?: boolean } & CheckboxProps) {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const ref = React.useRef<HTMLInputElement>(null!);
+
+  React.useEffect(() => {
+    if (typeof indeterminate === "boolean") {
+      ref.current.indeterminate = !rest.checked && indeterminate;
+    }
+  }, [ref, indeterminate, rest.checked]);
+
+  // eslint-disable-next-line react/jsx-props-no-spreading
+  return <Checkbox ref={ref} {...rest} />;
+}
+
 const AdminUserManagementPage = (): React.ReactElement => {
   const [allVolunteers, setAllVolunteers] = useState<
-    VolunteerUserResponseDTO[] | null
-  >(null);
-  const [allEmployees, setAllEmployees] = useState<
-    EmployeeUserResponseDTO[] | null
-  >(null);
+    VolunteerUserResponseDTO[]
+  >([]);
+  const [allEmployees, setAllEmployees] = useState<EmployeeUserResponseDTO[]>(
+    [],
+  );
+
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [globalFilter, setGlobalFilter] = React.useState("");
+
   const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<BranchResponseDTO[]>(
     [],
   );
 
-  const [userManagementTableTab, setUserManagementTableTab] = useState<number>(
-    0,
+  const [
+    userManagementTableTab,
+    setUserManagementTableTab,
+  ] = useState<AdminUserManagementTableTab>(
+    AdminUserManagementTableTab.Volunteers,
   );
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
-
-  // Temporary state for user management row checkboxes in testing #453.
-  const [row1Checked, setRow1Checked] = useState(false);
-  const [row2Checked, setRow2Checked] = useState(false);
-  const [row3Checked, setRow3Checked] = useState(false);
 
   const { loading, error } = useQuery(USERS, {
     fetchPolicy: "cache-and-network",
@@ -113,6 +140,10 @@ const AdminUserManagementPage = (): React.ReactElement => {
     }
   };
 
+  const handleTabClicked = (tab: AdminUserManagementTableTab) => {
+    setUserManagementTableTab(tab);
+  };
+
   useQuery<BranchQueryResponse>(BRANCHES, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
@@ -121,40 +152,63 @@ const AdminUserManagementPage = (): React.ReactElement => {
   });
 
   const data = React.useMemo(
-    () => [
-      {
-        fromUnit: "inches",
-        toUnit: "millimetres (mm)",
-        factor: 25.4,
-      },
-      {
-        fromUnit: "feet",
-        toUnit: "centimetres (cm)",
-        factor: 30.48,
-      },
-      {
-        fromUnit: "yards",
-        toUnit: "metres (m)",
-        factor: 0.91444,
-      },
-    ],
-    [],
+    () =>
+      userManagementTableTab === AdminUserManagementTableTab.Volunteers
+        ? allVolunteers.map((volunteer) => ({
+            firstName: volunteer.firstName,
+            lastName: volunteer.lastName,
+            pronouns: volunteer.pronouns,
+            email: volunteer.email,
+            phoneNumber: volunteer.phoneNumber,
+          }))
+        : allEmployees.map((employee) => ({
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+            pronouns: "",
+            email: employee.email,
+            phoneNumber: employee.phoneNumber,
+          })),
+    [allEmployees, allVolunteers, userManagementTableTab],
   );
 
   const columns = React.useMemo(
     () => [
       {
-        Header: "To convert",
-        accessor: "fromUnit" as const,
+        id: "select",
+        header: ({ table }) => (
+          <IndeterminateCheckbox
+            checked={table.getIsAllRowsSelected()}
+            indeterminate={table.getIsSomeRowsSelected()}
+            onChange={table.getToggleAllRowsSelectedHandler()}
+          />
+        ),
+        Cell: ({ row }) => (
+          <IndeterminateCheckbox
+            checked={row.getIsSelected()}
+            indeterminate={row.getIsSomeSelected()}
+            onChange={row.getToggleSelectedHandler()}
+          />
+        ),
       },
       {
-        Header: "Into",
-        accessor: "toUnit" as const,
+        Header: "First Name",
+        accessor: "firstName",
       },
       {
-        Header: "Multiply by",
-        accessor: "factor" as const,
-        isNumeric: true,
+        Header: "Last Name",
+        accessor: "lastName",
+      },
+      {
+        Header: "Pronouns",
+        accessor: "pronouns",
+      },
+      {
+        Header: "Email",
+        accessor: "email",
+      },
+      {
+        Header: "Phone Number",
+        accessor: "phoneNumber",
       },
     ],
     [],
@@ -166,7 +220,14 @@ const AdminUserManagementPage = (): React.ReactElement => {
     headerGroups,
     rows,
     prepareRow,
-  } = useTable({ columns, data }, useSortBy);
+  } = useTable({
+    data,
+    columns,
+    state: {
+      rowSelection,
+    },
+    onRowSelectionChange: setRowSelection,
+  });
 
   return (
     <>
@@ -187,6 +248,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
         <AdminUserManagementPageHeader
           branches={branches}
           onOpenProfileDrawer={onOpen}
+          handleTabClicked={handleTabClicked}
         />
         <Box
           flex={1}
@@ -200,10 +262,15 @@ const AdminUserManagementPage = (): React.ReactElement => {
               <Thead>
                 {headerGroups.map((headerGroup) => (
                   <Tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header, index) => (
+                    <Checkbox
+                      position="absolute"
+                      top={0}
+                      bottom={0}
+                      onChange={() => console.log("checked")}
+                    />
+                    {headerGroup.headers.map((header) => (
+                      // eslint-disable-next-line react/jsx-key
                       <Th
-                        key={index}
-                        // eslint-disable-next-line react/jsx-props-no-spreading
                         {...header.getHeaderProps(
                           header.getSortByToggleProps(),
                         )}
@@ -214,34 +281,25 @@ const AdminUserManagementPage = (): React.ReactElement => {
                   </Tr>
                 ))}
               </Thead>
-              <Tbody>
-                <UserManagementTableRow
-                  firstName="Amanda"
-                  lastName="Du 1"
-                  pronouns="She/Her"
-                  email="atdu@uwblueprint.org"
-                  phoneNumber="123-456-7890"
-                  checked={row1Checked}
-                  onCheck={() => setRow1Checked(!row1Checked)}
-                />
-                <UserManagementTableRow
-                  firstName="Amanda"
-                  lastName="Du 2"
-                  pronouns="She/Her"
-                  email="atdu@uwblueprint.org"
-                  phoneNumber="123-456-7890"
-                  checked={row2Checked}
-                  onCheck={() => setRow2Checked(!row2Checked)}
-                />
-                <UserManagementTableRow
-                  firstName="Amanda"
-                  lastName="Du 3"
-                  pronouns="She/Her"
-                  email="atdu@uwblueprint.org"
-                  phoneNumber="123-456-7890"
-                  checked={row3Checked}
-                  onCheck={() => setRow3Checked(!row3Checked)}
-                />
+              <Tbody {...getTableBodyProps()}>
+                {rows.map((row) => {
+                  prepareRow(row);
+                  return (
+                    // eslint-disable-next-line react/jsx-key
+                    <Tr {...row.getRowProps()}>
+                      <Checkbox
+                        position="absolute"
+                        top={0}
+                        bottom={0}
+                        onChange={() => console.log("checked")}
+                      />
+                      {row.cells.map((cell) => (
+                        // eslint-disable-next-line react/jsx-key
+                        <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
+                      ))}
+                    </Tr>
+                  );
+                })}
               </Tbody>
             </Table>
           </TableContainer>
