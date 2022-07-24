@@ -349,15 +349,15 @@ const SchedulePostingPage = (): React.ReactElement => {
       ),
     ) === PostingFilterStatus.PAST;
 
-    const [volunteerId, setVolunteerId] = useState("");
+  const [volunteerId, setVolunteerId] = useState("");
 
-    const handleVolunteerProfileClick = (
-      isDisplayingVolunteer: boolean,
-      userId: string,
-    ) => {
-      setDisplayVolunteerSidePanel(isDisplayingVolunteer);
-      setVolunteerId(userId);
-    };
+  const handleVolunteerProfileClick = (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => {
+    setDisplayVolunteerSidePanel(isDisplayingVolunteer);
+    setVolunteerId(userId);
+  };
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
