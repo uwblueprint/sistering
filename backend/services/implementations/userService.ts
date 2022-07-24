@@ -503,9 +503,10 @@ class UserService implements IUserService {
     role: Role,
   ): Promise<UserInviteResponse> {
     try {
+      const firebaseUser = await firebaseAdmin.auth().getUserByEmail(email);
       const user = await prisma.user.findUnique({
         where: {
-          email,
+          authId: firebaseUser.uid,
         },
       });
 
