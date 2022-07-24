@@ -503,6 +503,18 @@ class UserService implements IUserService {
     role: Role,
   ): Promise<UserInviteResponse> {
     try {
+      const user = await prisma.user.findUnique({
+        where: {
+          email,
+        },
+      });
+
+      if (user !== null) {
+        throw new Error(
+          "Create User Invite failed. Reason = Email already exists",
+        );
+      }
+
       const userInvite = await prisma.userInvite.create({
         data: {
           email,
