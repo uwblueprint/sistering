@@ -8,7 +8,6 @@ import {
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
   PostingStatus,
-  PostingRequestDTO,
 } from "../../types";
 
 const userService: IUserService = new UserService();

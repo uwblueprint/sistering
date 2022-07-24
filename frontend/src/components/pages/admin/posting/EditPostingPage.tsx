@@ -17,7 +17,6 @@ import PostingFormShiftsPage from "./PostingFormShiftsPage";
 
 const EDIT_POSTING_TITLE = "Edit Existing Posting";
 
-// TODO: this can be extracted to common
 export enum PostingPageStep {
   BasicInfo,
   Shifts,
@@ -31,7 +30,6 @@ export const defaultSteps = [
 ];
 const nonDraftEditSteps = ["Basic Information", "Review and Post"];
 
-// TODO: we also need info about all the shifts
 const POSTING = gql`
   query EditPostingForm_Posting($id: ID!) {
     posting(id: $id) {
@@ -86,7 +84,6 @@ const EditPostingPage = (): React.ReactElement => {
     fetchPolicy: "cache-and-network",
     onCompleted: ({ posting }) => {
       setIsDraft(posting.status === "DRAFT");
-      // TODO: on load, we want to dispatch all actions here
       dispatchPostingUpdate({
         type: "ADMIN_POSTING_EDIT_TITLE",
         value: posting.title,
@@ -179,9 +176,6 @@ const EditPostingPage = (): React.ReactElement => {
     return <ErrorModal />;
   }
 
-  // TODO: we should query data, write to context, and then continue.
-  // TODO: Change forms to take optional data from for init data to use if context is empty
-  // TODO: For the review page, if on edit mode, use mutation instead
   switch (step) {
     case PostingPageStep.BasicInfo:
       return (

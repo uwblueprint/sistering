@@ -11,7 +11,6 @@ import { Promise as BluebirdPromise } from "bluebird";
 
 import IShiftService from "../interfaces/IShiftService";
 import {
-  RecurrenceInterval,
   ShiftBulkRequestDTO,
   ShiftBulkRequestWithoutPostingId,
   ShiftRequestDTO,

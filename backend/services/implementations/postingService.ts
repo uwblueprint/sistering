@@ -13,7 +13,6 @@ import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
   EmployeeUserResponseDTO,
-  PostingRequestDTO,
   PostingResponseDTO,
   PostingStatus,
   PostingType,
