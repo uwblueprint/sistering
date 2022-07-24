@@ -59,6 +59,12 @@ const volunteerUsers = [
       hireDate: new Date(),
       dateOfBirth: new Date("August 19, 2000 23:15:30"),
       branches: [{ name: Branches.Arts }],
+      skills: [
+        { name: Skills.Cooking },
+        { name: Skills.CPR },
+        { name: Skills.Dancing },
+        { name: Skills.Yoga },
+      ],
     },
   },
   {
@@ -71,6 +77,7 @@ const volunteerUsers = [
       hireDate: addDays(new Date(), -7),
       dateOfBirth: new Date("August 19, 2000 23:15:30"),
       branches: [{ name: Branches.Kitchen }],
+      skills: [],
     },
   },
 ];
@@ -261,6 +268,7 @@ const main = async () => {
             create: {
               ...user.volunteer,
               branches: { connect: user.volunteer.branches },
+              skills: { connect: user.volunteer.skills },
             },
           },
         },

@@ -22,6 +22,10 @@ type ScheduleSidePanelProps = {
     React.SetStateAction<AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO>
   >;
   isReadOnly: boolean;
+  onVolunteerProfileClick: (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => void;
 };
 
 const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
@@ -35,6 +39,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
   selectedShift,
   setSelectedShift,
   isReadOnly,
+  onVolunteerProfileClick,
 }: ScheduleSidePanelProps): React.ReactElement => {
   const [isEditing, setIsEditing] = useBoolean(false);
 
@@ -94,6 +99,7 @@ const ScheduleSidePanel: React.FC<ScheduleSidePanelProps> = ({
             onEditSaveClick={handleEditSaveButtonClick}
             submitSignupsLoading={submitSignupsLoading}
             isReadOnly={isReadOnly}
+            onVolunteerProfileClick={onVolunteerProfileClick}
           />
         </>
       ) : (

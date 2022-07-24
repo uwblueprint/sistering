@@ -45,6 +45,17 @@ export const formatDateStringYear = (dateStringInput: string): string => {
 
 /**
  * @param {string} dateStringInput date string on frontend
+ * @returns corresponding date string in the following format (Mon, Oct 13, 2021)
+ */
+export const formatDateStringYearAbbrWeekday = (
+  dateStringInput: string,
+): string => {
+  const inputAsDate = new Date(dateStringInput);
+  return moment(inputAsDate).utc().format("ddd, ll");
+};
+
+/**
+ * @param {string} dateStringInput date string on frontend
  * @returns corresponding date string in the following format (Monday, Oct 13)
  */
 export const formatDateMonthDay = (dateStringInput: string): string => {
