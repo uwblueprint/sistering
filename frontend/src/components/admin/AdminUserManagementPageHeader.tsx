@@ -22,14 +22,21 @@ import { AddIcon, EmailIcon, SearchIcon } from "@chakra-ui/icons";
 import UserInvitesModal from "./UserInvitesModal";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 
+export enum AdminUserManagementTableTab {
+  Volunteers,
+  Admins,
+}
+
 type AdminUserManagementPageHeaderProps = {
   branches: BranchResponseDTO[];
   onOpenProfileDrawer: () => void;
+  handleTabClicked: (tab: AdminUserManagementTableTab) => void;
 };
 
 const AdminUserManagementPageHeader = ({
   branches,
   onOpenProfileDrawer,
+  handleTabClicked,
 }: AdminUserManagementPageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -78,6 +85,9 @@ const AdminUserManagementPageHeader = ({
                   borderColor: "currentColor",
                 }}
                 py="8px"
+                onClick={() =>
+                  handleTabClicked(AdminUserManagementTableTab.Volunteers)
+                }
               >
                 Volunteers
               </Tab>
@@ -90,6 +100,9 @@ const AdminUserManagementPageHeader = ({
                   borderColor: "currentColor",
                 }}
                 py="8px"
+                onClick={() =>
+                  handleTabClicked(AdminUserManagementTableTab.Admins)
+                }
               >
                 Admins
               </Tab>
