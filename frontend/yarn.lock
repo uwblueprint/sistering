@@ -2389,11 +2389,6 @@
     estree-walker "^1.0.1"
     picomatch "^2.2.2"
 
-"@scarf/scarf@^0.1.5":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@scarf/scarf/-/scarf-0.1.8.tgz#7e1e67563a9787de0d1779de96c1c4c84d22d16d"
-  integrity sha512-6iXObfLIy803IV2fikkxZoGuWduSVqlmOhU5mdak/9/k0x2ICdBvMh7p0D9Y36URlSkvv1CCn8TeZ5ZNiBkW5g==
-
 "@sinonjs/commons@^1.7.0":
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/@sinonjs/commons/-/commons-1.8.3.tgz#3802ddd21a50a949b6721ddd72da36e67e7f1b2d"
@@ -2829,10 +2824,10 @@
     "@types/history" "*"
     "@types/react" "*"
 
-"@types/react-table@7.0.14":
-  version "7.0.14"
-  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.0.14.tgz#6670a7712c334b7f31445e79d8c3489f330bb16c"
-  integrity sha512-TDXx0r5izh5wb73o63jde2WSPgbmvfq9E6JgcbK/P1q/DDKuVtQ8LC4FqyDasVS4BEv4+tZpaCNTW6Ww3N3luA==
+"@types/react-table@^7.7.12":
+  version "7.7.12"
+  resolved "https://registry.yarnpkg.com/@types/react-table/-/react-table-7.7.12.tgz#628011d3cb695b07c678704a61f2f1d5b8e567fd"
+  integrity sha512-bRUent+NR/WwtDGwI/BqhZ8XnHghwHw0HUKeohzB5xN3K2qKWYE5w19e7GCuOkL1CXD9Gi1HFy7TIm2AvgWUHg==
   dependencies:
     "@types/react" "*"
 
@@ -11072,12 +11067,10 @@ react-style-singleton@^2.1.0:
     invariant "^2.2.4"
     tslib "^1.0.0"
 
-react-table@7.0.4:
-  version "7.0.4"
-  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.0.4.tgz#456838661982c83c3682f156c59a41b4339a2120"
-  integrity sha512-Uqpj+VnUIvsNWNtNFD1z2i7OCHdlhoJtQt0DWx3XOkZnvDyI/eCghK8YBfA9mY4TW7vEgCDLaRCcREC/fmcx6Q==
-  dependencies:
-    "@scarf/scarf" "^0.1.5"
+react-table@^7.8.0:
+  version "7.8.0"
+  resolved "https://registry.yarnpkg.com/react-table/-/react-table-7.8.0.tgz#07858c01c1718c09f7f1aed7034fcfd7bda907d2"
+  integrity sha512-hNaz4ygkZO4bESeFfnfOft73iBUj8K5oKi1EcSHPAibEydfsX2MyU6Z8KCr3mv3C9Kqqh71U+DhZkFvibbnPbA==
 
 react-test-renderer@^17.0.2:
   version "17.0.2"
