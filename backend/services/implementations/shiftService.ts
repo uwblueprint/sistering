@@ -11,7 +11,6 @@ import { Promise as BluebirdPromise } from "bluebird";
 
 import IShiftService from "../interfaces/IShiftService";
 import {
-  RecurrenceInterval,
   ShiftBulkRequestDTO,
   ShiftBulkRequestWithoutPostingId,
   ShiftRequestDTO,
@@ -22,6 +21,7 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import { getInterval } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -51,22 +51,6 @@ type ShiftWithSignupAndVolunteers = Shift & {
 
 class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
-
-  getInterval(recurrence: RecurrenceInterval): number {
-    // Return interval in milliseconds
-    switch (recurrence) {
-      case "NONE": // No recurrence
-        return 0;
-      case "WEEKLY": // Weekly
-        return WEEK_IN_MILLISECONDS;
-      case "BIWEEKLY": // Biweekly
-        return WEEK_IN_MILLISECONDS * 2;
-      case "MONTHLY": // Monthly
-        return WEEK_IN_MILLISECONDS * 4;
-      default:
-        throw new Error(`Invalid recurrence ${recurrence}`);
-    }
-  }
 
   isSameDate(date1: Date, date2: Date): boolean {
     return (
@@ -130,7 +114,7 @@ class ShiftService implements IShiftService {
   buildTimeBlocks(shifts: ShiftBulkRequestWithoutPostingId): TimeBlock[] {
     const endDate = new Date(shifts.endDate.getTime() + DAY_IN_MILLISECONDS);
 
-    const interval = this.getInterval(shifts.recurrenceInterval);
+    const interval = getInterval(shifts.recurrenceInterval);
 
     const shiftTimes: TimeBlock[] = shifts.times.flatMap(
       ({ startTime, endTime }) => {

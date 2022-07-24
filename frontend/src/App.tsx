@@ -56,6 +56,7 @@ import AdminHomepage from "./components/pages/admin/AdminHomepage";
 import AdminUserManagementPage from "./components/pages/admin/user/AdminUserManagementPage";
 import CreatePostingPage from "./components/pages/admin/posting/CreatePostingPage";
 import EditAccountPage from "./components/pages/EditAccountPage";
+import EditPostingPage from "./components/pages/admin/posting/EditPostingPage";
 
 // Consts for Hotjar and Google Analytics (this is ok to expose)
 const TRACKING_ID = "G-DF2BP4T8YQ";
@@ -199,6 +200,12 @@ const App = (): React.ReactElement => {
                       path={Routes.ADMIN_CREATE_POSTING_PAGE}
                       authorizedRoles={[Role.Admin]}
                       component={CreatePostingPage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_EDIT_POSTING_PAGE}
+                      authorizedRoles={[Role.Admin]}
+                      component={EditPostingPage}
                     />
                     <PrivateRoute
                       exact

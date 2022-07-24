@@ -13,17 +13,19 @@ import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
   EmployeeUserResponseDTO,
-  PostingRequestDTO,
   PostingResponseDTO,
   PostingStatus,
   PostingType,
   PostingWithShiftsRequestDTO,
+  RecurrenceInterval,
   ShiftResponseDTO,
   SkillResponseDTO,
+  TimeBlock,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
 import IShiftService from "../interfaces/IShiftService";
+import { getInterval } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -102,6 +104,45 @@ const isPostingScheduledBySignups = (signups: Signup[]): boolean => {
     .some((signupStatus) => signupStatus === "PUBLISHED");
 };
 
+const intervalFromTimeBlocks = (blocks: TimeBlock[]): RecurrenceInterval => {
+  if (blocks.length < 2) {
+    return "NONE";
+  }
+
+  const sortedBlocks = blocks.sort(
+    (a, b) => a.startTime.getTime() - b.endTime.getTime(),
+  );
+  const first = sortedBlocks[0];
+
+  const weeklyInterval = getInterval("WEEKLY");
+  const biWeeklyInterval = getInterval("BIWEEKLY");
+  const monthlyInterval = getInterval("MONTHLY");
+
+  let result: RecurrenceInterval = "NONE";
+
+  sortedBlocks.slice(1).every((block) => {
+    switch (block.startTime.getTime() - first.startTime.getTime()) {
+      case weeklyInterval:
+        result = "WEEKLY";
+        break;
+      case biWeeklyInterval:
+        result = "BIWEEKLY";
+        break;
+      case monthlyInterval:
+        result = "MONTHLY";
+        break;
+      default:
+        break;
+    }
+    if (result !== "NONE") {
+      return false;
+    }
+    return true;
+  });
+
+  return result;
+};
+
 class PostingService implements IPostingService {
   shiftService: IShiftService;
 
@@ -176,6 +217,7 @@ class PostingService implements IPostingService {
         isScheduled: isPostingScheduledBySignups(
           posting.shifts.flatMap((shift) => shift.signups),
         ),
+        recurrenceInterval: intervalFromTimeBlocks(posting.shifts),
       };
     } catch (error: unknown) {
       Logger.error(`Failed to get posting. Reason = ${getErrorMessage(error)}`);
@@ -240,6 +282,7 @@ class PostingService implements IPostingService {
               isScheduled: isPostingScheduledBySignups(
                 posting.shifts.flatMap((shift) => shift.signups),
               ),
+              recurrenceInterval: intervalFromTimeBlocks(posting.shifts),
             };
           }),
         );
@@ -327,12 +370,13 @@ class PostingService implements IPostingService {
       autoClosingDate: newPosting.autoClosingDate,
       numVolunteers: newPosting.numVolunteers,
       isScheduled: false, // New posting is not scheduled
+      recurrenceInterval: posting.recurrenceInterval,
     };
   }
 
   async updatePosting(
     postingId: string,
-    posting: PostingRequestDTO,
+    posting: PostingWithShiftsRequestDTO,
   ): Promise<PostingResponseDTO | null> {
     try {
       const updateResult = await prisma.posting.update({
@@ -378,10 +422,49 @@ class PostingService implements IPostingService {
         updateResult.employees,
       );
 
+      let shiftFromDrafts = null;
+
+      if (updateResult.status === "DRAFT") {
+        const timeBlocks = this.shiftService.bulkGenerateTimeBlocks({
+          times: posting.times,
+          recurrenceInterval: posting.recurrenceInterval,
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+        });
+
+        // We delete all of our shifts and recreate them
+        await prisma.shift.deleteMany({
+          where: {
+            postingId: updateResult.id,
+          },
+        });
+        shiftFromDrafts = await prisma.posting.update({
+          where: {
+            id: updateResult.id,
+          },
+          data: {
+            shifts: {
+              createMany: {
+                data: timeBlocks,
+              },
+            },
+          },
+          include: {
+            shifts: {
+              include: {
+                signups: true,
+              },
+            },
+          },
+        });
+      }
+
       return {
         id: String(updateResult.id),
         branch: convertToBranchResponseDTO(updateResult.branch),
-        shifts: convertToShiftResponseDTO(updateResult.shifts),
+        shifts: convertToShiftResponseDTO(
+          shiftFromDrafts?.shifts ?? updateResult.shifts,
+        ),
         skills: convertToSkillResponseDTO(updateResult.skills),
         employees: employeeUsers,
         title: updateResult.title,
@@ -395,6 +478,7 @@ class PostingService implements IPostingService {
         isScheduled: isPostingScheduledBySignups(
           updateResult.shifts.flatMap((shift) => shift.signups),
         ),
+        recurrenceInterval: intervalFromTimeBlocks(updateResult.shifts),
       };
     } catch (error: unknown) {
       Logger.error(

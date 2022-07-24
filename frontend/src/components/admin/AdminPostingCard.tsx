@@ -33,6 +33,7 @@ type AdminPostingCardProps = {
   branchName: string;
   numVolunteers: number;
   navigateToAdminSchedule?: () => void;
+  navigateToEditPosting?: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
 };
@@ -48,6 +49,7 @@ const AdminPostingCard = ({
   branchName,
   numVolunteers,
   navigateToAdminSchedule,
+  navigateToEditPosting,
   onDuplicate,
   onDelete,
 }: AdminPostingCardProps): React.ReactElement => {
@@ -84,7 +86,7 @@ const AdminPostingCard = ({
                   variant="unstyled"
                 />
                 <MenuList shadow="md">
-                  <MenuItem>Edit</MenuItem>
+                  <MenuItem onClick={navigateToEditPosting}>Edit</MenuItem>
                   <MenuItem onClick={onDuplicate}>Make a copy</MenuItem>
                   <MenuItem onClick={() => setIsDeleteModalOpen(true)}>
                     Delete

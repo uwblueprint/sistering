@@ -58,6 +58,7 @@ export type PostingResponseDTO = Omit<
   skills: SkillResponseDTO[];
   employees: EmployeeUserResponseDTO[];
   isScheduled: boolean;
+  recurrenceInterval: RecurrenceInterval;
 };
 
 export type VolunteerDTO = {
