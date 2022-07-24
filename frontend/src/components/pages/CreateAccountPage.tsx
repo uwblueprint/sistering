@@ -1,11 +1,13 @@
 import React from "react";
 import { Text, Button, Box, Image } from "@chakra-ui/react";
+import { useHistory } from "react-router-dom";
 import Sistering_Logo from "../../assets/Sistering_Logo.svg";
+import { NEW_ACCOUNT_PAGE } from "../../constants/Routes";
 
 const CreateAccountPage = (): React.ReactElement => {
-  const onContinue = () => {
-    //
-  };
+  const history = useHistory();
+  const queryParams = new URLSearchParams(window.location.search);
+  const token = queryParams.get("token");
 
   return (
     <Box width="100%" display="flex" flexDirection="row" height="100vh">
@@ -21,7 +23,14 @@ const CreateAccountPage = (): React.ReactElement => {
               look forward to working with you.
             </Text>
             <Button color="violet" width="100%">
-              <Text color="background.white">Continue</Text>
+              <Text
+                color="background.white"
+                onClick={() =>
+                  history.push(`${NEW_ACCOUNT_PAGE}?token=${token}`)
+                }
+              >
+                Continue
+              </Text>
             </Button>
           </Box>
         </Box>

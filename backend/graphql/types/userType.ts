@@ -116,6 +116,7 @@ const userType = gql`
     skills: [ID!]!
     branches: [ID!]!
     languages: [Language]!
+    token: String!
   }
 
   input UpdateVolunteerUserDTO {
@@ -145,6 +146,7 @@ const userType = gql`
     password: String!
     branches: [ID!]!
     languages: [Language]!
+    token: String!
   }
 
   input UpdateEmployeeUserDTO {
@@ -164,6 +166,7 @@ const userType = gql`
     userByEmail(email: String!): UserDTO!
     users: [UserDTO!]!
     usersCSV: String!
+    getUserInvite(uuid: String!): UserInviteResponse!
     volunteerUserById(id: ID!): VolunteerUserResponseDTO!
     volunteerUserByEmail(email: String!): VolunteerUserResponseDTO!
     volunteerUsers: [VolunteerUserResponseDTO!]!

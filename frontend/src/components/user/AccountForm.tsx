@@ -50,7 +50,7 @@ type AccountFormProps = {
   profilePhoto: string;
   firstName?: string;
   lastName?: string;
-  email: string;
+  email?: string;
   dateOfBirth?: string | null;
   pronouns?: string | null;
   phoneNumber?: string | null;
@@ -75,6 +75,7 @@ type CreateAccountFormValues = {
   emergencyNumber: string;
   skills: SkillResponseDTO[];
   languages: LanguageResponseDTO[];
+  token: string | null;
 };
 
 type EditAccountFormValues = Omit<
@@ -106,6 +107,9 @@ const AccountForm = ({
   const [skills, setSkills] = useState<SkillResponseDTO[]>([]);
   const [languages, setLanguages] = useState<LanguageResponseDTO[]>([]);
 
+  const queryParams = new URLSearchParams(window.location.search);
+  const token = queryParams.get("token");
+
   const createInitialValues: CreateAccountFormValues = {
     profilePhoto,
     firstName: "",
@@ -118,6 +122,7 @@ const AccountForm = ({
     emergencyNumber: "",
     skills: [],
     languages: [],
+    token,
   };
 
   const editInitialValues: EditAccountFormValues = {
@@ -130,6 +135,7 @@ const AccountForm = ({
     emergencyNumber: emergencyNumber || "",
     skills: prevSkills || [],
     languages: prevLanguages || [],
+    token,
   };
 
   const toggleAgreeToTerms = (): void => {
@@ -229,6 +235,7 @@ const AccountForm = ({
             (language) => LANGUAGES[Number(language.id) - 1],
           ),
           branches: [],
+          token: values.token,
         });
       } else {
         onVolunteerCreate({
@@ -241,13 +248,14 @@ const AccountForm = ({
           emergencyContactEmail: "",
           emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
-          hireDate: new Date(),
+          hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
           languages: values.languages.map(
             (language) => LANGUAGES[Number(language.id) - 1],
           ),
           branches: [],
+          token: values.token,
         });
       }
     }
@@ -279,7 +287,7 @@ const AccountForm = ({
           emergencyContactEmail: "",
           emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
-          hireDate: new Date(),
+          hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
           languages: values.languages.map(
