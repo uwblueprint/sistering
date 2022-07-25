@@ -32,15 +32,15 @@ import {
 } from "../../../utils/DateTimeUtils";
 import StickyBackNext from "../../common/StickyBackNext";
 
-type CreatePostingShiftsProps = {
+type PostingFormShiftsProps = {
   navigateBack: () => void;
   navigateToNext: () => void;
 };
 
-const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
+const PostingFormShifts: React.FC<PostingFormShiftsProps> = ({
   navigateBack,
   navigateToNext,
-}: CreatePostingShiftsProps): React.ReactElement => {
+}: PostingFormShiftsProps): React.ReactElement => {
   const {
     startDate: startDateFromCtx,
     endDate: endDateFromCtx,
@@ -352,4 +352,4 @@ const CreatePostingShifts: React.FC<CreatePostingShiftsProps> = ({
   );
 };
 
-export default CreatePostingShifts;
+export default PostingFormShifts;

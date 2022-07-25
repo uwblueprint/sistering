@@ -12,4 +12,5 @@ export type ShiftSignupPostingResponseDTO = {
   postingId: string;
   postingTitle: string;
   autoClosingDate: string;
+  note: string;
 };
