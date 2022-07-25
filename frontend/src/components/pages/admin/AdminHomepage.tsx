@@ -116,6 +116,11 @@ const AdminHomepage = (): React.ReactElement => {
     history.push(route);
   };
 
+  const navigateToEditPosting = (id: string) => {
+    const route = generatePath(Routes.ADMIN_EDIT_POSTING_PAGE, { id });
+    history.push(route);
+  };
+
   useQuery<BranchQueryResponse>(BRANCHES, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
@@ -235,6 +240,9 @@ const AdminHomepage = (): React.ReactElement => {
                       numVolunteers={posting.numVolunteers}
                       navigateToAdminSchedule={() =>
                         navigateToAdminSchedule(posting.id)
+                      }
+                      navigateToEditPosting={() =>
+                        navigateToEditPosting(posting.id)
                       }
                       onDuplicate={() => duplicatePostingById(posting.id)}
                       onDelete={() => deletePostingById(posting.id)}

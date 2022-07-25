@@ -56,6 +56,7 @@ const postingType = gql`
     autoClosingDate: Date!
     numVolunteers: Int!
     isScheduled: Boolean!
+    recurrenceInterval: RecurrenceInterval!
   }
 
   extend type Query {
@@ -69,7 +70,10 @@ const postingType = gql`
 
   extend type Mutation {
     createPosting(posting: PostingWithShiftsRequestDTO!): PostingResponseDTO!
-    updatePosting(id: ID!, posting: PostingRequestDTO!): PostingResponseDTO!
+    updatePosting(
+      id: ID!
+      posting: PostingWithShiftsRequestDTO!
+    ): PostingResponseDTO!
     deletePosting(id: ID!): ID!
     duplicatePosting(id: ID!): ID!
   }
