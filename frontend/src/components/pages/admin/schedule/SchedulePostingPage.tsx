@@ -145,9 +145,6 @@ const SchedulePostingPage = (): React.ReactElement => {
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
   );
-  const [displayVolunteerSidePanel, setDisplayVolunteerSidePanel] = useState(
-    false,
-  );
   const [
     submitSignups,
     { loading: submitSignupsLoading, error: submitSignupsError },
@@ -266,16 +263,29 @@ const SchedulePostingPage = (): React.ReactElement => {
     }
   };
 
+  const [volunteerId, setVolunteerId] = useState("");
+  const [displayVolunteerSidePanel, setDisplayVolunteerSidePanel] = useState(
+    false,
+  );
+
+  const handleVolunteerProfileClick = (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => {
+    setDisplayVolunteerSidePanel(isDisplayingVolunteer);
+    setVolunteerId(userId);
+  };
+
   const handleDayClick = (calendarDate: Date) => {
     setSelectedDay(calendarDate);
-    setDisplayVolunteerSidePanel(false);
+    handleVolunteerProfileClick(false, "");
   };
 
   const handleShiftClick = (
     shift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
   ) => {
     setSelectedShift(shift);
-    setDisplayVolunteerSidePanel(false);
+    handleVolunteerProfileClick(false, "");
   };
 
   const handleSidePanelSaveClick = async () => {
@@ -349,15 +359,12 @@ const SchedulePostingPage = (): React.ReactElement => {
       ),
     ) === PostingFilterStatus.PAST;
 
-  const [volunteerId, setVolunteerId] = useState("");
-
-  const handleVolunteerProfileClick = (
-    isDisplayingVolunteer: boolean,
-    userId: string,
-  ) => {
-    setDisplayVolunteerSidePanel(isDisplayingVolunteer);
-    setVolunteerId(userId);
-  };
+  useEffect(() => {
+    return () => {
+      setVolunteerId("");
+      setDisplayVolunteerSidePanel(false);
+    };
+  }, []);
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">

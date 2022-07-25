@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { Text, VStack } from "@chakra-ui/react";
 import { ShiftSignupPostingResponseDTO } from "../../../../types/api/ShiftSignupTypes";
 import VolunteerShiftsRow from "./VolunteerShiftsRow";
@@ -13,6 +13,30 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   firstName,
   shifts,
 }: VolunteerShiftsTableProps): React.ReactElement => {
+  const [filteredRequestedShifts, setFilteredRequestedShifts] = useState<
+    ShiftSignupPostingResponseDTO[]
+  >([]);
+  useEffect(() => {
+    setFilteredRequestedShifts(
+      shifts?.filter((shift) => shift.status === "PENDING"),
+    );
+    return () => {
+      setFilteredRequestedShifts([]);
+    };
+  }, [shifts]);
+
+  const [filteredScheduledShifts, setFilteredScheduledShifts] = useState<
+    ShiftSignupPostingResponseDTO[]
+  >([]);
+  useEffect(() => {
+    setFilteredScheduledShifts(
+      shifts?.filter((shift) => shift.status === "CONFIRMED"),
+    );
+    return () => {
+      setFilteredScheduledShifts([]);
+    };
+  }, [shifts]);
+
   return (
     <VStack
       w="full"
@@ -36,20 +60,18 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       </VStack>
 
       <VStack w="full" spacing={0} overflow="auto">
-        {shifts?.filter((shift) => shift.status === "PENDING").length > 0 ? (
-          shifts
-            ?.filter((shift) => shift.status === "PENDING")
-            .map((shift, i) => {
-              return (
-                <VolunteerShiftsRow
-                  key={i}
-                  postingTitle={shift.postingTitle}
-                  shiftStartTime={shift.shiftStartTime}
-                  shiftEndTime={shift.shiftEndTime}
-                  note={shift.note}
-                />
-              );
-            })
+        {filteredRequestedShifts.length > 0 ? (
+          filteredRequestedShifts.map((shift, i) => {
+            return (
+              <VolunteerShiftsRow
+                key={i}
+                postingTitle={shift.postingTitle}
+                shiftStartTime={shift.shiftStartTime}
+                shiftEndTime={shift.shiftEndTime}
+                note={shift.note}
+              />
+            );
+          })
         ) : (
           <NoVolunteerShiftsRow firstName={firstName} status="requested" />
         )}
@@ -69,20 +91,18 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       </VStack>
 
       <VStack w="full" spacing={0} overflow="auto">
-        {shifts?.filter((shift) => shift.status === "CONFIRMED").length > 0 ? (
-          shifts
-            ?.filter((shift) => shift.status === "CONFIRMED")
-            .map((shift, i) => {
-              return (
-                <VolunteerShiftsRow
-                  key={i}
-                  postingTitle={shift.postingTitle}
-                  shiftStartTime={shift.shiftStartTime}
-                  shiftEndTime={shift.shiftEndTime}
-                  note={shift.note}
-                />
-              );
-            })
+        {filteredScheduledShifts.length > 0 ? (
+          filteredScheduledShifts.map((shift, i) => {
+            return (
+              <VolunteerShiftsRow
+                key={i}
+                postingTitle={shift.postingTitle}
+                shiftStartTime={shift.shiftStartTime}
+                shiftEndTime={shift.shiftEndTime}
+                note={shift.note}
+              />
+            );
+          })
         ) : (
           <NoVolunteerShiftsRow firstName={firstName} status="scheduled" />
         )}
