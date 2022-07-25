@@ -14,7 +14,7 @@ export const getWeekDiff = (start: Date, end: Date): number => {
     .startOf("week")
     .diff(moment(start).startOf("week").toDate(), "week", false);
 };
-    
+
 export const getInterval = (recurrence: RecurrenceInterval): number => {
   const WEEK_IN_MILLISECONDS = 1000 * 60 * 60 * 24 * 7;
   // Return interval in milliseconds
@@ -29,5 +29,5 @@ export const getInterval = (recurrence: RecurrenceInterval): number => {
       return WEEK_IN_MILLISECONDS * 4;
     default:
       throw new Error(`Invalid recurrence ${recurrence}`);
-   }
+  }
 };
