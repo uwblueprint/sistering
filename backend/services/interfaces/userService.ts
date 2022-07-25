@@ -102,6 +102,13 @@ interface IUserService {
   getUserInvite(uuid: string): Promise<UserInviteResponse>;
 
   /**
+   * Gets all user invites
+   * @returns array of UserInviteResponses
+   * @throws Error if get user invite retrieval fails
+   */
+  getUserInvites(): Promise<Array<UserInviteResponse>>;
+
+  /**
    * Creates user invite link to send to user
    * @param email user's email
    * @param role role that the user will have

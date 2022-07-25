@@ -49,6 +49,10 @@ export const convertToSkillResponseDTO = (
   });
 };
 
+const isInviteExpired = (createdDate: Date): boolean => {
+  return getWeekDiff(createdDate, new Date()) >= 2;
+};
+
 class UserService implements IUserService {
   async getUserById(userId: string): Promise<UserDTO> {
     let user: User | null;
@@ -509,6 +513,43 @@ class UserService implements IUserService {
       );
       throw error;
     }
+  }
+
+  async getUserInvites(): Promise<Array<UserInviteResponse>> {
+    let userInvites: Array<UserInviteResponse> = [];
+    try {
+      const expiredInvitesUuids: Array<string> = [];
+
+      const invites = await prisma.userInvite.findMany();
+      invites.forEach((invite) => {
+        if (isInviteExpired(invite.createdAt)) {
+          expiredInvitesUuids.push(invite.uuid);
+        } else {
+          userInvites.push(invite);
+        }
+      });
+
+      await prisma.userInvite.deleteMany({
+        where: { uuid: { in: expiredInvitesUuids } },
+      });
+
+      userInvites = await Promise.all(
+        userInvites.map((invite) => {
+          return {
+            uuid: invite.uuid,
+            role: invite.role.toString() as Role,
+            email: invite.email,
+          };
+        }),
+      );
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get user invite. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+
+    return userInvites;
   }
 
   async createUserInvite(
