@@ -18,6 +18,10 @@ type AdminScheduleVolunteerRowProps = {
   isDisabled: boolean;
   onSignupCheckboxClick: (id: string, isChecked: boolean) => void;
   isReadOnly: boolean;
+  onVolunteerProfileClick: (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => void;
 };
 
 const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
@@ -28,6 +32,7 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
   isDisabled,
   onSignupCheckboxClick,
   isReadOnly,
+  onVolunteerProfileClick,
 }: AdminScheduleVolunteerRowProps): React.ReactElement => {
   return (
     <Box
@@ -62,9 +67,9 @@ const AdminScheduleVolunteerRow: React.FC<AdminScheduleVolunteerRowProps> = ({
             colorScheme="none"
             aria-label="Person Icon"
             icon={<Image src={PersonIcon} alt="Person Icon" h={4} />}
-            // onClick to be changed later to open a panel that displays the volunteer's info
-            // eslint-disable-next-line no-console
-            onClick={() => console.log(volunteerID)}
+            onClick={() => {
+              onVolunteerProfileClick(true, volunteerID);
+            }}
           />
         </HStack>
         {note === "" ? null : (

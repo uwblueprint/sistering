@@ -14,6 +14,10 @@ type AdminScheduleVolunteerTableProps = {
   onEditSaveClick: () => void;
   submitSignupsLoading: boolean;
   isReadOnly: boolean;
+  onVolunteerProfileClick: (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => void;
 };
 
 const AdminScheduleVolunteerTable = ({
@@ -25,6 +29,7 @@ const AdminScheduleVolunteerTable = ({
   onEditSaveClick,
   submitSignupsLoading,
   isReadOnly,
+  onVolunteerProfileClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [signupsToDisplay, setSignupsToDisplay] = useState<
     AdminSchedulingSignupsAndVolunteerResponseDTO[]
@@ -105,6 +110,7 @@ const AdminScheduleVolunteerTable = ({
               isDisabled={!isEditing}
               onSignupCheckboxClick={onSignupCheckboxClick}
               isReadOnly={isReadOnly}
+              onVolunteerProfileClick={onVolunteerProfileClick}
             />
           );
         })}
