@@ -6,3 +6,7 @@ export type UserInviteDTO = {
   role: Role;
   uuid: string;
 };
+
+export type UserInvitesQueryResponse = {
+  getUserInvites: UserInviteDTO[];
+};
