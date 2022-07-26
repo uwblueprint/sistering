@@ -503,17 +503,19 @@ class UserService implements IUserService {
     role: Role,
   ): Promise<UserInviteResponse> {
     try {
-      const firebaseUser = await firebaseAdmin.auth().getUserByEmail(email);
-      const user = await prisma.user.findUnique({
-        where: {
-          authId: firebaseUser.uid,
-        },
-      });
-
-      if (user !== null) {
-        throw new Error(
-          "Create User Invite failed. Reason = Email already exists",
-        );
+      try {
+        await firebaseAdmin.auth().getUserByEmail(email);
+      } catch (error: unknown) {
+        if (
+          !(
+            getErrorMessage(error) ===
+            "There is no user record corresponding to the provided identifier."
+          )
+        ) {
+          throw new Error(
+            "Failed to create user invite. Reason = Email already exists",
+          );
+        }
       }
 
       const userInvite = await prisma.userInvite.create({
