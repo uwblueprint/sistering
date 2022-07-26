@@ -24,10 +24,14 @@ const USERS = gql`
       lastName
       email
       phoneNumber
+      emergencyContactName
+      emergencyContactPhone
+      emergencyContactEmail
       branches {
         id
         name
       }
+      languages
     }
     volunteerUsers {
       firstName
@@ -35,6 +39,9 @@ const USERS = gql`
       email
       phoneNumber
       pronouns
+      emergencyContactName
+      emergencyContactPhone
+      emergencyContactEmail
       skills {
         id
         name
@@ -43,6 +50,7 @@ const USERS = gql`
         id
         name
       }
+      languages
     }
   }
 `;
@@ -135,8 +143,18 @@ const AdminUserManagementPage = (): React.ReactElement => {
                   pronouns="She/Her"
                   email="atdu@uwblueprint.org"
                   phoneNumber="123-456-7890"
+                  emergencyContactName="Stephanie Smith"
+                  emergencyContactPhone="905-124-2313"
+                  emergencyContactEmail="stephaniesmith@gmail.com"
+                  totalHours="135"
+                  languages={["English", "French"]}
+                  skills={["Medical Terminology", "Faxing", "Microsoft Office"]}
+                  isVolunteer
                   checked={row1Checked}
                   onCheck={() => setRow1Checked(!row1Checked)}
+                  branches={branches}
+                  selectedBranches={selectedBranches}
+                  handleBranchMenuItemClicked={handleBranchMenuItemClicked}
                 />
                 <UserManagementTableRow
                   firstName="Amanda"
@@ -144,8 +162,18 @@ const AdminUserManagementPage = (): React.ReactElement => {
                   pronouns="She/Her"
                   email="atdu@uwblueprint.org"
                   phoneNumber="123-456-7890"
+                  emergencyContactName="Stephanie Smith"
+                  emergencyContactPhone="905-124-2313"
+                  emergencyContactEmail="stephaniesmith@gmail.com"
+                  totalHours="135"
+                  languages={["English", "French"]}
+                  skills={["Medical Terminology", "Faxing", "Microsoft Office"]}
+                  isVolunteer
                   checked={row2Checked}
                   onCheck={() => setRow2Checked(!row2Checked)}
+                  branches={branches}
+                  selectedBranches={selectedBranches}
+                  handleBranchMenuItemClicked={handleBranchMenuItemClicked}
                 />
                 <UserManagementTableRow
                   firstName="Amanda"
@@ -153,8 +181,16 @@ const AdminUserManagementPage = (): React.ReactElement => {
                   pronouns="She/Her"
                   email="atdu@uwblueprint.org"
                   phoneNumber="123-456-7890"
+                  emergencyContactName="Stephanie Smith"
+                  emergencyContactPhone="905-124-2313"
+                  emergencyContactEmail="stephaniesmith@gmail.com"
+                  languages={["English", "French"]}
                   checked={row3Checked}
                   onCheck={() => setRow3Checked(!row3Checked)}
+                  branches={branches}
+                  selectedBranches={selectedBranches}
+                  handleBranchMenuItemClicked={handleBranchMenuItemClicked}
+                  isVolunteer={false}
                 />
               </Tbody>
             </Table>
