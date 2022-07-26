@@ -1,14 +1,11 @@
-/* eslint-disable react/prop-types */
-/* eslint-disable react/display-name */
-/* eslint-disable react/jsx-props-no-spreading */
-import React, { HTMLProps, useState } from "react";
+import React, { useState } from "react";
 import {
   Flex,
   Box,
   Button,
   Checkbox,
   TableContainer,
-  Table,
+  Table as ChakraTable,
   Thead,
   Tbody,
   Tr,
@@ -19,10 +16,24 @@ import {
   chakra,
   CheckboxProps,
 } from "@chakra-ui/react";
-import { useTable, useSortBy, Column } from "react-table";
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import {
+  useTable,
+  useSortBy,
+  TableCellProps,
+  TableHeaderProps,
+} from "react-table";
 import { gql, useQuery } from "@apollo/client";
 
+import {
+  Column,
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  Table,
+  useReactTable,
+} from "@tanstack/react-table";
 import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
 import ProfileDrawer from "./ProfileDrawer";
@@ -86,6 +97,15 @@ const BRANCHES = gql`
     }
   }
 `;
+
+export type User = {
+  firstName: string;
+  lastName: string;
+  pronouns: string;
+  email: string;
+  phoneNumber: string;
+  subRows?: User[];
+};
 
 function IndeterminateCheckbox({
   indeterminate,
@@ -159,27 +179,28 @@ const AdminUserManagementPage = (): React.ReactElement => {
     },
   });
 
-  const data = React.useMemo(
+  const data = React.useMemo<User[]>(
     () =>
       userManagementTableTab === AdminUserManagementTableTab.Volunteers
         ? allVolunteers.map((volunteer) => ({
             firstName: volunteer.firstName,
             lastName: volunteer.lastName,
-            pronouns: volunteer.pronouns,
+            pronouns: volunteer.pronouns ?? "N/A",
             email: volunteer.email,
-            phoneNumber: volunteer.phoneNumber,
+            phoneNumber: volunteer.phoneNumber ?? "N/A",
           }))
         : allEmployees.map((employee) => ({
             firstName: employee.firstName,
             lastName: employee.lastName,
-            pronouns: "",
+            pronouns: "N/A", // TODO: Update once pronouns are migrated
             email: employee.email,
-            phoneNumber: employee.phoneNumber,
+            phoneNumber: employee.phoneNumber ?? "N/A",
           })),
     [allEmployees, allVolunteers, userManagementTableTab],
   );
 
-  const columns = React.useMemo(
+  // TODO: Figure out proper tying
+  const columns = React.useMemo<ColumnDef<User>[]>(
     () => [
       {
         id: "select",
@@ -190,7 +211,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
             onChange={table.getToggleAllRowsSelectedHandler()}
           />
         ),
-        Cell: ({ row }) => (
+        cell: ({ row }) => (
           <IndeterminateCheckbox
             checked={row.getIsSelected()}
             indeterminate={row.getIsSomeSelected()}
@@ -199,42 +220,62 @@ const AdminUserManagementPage = (): React.ReactElement => {
         ),
       },
       {
-        Header: "First Name",
-        accessor: "firstName",
+        header: "First Name",
+        accessorKey: "firstName",
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
       },
       {
-        Header: "Last Name",
-        accessor: "lastName",
+        header: "Last Name",
+        accessorKey: "lastName",
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
       },
       {
-        Header: "Pronouns",
-        accessor: "pronouns",
+        header: "Pronouns",
+        accessorKey: "pronouns",
+        footer: (props) => props.column.id,
       },
       {
-        Header: "Email",
-        accessor: "email",
+        header: "Email",
+        accessorKey: "email",
+        footer: (props) => props.column.id,
       },
       {
-        Header: "Phone Number",
-        accessor: "phoneNumber",
+        header: "Phone Number",
+        accessorKey: "phoneNumber",
+        footer: (props) => props.column.id,
       },
     ],
     [],
   );
 
-  const {
-    getTableProps,
-    getTableBodyProps,
-    headerGroups,
-    rows,
-    prepareRow,
-  } = useTable({
+  // const {
+  //   getTableProps,
+  //   getTableBodyProps,
+  //   headerGroups,
+  //   rows,
+  //   prepareRow,
+  // } = useReactTable({
+  //   data,
+  //   columns,
+  //   state: {
+  //     rowSelection,
+  //   },
+  //   onRowSelectionChange: setRowSelection,
+  // });
+
+  const table = useReactTable({
     data,
     columns,
     state: {
       rowSelection,
     },
     onRowSelectionChange: setRowSelection,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    debugTable: true,
   });
 
   return (
@@ -266,9 +307,9 @@ const AdminUserManagementPage = (): React.ReactElement => {
           pt="32px"
         >
           <TableContainer border="1px" borderRadius="md" borderColor="gray.200">
-            <Table variant="brand">
+            <ChakraTable variant="brand">
               <Thead>
-                {headerGroups.map((headerGroup) => (
+                {table.getHeaderGroups().map((headerGroup) => (
                   <Tr key={headerGroup.id}>
                     <Checkbox
                       position="absolute"
@@ -277,39 +318,50 @@ const AdminUserManagementPage = (): React.ReactElement => {
                       onChange={() => console.log("checked")}
                     />
                     {headerGroup.headers.map((header) => (
-                      // eslint-disable-next-line react/jsx-key
                       <Th
-                        {...header.getHeaderProps(
-                          header.getSortByToggleProps(),
-                        )}
+                        // {...header.getHeaderProps(
+                        //   header.getSortByToggleProps(),
+                        // )}
+                        key={header.id}
+                        colSpan={header.colSpan}
                       >
-                        {header.render("Header")}
+                        {/* {header.render("Header")} */}
+                        {header.isPlaceholder ? null : (
+                          <>
+                            {flexRender(
+                              header.column.columnDef.header,
+                              header.getContext(),
+                            )}
+                          </>
+                        )}
                       </Th>
                     ))}
                   </Tr>
                 ))}
               </Thead>
-              <Tbody {...getTableBodyProps()}>
-                {rows.map((row) => {
-                  prepareRow(row);
+              <Tbody>
+                {table.getRowModel().rows.map((row) => {
                   return (
-                    // eslint-disable-next-line react/jsx-key
-                    <Tr {...row.getRowProps()}>
-                      <Checkbox
-                        position="absolute"
-                        top={0}
-                        bottom={0}
-                        onChange={() => console.log("checked")}
-                      />
-                      {row.cells.map((cell) => (
+                    <Tr key={row.id}>
+                      {/* {row.cells.map((cell) => (
                         // eslint-disable-next-line react/jsx-key
                         <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
-                      ))}
+                      ))} */}
+                      {row.getVisibleCells().map((cell) => {
+                        return (
+                          <Td key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </Td>
+                        );
+                      })}
                     </Tr>
                   );
                 })}
               </Tbody>
-            </Table>
+            </ChakraTable>
           </TableContainer>
           <Button
             onClick={() =>
