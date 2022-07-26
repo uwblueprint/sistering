@@ -8,10 +8,10 @@ import {
   ModalOverlay,
   Text,
   Input,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState, ChangeEvent } from "react";
 import { gql, useMutation } from "@apollo/client";
-import ErrorModal from "../common/ErrorModal";
 
 type AddUserModalProps = {
   isOpen: boolean;
@@ -31,6 +31,7 @@ const AddVolunteerModal = ({
   onClose = () => {},
 }: AddUserModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
+  const toast = useToast();
 
   const [email, setEmail] = useState("");
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -39,9 +40,7 @@ const AddVolunteerModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [createVolunteerInvite, { error: createUserInviteError }] = useMutation(
-    CREATE_VOLUNTEER_INVITE,
-  );
+  const [createVolunteerInvite] = useMutation(CREATE_VOLUNTEER_INVITE);
 
   const onSubmit = async () => {
     await createVolunteerInvite({
@@ -54,7 +53,17 @@ const AddVolunteerModal = ({
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    await onSubmit();
+    try {
+      await onSubmit();
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot send user invite.",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
     setIsLoading(false);
     onClose();
   };
@@ -67,7 +76,6 @@ const AddVolunteerModal = ({
       initialFocusRef={initialRef}
     >
       <ModalOverlay />
-      {createUserInviteError && <ErrorModal />}
       <ModalContent borderRadius={0} p="10px">
         <ModalHeader py="11px">
           <Text textStyle="body-bold">Add New Volunteer</Text>

@@ -8,10 +8,10 @@ import {
   ModalOverlay,
   Text,
   Input,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState, ChangeEvent } from "react";
 import { gql, useMutation } from "@apollo/client";
-import ErrorModal from "../common/ErrorModal";
 
 type AddUserModalProps = {
   isOpen: boolean;
@@ -31,6 +31,7 @@ const AddAdminModal = ({
   onClose = () => {},
 }: AddUserModalProps): React.ReactElement => {
   const initialRef = React.useRef(null);
+  const toast = useToast();
 
   const [email, setEmail] = useState("");
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -39,9 +40,7 @@ const AddAdminModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [createAdminInvite, { error: createUserInviteError }] = useMutation(
-    CREATE_ADMIN_INVITE,
-  );
+  const [createAdminInvite] = useMutation(CREATE_ADMIN_INVITE);
 
   const onSubmit = async (userEmail: string) => {
     await createAdminInvite({
@@ -54,7 +53,17 @@ const AddAdminModal = ({
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    await onSubmit(email);
+    try {
+      await onSubmit(email);
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot send user invite.",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
     setIsLoading(false);
     onClose();
   };
@@ -67,7 +76,6 @@ const AddAdminModal = ({
       initialFocusRef={initialRef}
     >
       <ModalOverlay />
-      {createUserInviteError && <ErrorModal />}
       <ModalContent borderRadius={0} p="10px">
         <ModalHeader py="11px">
           <Text textStyle="body-bold">Add New Admin</Text>
