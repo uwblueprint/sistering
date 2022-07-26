@@ -94,6 +94,7 @@ const userType = gql`
     uuid: String!
     email: String!
     role: Role!
+    createdAt: DateTime!
   }
 
   input UpdateUserDTO {

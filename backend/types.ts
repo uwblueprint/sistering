@@ -17,6 +17,7 @@ export type UserInviteResponse = {
   email: string;
   role: Role;
   uuid: string;
+  createdAt: Date;
 };
 
 export type UserDTO = {

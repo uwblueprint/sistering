@@ -506,6 +506,7 @@ class UserService implements IUserService {
         uuid: userInvite.uuid,
         role: userInvite.role.toString() as Role,
         email: userInvite.email,
+        createdAt: userInvite.createdAt,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -539,6 +540,7 @@ class UserService implements IUserService {
             uuid: invite.uuid,
             role: invite.role.toString() as Role,
             email: invite.email,
+            createdAt: invite.createdAt,
           };
         }),
       );
@@ -586,6 +588,7 @@ class UserService implements IUserService {
         email: userInvite.email,
         role: userInvite.role.toString() as Role,
         uuid: userInvite.uuid,
+        createdAt: userInvite.createdAt,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -606,6 +609,7 @@ class UserService implements IUserService {
         email: userInvite.email,
         role: userInvite.role.toString() as Role,
         uuid: userInvite.uuid,
+        createdAt: userInvite.createdAt,
       };
     } catch (error: unknown) {
       Logger.error(
