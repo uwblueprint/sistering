@@ -147,8 +147,8 @@ const ProfileDrawer = ({
         </DrawerFooter>
       </DrawerContent>
       <DeleteModal
-        title="insert title here"
-        body="insert text here"
+        title="Remove User?"
+        body="Are you sure you want to permanently remove this user? This action cannot be undone."
         isOpen={openDeleteModal}
         onClose={() => setOpenDeleteModal(false)}
         onDelete={() => {}}
