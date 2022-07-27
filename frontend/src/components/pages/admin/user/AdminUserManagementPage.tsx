@@ -1,3 +1,5 @@
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
 import React, { useState } from "react";
 import {
   Flex,
@@ -13,15 +15,8 @@ import {
   Td,
   useDisclosure,
   useToast,
-  chakra,
   CheckboxProps,
 } from "@chakra-ui/react";
-import {
-  useTable,
-  useSortBy,
-  TableCellProps,
-  TableHeaderProps,
-} from "react-table";
 import { gql, useQuery } from "@apollo/client";
 
 import {
