@@ -18,6 +18,7 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import AuthContext from "../../contexts/AuthContext";
 import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 import authAPIClient from "../../APIClients/AuthAPIClient";
+import { EDIT_ACCOUNT_PAGE } from "../../constants/Routes";
 
 type TabInfo = {
   name: string;
@@ -51,6 +52,11 @@ const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
 
   const userName = `${authenticatedUser?.firstName} ${authenticatedUser?.lastName}`;
   const history = useHistory();
+
+  const navigateToEditProfile = () => {
+    history.push(EDIT_ACCOUNT_PAGE);
+  };
+
   return (
     <Box px="90px" boxShadow="md">
       <Flex h="80px" alignItems="center" justifyContent="space-between">
@@ -87,7 +93,7 @@ const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
             {userName} <ChevronDownIcon />
           </MenuButton>
           <MenuList textStyle="caption" color="black">
-            <MenuItem>Profile</MenuItem>
+            <MenuItem onClick={navigateToEditProfile}>Profile</MenuItem>
             <MenuItem onClick={onLogOutClick}>Logout</MenuItem>
           </MenuList>
         </Menu>
