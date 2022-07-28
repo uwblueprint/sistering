@@ -20,12 +20,14 @@ import {
 import { gql, useQuery } from "@apollo/client";
 
 import {
+  CellContext,
   Column,
   ColumnDef,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
+  HeaderContext,
   Table,
   useReactTable,
 } from "@tanstack/react-table";
@@ -99,13 +101,12 @@ export type User = {
   pronouns: string;
   email: string;
   phoneNumber: string;
-  subRows?: User[];
 };
 
-function IndeterminateCheckbox({
+const IndeterminateCheckbox = ({
   indeterminate,
   ...rest
-}: { indeterminate?: boolean } & CheckboxProps) {
+}: { indeterminate?: boolean } & CheckboxProps): React.ReactElement => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const ref = React.useRef<HTMLInputElement>(null!);
 
@@ -117,7 +118,7 @@ function IndeterminateCheckbox({
 
   // eslint-disable-next-line react/jsx-props-no-spreading
   return <Checkbox ref={ref} {...rest} />;
-}
+};
 
 const AdminUserManagementPage = (): React.ReactElement => {
   const [allVolunteers, setAllVolunteers] = useState<
@@ -199,14 +200,14 @@ const AdminUserManagementPage = (): React.ReactElement => {
     () => [
       {
         id: "select",
-        header: ({ table }) => (
+        header: ({ table }: HeaderContext<User, unknown>) => (
           <IndeterminateCheckbox
             checked={table.getIsAllRowsSelected()}
             indeterminate={table.getIsSomeRowsSelected()}
             onChange={table.getToggleAllRowsSelectedHandler()}
           />
         ),
-        cell: ({ row }) => (
+        cell: ({ row }: CellContext<User, unknown>) => (
           <IndeterminateCheckbox
             checked={row.getIsSelected()}
             indeterminate={row.getIsSomeSelected()}
@@ -215,30 +216,33 @@ const AdminUserManagementPage = (): React.ReactElement => {
         ),
       },
       {
-        header: "First Name",
+        header: () => "First Name",
         accessorKey: "firstName",
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
       },
       {
-        header: "Last Name",
+        header: () => "Last Name",
         accessorKey: "lastName",
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
       },
       {
-        header: "Pronouns",
+        header: () => "Pronouns",
         accessorKey: "pronouns",
+        cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
       },
       {
-        header: "Email",
+        header: () => "Email",
         accessorKey: "email",
+        cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
       },
       {
-        header: "Phone Number",
+        header: () => "Phone Number",
         accessorKey: "phoneNumber",
+        cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
       },
     ],
@@ -306,21 +310,8 @@ const AdminUserManagementPage = (): React.ReactElement => {
               <Thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <Tr key={headerGroup.id}>
-                    <Checkbox
-                      position="absolute"
-                      top={0}
-                      bottom={0}
-                      onChange={() => console.log("checked")}
-                    />
                     {headerGroup.headers.map((header) => (
-                      <Th
-                        // {...header.getHeaderProps(
-                        //   header.getSortByToggleProps(),
-                        // )}
-                        key={header.id}
-                        colSpan={header.colSpan}
-                      >
-                        {/* {header.render("Header")} */}
+                      <Th key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder ? null : (
                           <>
                             {flexRender(
@@ -338,10 +329,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
                 {table.getRowModel().rows.map((row) => {
                   return (
                     <Tr key={row.id}>
-                      {/* {row.cells.map((cell) => (
-                        // eslint-disable-next-line react/jsx-key
-                        <Td {...cell.getCellProps()}>{cell.render("Cell")}</Td>
-                      ))} */}
                       {row.getVisibleCells().map((cell) => {
                         return (
                           <Td key={cell.id}>
