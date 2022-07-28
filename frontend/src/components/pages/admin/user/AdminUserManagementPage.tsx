@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 /* eslint-disable react/display-name */
-import React, { useState } from "react";
+import React, { HTMLProps, useState } from "react";
 import {
   Flex,
   Box,
@@ -16,6 +16,7 @@ import {
   useDisclosure,
   useToast,
   CheckboxProps,
+  chakra,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
@@ -30,7 +31,11 @@ import {
   HeaderContext,
   Table,
   useReactTable,
+  getSortedRowModel,
+  SortingState,
 } from "@tanstack/react-table";
+import { useSortBy } from "react-table";
+import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
 import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
 import ProfileDrawer from "./ProfileDrawer";
@@ -103,10 +108,18 @@ export type User = {
   phoneNumber: string;
 };
 
+const sortIcon: { [index: string]: JSX.Element } = {
+  asc: <TriangleUpIcon aria-label="sorted ascending" />,
+  desc: <TriangleDownIcon aria-label="sorted descending" />,
+};
+
 const IndeterminateCheckbox = ({
   indeterminate,
+  className = "",
   ...rest
-}: { indeterminate?: boolean } & CheckboxProps): React.ReactElement => {
+}: {
+  indeterminate?: boolean;
+} & HTMLProps<HTMLInputElement>): React.ReactElement => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
   const ref = React.useRef<HTMLInputElement>(null!);
 
@@ -116,8 +129,15 @@ const IndeterminateCheckbox = ({
     }
   }, [ref, indeterminate, rest.checked]);
 
-  // eslint-disable-next-line react/jsx-props-no-spreading
-  return <Checkbox ref={ref} {...rest} />;
+  return (
+    <input
+      type="checkbox"
+      ref={ref}
+      className={`${className} cursor-pointer`}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
+    />
+  );
 };
 
 const AdminUserManagementPage = (): React.ReactElement => {
@@ -128,6 +148,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
     [],
   );
 
+  const [sorting, setSorting] = React.useState<SortingState>([]);
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
 
@@ -202,16 +223,26 @@ const AdminUserManagementPage = (): React.ReactElement => {
         id: "select",
         header: ({ table }: HeaderContext<User, unknown>) => (
           <IndeterminateCheckbox
-            checked={table.getIsAllRowsSelected()}
-            indeterminate={table.getIsSomeRowsSelected()}
-            onChange={table.getToggleAllRowsSelectedHandler()}
+            // checked={table.getIsAllRowsSelected()}
+            // indeterminate={table.getIsSomeRowsSelected()}
+            // onChange={table.getToggleAllRowsSelectedHandler()}
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
           />
         ),
         cell: ({ row }: CellContext<User, unknown>) => (
           <IndeterminateCheckbox
-            checked={row.getIsSelected()}
-            indeterminate={row.getIsSomeSelected()}
-            onChange={row.getToggleSelectedHandler()}
+            // checked={row.getIsSelected()}
+            // indeterminate={row.getIsSomeSelected()}
+            // onChange={row.getToggleSelectedHandler()}
+            {...{
+              checked: row.getIsSelected(),
+              indeterminate: row.getIsSomeSelected(),
+              onChange: row.getToggleSelectedHandler(),
+            }}
           />
         ),
       },
@@ -249,34 +280,26 @@ const AdminUserManagementPage = (): React.ReactElement => {
     [],
   );
 
-  // const {
-  //   getTableProps,
-  //   getTableBodyProps,
-  //   headerGroups,
-  //   rows,
-  //   prepareRow,
-  // } = useReactTable({
-  //   data,
-  //   columns,
-  //   state: {
-  //     rowSelection,
-  //   },
-  //   onRowSelectionChange: setRowSelection,
-  // });
-
   const table = useReactTable({
     data,
     columns,
     state: {
       rowSelection,
+      sorting,
     },
+    onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
     debugTable: true,
   });
 
+  console.log(rowSelection);
+
+  // TODO: Add pagination footer
+  // TODO: make select all work
   return (
     <>
       <ProfileDrawer
@@ -293,6 +316,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
           defaultIndex={Number(AdminPages.AdminUserManagement)}
           tabs={AdminNavbarTabs}
         />
+        {/* // TODO: Add global filter */}
         <AdminUserManagementPageHeader
           branches={branches}
           onOpenProfileDrawer={onOpen}
@@ -305,7 +329,12 @@ const AdminUserManagementPage = (): React.ReactElement => {
           px="100px"
           pt="32px"
         >
-          <TableContainer border="1px" borderRadius="md" borderColor="gray.200">
+          <TableContainer
+            border="1px"
+            borderRadius="md"
+            borderColor="gray.200"
+            bgColor="white"
+          >
             <ChakraTable variant="brand">
               <Thead>
                 {table.getHeaderGroups().map((headerGroup) => (
@@ -313,12 +342,27 @@ const AdminUserManagementPage = (): React.ReactElement => {
                     {headerGroup.headers.map((header) => (
                       <Th key={header.id} colSpan={header.colSpan}>
                         {header.isPlaceholder ? null : (
-                          <>
+                          <Box
+                            className={
+                              header.column.getCanSort()
+                                ? "cursor-pointer select-none"
+                                : ""
+                            }
+                            _hover={{
+                              cursor: "pointer",
+                            }}
+                            onClick={header.column.getToggleSortingHandler()}
+                          >
                             {flexRender(
                               header.column.columnDef.header,
                               header.getContext(),
                             )}
-                          </>
+                            <chakra.span pl="4">
+                              {sortIcon[
+                                header.column.getIsSorted() as string
+                              ] ?? null}
+                            </chakra.span>
+                          </Box>
                         )}
                       </Th>
                     ))}
@@ -328,7 +372,10 @@ const AdminUserManagementPage = (): React.ReactElement => {
               <Tbody>
                 {table.getRowModel().rows.map((row) => {
                   return (
-                    <Tr key={row.id}>
+                    <Tr
+                      key={row.id}
+                      bgColor={row.getIsSelected() ? "purple.50" : undefined}
+                    >
                       {row.getVisibleCells().map((cell) => {
                         return (
                           <Td key={cell.id}>
