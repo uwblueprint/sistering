@@ -4,7 +4,13 @@ import { ADMIN_SCHEDULE_NO_SHIFTS } from "../../../../constants/Copy";
 
 const NoShiftsPanel = (): React.ReactElement => {
   return (
-    <Center h="full" borderLeft="2px" borderColor="background.dark" px="100px">
+    <Center
+      h="full"
+      borderLeft="1px"
+      borderTop="1px"
+      borderColor="background.dark"
+      px="100px"
+    >
       <Text textStyle="heading" color="text.gray">
         {ADMIN_SCHEDULE_NO_SHIFTS}
       </Text>

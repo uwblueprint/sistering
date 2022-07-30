@@ -13,6 +13,11 @@ type AdminScheduleVolunteerTableProps = {
   isEditing: boolean;
   onEditSaveClick: () => void;
   submitSignupsLoading: boolean;
+  isReadOnly: boolean;
+  onVolunteerProfileClick: (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => void;
 };
 
 const AdminScheduleVolunteerTable = ({
@@ -23,6 +28,8 @@ const AdminScheduleVolunteerTable = ({
   isEditing,
   onEditSaveClick,
   submitSignupsLoading,
+  isReadOnly,
+  onVolunteerProfileClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [signupsToDisplay, setSignupsToDisplay] = useState<
     AdminSchedulingSignupsAndVolunteerResponseDTO[]
@@ -54,30 +61,34 @@ const AdminScheduleVolunteerTable = ({
         <Flex w="full" alignItems="center">
           <Text textStyle="body-bold">Available Volunteers</Text>
           <Spacer />
-          <Button
-            variant="outline"
-            w="64px"
-            h="24px"
-            px="18px"
-            fontSize="12px"
-            lineHeight="100%"
-            onClick={onEditSaveClick}
-            isLoading={submitSignupsLoading}
-          >
-            {isEditing ? "Save" : "Edit"}
-          </Button>
+          {isReadOnly ? undefined : (
+            <Button
+              variant="outline"
+              w="64px"
+              h="24px"
+              px="18px"
+              fontSize="12px"
+              lineHeight="100%"
+              onClick={onEditSaveClick}
+              isLoading={submitSignupsLoading}
+            >
+              {isEditing ? "Save" : "Edit"}
+            </Button>
+          )}
         </Flex>
         <Flex w="full" alignItems="center">
-          <Text
-            textStyle="button-semibold"
-            fontSize="12px"
-            color="violet"
-            textDecor="underline"
-            cursor="pointer"
-            onClick={onSelectAllSignupsClick}
-          >
-            Select All
-          </Text>
+          {isReadOnly ? undefined : (
+            <Text
+              textStyle="button-semibold"
+              fontSize="12px"
+              color="violet"
+              textDecor="underline"
+              cursor="pointer"
+              onClick={onSelectAllSignupsClick}
+            >
+              Select All
+            </Text>
+          )}
           <Spacer />
           <Text textStyle="caption" fontSize="12px">
             Volunteers per shift: {signups[0] ? signups[0].numVolunteers : ""}
@@ -85,19 +96,24 @@ const AdminScheduleVolunteerTable = ({
         </Flex>
       </VStack>
       <VStack w="full" spacing={0} overflow="auto">
-        {signupsToDisplay.map((signup, i) => (
-          <AdminScheduleVolunteerRow
-            key={i}
-            volunteerID={signup.volunteer.id}
-            volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
-            note={signup.note}
-            isConfirmed={
-              signup.status === "CONFIRMED" || signup.status === "PUBLISHED"
-            }
-            isDisabled={!isEditing}
-            onSignupCheckboxClick={onSignupCheckboxClick}
-          />
-        ))}
+        {signupsToDisplay.map((signup, i) => {
+          const isSignupConfirmed =
+            signup.status === "CONFIRMED" || signup.status === "PUBLISHED";
+
+          return isReadOnly && !isSignupConfirmed ? undefined : (
+            <AdminScheduleVolunteerRow
+              key={i}
+              volunteerID={signup.volunteer.id}
+              volunteerName={`${signup.volunteer.firstName} ${signup.volunteer.lastName}`}
+              note={signup.note}
+              isConfirmed={isSignupConfirmed}
+              isDisabled={!isEditing}
+              onSignupCheckboxClick={onSignupCheckboxClick}
+              isReadOnly={isReadOnly}
+              onVolunteerProfileClick={onVolunteerProfileClick}
+            />
+          );
+        })}
       </VStack>
     </VStack>
   );

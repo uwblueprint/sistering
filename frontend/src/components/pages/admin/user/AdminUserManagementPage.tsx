@@ -1,5 +1,14 @@
 import React, { useState } from "react";
-import { Flex, Box, Table, Tbody, useDisclosure } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Button,
+  TableContainer,
+  Table,
+  Tbody,
+  useDisclosure,
+  useToast,
+} from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
 import ErrorModal from "../../../common/ErrorModal";
@@ -68,6 +77,12 @@ const AdminUserManagementPage = (): React.ReactElement => {
     [],
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+
+  // Temporary state for user management row checkboxes in testing #453.
+  const [row1Checked, setRow1Checked] = useState(false);
+  const [row2Checked, setRow2Checked] = useState(false);
+  const [row3Checked, setRow3Checked] = useState(false);
 
   const { loading, error } = useQuery(USERS, {
     fetchPolicy: "cache-and-network",
@@ -93,11 +108,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
       setBranches(data.branches);
     },
   });
-
-  // Temporary state for user management row checkboxes in testing #453.
-  const [row1Checked, setRow1Checked] = useState(false);
-  const [row2Checked, setRow2Checked] = useState(false);
-  const [row3Checked, setRow3Checked] = useState(false);
 
   return (
     <>
@@ -126,7 +136,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
           px="100px"
           pt="32px"
         >
-          <Box m={20} border="1px" borderRadius="md" borderColor="gray.200">
+          <TableContainer border="1px" borderRadius="md" borderColor="gray.200">
             <Table variant="brand">
               <Tbody>
                 <UserManagementTableRow
@@ -158,7 +168,20 @@ const AdminUserManagementPage = (): React.ReactElement => {
                 />
               </Tbody>
             </Table>
-          </Box>
+          </TableContainer>
+          <Button
+            onClick={() =>
+              toast({
+                title: "User Branches Updated",
+                description: "7 user(s) added to new branch(es).",
+                status: "success",
+                duration: 5000,
+                isClosable: true,
+              })
+            }
+          >
+            Add Users to Branch
+          </Button>
         </Box>
       </Flex>
     </>

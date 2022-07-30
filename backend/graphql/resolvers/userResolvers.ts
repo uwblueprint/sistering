@@ -50,6 +50,12 @@ const userResolvers = {
       const csv = await generateCSV<UserDTO>({ data: users });
       return csv;
     },
+    getUserInvite: async (
+      _parent: undefined,
+      { uuid }: { uuid: string },
+    ): Promise<UserInviteResponse> => {
+      return userService.getUserInvite(uuid);
+    },
     // VolunteerUsers
     volunteerUserById: async (
       _parent: undefined,
@@ -121,12 +127,12 @@ const userResolvers = {
 
       if (role === "VOLUNTEER") {
         htmlBody = volunteerAccountCreationInviteTemplate(
-          `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
+          `${process.env.SITE_URL}/create-account?token=${results.uuid}`,
         );
         subject = "Welcome to Your Volunteer Account";
       } else {
         htmlBody = adminAccountCreationInviteTemplate(
-          `https://sistering-dev.web.app/create-account?token=${results.uuid}`,
+          `${process.env.SITE_URL}/create-account?token=${results.uuid}`,
         );
         subject = "Welcome to Your Admin Account";
       }

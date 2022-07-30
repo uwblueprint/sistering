@@ -12,6 +12,14 @@ export const formatTimeHourMinutes = (date: Date): string => {
 };
 
 /**
+ * @param {Date} date
+ * @returns corresponding time string string in format DD/MM/YY
+ */
+export const formatDateMonthYear = (date: Date): string => {
+  return moment(date).format("DD/MM/YY");
+};
+
+/**
  *
  * @param {Date} start
  * @param {Date} end
@@ -33,6 +41,17 @@ export const getElapsedHours = (start: Date, end: Date): number => {
 export const formatDateStringYear = (dateStringInput: string): string => {
   const inputAsDate = new Date(dateStringInput);
   return moment(inputAsDate).utc().format("dddd, ll");
+};
+
+/**
+ * @param {string} dateStringInput date string on frontend
+ * @returns corresponding date string in the following format (Mon, Oct 13, 2021)
+ */
+export const formatDateStringYearAbbrWeekday = (
+  dateStringInput: string,
+): string => {
+  const inputAsDate = new Date(dateStringInput);
+  return moment(inputAsDate).utc().format("ddd, ll");
 };
 
 /**
@@ -189,6 +208,6 @@ export const isEventPosting = (startDate: Date, endDate: Date): boolean => {
  * @returns true if the date is in the past
  * @returns false if the date is in the future
  */
-export const isPast = (date: string): boolean => {
+export const isPast = (date: Date): boolean => {
   return moment(date).isBefore(moment().toDate());
 };

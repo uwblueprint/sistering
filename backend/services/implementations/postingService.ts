@@ -5,23 +5,27 @@ import {
   Employee,
   Branch,
   Shift,
+  PostingStatus as PrismaPostingStatus,
+  Signup,
 } from "@prisma/client";
 import IPostingService from "../interfaces/postingService";
 import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
   EmployeeUserResponseDTO,
-  PostingRequestDTO,
   PostingResponseDTO,
   PostingStatus,
   PostingType,
   PostingWithShiftsRequestDTO,
+  RecurrenceInterval,
   ShiftResponseDTO,
   SkillResponseDTO,
+  TimeBlock,
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
 import IShiftService from "../interfaces/IShiftService";
+import { getInterval } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -94,6 +98,51 @@ const convertToSkillResponseDTO = (skills: Skill[]): SkillResponseDTO[] => {
   });
 };
 
+const isPostingScheduledBySignups = (signups: Signup[]): boolean => {
+  return signups
+    .flatMap((signup) => signup.status)
+    .some((signupStatus) => signupStatus === "PUBLISHED");
+};
+
+const intervalFromTimeBlocks = (blocks: TimeBlock[]): RecurrenceInterval => {
+  if (blocks.length < 2) {
+    return "NONE";
+  }
+
+  const sortedBlocks = blocks.sort(
+    (a, b) => a.startTime.getTime() - b.endTime.getTime(),
+  );
+  const first = sortedBlocks[0];
+
+  const weeklyInterval = getInterval("WEEKLY");
+  const biWeeklyInterval = getInterval("BIWEEKLY");
+  const monthlyInterval = getInterval("MONTHLY");
+
+  let result: RecurrenceInterval = "NONE";
+
+  sortedBlocks.slice(1).every((block) => {
+    switch (block.startTime.getTime() - first.startTime.getTime()) {
+      case weeklyInterval:
+        result = "WEEKLY";
+        break;
+      case biWeeklyInterval:
+        result = "BIWEEKLY";
+        break;
+      case monthlyInterval:
+        result = "MONTHLY";
+        break;
+      default:
+        break;
+    }
+    if (result !== "NONE") {
+      return false;
+    }
+    return true;
+  });
+
+  return result;
+};
+
 class PostingService implements IPostingService {
   shiftService: IShiftService;
 
@@ -126,16 +175,18 @@ class PostingService implements IPostingService {
   }
 
   async getPosting(postingId: string): Promise<PostingResponseDTO> {
-    let posting: PostingWithRelations | null;
-
     try {
-      posting = await prisma.posting.findUnique({
+      const posting = await prisma.posting.findUnique({
         where: {
           id: Number(postingId),
         },
         include: {
           branch: true,
-          shifts: true,
+          shifts: {
+            include: {
+              signups: true,
+            },
+          },
           skills: true,
           employees: true,
         },
@@ -144,30 +195,34 @@ class PostingService implements IPostingService {
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
       }
+
+      const employeeUsers = await this.convertToEmployeeUserResponseDTO(
+        posting.employees,
+      );
+
+      return {
+        id: String(posting.id),
+        branch: convertToBranchResponseDTO(posting.branch),
+        shifts: convertToShiftResponseDTO(posting.shifts),
+        skills: convertToSkillResponseDTO(posting.skills),
+        employees: employeeUsers,
+        title: posting.title,
+        type: posting.type,
+        status: posting.status,
+        description: posting.description,
+        startDate: posting.startDate,
+        endDate: posting.endDate,
+        autoClosingDate: posting.autoClosingDate,
+        numVolunteers: posting.numVolunteers,
+        isScheduled: isPostingScheduledBySignups(
+          posting.shifts.flatMap((shift) => shift.signups),
+        ),
+        recurrenceInterval: intervalFromTimeBlocks(posting.shifts),
+      };
     } catch (error: unknown) {
       Logger.error(`Failed to get posting. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
-
-    const employeeUsers = await this.convertToEmployeeUserResponseDTO(
-      posting.employees,
-    );
-
-    return {
-      id: String(posting.id),
-      branch: convertToBranchResponseDTO(posting.branch),
-      shifts: convertToShiftResponseDTO(posting.shifts),
-      skills: convertToSkillResponseDTO(posting.skills),
-      employees: employeeUsers,
-      title: posting.title,
-      type: posting.type,
-      status: posting.status,
-      description: posting.description,
-      startDate: posting.startDate,
-      endDate: posting.endDate,
-      autoClosingDate: posting.autoClosingDate,
-      numVolunteers: posting.numVolunteers,
-    };
   }
 
   async getPostings(
@@ -189,21 +244,23 @@ class PostingService implements IPostingService {
       }
 
       try {
-        const postings: Array<PostingWithRelations> = await prismaClient.posting.findMany(
-          {
-            where: {
-              AND: filter,
-            },
-            include: {
-              branch: true,
-              shifts: true,
-              skills: true,
-              employees: true,
-            },
+        const postings = await prismaClient.posting.findMany({
+          where: {
+            AND: filter,
           },
-        );
+          include: {
+            branch: true,
+            shifts: {
+              include: {
+                signups: true,
+              },
+            },
+            skills: true,
+            employees: true,
+          },
+        });
         return await Promise.all(
-          postings.map(async (posting: PostingWithRelations) => {
+          postings.map(async (posting) => {
             const employeeUsers: EmployeeUserResponseDTO[] = await this.convertToEmployeeUserResponseDTO(
               posting.employees,
             );
@@ -222,6 +279,10 @@ class PostingService implements IPostingService {
               endDate: posting.endDate,
               autoClosingDate: posting.autoClosingDate,
               numVolunteers: posting.numVolunteers,
+              isScheduled: isPostingScheduledBySignups(
+                posting.shifts.flatMap((shift) => shift.signups),
+              ),
+              recurrenceInterval: intervalFromTimeBlocks(posting.shifts),
             };
           }),
         );
@@ -308,17 +369,17 @@ class PostingService implements IPostingService {
       endDate: newPosting.endDate,
       autoClosingDate: newPosting.autoClosingDate,
       numVolunteers: newPosting.numVolunteers,
+      isScheduled: false, // New posting is not scheduled
+      recurrenceInterval: posting.recurrenceInterval,
     };
   }
 
   async updatePosting(
     postingId: string,
-    posting: PostingRequestDTO,
+    posting: PostingWithShiftsRequestDTO,
   ): Promise<PostingResponseDTO | null> {
-    let updateResult: PostingWithRelations;
-
     try {
-      updateResult = await prisma.posting.update({
+      const updateResult = await prisma.posting.update({
         where: { id: Number(postingId) },
         data: {
           branch: {
@@ -347,37 +408,84 @@ class PostingService implements IPostingService {
         },
         include: {
           branch: true,
-          shifts: true,
+          shifts: {
+            include: {
+              signups: true,
+            },
+          },
           skills: true,
           employees: true,
         },
       });
+
+      const employeeUsers: EmployeeUserResponseDTO[] = await this.convertToEmployeeUserResponseDTO(
+        updateResult.employees,
+      );
+
+      let shiftFromDrafts = null;
+
+      if (updateResult.status === "DRAFT") {
+        const timeBlocks = this.shiftService.bulkGenerateTimeBlocks({
+          times: posting.times,
+          recurrenceInterval: posting.recurrenceInterval,
+          startDate: posting.startDate,
+          endDate: posting.endDate,
+        });
+
+        // We delete all of our shifts and recreate them
+        await prisma.shift.deleteMany({
+          where: {
+            postingId: updateResult.id,
+          },
+        });
+        shiftFromDrafts = await prisma.posting.update({
+          where: {
+            id: updateResult.id,
+          },
+          data: {
+            shifts: {
+              createMany: {
+                data: timeBlocks,
+              },
+            },
+          },
+          include: {
+            shifts: {
+              include: {
+                signups: true,
+              },
+            },
+          },
+        });
+      }
+
+      return {
+        id: String(updateResult.id),
+        branch: convertToBranchResponseDTO(updateResult.branch),
+        shifts: convertToShiftResponseDTO(
+          shiftFromDrafts?.shifts ?? updateResult.shifts,
+        ),
+        skills: convertToSkillResponseDTO(updateResult.skills),
+        employees: employeeUsers,
+        title: updateResult.title,
+        type: updateResult.type,
+        status: updateResult.status,
+        description: updateResult.description,
+        startDate: updateResult.startDate,
+        endDate: updateResult.endDate,
+        autoClosingDate: updateResult.autoClosingDate,
+        numVolunteers: updateResult.numVolunteers,
+        isScheduled: isPostingScheduledBySignups(
+          updateResult.shifts.flatMap((shift) => shift.signups),
+        ),
+        recurrenceInterval: intervalFromTimeBlocks(updateResult.shifts),
+      };
     } catch (error: unknown) {
       Logger.error(
         `Failed to update posting. Reason = ${getErrorMessage(error)}`,
       );
       throw error;
     }
-
-    const employeeUsers: EmployeeUserResponseDTO[] = await this.convertToEmployeeUserResponseDTO(
-      updateResult.employees,
-    );
-
-    return {
-      id: String(updateResult.id),
-      branch: convertToBranchResponseDTO(updateResult.branch),
-      shifts: convertToShiftResponseDTO(updateResult.shifts),
-      skills: convertToSkillResponseDTO(updateResult.skills),
-      employees: employeeUsers,
-      title: updateResult.title,
-      type: updateResult.type,
-      status: updateResult.status,
-      description: updateResult.description,
-      startDate: updateResult.startDate,
-      endDate: updateResult.endDate,
-      autoClosingDate: updateResult.autoClosingDate,
-      numVolunteers: updateResult.numVolunteers,
-    };
   }
 
   async deletePosting(postingId: string): Promise<string> {
@@ -389,6 +497,65 @@ class PostingService implements IPostingService {
     } catch (error: unknown) {
       Logger.error(
         `Failed to delete posting. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
+  async duplicatePosting(postingId: string): Promise<string> {
+    try {
+      // get posting along with its postings
+      const targetPosting = await prisma.posting.findUnique({
+        where: { id: Number(postingId) },
+        include: {
+          shifts: true,
+          employees: true,
+          skills: true,
+        },
+      });
+      if (targetPosting === null) {
+        throw new Error(`Target posting with ${postingId} not found`);
+      }
+
+      // create duplicate posting
+      const duplicatePosting = await prisma.posting.create({
+        data: {
+          branch: {
+            connect: { id: targetPosting.branchId },
+          },
+          skills: {
+            connect: targetPosting.skills.map((skill) => {
+              return { id: skill.id };
+            }),
+          },
+          employees: {
+            connect: targetPosting.employees.map((employee) => {
+              return { id: employee.id };
+            }),
+          },
+          shifts: {
+            createMany: {
+              data:
+                targetPosting.shifts.map((shift) => {
+                  return { startTime: shift.startTime, endTime: shift.endTime };
+                }) ?? [],
+            },
+          },
+          title: `Copy of ${targetPosting.title}`,
+          type: targetPosting.type,
+          status: PrismaPostingStatus.DRAFT,
+          description: targetPosting.description,
+          startDate: targetPosting.startDate,
+          endDate: targetPosting.endDate,
+          autoClosingDate: targetPosting.autoClosingDate,
+          numVolunteers: targetPosting.numVolunteers,
+        },
+      });
+
+      return String(duplicatePosting.id);
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to duplicate posting. Reason = ${getErrorMessage(error)}`,
       );
       throw error;
     }

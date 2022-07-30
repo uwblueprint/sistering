@@ -8,7 +8,6 @@ import {
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
   PostingStatus,
-  PostingRequestDTO,
 } from "../../types";
 
 const userService: IUserService = new UserService();
@@ -51,7 +50,7 @@ const postingResolvers = {
     },
     updatePosting: async (
       _parent: undefined,
-      { id, posting }: { id: string; posting: PostingRequestDTO },
+      { id, posting }: { id: string; posting: PostingWithShiftsRequestDTO },
     ): Promise<PostingResponseDTO | null> => {
       return postingService.updatePosting(id, posting);
     },
@@ -60,6 +59,12 @@ const postingResolvers = {
       { id }: { id: string },
     ): Promise<string> => {
       return postingService.deletePosting(id);
+    },
+    duplicatePosting: async (
+      _parent: undefined,
+      { id }: { id: string },
+    ): Promise<string> => {
+      return postingService.duplicatePosting(id);
     },
   },
 };

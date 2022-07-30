@@ -2,7 +2,6 @@ import {
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
   PostingStatus,
-  PostingRequestDTO,
 } from "../../types";
 
 interface IPostingService {
@@ -47,7 +46,7 @@ interface IPostingService {
    */
   updatePosting(
     postingId: string,
-    posting: PostingRequestDTO,
+    posting: PostingWithShiftsRequestDTO,
   ): Promise<PostingResponseDTO | null>;
 
   /**
@@ -56,6 +55,13 @@ interface IPostingService {
    * @throws Error if posting deletion fails
    */
   deletePosting(postingId: string): Promise<string>;
+
+  /**
+   * Duplicate a posting along with its shifts by id
+   * @param postingId posting's postingId
+   * @throws Error if posting duplication fails
+   */
+  duplicatePosting(postingId: string): Promise<string>;
 }
 
 export default IPostingService;

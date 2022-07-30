@@ -6,12 +6,14 @@ type AdminPostingScheduleHeaderProps = {
   postingName: string;
   postingID: number;
   onReviewClick: () => void;
+  isReadOnly: boolean;
 };
 
 const AdminPostingScheduleHeader = ({
   postingName,
   postingID,
   onReviewClick,
+  isReadOnly,
 }: AdminPostingScheduleHeaderProps): React.ReactElement => {
   const history = useHistory();
 
@@ -38,9 +40,11 @@ const AdminPostingScheduleHeader = ({
           >
             View Posting
           </Button>
-          <Button textStyle="button-semibold" onClick={onReviewClick}>
-            Review
-          </Button>
+          {isReadOnly ? undefined : (
+            <Button textStyle="button-semibold" onClick={onReviewClick}>
+              Review
+            </Button>
+          )}
         </Flex>
       </Flex>
     </VStack>

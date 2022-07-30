@@ -6,6 +6,7 @@ import {
   SimpleGrid,
   Stack,
   Table,
+  Box,
   Tag,
   Tbody,
   Text,
@@ -26,7 +27,7 @@ import {
   getWeekday,
 } from "../../../utils/DateTimeUtils";
 
-const CreatePostingReview = (): React.ReactElement => {
+const PostingFormReview = (): React.ReactElement => {
   const {
     branch,
     skills,
@@ -65,9 +66,9 @@ const CreatePostingReview = (): React.ReactElement => {
               <Text textStyle="subheading" color="text.gray" mt={3}>
                 Description
               </Text>
-              <Text textStyle="caption">
+              <Box textStyle="caption">
                 <RichTextDisplay>{description}</RichTextDisplay>
-              </Text>
+              </Box>
             </Stack>
             <Stack spacing={4}>
               <Text textStyle="subheading" color="text.gray" mt={5}>
@@ -135,4 +136,4 @@ const CreatePostingReview = (): React.ReactElement => {
   );
 };
 
-export default CreatePostingReview;
+export default PostingFormReview;

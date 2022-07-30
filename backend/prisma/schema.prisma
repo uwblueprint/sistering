@@ -16,6 +16,8 @@ model Entity {
   stringArrayField String[] @map("string_array_field")
   boolField        Boolean  @map("bool_field")
   fileName         String   @map("file_name")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
 
   @@map("entities")
 }
@@ -34,6 +36,8 @@ model User {
   emergencyContactPhone String?    @map("emergency_contact_phone")
   emergencyContactEmail String?    @map("emergency_conatct_email")
   languages             Language[]
+  createdAt             DateTime   @default(now())
+  updatedAt             DateTime   @updatedAt
 
   @@map("users")
 }
@@ -93,6 +97,8 @@ model Posting {
   endDate         DateTime      @map("end_date")
   autoClosingDate DateTime      @map("auto_closing_date")
   numVolunteers   Int           @default(1) @map("num_volunteers")
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
 
   @@map("postings")
 }
@@ -102,6 +108,8 @@ model Skill {
   name       String      @unique
   postings   Posting[]
   volunteers Volunteer[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@map("skills")
 }
@@ -112,6 +120,8 @@ model Branch {
   name       String      @unique
   employees  Employee[]
   volunteers Volunteer[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
 
   @@map("branches")
 }
@@ -123,18 +133,22 @@ model Shift {
   startTime DateTime @map("start_time")
   endTime   DateTime @map("end_time")
   signups   Signup[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("shifts")
 }
 
 model Signup {
-  shift         Shift        @relation(fields: [shiftId], references: [id])
+  shift         Shift        @relation(fields: [shiftId], references: [id], onDelete: Cascade)
   shiftId       Int          @map("shifts_id")
   user          User         @relation(fields: [userId], references: [id])
   userId        Int
   status        SignupStatus
   numVolunteers Int          @default(1) @map("num_volunteers")
   note          String
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
 
   @@id([shiftId, userId])
   @@map("signups")
@@ -148,23 +162,29 @@ model Volunteer {
   skills      Skill[]
   dateOfBirth DateTime? @map("date_of_birth")
   pronouns    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@map("volunteers")
 }
 
 model Employee {
-  id       Int       @id
-  user     User      @relation(fields: [id], references: [id], onDelete: Cascade)
-  branches   Branch[]
-  postings Posting[]
+  id        Int       @id
+  user      User      @relation(fields: [id], references: [id], onDelete: Cascade)
+  branches  Branch[]
+  postings  Posting[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
 
   @@map("employees")
 }
 
 model UserInvite {
-  uuid String @id @default(uuid())
-  email String @unique
-  role  Role
+  uuid      String   @id @default(uuid())
+  email     String   @unique
+  role      Role
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("user_invites")
 }

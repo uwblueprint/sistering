@@ -45,7 +45,7 @@ import AdminPostingDetails from "./components/pages/admin/posting/AdminPostingDe
 import customTheme from "./theme";
 import { AuthenticatedUser, Role } from "./types/AuthTypes";
 import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
-import AdminSchedulePostingPage from "./components/pages/admin/schedule/AdminSchedulePostingPage";
+import SchedulePostingPage from "./components/pages/admin/schedule/SchedulePostingPage";
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
 import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/AdminSchedulePostingReviewPage";
 import CreateAccountPage from "./components/pages/CreateAccountPage";
@@ -55,6 +55,8 @@ import AccountCreatedPage from "./components/pages/AccountCreatedPage";
 import AdminHomepage from "./components/pages/admin/AdminHomepage";
 import AdminUserManagementPage from "./components/pages/admin/user/AdminUserManagementPage";
 import CreatePostingPage from "./components/pages/admin/posting/CreatePostingPage";
+import EditAccountPage from "./components/pages/EditAccountPage";
+import EditPostingPage from "./components/pages/admin/posting/EditPostingPage";
 
 // Consts for Hotjar and Google Analytics (this is ok to expose)
 const TRACKING_ID = "G-DF2BP4T8YQ";
@@ -134,17 +136,22 @@ const App = (): React.ReactElement => {
                       path={Routes.RESET_PASSWORD_SUCCESS_PAGE}
                       component={PasswordResetSuccessPage}
                     />
-
-                    <PrivateRoute
-                      exact
-                      path={Routes.ADMIN_HOMEPAGE}
-                      component={AdminHomepage}
-                    />
-
                     <Route
                       exact
                       path={Routes.DONE_RESET_PASSWORD_PAGE}
                       component={DoneResetPassword}
+                    />
+
+                    <PrivateRoute
+                      exact
+                      path={Routes.ADMIN_HOMEPAGE}
+                      authorizedRoles={[Role.Admin]}
+                      component={AdminHomepage}
+                    />
+                    <PrivateRoute
+                      exact
+                      path={Routes.EDIT_ACCOUNT_PAGE}
+                      component={EditAccountPage}
                     />
                     <PrivateRoute
                       exact
@@ -196,6 +203,12 @@ const App = (): React.ReactElement => {
                     />
                     <PrivateRoute
                       exact
+                      path={Routes.ADMIN_EDIT_POSTING_PAGE}
+                      authorizedRoles={[Role.Admin]}
+                      component={EditPostingPage}
+                    />
+                    <PrivateRoute
+                      exact
                       path={Routes.VOLUNTEER_POSTING_DETAILS}
                       authorizedRoles={[Role.Volunteer]}
                       component={VolunteerPostingDetails}
@@ -215,8 +228,8 @@ const App = (): React.ReactElement => {
                     <PrivateRoute
                       exact
                       path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
-                      authorizedRoles={[Role.Admin]}
-                      component={AdminSchedulePostingPage}
+                      authorizedRoles={[Role.Admin, Role.Employee]}
+                      component={SchedulePostingPage}
                     />
                     <PrivateRoute
                       exact

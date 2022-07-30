@@ -1,5 +1,5 @@
 import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
@@ -20,8 +20,13 @@ import ErrorModal from "../../../common/ErrorModal";
 import MonthViewShiftCalendar from "../../../admin/ShiftCalendar/MonthViewShiftCalendar";
 import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
+import VolunteerSidePanel from "../../../admin/schedule/volunteersidepanel/VolunteerSidePanel";
 import Loading from "../../../common/Loading";
 import { getUTCDateForDateTimeString } from "../../../../utils/DateTimeUtils";
+import AuthContext from "../../../../contexts/AuthContext";
+import { Role } from "../../../../types/AuthTypes";
+import { getPostingFilterStatusBySignupStatuses } from "../../../../utils/TypeUtils";
+import { PostingFilterStatus } from "../../../../types/PostingTypes";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -89,6 +94,7 @@ const POSTING = gql`
       }
       startDate
       endDate
+      status
     }
   }
 `;
@@ -120,8 +126,9 @@ const ShiftScheduleCalendar = ({
     />
   );
 
-const AdminSchedulePostingPage = (): React.ReactElement => {
+const SchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
+  const { authenticatedUser } = useContext(AuthContext);
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -256,11 +263,30 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     }
   };
 
-  const handleDayClick = (calendarDate: Date) => setSelectedDay(calendarDate);
+  const [volunteerId, setVolunteerId] = useState("");
+  const [displayVolunteerSidePanel, setDisplayVolunteerSidePanel] = useState(
+    false,
+  );
+
+  const handleVolunteerProfileClick = (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => {
+    setDisplayVolunteerSidePanel(isDisplayingVolunteer);
+    setVolunteerId(userId);
+  };
+
+  const handleDayClick = (calendarDate: Date) => {
+    setSelectedDay(calendarDate);
+    handleVolunteerProfileClick(false, "");
+  };
 
   const handleShiftClick = (
     shift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO,
-  ) => setSelectedShift(shift);
+  ) => {
+    setSelectedShift(shift);
+    handleVolunteerProfileClick(false, "");
+  };
 
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
@@ -323,6 +349,23 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
     setCurrentView(AdminScheduleViews.CalendarView);
   };
 
+  const isReadOnly =
+    (authenticatedUser && authenticatedUser.role !== Role.Admin) ||
+    getPostingFilterStatusBySignupStatuses(
+      postingDetails?.status,
+      new Date(postingDetails?.endDate),
+      shifts.flatMap((shift) =>
+        shift.signups.flatMap((signup) => signup.status),
+      ),
+    ) === PostingFilterStatus.PAST;
+
+  useEffect(() => {
+    return () => {
+      setVolunteerId("");
+      setDisplayVolunteerSidePanel(false);
+    };
+  }, []);
+
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
       {(tableDataQueryError || submitSignupsError || postingError) && (
@@ -344,6 +387,7 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
               onReviewClick={() =>
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
+              isReadOnly={isReadOnly}
             />
             {tableDataLoading || postingLoading ? (
               <Loading />
@@ -356,17 +400,26 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
             )}
           </Box>
           <Box w="400px" overflow="hidden">
-            <ScheduleSidePanel
-              shifts={sidePanelShifts}
-              currentlyEditingShift={currentlyEditingShift}
-              onEditSignupsClick={handleSidePanelEditClick}
-              onSelectAllSignupsClick={handleSelectAllSignupsClick}
-              onSignupCheckboxClick={handleSignupCheckboxClick}
-              onSaveSignupsClick={handleSidePanelSaveClick}
-              submitSignupsLoading={submitSignupsLoading}
-              selectedShift={selectedShift}
-              setSelectedShift={setSelectedShift}
-            />
+            {displayVolunteerSidePanel ? (
+              <VolunteerSidePanel
+                onVolunteerProfileClick={handleVolunteerProfileClick}
+                volunteerId={volunteerId}
+              />
+            ) : (
+              <ScheduleSidePanel
+                shifts={sidePanelShifts}
+                currentlyEditingShift={currentlyEditingShift}
+                onEditSignupsClick={handleSidePanelEditClick}
+                onSelectAllSignupsClick={handleSelectAllSignupsClick}
+                onSignupCheckboxClick={handleSignupCheckboxClick}
+                onSaveSignupsClick={handleSidePanelSaveClick}
+                submitSignupsLoading={submitSignupsLoading}
+                selectedShift={selectedShift}
+                setSelectedShift={setSelectedShift}
+                isReadOnly={isReadOnly}
+                onVolunteerProfileClick={handleVolunteerProfileClick}
+              />
+            )}
           </Box>
         </Flex>
       ) : (
@@ -405,4 +458,4 @@ const AdminSchedulePostingPage = (): React.ReactElement => {
   );
 };
 
-export default AdminSchedulePostingPage;
+export default SchedulePostingPage;

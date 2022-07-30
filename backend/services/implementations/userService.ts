@@ -19,6 +19,7 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import { getWeekDiff } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -454,11 +455,73 @@ class UserService implements IUserService {
     }
   }
 
+  async getUserInvite(uuid: string): Promise<UserInviteResponse> {
+    try {
+      const userInvite = await prisma.userInvite.findUnique({
+        where: {
+          uuid,
+        },
+      });
+
+      if (userInvite === null) {
+        // not found
+        throw new Error(
+          "Failed to get user invite with token. Reason = user is not allowed to create an account",
+        );
+      }
+
+      if (getWeekDiff(userInvite.createdAt, new Date()) >= 2) {
+        const resultsFromDeletion = await this.deleteUserInvite(
+          userInvite.email,
+        );
+        if (resultsFromDeletion != null) {
+          throw new Error(
+            "Failed to allow user to create account. Reason = User Invite age exceeded accepted time period (2 weeks), user invite has been removed",
+          );
+        } else {
+          throw new Error(
+            "Failed to allow user to create account. Reason = User Invite age exceeded accepted time period (2 weeks), attempted to remove user invite but error occurred",
+          );
+        }
+      }
+
+      return {
+        uuid: userInvite.uuid,
+        role: userInvite.role.toString() as Role,
+        email: userInvite.email,
+      };
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get user invite. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+  }
+
   async createUserInvite(
     email: string,
     role: Role,
   ): Promise<UserInviteResponse> {
     try {
+      let user = null;
+      await firebaseAdmin
+        .auth()
+        .getUserByEmail(email)
+        .then(async (firebaseUser) => {
+          user = await prisma.user.findUnique({
+            where: {
+              authId: firebaseUser.uid,
+            },
+          });
+        })
+        .catch(() => {});
+
+      if (user !== null) {
+        throw new Error(
+          "Create User Invite failed. Reason = Email already exists",
+        );
+      }
+
       const userInvite = await prisma.userInvite.create({
         data: {
           email,
@@ -637,6 +700,30 @@ class UserService implements IUserService {
     signUpMethod = "PASSWORD",
   ): Promise<VolunteerUserResponseDTO> {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
+
+    try {
+      const userInvite = await prisma.userInvite.findUnique({
+        where: {
+          uuid: volunteerUser.token,
+        },
+      });
+
+      if (userInvite === null) {
+        // not found
+        throw new Error(
+          "Failed to get user invite with token - user is not allowed to create an account",
+        );
+      } else if (userInvite.role !== "VOLUNTEER") {
+        throw new Error(
+          "User invite with associated token does not have matching role - cannot create account",
+        );
+      }
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to check user invite. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
 
     try {
       // signUpMethod === PASSWORD
@@ -1072,6 +1159,30 @@ class UserService implements IUserService {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
+      const userInvite = await prisma.userInvite.findUnique({
+        where: {
+          uuid: employeeUser.token,
+        },
+      });
+
+      if (userInvite === null) {
+        // not found
+        throw new Error(
+          "Failed to get user invite with token - user is not allowed to create account",
+        );
+      } else if (userInvite.role !== "EMPLOYEE") {
+        throw new Error(
+          "User invite with associated token does not have matching role - cannot create account",
+        );
+      }
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to check user invite. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+
+    try {
       // signUpMethod === PASSWORD
       firebaseUser = await firebaseAdmin.auth().createUser({
         email: employeeUser.email,
@@ -1147,43 +1258,42 @@ class UserService implements IUserService {
     let updatedFirebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
-      const [oldEmployeeUser, updatedEmployeeUser] = await prisma.$transaction([
-        prisma.employee.findUnique({
-          where: {
-            id: Number(userId),
-          },
-          include: {
-            user: true,
-            branches: true,
-          },
-        }),
-        prisma.employee.update({
-          where: {
-            id: Number(userId),
-          },
-          data: {
-            user: {
-              update: {
-                firstName: employeeUser.firstName,
-                lastName: employeeUser.lastName,
-                role: "EMPLOYEE",
-                phoneNumber: employeeUser.phoneNumber,
-                emergencyContactName: employeeUser.emergencyContactName,
-                emergencyContactPhone: employeeUser.emergencyContactPhone,
-                emergencyContactEmail: employeeUser.emergencyContactEmail,
-              },
-            },
-            branches: {
-              set: [],
-              connect: convertToNumberIds(employeeUser.branches),
+      const oldEmployeeUser = await prisma.employee.findUnique({
+        where: {
+          id: Number(userId),
+        },
+        include: {
+          user: true,
+          branches: true,
+        },
+      });
+      const updatedEmployeeUser = await prisma.employee.update({
+        where: {
+          id: Number(userId),
+        },
+        data: {
+          user: {
+            update: {
+              firstName: employeeUser.firstName,
+              lastName: employeeUser.lastName,
+              role: oldEmployeeUser?.user.role,
+              phoneNumber: employeeUser.phoneNumber,
+              emergencyContactName: employeeUser.emergencyContactName,
+              emergencyContactPhone: employeeUser.emergencyContactPhone,
+              emergencyContactEmail: employeeUser.emergencyContactEmail,
+              languages: employeeUser.languages,
             },
           },
-          include: {
-            branches: true,
-            user: true,
+          branches: {
+            set: [],
+            connect: convertToNumberIds(employeeUser.branches),
           },
-        }),
-      ]);
+        },
+        include: {
+          branches: true,
+          user: true,
+        },
+      });
       try {
         updatedFirebaseUser = await firebaseAdmin
           .auth()

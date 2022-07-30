@@ -10,6 +10,8 @@ export const ACCOUNT_CREATED_PAGE = "/account-created";
 
 export const NEW_ACCOUNT_PAGE = "/new-account";
 
+export const EDIT_ACCOUNT_PAGE = "/edit-account";
+
 export const RESET_PASSWORD_PAGE = "/reset-password";
 
 export const ADMIN_HOMEPAGE = "/admin";
@@ -36,12 +38,7 @@ export const VOLUNTEER_SHIFTS_PAGE = "/volunteer/shifts";
 
 export const ADMIN_CREATE_POSTING_PAGE = "/admin/posting/create";
 
-export const ADMIN_POSTING_CREATE_BASIC_INFO_PAGE =
-  "/admin/posting/create/basic-info";
-
-export const ADMIN_POSTING_CREATE_SHIFTS_PAGE = "/admin/posting/create/shifts";
-
-export const ADMIN_POSTING_CREATE_REVIEW_PAGE = "/admin/posting/create/review";
+export const ADMIN_EDIT_POSTING_PAGE = "/admin/posting/edit/:id";
 
 export const VOLUNTEER_POSTING_DETAILS = "/volunteer/posting/:id";
 
