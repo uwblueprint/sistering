@@ -11,10 +11,7 @@ const ProfilePhotoForm = ({
   setProfilePhoto,
 }: ProfilePhotoFormProps): React.ReactElement => {
   useEffect(() => {
-    setProfilePhoto(
-      // TODO: Currently a test profile photo. Implement functional upload. later
-      "https://www.thesprucepets.com/thmb/q09WCbmIY_apTHaqAUFTd0TrhYI=/1936x1452/smart/filters:no_upscale()/fiddler-crab-134252510-57ffec745f9b5805c2b0f356.jpg",
-    );
+    setProfilePhoto("");
   });
 
   return (
@@ -24,9 +21,6 @@ const ProfilePhotoForm = ({
         <Avatar src={profilePhoto} m={3} size="lg" />
         <Button m={3} variant="outline">
           Upload Photo
-        </Button>
-        <Button m={3} variant="outline">
-          Remove Photo
         </Button>
       </Flex>
     </Box>
