@@ -5,41 +5,44 @@ import {
   Flex,
   Box,
   Button,
-  Checkbox,
   TableContainer,
   Table as ChakraTable,
   Thead,
   Tbody,
+  Text,
   Tr,
   Th,
   Td,
   useDisclosure,
   useToast,
-  CheckboxProps,
   chakra,
+  TableCaption,
+  IconButton,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
 import {
   CellContext,
-  Column,
   ColumnDef,
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
   getPaginationRowModel,
   HeaderContext,
-  Table,
   useReactTable,
   getSortedRowModel,
   SortingState,
+  PaginationState,
 } from "@tanstack/react-table";
-import { useSortBy } from "react-table";
-import { TriangleDownIcon, TriangleUpIcon } from "@chakra-ui/icons";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  TriangleDownIcon,
+  TriangleUpIcon,
+} from "@chakra-ui/icons";
 import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
 import ProfileDrawer from "./ProfileDrawer";
-import UserManagementTableRow from "../../../admin/users/UserManagementTableRow";
 import Navbar from "../../../common/Navbar";
 import AdminUserManagementPageHeader, {
   AdminUserManagementTableTab,
@@ -111,6 +114,19 @@ export type User = {
 const sortIcon: { [index: string]: JSX.Element } = {
   asc: <TriangleUpIcon aria-label="sorted ascending" />,
   desc: <TriangleDownIcon aria-label="sorted descending" />,
+};
+
+const TABLE_PAGE_SIZE = 2;
+
+const getPageRange = (
+  pagination: PaginationState,
+  totalRecords: number,
+): string => {
+  const pageAnchor = pagination.pageSize * pagination.pageIndex;
+  return `${pageAnchor + 1}-${Math.min(
+    pageAnchor + TABLE_PAGE_SIZE,
+    totalRecords,
+  )}`;
 };
 
 const IndeterminateCheckbox = ({
@@ -196,6 +212,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
     },
   });
 
+  // TODO: Add filter so data changes when branch filter change
   const data = React.useMemo<User[]>(
     () =>
       userManagementTableTab === AdminUserManagementTableTab.Volunteers
@@ -216,16 +233,12 @@ const AdminUserManagementPage = (): React.ReactElement => {
     [allEmployees, allVolunteers, userManagementTableTab],
   );
 
-  // TODO: Figure out proper tying
   const columns = React.useMemo<ColumnDef<User>[]>(
     () => [
       {
         id: "select",
         header: ({ table }: HeaderContext<User, unknown>) => (
           <IndeterminateCheckbox
-            // checked={table.getIsAllRowsSelected()}
-            // indeterminate={table.getIsSomeRowsSelected()}
-            // onChange={table.getToggleAllRowsSelectedHandler()}
             {...{
               checked: table.getIsAllRowsSelected(),
               indeterminate: table.getIsSomeRowsSelected(),
@@ -235,9 +248,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
         ),
         cell: ({ row }: CellContext<User, unknown>) => (
           <IndeterminateCheckbox
-            // checked={row.getIsSelected()}
-            // indeterminate={row.getIsSomeSelected()}
-            // onChange={row.getToggleSelectedHandler()}
             {...{
               checked: row.getIsSelected(),
               indeterminate: row.getIsSomeSelected(),
@@ -286,9 +296,16 @@ const AdminUserManagementPage = (): React.ReactElement => {
     state: {
       rowSelection,
       sorting,
+      globalFilter,
+    },
+    initialState: {
+      pagination: {
+        pageSize: TABLE_PAGE_SIZE,
+      },
     },
     onSortingChange: setSorting,
     onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -296,10 +313,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
     debugTable: true,
   });
 
-  console.log(rowSelection);
-
-  // TODO: Add pagination footer
-  // TODO: make select all work
   return (
     <>
       <ProfileDrawer
@@ -316,11 +329,12 @@ const AdminUserManagementPage = (): React.ReactElement => {
           defaultIndex={Number(AdminPages.AdminUserManagement)}
           tabs={AdminNavbarTabs}
         />
-        {/* // TODO: Add global filter */}
         <AdminUserManagementPageHeader
           branches={branches}
           onOpenProfileDrawer={onOpen}
           handleTabClicked={handleTabClicked}
+          searchFilter={globalFilter ?? ""}
+          onSearchFilterChange={(event) => setGlobalFilter(event.target.value)}
         />
         <Box
           flex={1}
@@ -336,6 +350,47 @@ const AdminUserManagementPage = (): React.ReactElement => {
             bgColor="white"
           >
             <ChakraTable variant="brand">
+              <TableCaption textAlign="right">
+                <Flex alignItems="baseline" justifyContent="flex-end">
+                  <Text fontWeight="bold">
+                    {getPageRange(
+                      table.getState().pagination,
+                      table.getFilteredRowModel().rows.length,
+                    )}
+                  </Text>
+                  <Text pl={1} pr={6}>
+                    of {table.getPageCount()}
+                  </Text>
+                  <IconButton
+                    aria-label="Previous page"
+                    variant="ghost"
+                    color="gray.700"
+                    _hover={{
+                      bg: "transparent",
+                    }}
+                    _active={{
+                      bg: "transparent",
+                    }}
+                    icon={<ChevronLeftIcon />}
+                    onClick={() => table.previousPage()}
+                    disabled={!table.getCanPreviousPage()}
+                  />
+                  <IconButton
+                    aria-label="Next page"
+                    variant="ghost"
+                    color="gray.700"
+                    _hover={{
+                      bg: "transparent",
+                    }}
+                    _active={{
+                      bg: "transparent",
+                    }}
+                    icon={<ChevronRightIcon />}
+                    onClick={() => table.nextPage()}
+                    disabled={!table.getCanNextPage()}
+                  />
+                </Flex>
+              </TableCaption>
               <Thead>
                 {table.getHeaderGroups().map((headerGroup) => (
                   <Tr key={headerGroup.id}>

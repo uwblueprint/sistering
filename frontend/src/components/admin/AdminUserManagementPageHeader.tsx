@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import {
   VStack,
   HStack,
@@ -34,12 +34,16 @@ type AdminUserManagementPageHeaderProps = {
   branches: BranchResponseDTO[];
   onOpenProfileDrawer: () => void;
   handleTabClicked: (tab: AdminUserManagementTableTab) => void;
+  onSearchFilterChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  searchFilter: string;
 };
 
 const AdminUserManagementPageHeader = ({
   branches,
   onOpenProfileDrawer,
   handleTabClicked,
+  onSearchFilterChange,
+  searchFilter,
 }: AdminUserManagementPageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -144,7 +148,13 @@ const AdminUserManagementPageHeader = ({
               <InputLeftElement pointerEvents="none">
                 <SearchIcon color="gray.300" />
               </InputLeftElement>
-              <Input type="text" placeholder="Search" w="368px" />
+              <Input
+                type="text"
+                placeholder="Search"
+                w="368px"
+                onChange={onSearchFilterChange}
+                value={searchFilter}
+              />
             </InputGroup>
             <Select placeholder="All branches">
               {branches.map((branch) => (
