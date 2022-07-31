@@ -26,14 +26,14 @@ export type UserDTO = {
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
   emergencyContactEmail: string | null;
+  dateOfBirth: string | null;
+  pronouns: string | null;
   branches: BranchResponseDTO[];
 };
 
 export type VolunteerDTO = {
   id: string;
   hireDate: string;
-  dateOfBirth: string | null;
-  pronouns: string | null;
   skills: SkillResponseDTO[];
 };
 

@@ -11,6 +11,8 @@ export type EmployeeUserDTO = {
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
   emergencyContactEmail: string | null;
+  pronouns: string | null;
+  dateOfBirth: string | null;
   branches: BranchResponseDTO[];
   languages: Language[];
 };
