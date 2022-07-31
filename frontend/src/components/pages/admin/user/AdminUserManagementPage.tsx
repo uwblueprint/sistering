@@ -51,6 +51,7 @@ import AdminUserManagementPageHeader, {
 import { VolunteerUserResponseDTO } from "../../../../types/api/UserType";
 import { EmployeeUserResponseDTO } from "../../../../types/api/EmployeeTypes";
 import {
+  BranchDTO,
   BranchQueryResponse,
   BranchResponseDTO,
 } from "../../../../types/api/BranchTypes";
@@ -116,7 +117,7 @@ const sortIcon: { [index: string]: JSX.Element } = {
   desc: <TriangleDownIcon aria-label="sorted descending" />,
 };
 
-const TABLE_PAGE_SIZE = 2;
+const TABLE_PAGE_SIZE = 9;
 
 const getPageRange = (
   pagination: PaginationState,
@@ -127,6 +128,16 @@ const getPageRange = (
     pageAnchor + TABLE_PAGE_SIZE,
     totalRecords,
   )}`;
+};
+
+const userBranchesPassBranchFilter = (
+  branchFilter: BranchResponseDTO | undefined,
+  userBranches: BranchDTO[],
+): boolean => {
+  return (
+    branchFilter === undefined ||
+    userBranches.some((branch) => branchFilter.id === branch.id)
+  );
 };
 
 const IndeterminateCheckbox = ({
@@ -168,10 +179,14 @@ const AdminUserManagementPage = (): React.ReactElement => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
 
+  // TODO: Modulate branches, setBranches for sidebar drawers
   const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
   const [selectedBranches, setSelectedBranches] = useState<BranchResponseDTO[]>(
     [],
   );
+  const [branchFilter, setBranchFilter] = useState<
+    BranchResponseDTO | undefined
+  >(undefined);
 
   const [
     userManagementTableTab,
@@ -212,25 +227,32 @@ const AdminUserManagementPage = (): React.ReactElement => {
     },
   });
 
-  // TODO: Add filter so data changes when branch filter change
   const data = React.useMemo<User[]>(
     () =>
       userManagementTableTab === AdminUserManagementTableTab.Volunteers
-        ? allVolunteers.map((volunteer) => ({
-            firstName: volunteer.firstName,
-            lastName: volunteer.lastName,
-            pronouns: volunteer.pronouns ?? "N/A",
-            email: volunteer.email,
-            phoneNumber: volunteer.phoneNumber ?? "N/A",
-          }))
-        : allEmployees.map((employee) => ({
-            firstName: employee.firstName,
-            lastName: employee.lastName,
-            pronouns: "N/A", // TODO: Update once pronouns are migrated
-            email: employee.email,
-            phoneNumber: employee.phoneNumber ?? "N/A",
-          })),
-    [allEmployees, allVolunteers, userManagementTableTab],
+        ? allVolunteers
+            .filter((volunteer) =>
+              userBranchesPassBranchFilter(branchFilter, volunteer.branches),
+            )
+            .map((volunteer) => ({
+              firstName: volunteer.firstName,
+              lastName: volunteer.lastName,
+              pronouns: volunteer.pronouns ?? "N/A",
+              email: volunteer.email,
+              phoneNumber: volunteer.phoneNumber ?? "N/A",
+            }))
+        : allEmployees
+            .filter((employee) =>
+              userBranchesPassBranchFilter(branchFilter, employee.branches),
+            )
+            .map((employee) => ({
+              firstName: employee.firstName,
+              lastName: employee.lastName,
+              pronouns: "N/A", // TODO: Update once pronouns are migrated
+              email: employee.email,
+              phoneNumber: employee.phoneNumber ?? "N/A",
+            })),
+    [allEmployees, allVolunteers, userManagementTableTab, branchFilter],
   );
 
   const columns = React.useMemo<ColumnDef<User>[]>(
@@ -335,6 +357,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
           handleTabClicked={handleTabClicked}
           searchFilter={globalFilter ?? ""}
           onSearchFilterChange={(event) => setGlobalFilter(event.target.value)}
+          setBranchFilter={setBranchFilter}
         />
         <Box
           flex={1}

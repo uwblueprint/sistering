@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import {
   VStack,
   HStack,
@@ -36,6 +36,7 @@ type AdminUserManagementPageHeaderProps = {
   handleTabClicked: (tab: AdminUserManagementTableTab) => void;
   onSearchFilterChange: (event: ChangeEvent<HTMLInputElement>) => void;
   searchFilter: string;
+  setBranchFilter: Dispatch<SetStateAction<BranchResponseDTO | undefined>>;
 };
 
 const AdminUserManagementPageHeader = ({
@@ -44,6 +45,7 @@ const AdminUserManagementPageHeader = ({
   handleTabClicked,
   onSearchFilterChange,
   searchFilter,
+  setBranchFilter,
 }: AdminUserManagementPageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -156,9 +158,18 @@ const AdminUserManagementPageHeader = ({
                 value={searchFilter}
               />
             </InputGroup>
-            <Select placeholder="All branches">
+            <Select
+              placeholder="All branches"
+              onChange={(event) => {
+                setBranchFilter(
+                  branches.find((branch) => branch.id === event.target.value),
+                );
+              }}
+            >
               {branches.map((branch) => (
-                <option key={branch.id}>{branch.name}</option>
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
               ))}
             </Select>
           </HStack>
