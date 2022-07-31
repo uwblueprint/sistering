@@ -205,6 +205,7 @@ const main = async () => {
           lastName: user.lastName,
           authId: user.authId,
           role: user.role,
+          pronouns: "they/them",
           employee: {
             create: {},
           },
@@ -229,6 +230,7 @@ const main = async () => {
           lastName: employee.lastName,
           authId: employee.authId,
           role: employee.role,
+          pronouns: "they/them",
           employee: {
             create: {
               branches: {
@@ -264,6 +266,7 @@ const main = async () => {
           lastName: user.lastName,
           authId: user.authId,
           role: user.role,
+          pronouns: "they/them",
           volunteer: {
             create: {
               ...user.volunteer,

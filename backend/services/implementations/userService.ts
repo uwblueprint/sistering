@@ -534,7 +534,7 @@ class UserService implements IUserService {
             },
           });
         })
-        .catch(() => {});
+        .catch(() => { });
 
       if (user !== null) {
         throw new Error(
@@ -611,9 +611,9 @@ class UserService implements IUserService {
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
+        dateOfBirth: user.dateOfBirth,
+        pronouns: user.pronouns,
         hireDate: volunteer.hireDate,
-        dateOfBirth: volunteer.dateOfBirth,
-        pronouns: volunteer.pronouns,
         languages: user.languages,
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
@@ -661,9 +661,9 @@ class UserService implements IUserService {
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
+        dateOfBirth: user.dateOfBirth,
+        pronouns: user.pronouns,
         hireDate: volunteer.hireDate,
-        dateOfBirth: volunteer.dateOfBirth,
-        pronouns: volunteer.pronouns,
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
         languages: user.languages,
@@ -765,7 +765,7 @@ class UserService implements IUserService {
             emergencyContactName: volunteerUser.emergencyContactName,
             emergencyContactPhone: volunteerUser.emergencyContactPhone,
             emergencyContactEmail: volunteerUser.emergencyContactEmail,
-            pronouns: volunteerUser.pronouns ?? "",
+            pronouns: volunteerUser.pronouns,
             dateOfBirth: volunteerUser.dateOfBirth,
             volunteer: {
               create: {
@@ -797,10 +797,6 @@ class UserService implements IUserService {
           email: firebaseUser.email ?? "",
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           hireDate: volunteer!.hireDate,
-          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-          dateOfBirth: volunteer!.dateOfBirth,
-          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-          pronouns: volunteer!.pronouns,
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           skills: convertToSkillResponseDTO(volunteer!.skills),
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
@@ -940,9 +936,9 @@ class UserService implements IUserService {
                   emergencyContactEmail: oldVolunteerUser!.user
                     .emergencyContactEmail,
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                  pronouns: oldVolunteerUser!.pronouns,
+                  pronouns: oldVolunteerUser!.user.pronouns,
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                  dateOfBirth: oldVolunteerUser!.dateOfBirth,
+                  dateOfBirth: oldVolunteerUser!.user.dateOfBirth,
                 },
               },
             },

@@ -31,7 +31,7 @@ export type UserDTO = {
   emergencyContactPhone: string | null;
   emergencyContactEmail: string | null;
   dateOfBirth: Date | null;
-  pronouns: string | null;
+  pronouns: string;
 };
 
 export type PostingDTO = {

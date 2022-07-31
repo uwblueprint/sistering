@@ -24,7 +24,7 @@ const userType = gql`
     email: String!
     role: Role!
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
   }
 
   type VolunteerUserResponseDTO {
@@ -39,7 +39,7 @@ const userType = gql`
     emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     skills: [SkillResponseDTO!]!
     branches: [BranchResponseDTO!]!
     languages: [Language]!
@@ -56,7 +56,7 @@ const userType = gql`
     emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     languages: [Language]!
   }
 
@@ -71,7 +71,7 @@ const userType = gql`
     emergencyContactPhone: String
     emergencyContactEmail: String
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     branches: [BranchResponseDTO!]!
     languages: [Language]!
   }
@@ -87,7 +87,7 @@ const userType = gql`
     emergencyContactPhone: String
     emergencyContactEmail: String
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
   }
 
   type UserInviteResponse {
@@ -106,7 +106,7 @@ const userType = gql`
     emergencyContactPhone: String
     emergencyContactEmail: String
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
   }
 
   input CreateVolunteerUserDTO {
@@ -120,7 +120,7 @@ const userType = gql`
     password: String!
     hireDate: Date!
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     skills: [ID!]!
     branches: [ID!]!
     languages: [Language]!
@@ -137,7 +137,7 @@ const userType = gql`
     emergencyContactEmail: String
     hireDate: Date!
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     skills: [ID!]!
     branches: [ID!]!
     languages: [Language]!
@@ -152,7 +152,7 @@ const userType = gql`
     emergencyContactPhone: String
     emergencyContactEmail: String
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     password: String!
     branches: [ID!]!
     languages: [Language]!
@@ -168,7 +168,7 @@ const userType = gql`
     emergencyContactPhone: String
     emergencyContactEmail: String
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     branches: [ID!]!
     languages: [Language]!
   }
