@@ -43,7 +43,10 @@ export type VolunteerUserRequestDTO = Omit<UserDTO, "branches" | "role"> &
     branches: string[];
   };
 
-export type VolunteerUserResponseDTO = UserDTO & VolunteerDTO;
+export type VolunteerUserResponseDTO = Omit<UserDTO, "email"> &
+  VolunteerDTO & {
+    email: string; // Non-null email field
+  };
 
 export type CreateVolunteerUserDTO = Omit<VolunteerUserRequestDTO, "id"> & {
   password: string;
