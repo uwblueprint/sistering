@@ -870,7 +870,7 @@ class UserService implements IUserService {
                 emergencyContactName: volunteerUser.emergencyContactName,
                 emergencyContactPhone: volunteerUser.emergencyContactPhone,
                 emergencyContactEmail: volunteerUser.emergencyContactEmail,
-                pronouns: volunteerUser.pronouns ?? "",
+                pronouns: volunteerUser.pronouns,
                 dateOfBirth: volunteerUser.dateOfBirth ?? "",
               },
             },
@@ -993,7 +993,7 @@ class UserService implements IUserService {
               emergencyContactName: deletedVolunteerUser.emergencyContactName,
               emergencyContactPhone: deletedVolunteerUser.emergencyContactPhone,
               emergencyContactEmail: deletedVolunteerUser.emergencyContactEmail,
-              pronouns: deletedVolunteerUser.pronouns ?? "",
+              pronouns: deletedVolunteerUser.pronouns,
               dateOfBirth: deletedVolunteerUser.dateOfBirth ?? "",
               volunteer: {
                 create: {
