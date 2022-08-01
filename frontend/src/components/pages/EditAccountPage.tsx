@@ -163,7 +163,7 @@ const EditAccountPage = (): React.ReactElement => {
       {isError && <ErrorModal />}
       <Container maxW="container.xl" align="left" mt={12}>
         <Text mb={2} textStyle="display-large">
-          Edit Account
+          Edit Profile
         </Text>
         <ProfilePhotoForm
           profilePhoto={profilePhoto}
