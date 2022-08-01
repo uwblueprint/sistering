@@ -59,6 +59,8 @@ import {
 } from "../../../../types/api/BranchTypes";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import ProfileDrawer from "../../../admin/users/ProfileDrawer";
+import UserManagementTableProfileCell from "../../../admin/users/UserManagementTableProfileCell";
+import getTitleCaseForOneWord from "../../../../utils/StringUtils";
 
 const USERS = gql`
   query AdminUserManagementPage_Users {
@@ -203,20 +205,10 @@ const AdminUserManagementPage = (): React.ReactElement => {
   const { loading, error } = useQuery(USERS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      setAllVolunteers(data.employeeUsers);
-      setAllEmployees(data.volunteerUsers);
+      setAllEmployees(data.employeeUsers);
+      setAllVolunteers(data.volunteerUsers);
     },
   });
-
-  const handleBranchMenuItemClicked = (clickedBranch: BranchResponseDTO) => {
-    if (selectedBranches.includes(clickedBranch)) {
-      setSelectedBranches(
-        selectedBranches.filter((branch) => branch !== clickedBranch),
-      );
-    } else {
-      setSelectedBranches([...selectedBranches, clickedBranch]);
-    }
-  };
 
   const handleTabClicked = (tab: AdminUserManagementTableTab) => {
     setUserManagementTableTab(tab);
@@ -231,7 +223,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
 
   const data = React.useMemo<User[]>(
     () =>
-      userManagementTableTab !== AdminUserManagementTableTab.Volunteers
+      userManagementTableTab === AdminUserManagementTableTab.Volunteers
         ? allVolunteers
             .filter((volunteer) =>
               userBranchesPassBranchFilter(branchFilter, volunteer.branches),
@@ -314,9 +306,19 @@ const AdminUserManagementPage = (): React.ReactElement => {
         id: "profile",
         header: () => "",
         cell: ({ row }: CellContext<User, unknown>) => {
-          // TODO: Make this into it's own component
-          // eslint-disable-next-line react-hooks/rules-of-hooks
-          const { isOpen, onOpen, onClose } = useDisclosure();
+          // TODO: Fix selected branches state for each row
+          const handleBranchMenuItemClicked = (
+            clickedBranch: BranchResponseDTO,
+          ) => {
+            if (selectedBranches.includes(clickedBranch)) {
+              setSelectedBranches(
+                selectedBranches.filter((branch) => branch !== clickedBranch),
+              );
+            } else {
+              setSelectedBranches([...selectedBranches, clickedBranch]);
+            }
+          };
+
           const isVolunteer =
             userManagementTableTab === AdminUserManagementTableTab.Volunteers;
           let rowEmgName: string | undefined;
@@ -353,37 +355,22 @@ const AdminUserManagementPage = (): React.ReactElement => {
             });
           }
           return (
-            <>
-              <Tooltip label="View details" placement="bottom-start">
-                <Box as="span">
-                  <Icon
-                    as={MdMoreHoriz}
-                    w={6}
-                    h={6}
-                    onClick={onOpen}
-                    cursor="pointer"
-                  />
-                </Box>
-              </Tooltip>
-              <ProfileDrawer
-                isOpen={isOpen}
-                onClose={onClose}
-                firstName={row.original.firstName}
-                lastName={row.original.lastName}
-                pronouns={row.original.pronouns}
-                email={row.original.email}
-                phoneNumber={row.original.phoneNumber}
-                emergencyContactName={rowEmgName ?? "N/A"}
-                emergencyContactPhone={rowEmgPhone ?? "N/A"}
-                emergencyContactEmail={rowEmgEmail ?? "N/A"}
-                languages={rowLangs}
-                skills={rowSkills}
-                isVolunteer={isVolunteer}
-                branches={branches}
-                selectedBranches={userBranches}
-                handleBranchMenuItemClicked={handleBranchMenuItemClicked}
-              />
-            </>
+            <UserManagementTableProfileCell
+              firstName={row.original.firstName}
+              lastName={row.original.lastName}
+              pronouns={row.original.pronouns}
+              email={row.original.email}
+              phoneNumber={row.original.phoneNumber}
+              emergencyContactName={rowEmgName ?? "N/A"}
+              emergencyContactPhone={rowEmgPhone ?? "N/A"}
+              emergencyContactEmail={rowEmgEmail ?? "N/A"}
+              languages={rowLangs.map((lang) => getTitleCaseForOneWord(lang))}
+              skills={rowSkills}
+              isVolunteer={isVolunteer}
+              branches={branches}
+              selectedBranches={userBranches}
+              handleBranchMenuItemClicked={handleBranchMenuItemClicked}
+            />
           );
         },
       },
@@ -392,7 +379,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
       allEmployees,
       allVolunteers,
       branches,
-      handleBranchMenuItemClicked,
+      selectedBranches,
       userManagementTableTab,
     ],
   );
@@ -417,7 +404,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
-    debugTable: true,
   });
 
   return (
@@ -431,7 +417,9 @@ const AdminUserManagementPage = (): React.ReactElement => {
         />
         <AdminUserManagementPageHeader
           branches={branches}
-          onOpenProfileDrawer={() => console.log("TODO")}
+          // TODO: Integrate multi-user editor
+          // eslint-disable-next-line no-console
+          onOpenMultiUserBranchDrawer={() => console.log("TODO")}
           handleTabClicked={handleTabClicked}
           searchFilter={globalFilter ?? ""}
           onSearchFilterChange={(event) => setGlobalFilter(event.target.value)}

@@ -35,7 +35,6 @@ type ProfileDrawerProps = {
   emergencyContactName: string;
   emergencyContactPhone: string;
   emergencyContactEmail: string;
-  totalHours?: string;
   languages: string[];
   skills?: string[];
   isVolunteer?: boolean;
@@ -55,7 +54,6 @@ const ProfileDrawer = ({
   emergencyContactName,
   emergencyContactPhone,
   emergencyContactEmail,
-  totalHours,
   languages,
   skills,
   isVolunteer,
@@ -116,7 +114,6 @@ const ProfileDrawer = ({
                 <Text>Email Address</Text>
                 <Text>Phone Number</Text>
                 <Text pb="70px">Emergency Contact</Text>
-                {isVolunteer ? <Text>Total Hours</Text> : <></>}
                 <Text>Language(s) Spoken</Text>
               </VStack>
               <VStack align="start" spacing="8px">
@@ -128,7 +125,6 @@ const ProfileDrawer = ({
                 <Text>{emergencyContactName}</Text>
                 <Text>{emergencyContactEmail}</Text>
                 <Text>{emergencyContactPhone}</Text>
-                {isVolunteer ? <Text>{totalHours}</Text> : <></>}
                 <Text>{languages.join(", ")}</Text>
               </VStack>
             </HStack>

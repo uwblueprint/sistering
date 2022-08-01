@@ -32,7 +32,7 @@ export enum AdminUserManagementTableTab {
 
 type AdminUserManagementPageHeaderProps = {
   branches: BranchResponseDTO[];
-  onOpenProfileDrawer: () => void;
+  onOpenMultiUserBranchDrawer: () => void;
   handleTabClicked: (tab: AdminUserManagementTableTab) => void;
   onSearchFilterChange: (event: ChangeEvent<HTMLInputElement>) => void;
   searchFilter: string;
@@ -41,7 +41,7 @@ type AdminUserManagementPageHeaderProps = {
 
 const AdminUserManagementPageHeader = ({
   branches,
-  onOpenProfileDrawer,
+  onOpenMultiUserBranchDrawer,
   handleTabClicked,
   onSearchFilterChange,
   searchFilter,
@@ -70,7 +70,7 @@ const AdminUserManagementPageHeader = ({
         <HStack w="full" mb="16px">
           <Text textStyle="display-small-semibold">User Management</Text>
           <Spacer />
-          <Button variant="outline" onClick={onOpenProfileDrawer}>
+          <Button variant="outline" onClick={onOpenMultiUserBranchDrawer}>
             Edit Branch Access
           </Button>
           <Button onClick={() => setIsModalOpen(true)}>

@@ -22,7 +22,6 @@ type UserManagementTableRowProps = {
   emergencyContactName: string;
   emergencyContactPhone: string;
   emergencyContactEmail: string;
-  totalHours?: string;
   languages: string[];
   skills?: string[];
   isVolunteer?: boolean;
@@ -43,7 +42,6 @@ const UserManagementTableRow = ({
   emergencyContactName,
   emergencyContactPhone,
   emergencyContactEmail,
-  totalHours,
   languages,
   isVolunteer,
   skills,
@@ -101,7 +99,6 @@ const UserManagementTableRow = ({
           emergencyContactName={emergencyContactName}
           emergencyContactPhone={emergencyContactPhone}
           emergencyContactEmail={emergencyContactEmail}
-          totalHours={totalHours}
           languages={languages}
           skills={skills}
           isVolunteer={isVolunteer}
