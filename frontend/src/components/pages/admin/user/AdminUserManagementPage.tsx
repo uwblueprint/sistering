@@ -13,13 +13,10 @@ import {
   Tr,
   Th,
   Td,
-  useDisclosure,
   useToast,
   chakra,
   TableCaption,
   IconButton,
-  Icon,
-  Tooltip,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
@@ -42,7 +39,6 @@ import {
   TriangleDownIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
-import { MdMoreHoriz } from "react-icons/md";
 import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
 import Navbar from "../../../common/Navbar";
@@ -58,7 +54,6 @@ import {
   BranchResponseDTO,
 } from "../../../../types/api/BranchTypes";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
-import ProfileDrawer from "../../../admin/users/ProfileDrawer";
 import UserManagementTableProfileCell from "../../../admin/users/UserManagementTableProfileCell";
 import getTitleCaseForOneWord from "../../../../utils/StringUtils";
 

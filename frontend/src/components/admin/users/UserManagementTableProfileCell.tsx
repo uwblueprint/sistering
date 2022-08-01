@@ -19,7 +19,6 @@ type UserManagementTableProfileCellProps = {
   branches: BranchResponseDTO[];
   selectedBranches: BranchResponseDTO[];
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
-  // TODO: Replace param type
 };
 
 const UserManagementTableProfileCell = ({
