@@ -17,6 +17,7 @@ import {
   chakra,
   TableCaption,
   IconButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
@@ -56,6 +57,7 @@ import {
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import UserManagementTableProfileCell from "../../../admin/users/UserManagementTableProfileCell";
 import getTitleCaseForOneWord from "../../../../utils/StringUtils";
+import MultiUserBranchDrawer from "./MultiUserBranchDrawer";
 
 const USERS = gql`
   query AdminUserManagementPage_Users {
@@ -168,6 +170,9 @@ const IndeterminateCheckbox = ({
 };
 
 const AdminUserManagementPage = (): React.ReactElement => {
+  // Disclosure used for multi-user branch adder
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [allVolunteers, setAllVolunteers] = useState<
     VolunteerUserResponseDTO[]
   >([]);
@@ -179,11 +184,29 @@ const AdminUserManagementPage = (): React.ReactElement => {
   const [rowSelection, setRowSelection] = React.useState({});
   const [globalFilter, setGlobalFilter] = React.useState("");
 
-  // TODO: Modulate branches, setBranches for sidebar drawers
   const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
-  const [selectedBranches, setSelectedBranches] = useState<BranchResponseDTO[]>(
-    [],
-  );
+  const [
+    selectedBranchesForMultiUser,
+    setSelectedBranchesForMultiUser,
+  ] = useState<BranchResponseDTO[]>([]);
+
+  const handleMultiUserBranchMenuItemClicked = (
+    clickedBranch: BranchResponseDTO,
+  ) => {
+    if (selectedBranchesForMultiUser.includes(clickedBranch)) {
+      setSelectedBranchesForMultiUser(
+        selectedBranchesForMultiUser.filter(
+          (branch) => branch !== clickedBranch,
+        ),
+      );
+    } else {
+      setSelectedBranchesForMultiUser([
+        ...selectedBranchesForMultiUser,
+        clickedBranch,
+      ]);
+    }
+  };
+
   const [branchFilter, setBranchFilter] = useState<
     BranchResponseDTO | undefined
   >(undefined);
@@ -301,19 +324,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
         id: "profile",
         header: () => "",
         cell: ({ row }: CellContext<User, unknown>) => {
-          // TODO: Fix selected branches state for each row
-          const handleBranchMenuItemClicked = (
-            clickedBranch: BranchResponseDTO,
-          ) => {
-            if (selectedBranches.includes(clickedBranch)) {
-              setSelectedBranches(
-                selectedBranches.filter((branch) => branch !== clickedBranch),
-              );
-            } else {
-              setSelectedBranches([...selectedBranches, clickedBranch]);
-            }
-          };
-
           const isVolunteer =
             userManagementTableTab === AdminUserManagementTableTab.Volunteers;
           let rowEmgName: string | undefined;
@@ -363,20 +373,13 @@ const AdminUserManagementPage = (): React.ReactElement => {
               skills={rowSkills}
               isVolunteer={isVolunteer}
               branches={branches}
-              selectedBranches={userBranches}
-              handleBranchMenuItemClicked={handleBranchMenuItemClicked}
+              userBranches={userBranches}
             />
           );
         },
       },
     ],
-    [
-      allEmployees,
-      allVolunteers,
-      branches,
-      selectedBranches,
-      userManagementTableTab,
-    ],
+    [allEmployees, allVolunteers, branches, userManagementTableTab],
   );
 
   const table = useReactTable({
@@ -405,6 +408,17 @@ const AdminUserManagementPage = (): React.ReactElement => {
     <>
       {loading && <Loading />}
       {error && <ErrorModal />}
+      {/* // TODO: Get all the selected row, pass in the email */}
+      <MultiUserBranchDrawer
+        userEmails={table
+          .getSelectedRowModel()
+          .rows.map((row) => row.original.email)}
+        isOpen={isOpen}
+        branches={branches}
+        selectedBranches={selectedBranchesForMultiUser}
+        onClose={onClose}
+        handleBranchMenuItemClicked={handleMultiUserBranchMenuItemClicked}
+      />
       <Flex flexFlow="column" width="100%" height="100vh">
         <Navbar
           defaultIndex={Number(AdminPages.AdminUserManagement)}
@@ -412,9 +426,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
         />
         <AdminUserManagementPageHeader
           branches={branches}
-          // TODO: Integrate multi-user editor
-          // eslint-disable-next-line no-console
-          onOpenMultiUserBranchDrawer={() => console.log("TODO")}
+          onOpenMultiUserBranchDrawer={onOpen}
           handleTabClicked={handleTabClicked}
           searchFilter={globalFilter ?? ""}
           onSearchFilterChange={(event) => setGlobalFilter(event.target.value)}

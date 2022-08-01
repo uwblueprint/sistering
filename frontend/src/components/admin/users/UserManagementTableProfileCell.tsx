@@ -1,6 +1,6 @@
 import { Box, Icon, Tooltip, useDisclosure } from "@chakra-ui/react";
 import { MdMoreHoriz } from "react-icons/md";
-import React from "react";
+import React, { useState } from "react";
 import ProfileDrawer from "./ProfileDrawer";
 import { BranchResponseDTO } from "../../../types/api/BranchTypes";
 
@@ -17,8 +17,7 @@ type UserManagementTableProfileCellProps = {
   skills?: string[];
   isVolunteer?: boolean;
   branches: BranchResponseDTO[];
-  selectedBranches: BranchResponseDTO[];
-  handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
+  userBranches: BranchResponseDTO[];
 };
 
 const UserManagementTableProfileCell = ({
@@ -34,10 +33,24 @@ const UserManagementTableProfileCell = ({
   isVolunteer,
   skills,
   branches,
-  selectedBranches,
-  handleBranchMenuItemClicked,
+  userBranches,
 }: UserManagementTableProfileCellProps): React.ReactElement => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [selectedBranches, setSelectedBranches] = useState<BranchResponseDTO[]>(
+    userBranches,
+  );
+
+  const handleBranchMenuItemClicked = (clickedBranch: BranchResponseDTO) => {
+    if (selectedBranches.includes(clickedBranch)) {
+      setSelectedBranches(
+        selectedBranches.filter((branch) => branch !== clickedBranch),
+      );
+    } else {
+      setSelectedBranches([...selectedBranches, clickedBranch]);
+    }
+  };
+
   return (
     <>
       <Tooltip label="View details" placement="bottom-start">

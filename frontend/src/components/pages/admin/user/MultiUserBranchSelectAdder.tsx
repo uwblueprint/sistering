@@ -15,24 +15,24 @@ import { ChevronDownIcon } from "@chakra-ui/icons";
 import colors from "../../../../theme/colors";
 import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
 
-type MultiBranchSelectorProps = {
-  userEmail: string;
+type MultiUserBranchSelectAdderProps = {
+  userEmails: string[];
   branches: BranchResponseDTO[];
   selectedBranches: BranchResponseDTO[];
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
 };
 
-const MultiBranchSelector = ({
-  userEmail,
+const MultiUserBranchSelectAdder = ({
+  userEmails,
   branches,
   selectedBranches,
   handleBranchMenuItemClicked,
-}: MultiBranchSelectorProps): React.ReactElement => {
+}: MultiUserBranchSelectAdderProps): React.ReactElement => {
   const [isEditingBranches, setIsEditingBranches] = useState(false);
 
   const handleEditSaveButtonClicked = () => {
     if (isEditingBranches) {
-      console.log(`save branches ${selectedBranches} to ${userEmail}`);
+      console.log(`add branches ${selectedBranches} to ${userEmails}`);
     }
     setIsEditingBranches(!isEditingBranches);
   };
@@ -44,7 +44,7 @@ const MultiBranchSelector = ({
   return (
     <Box>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text fontWeight="bold">Branches</Text>
+        <Text fontWeight="bold">Add a Branch</Text>
         {isEditingBranches ? (
           <Button
             variant="outline"
@@ -115,4 +115,4 @@ const MultiBranchSelector = ({
   );
 };
 
-export default MultiBranchSelector;
+export default MultiUserBranchSelectAdder;

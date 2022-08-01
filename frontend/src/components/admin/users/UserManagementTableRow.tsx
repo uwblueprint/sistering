@@ -13,6 +13,7 @@ import React from "react";
 import ProfileDrawer from "./ProfileDrawer";
 import { BranchResponseDTO } from "../../../types/api/BranchTypes";
 
+// TODO: Deprecate and remove this file
 type UserManagementTableRowProps = {
   firstName: string;
   lastName: string;

@@ -8,9 +8,10 @@ import {
   DrawerCloseButton,
 } from "@chakra-ui/react";
 import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
-import BranchSelector from "./MultiBranchSelector";
+import MultiUserBranchSelectAdder from "./MultiUserBranchSelectAdder";
 
-type ProfileDrawerProps = {
+type MultiUserBranchDrawerProps = {
+  userEmails: string[];
   isOpen: boolean;
   branches: BranchResponseDTO[];
   selectedBranches: BranchResponseDTO[];
@@ -18,21 +19,23 @@ type ProfileDrawerProps = {
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
 };
 
-const MultiUserDrawer = ({
+const MultiUserBranchDrawer = ({
+  userEmails,
   isOpen,
   branches,
   selectedBranches,
   onClose,
   handleBranchMenuItemClicked,
-}: ProfileDrawerProps): React.ReactElement => {
+}: MultiUserBranchDrawerProps): React.ReactElement => {
   return (
     <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
       <DrawerOverlay />
       <DrawerContent>
         <DrawerCloseButton />
-        <DrawerHeader>[#] User(s) Selected</DrawerHeader>
+        <DrawerHeader>{userEmails.length} User(s) Selected</DrawerHeader>
         <DrawerBody>
-          <BranchSelector
+          <MultiUserBranchSelectAdder
+            userEmails={userEmails}
             branches={branches}
             selectedBranches={selectedBranches}
             handleBranchMenuItemClicked={handleBranchMenuItemClicked}
@@ -43,4 +46,4 @@ const MultiUserDrawer = ({
   );
 };
 
-export default MultiUserDrawer;
+export default MultiUserBranchDrawer;

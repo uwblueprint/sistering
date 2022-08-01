@@ -20,9 +20,8 @@ import {
 import React, { useState } from "react";
 
 import DeleteModal from "../DeleteModal";
-import BranchSelector from "../../pages/admin/user/MultiBranchSelector";
-
 import { BranchResponseDTO } from "../../../types/api/BranchTypes";
+import MultiBranchSelector from "../../pages/admin/user/MultiBranchSelector";
 
 type ProfileDrawerProps = {
   isOpen: boolean;
@@ -95,7 +94,8 @@ const ProfileDrawer = ({
             <></>
           )}
           <Box mx="6">
-            <BranchSelector
+            <MultiBranchSelector
+              userEmail={email}
               branches={branches}
               selectedBranches={selectedBranches}
               handleBranchMenuItemClicked={handleBranchMenuItemClicked}
