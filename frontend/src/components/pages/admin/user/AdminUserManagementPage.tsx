@@ -18,6 +18,8 @@ import {
   chakra,
   TableCaption,
   IconButton,
+  Icon,
+  Tooltip,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
@@ -40,9 +42,9 @@ import {
   TriangleDownIcon,
   TriangleUpIcon,
 } from "@chakra-ui/icons";
+import { MdMoreHoriz } from "react-icons/md";
 import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
-import ProfileDrawer from "./ProfileDrawer";
 import Navbar from "../../../common/Navbar";
 import AdminUserManagementPageHeader, {
   AdminUserManagementTableTab,
@@ -56,6 +58,7 @@ import {
   BranchResponseDTO,
 } from "../../../../types/api/BranchTypes";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
+import ProfileDrawer from "../../../admin/users/ProfileDrawer";
 
 const USERS = gql`
   query AdminUserManagementPage_Users {
@@ -195,7 +198,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
     AdminUserManagementTableTab.Volunteers,
   );
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
   const toast = useToast();
 
   const { loading, error } = useQuery(USERS, {
@@ -229,7 +231,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
 
   const data = React.useMemo<User[]>(
     () =>
-      userManagementTableTab === AdminUserManagementTableTab.Volunteers
+      userManagementTableTab !== AdminUserManagementTableTab.Volunteers
         ? allVolunteers
             .filter((volunteer) =>
               userBranchesPassBranchFilter(branchFilter, volunteer.branches),
@@ -308,8 +310,91 @@ const AdminUserManagementPage = (): React.ReactElement => {
         cell: (info) => info.getValue(),
         footer: (props) => props.column.id,
       },
+      {
+        id: "profile",
+        header: () => "",
+        cell: ({ row }: CellContext<User, unknown>) => {
+          // TODO: Make this into it's own component
+          // eslint-disable-next-line react-hooks/rules-of-hooks
+          const { isOpen, onOpen, onClose } = useDisclosure();
+          const isVolunteer =
+            userManagementTableTab === AdminUserManagementTableTab.Volunteers;
+          let rowEmgName: string | undefined;
+          let rowEmgEmail: string | undefined;
+          let rowEmgPhone: string | undefined;
+          let rowLangs: string[] = [];
+          let rowSkills: string[] | undefined;
+          let userBranches: BranchDTO[] = [];
+
+          if (isVolunteer) {
+            allVolunteers.some((user) => {
+              if (user.email === row.original.email) {
+                rowEmgEmail = user.emergencyContactEmail ?? "N/A";
+                rowEmgName = user.emergencyContactName ?? "N/A";
+                rowEmgPhone = user.emergencyContactPhone ?? "N/A";
+                rowLangs = user.languages;
+                rowSkills = user.skills?.map((skill) => skill.name);
+                userBranches = user.branches;
+                return true;
+              }
+              return false;
+            });
+          } else {
+            allEmployees.some((user) => {
+              if (user.email === row.original.email) {
+                rowEmgEmail = user.emergencyContactEmail ?? "N/A";
+                rowEmgName = user.emergencyContactName ?? "N/A";
+                rowEmgPhone = user.emergencyContactPhone ?? "N/A";
+                rowLangs = user.languages;
+                userBranches = user.branches;
+                return true;
+              }
+              return false;
+            });
+          }
+          return (
+            <>
+              <Tooltip label="View details" placement="bottom-start">
+                <Box as="span">
+                  <Icon
+                    as={MdMoreHoriz}
+                    w={6}
+                    h={6}
+                    onClick={onOpen}
+                    cursor="pointer"
+                  />
+                </Box>
+              </Tooltip>
+              <ProfileDrawer
+                isOpen={isOpen}
+                onClose={onClose}
+                firstName={row.original.firstName}
+                lastName={row.original.lastName}
+                pronouns={row.original.pronouns}
+                email={row.original.email}
+                phoneNumber={row.original.phoneNumber}
+                emergencyContactName={rowEmgName ?? "N/A"}
+                emergencyContactPhone={rowEmgPhone ?? "N/A"}
+                emergencyContactEmail={rowEmgEmail ?? "N/A"}
+                languages={rowLangs}
+                skills={rowSkills}
+                isVolunteer={isVolunteer}
+                branches={branches}
+                selectedBranches={userBranches}
+                handleBranchMenuItemClicked={handleBranchMenuItemClicked}
+              />
+            </>
+          );
+        },
+      },
     ],
-    [],
+    [
+      allEmployees,
+      allVolunteers,
+      branches,
+      handleBranchMenuItemClicked,
+      userManagementTableTab,
+    ],
   );
 
   const table = useReactTable({
@@ -337,13 +422,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
 
   return (
     <>
-      <ProfileDrawer
-        isOpen={isOpen}
-        branches={branches}
-        selectedBranches={selectedBranches}
-        onClose={onClose}
-        handleBranchMenuItemClicked={handleBranchMenuItemClicked}
-      />
       {loading && <Loading />}
       {error && <ErrorModal />}
       <Flex flexFlow="column" width="100%" height="100vh">
@@ -353,7 +431,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
         />
         <AdminUserManagementPageHeader
           branches={branches}
-          onOpenProfileDrawer={onOpen}
+          onOpenProfileDrawer={() => console.log("TODO")}
           handleTabClicked={handleTabClicked}
           searchFilter={globalFilter ?? ""}
           onSearchFilterChange={(event) => setGlobalFilter(event.target.value)}
