@@ -534,7 +534,7 @@ class UserService implements IUserService {
             },
           });
         })
-        .catch(() => { });
+        .catch(() => {});
 
       if (user !== null) {
         throw new Error(
