@@ -16,6 +16,11 @@ const branchType = gql`
     createBranch(branch: BranchRequestDTO!): BranchResponseDTO!
     updateBranch(id: ID!, branch: BranchRequestDTO!): BranchResponseDTO!
     deleteBranch(id: ID!): ID!
+    updateUserBranchesByEmail(email: String!, branchIds: [ID!]!): ID!
+    appendBranchesForMultipleUsersByEmail(
+      emails: [String!]!
+      branchIds: [ID!]!
+    ): Boolean!
   }
 `;
 

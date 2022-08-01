@@ -20,6 +20,7 @@ import {
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
 import { getWeekDiff } from "../../utilities/dateUtils";
+import convertToNumberIds from "../../utilities/typeUtils";
 
 const prisma = new PrismaClient();
 
@@ -44,14 +45,6 @@ export const convertToSkillResponseDTO = (
     return {
       id: String(skill.id),
       name: skill.name,
-    };
-  });
-};
-
-const convertToNumberIds = (ids: string[]): { id: number }[] => {
-  return ids.map((id: string) => {
-    return {
-      id: Number(id),
     };
   });
 };
