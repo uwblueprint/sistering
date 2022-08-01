@@ -17,6 +17,7 @@ type MultiUserBranchDrawerProps = {
   selectedBranches: BranchResponseDTO[];
   onClose: () => void;
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
+  clearSelectedBranches: () => void;
 };
 
 const MultiUserBranchDrawer = ({
@@ -26,15 +27,23 @@ const MultiUserBranchDrawer = ({
   selectedBranches,
   onClose,
   handleBranchMenuItemClicked,
+  clearSelectedBranches,
 }: MultiUserBranchDrawerProps): React.ReactElement => {
   return (
-    <Drawer isOpen={isOpen} placement="right" onClose={onClose}>
+    <Drawer
+      isOpen={isOpen}
+      placement="right"
+      onClose={() => {
+        clearSelectedBranches();
+        onClose();
+      }}
+    >
       <DrawerOverlay />
       <DrawerContent>
-        <DrawerCloseButton />
         <DrawerHeader>{userEmails.length} User(s) Selected</DrawerHeader>
         <DrawerBody>
           <MultiUserBranchSelectAdder
+            onSave={onClose}
             userEmails={userEmails}
             branches={branches}
             selectedBranches={selectedBranches}

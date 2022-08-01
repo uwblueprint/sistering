@@ -418,6 +418,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
         selectedBranches={selectedBranchesForMultiUser}
         onClose={onClose}
         handleBranchMenuItemClicked={handleMultiUserBranchMenuItemClicked}
+        clearSelectedBranches={() => setSelectedBranchesForMultiUser([])}
       />
       <Flex flexFlow="column" width="100%" height="100vh">
         <Navbar
@@ -543,19 +544,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
               </Tbody>
             </ChakraTable>
           </TableContainer>
-          <Button
-            onClick={() =>
-              toast({
-                title: "User Branches Updated",
-                description: "7 user(s) added to new branch(es).",
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-              })
-            }
-          >
-            Add Users to Branch
-          </Button>
         </Box>
       </Flex>
     </>

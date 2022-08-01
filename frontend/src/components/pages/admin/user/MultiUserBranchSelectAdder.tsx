@@ -10,6 +10,7 @@ import {
   MenuList,
   MenuOptionGroup,
   MenuItemOption,
+  useToast,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 import colors from "../../../../theme/colors";
@@ -20,6 +21,7 @@ type MultiUserBranchSelectAdderProps = {
   branches: BranchResponseDTO[];
   selectedBranches: BranchResponseDTO[];
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
+  onSave: () => void;
 };
 
 const MultiUserBranchSelectAdder = ({
@@ -27,12 +29,22 @@ const MultiUserBranchSelectAdder = ({
   branches,
   selectedBranches,
   handleBranchMenuItemClicked,
+  onSave,
 }: MultiUserBranchSelectAdderProps): React.ReactElement => {
+  const toast = useToast();
   const [isEditingBranches, setIsEditingBranches] = useState(false);
 
   const handleEditSaveButtonClicked = () => {
     if (isEditingBranches) {
       console.log(`add branches ${selectedBranches} to ${userEmails}`);
+      toast({
+        title: "User Branches Updated",
+        description: `${userEmails.length} user(s) added to new branch(es).`,
+        status: "success",
+        duration: 5000,
+        isClosable: true,
+      });
+      onSave();
     }
     setIsEditingBranches(!isEditingBranches);
   };
