@@ -10,8 +10,10 @@ import {
   MenuList,
   MenuOptionGroup,
   MenuItemOption,
+  useToast,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { gql, useMutation } from "@apollo/client";
 import colors from "../../../../theme/colors";
 import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
 
@@ -22,24 +24,47 @@ type MultiBranchSelectorProps = {
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
 };
 
+const UPDATE_USER_BRANCHES = gql`
+  mutation MultiBranchSelector_UpdateUserBranches(
+    $email: String!
+    $branchIds: [ID!]!
+  ) {
+    updateUserBranchesByEmail(email: $email, branchIds: $branchIds)
+  }
+`;
+
 const MultiBranchSelector = ({
   userEmail,
   branches,
   selectedBranches,
   handleBranchMenuItemClicked,
 }: MultiBranchSelectorProps): React.ReactElement => {
+  const toast = useToast();
   const [isEditingBranches, setIsEditingBranches] = useState(false);
 
-  const handleEditSaveButtonClicked = () => {
+  const [updateUserBranches] = useMutation(UPDATE_USER_BRANCHES, {
+    variables: {
+      email: userEmail,
+      branchIds: selectedBranches.map((branch) => branch.id),
+    },
+  });
+
+  const handleEditSaveButtonClicked = async () => {
     if (isEditingBranches) {
-      console.log(`save branches ${selectedBranches} to ${userEmail}`);
+      try {
+        await updateUserBranches();
+      } catch (error: unknown) {
+        toast({
+          title: "Failed to update user branches.",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     }
     setIsEditingBranches(!isEditingBranches);
   };
-
-  // We need a mutation call that saves branches, similar to branch editor on save
-  // We should have a list of users as props so we can update the input users' branches
-  // These users should be given by userIds, that is sufficient.
 
   return (
     <Box>

@@ -13,6 +13,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
+import { gql, useMutation } from "@apollo/client";
 import colors from "../../../../theme/colors";
 import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
 
@@ -24,6 +25,18 @@ type MultiUserBranchSelectAdderProps = {
   onSave: () => void;
 };
 
+const BULK_ADD_USER_BRANCHES = gql`
+  mutation MultiBranchSelector_UpdateUserBranches(
+    $emails: [String!]!
+    $branchIds: [ID!]!
+  ) {
+    appendBranchesForMultipleUsersByEmail(
+      emails: $emails
+      branchIds: $branchIds
+    )
+  }
+`;
+
 const MultiUserBranchSelectAdder = ({
   userEmails,
   branches,
@@ -34,24 +47,38 @@ const MultiUserBranchSelectAdder = ({
   const toast = useToast();
   const [isEditingBranches, setIsEditingBranches] = useState(false);
 
-  const handleEditSaveButtonClicked = () => {
+  const [bulkAddUserBranches] = useMutation(BULK_ADD_USER_BRANCHES, {
+    refetchQueries: ["AdminUserManagementPage_Users"],
+    variables: {
+      emails: userEmails,
+      branchIds: selectedBranches.map((branch) => branch.id),
+    },
+  });
+
+  const handleEditSaveButtonClicked = async () => {
     if (isEditingBranches) {
-      console.log(`add branches ${selectedBranches} to ${userEmails}`);
-      toast({
-        title: "User Branches Updated",
-        description: `${userEmails.length} user(s) added to new branch(es).`,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      try {
+        await bulkAddUserBranches();
+        toast({
+          title: "User Branches Updated",
+          description: `${userEmails.length} user(s) added to new branch(es).`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Failed to add branches for users.",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
       onSave();
     }
     setIsEditingBranches(!isEditingBranches);
   };
-
-  // We need a mutation call that saves branches, similar to branch editor on save
-  // We should have a list of users as props so we can update the input users' branches
-  // These users should be given by userIds, that is sufficient.
 
   return (
     <Box>

@@ -42,9 +42,9 @@ const UserManagementTableProfileCell = ({
   );
 
   const handleBranchMenuItemClicked = (clickedBranch: BranchResponseDTO) => {
-    if (selectedBranches.includes(clickedBranch)) {
+    if (selectedBranches.some((branch) => branch.id === clickedBranch.id)) {
       setSelectedBranches(
-        selectedBranches.filter((branch) => branch !== clickedBranch),
+        selectedBranches.filter((branch) => branch.id !== clickedBranch.id),
       );
     } else {
       setSelectedBranches([...selectedBranches, clickedBranch]);

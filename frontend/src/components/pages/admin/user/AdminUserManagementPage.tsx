@@ -4,7 +4,6 @@ import React, { HTMLProps, useState } from "react";
 import {
   Flex,
   Box,
-  Button,
   TableContainer,
   Table as ChakraTable,
   Thead,
@@ -13,7 +12,6 @@ import {
   Tr,
   Th,
   Td,
-  useToast,
   chakra,
   TableCaption,
   IconButton,
@@ -193,10 +191,14 @@ const AdminUserManagementPage = (): React.ReactElement => {
   const handleMultiUserBranchMenuItemClicked = (
     clickedBranch: BranchResponseDTO,
   ) => {
-    if (selectedBranchesForMultiUser.includes(clickedBranch)) {
+    if (
+      selectedBranchesForMultiUser.some(
+        (branch) => branch.id === clickedBranch.id,
+      )
+    ) {
       setSelectedBranchesForMultiUser(
         selectedBranchesForMultiUser.filter(
-          (branch) => branch !== clickedBranch,
+          (branch) => branch.id !== clickedBranch.id,
         ),
       );
     } else {
@@ -218,8 +220,6 @@ const AdminUserManagementPage = (): React.ReactElement => {
     AdminUserManagementTableTab.Volunteers,
   );
 
-  const toast = useToast();
-
   const { loading, error } = useQuery(USERS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
@@ -230,6 +230,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
 
   const handleTabClicked = (tab: AdminUserManagementTableTab) => {
     setUserManagementTableTab(tab);
+    setRowSelection({});
   };
 
   useQuery<BranchQueryResponse>(BRANCHES, {
@@ -406,9 +407,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
 
   return (
     <>
-      {loading && <Loading />}
       {error && <ErrorModal />}
-      {/* // TODO: Get all the selected row, pass in the email */}
       <MultiUserBranchDrawer
         userEmails={table
           .getSelectedRowModel()
@@ -416,9 +415,11 @@ const AdminUserManagementPage = (): React.ReactElement => {
         isOpen={isOpen}
         branches={branches}
         selectedBranches={selectedBranchesForMultiUser}
-        onClose={onClose}
+        onClose={() => {
+          onClose();
+          setSelectedBranchesForMultiUser([]);
+        }}
         handleBranchMenuItemClicked={handleMultiUserBranchMenuItemClicked}
-        clearSelectedBranches={() => setSelectedBranchesForMultiUser([])}
       />
       <Flex flexFlow="column" width="100%" height="100vh">
         <Navbar
@@ -446,103 +447,107 @@ const AdminUserManagementPage = (): React.ReactElement => {
             borderColor="gray.200"
             bgColor="white"
           >
-            <ChakraTable variant="brand">
-              <TableCaption textAlign="right">
-                <Flex alignItems="baseline" justifyContent="flex-end">
-                  <Text fontWeight="bold">
-                    {getPageRange(
-                      table.getState().pagination,
-                      table.getFilteredRowModel().rows.length,
-                    )}
-                  </Text>
-                  <Text pl={1} pr={6}>
-                    of {table.getPageCount()}
-                  </Text>
-                  <IconButton
-                    aria-label="Previous page"
-                    variant="ghost"
-                    color="gray.700"
-                    _hover={{
-                      bg: "transparent",
-                    }}
-                    _active={{
-                      bg: "transparent",
-                    }}
-                    icon={<ChevronLeftIcon />}
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                  />
-                  <IconButton
-                    aria-label="Next page"
-                    variant="ghost"
-                    color="gray.700"
-                    _hover={{
-                      bg: "transparent",
-                    }}
-                    _active={{
-                      bg: "transparent",
-                    }}
-                    icon={<ChevronRightIcon />}
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                  />
-                </Flex>
-              </TableCaption>
-              <Thead>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <Tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => (
-                      <Th key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder ? null : (
-                          <Box
-                            className={
-                              header.column.getCanSort()
-                                ? "cursor-pointer select-none"
-                                : ""
-                            }
-                            _hover={{
-                              cursor: "pointer",
-                            }}
-                            onClick={header.column.getToggleSortingHandler()}
-                          >
-                            {flexRender(
-                              header.column.columnDef.header,
-                              header.getContext(),
-                            )}
-                            <chakra.span pl="4">
-                              {sortIcon[
-                                header.column.getIsSorted() as string
-                              ] ?? null}
-                            </chakra.span>
-                          </Box>
-                        )}
-                      </Th>
-                    ))}
-                  </Tr>
-                ))}
-              </Thead>
-              <Tbody>
-                {table.getRowModel().rows.map((row) => {
-                  return (
-                    <Tr
-                      key={row.id}
-                      bgColor={row.getIsSelected() ? "purple.50" : undefined}
-                    >
-                      {row.getVisibleCells().map((cell) => {
-                        return (
-                          <Td key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
-                            )}
-                          </Td>
-                        );
-                      })}
+            {loading ? (
+              <Loading />
+            ) : (
+              <ChakraTable variant="brand">
+                <TableCaption textAlign="right">
+                  <Flex alignItems="baseline" justifyContent="flex-end">
+                    <Text fontWeight="bold">
+                      {getPageRange(
+                        table.getState().pagination,
+                        table.getFilteredRowModel().rows.length,
+                      )}
+                    </Text>
+                    <Text pl={1} pr={6}>
+                      of {table.getPageCount()}
+                    </Text>
+                    <IconButton
+                      aria-label="Previous page"
+                      variant="ghost"
+                      color="gray.700"
+                      _hover={{
+                        bg: "transparent",
+                      }}
+                      _active={{
+                        bg: "transparent",
+                      }}
+                      icon={<ChevronLeftIcon />}
+                      onClick={() => table.previousPage()}
+                      disabled={!table.getCanPreviousPage()}
+                    />
+                    <IconButton
+                      aria-label="Next page"
+                      variant="ghost"
+                      color="gray.700"
+                      _hover={{
+                        bg: "transparent",
+                      }}
+                      _active={{
+                        bg: "transparent",
+                      }}
+                      icon={<ChevronRightIcon />}
+                      onClick={() => table.nextPage()}
+                      disabled={!table.getCanNextPage()}
+                    />
+                  </Flex>
+                </TableCaption>
+                <Thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <Tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <Th key={header.id} colSpan={header.colSpan}>
+                          {header.isPlaceholder ? null : (
+                            <Box
+                              className={
+                                header.column.getCanSort()
+                                  ? "cursor-pointer select-none"
+                                  : ""
+                              }
+                              _hover={{
+                                cursor: "pointer",
+                              }}
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                              <chakra.span pl="4">
+                                {sortIcon[
+                                  header.column.getIsSorted() as string
+                                ] ?? null}
+                              </chakra.span>
+                            </Box>
+                          )}
+                        </Th>
+                      ))}
                     </Tr>
-                  );
-                })}
-              </Tbody>
-            </ChakraTable>
+                  ))}
+                </Thead>
+                <Tbody>
+                  {table.getRowModel().rows.map((row) => {
+                    return (
+                      <Tr
+                        key={row.id}
+                        bgColor={row.getIsSelected() ? "purple.50" : undefined}
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <Td key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </Td>
+                          );
+                        })}
+                      </Tr>
+                    );
+                  })}
+                </Tbody>
+              </ChakraTable>
+            )}
           </TableContainer>
         </Box>
       </Flex>
