@@ -12,6 +12,7 @@ import { ChakraProvider } from "@chakra-ui/react";
 
 import { hotjar } from "react-hotjar";
 import ReactGA from "react-ga";
+import { gql, useMutation } from "@apollo/client";
 import Login from "./components/auth/Login";
 import Signup from "./components/auth/Signup";
 import ResetPassword from "./components/auth/ResetPassword";
@@ -57,22 +58,22 @@ import AdminUserManagementPage from "./components/pages/admin/user/AdminUserMana
 import CreatePostingPage from "./components/pages/admin/posting/CreatePostingPage";
 import EditAccountPage from "./components/pages/EditAccountPage";
 import EditPostingPage from "./components/pages/admin/posting/EditPostingPage";
+import authAPIClient from "./APIClients/AuthAPIClient";
 
 // Consts for Hotjar and Google Analytics (this is ok to expose)
 const TRACKING_ID = "G-DF2BP4T8YQ";
 const HJID = 2949419;
 const HSJV = 6;
 
+const REFRESH = gql`
+  mutation Refresh {
+    refresh
+  }
+`;
+
 ReactGA.initialize(TRACKING_ID);
 
 const App = (): React.ReactElement => {
-  useEffect(() => {
-    ReactGA.pageview(window.location.pathname + window.location.search);
-  }, []);
-  useEffect(() => {
-    hotjar.initialize(HJID, HSJV);
-  }, []);
-
   const currentUser: AuthenticatedUser = getLocalStorageObj<AuthenticatedUser>(
     AUTHENTICATED_USER_KEY,
   );
@@ -93,6 +94,24 @@ const App = (): React.ReactElement => {
     postingContextReducer,
     DEFAULT_POSTING_CONTEXT,
   );
+
+  const [refresh] = useMutation<{ refresh: string }>(REFRESH);
+
+  useEffect(() => {
+    ReactGA.pageview(window.location.pathname + window.location.search);
+  }, []);
+
+  useEffect(() => {
+    hotjar.initialize(HJID, HSJV);
+  }, []);
+
+  useEffect(() => {
+    authAPIClient.refresh(refresh).then((response) => {
+      if (!response.valueOf()) {
+        setAuthenticatedUser(null);
+      }
+    });
+  }, [refresh]);
 
   return (
     <ChakraProvider theme={customTheme}>
