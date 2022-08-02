@@ -25,6 +25,8 @@ const EMPLOYEE_BY_ID = gql`
       firstName
       lastName
       email
+      dateOfBirth
+      pronouns
       phoneNumber
       emergencyContactPhone
       languages
