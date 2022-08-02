@@ -12,6 +12,7 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Link,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
@@ -60,7 +61,13 @@ const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
   return (
     <Box px="90px" boxShadow="md">
       <Flex h="80px" alignItems="center" justifyContent="space-between">
-        <Image src={Sistering_Logo} alt="Sistering logo" h={14} />
+        <Link
+          href="/"
+          _focus={{ boxShadow: "none" }}
+          _hover={{ transform: "scale(1.1)" }}
+        >
+          <Image src={Sistering_Logo} alt="Sistering logo" h={14} />
+        </Link>
         <Tabs defaultIndex={defaultIndex} alignSelf="flex-end">
           <TabList>
             {tabs.map((tab) => (
