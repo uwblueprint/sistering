@@ -54,10 +54,10 @@ const volunteerUsers = [
     lastName: "Volunteer",
     authId: process.env.VOLUNTEER_UID,
     role: Role.VOLUNTEER,
+    dateOfBirth: new Date("August 19, 2000 23:15:30"),
+    pronouns: "they/them",
     volunteer: {
-      pronouns: "they/them",
       hireDate: new Date(),
-      dateOfBirth: new Date("August 19, 2000 23:15:30"),
       branches: [{ name: Branches.Arts }],
       skills: [
         { name: Skills.Cooking },
@@ -72,10 +72,10 @@ const volunteerUsers = [
     lastName: "Volunteer",
     authId: process.env.VOLUNTEER1_UID,
     role: Role.VOLUNTEER,
+    dateOfBirth: new Date("August 19, 2000 23:15:30"),
+    pronouns: "she/her",
     volunteer: {
-      pronouns: "she/her",
       hireDate: addDays(new Date(), -7),
-      dateOfBirth: new Date("August 19, 2000 23:15:30"),
       branches: [{ name: Branches.Kitchen }],
       skills: [],
     },
@@ -205,6 +205,7 @@ const main = async () => {
           lastName: user.lastName,
           authId: user.authId,
           role: user.role,
+          pronouns: "they/them",
           employee: {
             create: {},
           },
@@ -229,6 +230,7 @@ const main = async () => {
           lastName: employee.lastName,
           authId: employee.authId,
           role: employee.role,
+          pronouns: "they/them",
           employee: {
             create: {
               branches: {
@@ -264,6 +266,7 @@ const main = async () => {
           lastName: user.lastName,
           authId: user.authId,
           role: user.role,
+          pronouns: "they/them",
           volunteer: {
             create: {
               ...user.volunteer,

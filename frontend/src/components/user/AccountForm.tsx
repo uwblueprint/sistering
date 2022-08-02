@@ -230,6 +230,8 @@ const AccountForm = ({
           emergencyContactEmail: "",
           emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
+          pronouns: values.pronouns,
+          dateOfBirth: values.dateOfBirth,
           password: values.password,
           languages: values.languages.map(
             (language) => LANGUAGES[Number(language.id) - 1],
@@ -272,6 +274,8 @@ const AccountForm = ({
           emergencyContactEmail: "",
           emergencyContactName: "",
           emergencyContactPhone: values.emergencyNumber,
+          pronouns: values.pronouns,
+          dateOfBirth: values.dateOfBirth,
           languages: values.languages.map(
             (language) => LANGUAGES[Number(language.id) - 1],
           ),
