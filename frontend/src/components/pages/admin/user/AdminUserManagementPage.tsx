@@ -64,6 +64,8 @@ const USERS = gql`
       lastName
       email
       phoneNumber
+      pronouns
+      dateOfBirth
       emergencyContactName
       emergencyContactPhone
       emergencyContactEmail
@@ -79,6 +81,7 @@ const USERS = gql`
       email
       phoneNumber
       pronouns
+      dateOfBirth
       emergencyContactName
       emergencyContactPhone
       emergencyContactEmail
@@ -261,7 +264,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
             .map((employee) => ({
               firstName: employee.firstName,
               lastName: employee.lastName,
-              pronouns: "N/A", // TODO: Update once pronouns are migrated
+              pronouns: employee.pronouns ?? "N/A",
               email: employee.email,
               phoneNumber: employee.phoneNumber ?? "N/A",
             })),
@@ -327,6 +330,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
         cell: ({ row }: CellContext<User, unknown>) => {
           const isVolunteer =
             userManagementTableTab === AdminUserManagementTableTab.Volunteers;
+          let rowDateOfBirth: string | undefined;
           let rowEmgName: string | undefined;
           let rowEmgEmail: string | undefined;
           let rowEmgPhone: string | undefined;
@@ -337,6 +341,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
           if (isVolunteer) {
             allVolunteers.some((user) => {
               if (user.email === row.original.email) {
+                rowDateOfBirth = user.dateOfBirth?.toString();
                 rowEmgEmail = user.emergencyContactEmail ?? "N/A";
                 rowEmgName = user.emergencyContactName ?? "N/A";
                 rowEmgPhone = user.emergencyContactPhone ?? "N/A";
@@ -350,6 +355,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
           } else {
             allEmployees.some((user) => {
               if (user.email === row.original.email) {
+                rowDateOfBirth = user.dateOfBirth?.toString();
                 rowEmgEmail = user.emergencyContactEmail ?? "N/A";
                 rowEmgName = user.emergencyContactName ?? "N/A";
                 rowEmgPhone = user.emergencyContactPhone ?? "N/A";
@@ -365,6 +371,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
               firstName={row.original.firstName}
               lastName={row.original.lastName}
               pronouns={row.original.pronouns}
+              dateOfBirth={rowDateOfBirth ?? "N/A"}
               email={row.original.email}
               phoneNumber={row.original.phoneNumber}
               emergencyContactName={rowEmgName ?? "N/A"}

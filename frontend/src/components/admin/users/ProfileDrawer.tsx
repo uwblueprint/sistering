@@ -29,6 +29,7 @@ type ProfileDrawerProps = {
   firstName: string;
   lastName: string;
   pronouns: string;
+  dateOfBirth: string;
   email: string;
   phoneNumber: string;
   emergencyContactName: string;
@@ -48,6 +49,7 @@ const ProfileDrawer = ({
   firstName,
   lastName,
   pronouns,
+  dateOfBirth,
   email,
   phoneNumber,
   emergencyContactName,
@@ -111,6 +113,7 @@ const ProfileDrawer = ({
                 <Text>First Name</Text>
                 <Text>Last Name</Text>
                 <Text>Pronouns</Text>
+                <Text>Date of Birth</Text>
                 <Text>Email Address</Text>
                 <Text>Phone Number</Text>
                 <Text pb="70px">Emergency Contact</Text>
@@ -120,6 +123,7 @@ const ProfileDrawer = ({
                 <Text>{firstName}</Text>
                 <Text>{lastName}</Text>
                 <Text>{pronouns}</Text>
+                <Text>{dateOfBirth}</Text>
                 <Text>{email}</Text>
                 <Text>{phoneNumber}</Text>
                 <Text>{emergencyContactName}</Text>

@@ -8,6 +8,7 @@ type UserManagementTableProfileCellProps = {
   firstName: string;
   lastName: string;
   pronouns: string;
+  dateOfBirth: string;
   email: string;
   phoneNumber: string;
   emergencyContactName: string;
@@ -24,6 +25,7 @@ const UserManagementTableProfileCell = ({
   firstName,
   lastName,
   pronouns,
+  dateOfBirth,
   email,
   phoneNumber,
   emergencyContactName,
@@ -70,6 +72,7 @@ const UserManagementTableProfileCell = ({
         firstName={firstName}
         lastName={lastName}
         pronouns={pronouns}
+        dateOfBirth={dateOfBirth}
         email={email}
         phoneNumber={phoneNumber}
         emergencyContactName={emergencyContactName}
