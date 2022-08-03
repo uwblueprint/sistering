@@ -1,30 +1,61 @@
-import React, { useState } from "react";
+/* eslint-disable react/prop-types */
+/* eslint-disable react/display-name */
+import React, { HTMLProps, useState } from "react";
 import {
   Flex,
   Box,
-  Button,
   TableContainer,
-  Table,
+  Table as ChakraTable,
+  Thead,
   Tbody,
+  Text,
+  Tr,
+  Th,
+  Td,
+  chakra,
+  TableCaption,
+  IconButton,
   useDisclosure,
-  useToast,
 } from "@chakra-ui/react";
 import { gql, useQuery } from "@apollo/client";
 
+import {
+  CellContext,
+  ColumnDef,
+  flexRender,
+  getCoreRowModel,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  HeaderContext,
+  useReactTable,
+  getSortedRowModel,
+  SortingState,
+  PaginationState,
+} from "@tanstack/react-table";
+import {
+  ChevronLeftIcon,
+  ChevronRightIcon,
+  TriangleDownIcon,
+  TriangleUpIcon,
+} from "@chakra-ui/icons";
 import ErrorModal from "../../../common/ErrorModal";
 import Loading from "../../../common/Loading";
-import ProfileDrawer from "./ProfileDrawer";
-import UserManagementTableRow from "../../../admin/users/UserManagementTableRow";
 import Navbar from "../../../common/Navbar";
-import AdminUserManagementPageHeader from "../../../admin/AdminUserManagementPageHeader";
+import AdminUserManagementPageHeader, {
+  AdminUserManagementTableTab,
+} from "../../../admin/AdminUserManagementPageHeader";
 
 import { VolunteerUserResponseDTO } from "../../../../types/api/UserType";
 import { EmployeeUserResponseDTO } from "../../../../types/api/EmployeeTypes";
 import {
+  BranchDTO,
   BranchQueryResponse,
   BranchResponseDTO,
 } from "../../../../types/api/BranchTypes";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
+import UserManagementTableProfileCell from "../../../admin/users/UserManagementTableProfileCell";
+import getTitleCaseForOneWord from "../../../../utils/StringUtils";
+import MultiUserBranchDrawer from "./MultiUserBranchDrawer";
 
 const USERS = gql`
   query AdminUserManagementPage_Users {
@@ -33,6 +64,8 @@ const USERS = gql`
       lastName
       email
       phoneNumber
+      pronouns
+      dateOfBirth
       emergencyContactName
       emergencyContactPhone
       emergencyContactEmail
@@ -48,6 +81,7 @@ const USERS = gql`
       email
       phoneNumber
       pronouns
+      dateOfBirth
       emergencyContactName
       emergencyContactPhone
       emergencyContactEmail
@@ -73,41 +107,133 @@ const BRANCHES = gql`
   }
 `;
 
+export type User = {
+  firstName: string;
+  lastName: string;
+  pronouns: string;
+  email: string;
+  phoneNumber: string;
+};
+
+const sortIcon: { [index: string]: JSX.Element } = {
+  asc: <TriangleUpIcon aria-label="sorted ascending" />,
+  desc: <TriangleDownIcon aria-label="sorted descending" />,
+};
+
+const TABLE_PAGE_SIZE = 9;
+
+const getPageRange = (
+  pagination: PaginationState,
+  totalRecords: number,
+): string => {
+  const pageAnchor = pagination.pageSize * pagination.pageIndex;
+  return `${pageAnchor + 1}-${Math.min(
+    pageAnchor + TABLE_PAGE_SIZE,
+    totalRecords,
+  )}`;
+};
+
+const userBranchesPassBranchFilter = (
+  branchFilter: BranchResponseDTO | undefined,
+  userBranches: BranchDTO[],
+): boolean => {
+  return (
+    branchFilter === undefined ||
+    userBranches.some((branch) => branchFilter.id === branch.id)
+  );
+};
+
+const IndeterminateCheckbox = ({
+  indeterminate,
+  className = "",
+  ...rest
+}: {
+  indeterminate?: boolean;
+} & HTMLProps<HTMLInputElement>): React.ReactElement => {
+  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+  const ref = React.useRef<HTMLInputElement>(null!);
+
+  React.useEffect(() => {
+    if (typeof indeterminate === "boolean") {
+      ref.current.indeterminate = !rest.checked && indeterminate;
+    }
+  }, [ref, indeterminate, rest.checked]);
+
+  return (
+    <input
+      type="checkbox"
+      ref={ref}
+      className={`${className} cursor-pointer`}
+      // eslint-disable-next-line react/jsx-props-no-spreading
+      {...rest}
+    />
+  );
+};
+
 const AdminUserManagementPage = (): React.ReactElement => {
+  // Disclosure used for multi-user branch adder
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const [allVolunteers, setAllVolunteers] = useState<
-    VolunteerUserResponseDTO[] | null
-  >(null);
-  const [allEmployees, setAllEmployees] = useState<
-    EmployeeUserResponseDTO[] | null
-  >(null);
-  const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
-  const [selectedBranches, setSelectedBranches] = useState<BranchResponseDTO[]>(
+    VolunteerUserResponseDTO[]
+  >([]);
+  const [allEmployees, setAllEmployees] = useState<EmployeeUserResponseDTO[]>(
     [],
   );
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const toast = useToast();
 
-  // Temporary state for user management row checkboxes in testing #453.
-  const [row1Checked, setRow1Checked] = useState(false);
-  const [row2Checked, setRow2Checked] = useState(false);
-  const [row3Checked, setRow3Checked] = useState(false);
+  const [sorting, setSorting] = React.useState<SortingState>([]);
+  const [rowSelection, setRowSelection] = React.useState({});
+  const [globalFilter, setGlobalFilter] = React.useState("");
+
+  const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
+  const [
+    selectedBranchesForMultiUser,
+    setSelectedBranchesForMultiUser,
+  ] = useState<BranchResponseDTO[]>([]);
+
+  const handleMultiUserBranchMenuItemClicked = (
+    clickedBranch: BranchResponseDTO,
+  ) => {
+    if (
+      selectedBranchesForMultiUser.some(
+        (branch) => branch.id === clickedBranch.id,
+      )
+    ) {
+      setSelectedBranchesForMultiUser(
+        selectedBranchesForMultiUser.filter(
+          (branch) => branch.id !== clickedBranch.id,
+        ),
+      );
+    } else {
+      setSelectedBranchesForMultiUser([
+        ...selectedBranchesForMultiUser,
+        clickedBranch,
+      ]);
+    }
+  };
+
+  const [branchFilter, setBranchFilter] = useState<
+    BranchResponseDTO | undefined
+  >(undefined);
+
+  const [
+    userManagementTableTab,
+    setUserManagementTableTab,
+  ] = useState<AdminUserManagementTableTab>(
+    AdminUserManagementTableTab.Volunteers,
+  );
 
   const { loading, error } = useQuery(USERS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
-      setAllVolunteers(data.employeeUsers);
-      setAllEmployees(data.volunteerUsers);
+      setAllEmployees(data.employeeUsers);
+      setAllVolunteers(data.volunteerUsers);
     },
   });
 
-  const handleBranchMenuItemClicked = (clickedBranch: BranchResponseDTO) => {
-    if (selectedBranches.includes(clickedBranch)) {
-      setSelectedBranches(
-        selectedBranches.filter((branch) => branch !== clickedBranch),
-      );
-    } else {
-      setSelectedBranches([...selectedBranches, clickedBranch]);
-    }
+  const handleTabClicked = (tab: AdminUserManagementTableTab) => {
+    setUserManagementTableTab(tab);
+    setRowSelection({});
   };
 
   useQuery<BranchQueryResponse>(BRANCHES, {
@@ -117,17 +243,191 @@ const AdminUserManagementPage = (): React.ReactElement => {
     },
   });
 
+  const data = React.useMemo<User[]>(
+    () =>
+      userManagementTableTab === AdminUserManagementTableTab.Volunteers
+        ? allVolunteers
+            .filter((volunteer) =>
+              userBranchesPassBranchFilter(branchFilter, volunteer.branches),
+            )
+            .map((volunteer) => ({
+              firstName: volunteer.firstName,
+              lastName: volunteer.lastName,
+              pronouns: volunteer.pronouns ?? "N/A",
+              email: volunteer.email,
+              phoneNumber: volunteer.phoneNumber ?? "N/A",
+            }))
+        : allEmployees
+            .filter((employee) =>
+              userBranchesPassBranchFilter(branchFilter, employee.branches),
+            )
+            .map((employee) => ({
+              firstName: employee.firstName,
+              lastName: employee.lastName,
+              pronouns: employee.pronouns ?? "N/A",
+              email: employee.email,
+              phoneNumber: employee.phoneNumber ?? "N/A",
+            })),
+    [allEmployees, allVolunteers, userManagementTableTab, branchFilter],
+  );
+
+  const columns = React.useMemo<ColumnDef<User>[]>(
+    () => [
+      {
+        id: "select",
+        header: ({ table }: HeaderContext<User, unknown>) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: table.getIsAllRowsSelected(),
+              indeterminate: table.getIsSomeRowsSelected(),
+              onChange: table.getToggleAllRowsSelectedHandler(),
+            }}
+          />
+        ),
+        cell: ({ row }: CellContext<User, unknown>) => (
+          <IndeterminateCheckbox
+            {...{
+              checked: row.getIsSelected(),
+              indeterminate: row.getIsSomeSelected(),
+              onChange: row.getToggleSelectedHandler(),
+            }}
+          />
+        ),
+      },
+      {
+        header: () => "First Name",
+        accessorKey: "firstName",
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
+      },
+      {
+        header: () => "Last Name",
+        accessorKey: "lastName",
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
+      },
+      {
+        header: () => "Pronouns",
+        accessorKey: "pronouns",
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
+      },
+      {
+        header: () => "Email",
+        accessorKey: "email",
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
+      },
+      {
+        header: () => "Phone Number",
+        accessorKey: "phoneNumber",
+        cell: (info) => info.getValue(),
+        footer: (props) => props.column.id,
+      },
+      {
+        id: "profile",
+        header: () => "",
+        cell: ({ row }: CellContext<User, unknown>) => {
+          const isVolunteer =
+            userManagementTableTab === AdminUserManagementTableTab.Volunteers;
+          let rowDateOfBirth: string | undefined;
+          let rowEmgName: string | undefined;
+          let rowEmgEmail: string | undefined;
+          let rowEmgPhone: string | undefined;
+          let rowLangs: string[] = [];
+          let rowSkills: string[] | undefined;
+          let userBranches: BranchDTO[] = [];
+
+          if (isVolunteer) {
+            allVolunteers.some((user) => {
+              if (user.email === row.original.email) {
+                rowDateOfBirth = user.dateOfBirth?.toString();
+                rowEmgEmail = user.emergencyContactEmail ?? "N/A";
+                rowEmgName = user.emergencyContactName ?? "N/A";
+                rowEmgPhone = user.emergencyContactPhone ?? "N/A";
+                rowLangs = user.languages;
+                rowSkills = user.skills?.map((skill) => skill.name);
+                userBranches = user.branches;
+                return true;
+              }
+              return false;
+            });
+          } else {
+            allEmployees.some((user) => {
+              if (user.email === row.original.email) {
+                rowDateOfBirth = user.dateOfBirth?.toString();
+                rowEmgEmail = user.emergencyContactEmail ?? "N/A";
+                rowEmgName = user.emergencyContactName ?? "N/A";
+                rowEmgPhone = user.emergencyContactPhone ?? "N/A";
+                rowLangs = user.languages;
+                userBranches = user.branches;
+                return true;
+              }
+              return false;
+            });
+          }
+          return (
+            <UserManagementTableProfileCell
+              firstName={row.original.firstName}
+              lastName={row.original.lastName}
+              pronouns={row.original.pronouns}
+              dateOfBirth={rowDateOfBirth ?? "N/A"}
+              email={row.original.email}
+              phoneNumber={row.original.phoneNumber}
+              emergencyContactName={rowEmgName ?? "N/A"}
+              emergencyContactPhone={rowEmgPhone ?? "N/A"}
+              emergencyContactEmail={rowEmgEmail ?? "N/A"}
+              languages={rowLangs.map((lang) => getTitleCaseForOneWord(lang))}
+              skills={rowSkills}
+              isVolunteer={isVolunteer}
+              branches={branches}
+              userBranches={userBranches}
+            />
+          );
+        },
+      },
+    ],
+    [allEmployees, allVolunteers, branches, userManagementTableTab],
+  );
+
+  const table = useReactTable({
+    data,
+    columns,
+    state: {
+      rowSelection,
+      sorting,
+      globalFilter,
+    },
+    initialState: {
+      pagination: {
+        pageSize: TABLE_PAGE_SIZE,
+      },
+    },
+    onSortingChange: setSorting,
+    onRowSelectionChange: setRowSelection,
+    onGlobalFilterChange: setGlobalFilter,
+    getCoreRowModel: getCoreRowModel(),
+    getFilteredRowModel: getFilteredRowModel(),
+    getPaginationRowModel: getPaginationRowModel(),
+    getSortedRowModel: getSortedRowModel(),
+  });
+
   return (
     <>
-      <ProfileDrawer
+      {error && <ErrorModal />}
+      <MultiUserBranchDrawer
+        userEmails={table
+          .getSelectedRowModel()
+          .rows.map((row) => row.original.email)}
         isOpen={isOpen}
         branches={branches}
-        selectedBranches={selectedBranches}
-        onClose={onClose}
-        handleBranchMenuItemClicked={handleBranchMenuItemClicked}
+        selectedBranches={selectedBranchesForMultiUser}
+        onClose={() => {
+          onClose();
+          setSelectedBranchesForMultiUser([]);
+        }}
+        handleBranchMenuItemClicked={handleMultiUserBranchMenuItemClicked}
       />
-      {loading && <Loading />}
-      {error && <ErrorModal />}
       <Flex flexFlow="column" width="100%" height="100vh">
         <Navbar
           defaultIndex={Number(AdminPages.AdminUserManagement)}
@@ -135,7 +435,11 @@ const AdminUserManagementPage = (): React.ReactElement => {
         />
         <AdminUserManagementPageHeader
           branches={branches}
-          onOpenProfileDrawer={onOpen}
+          onOpenMultiUserBranchDrawer={onOpen}
+          handleTabClicked={handleTabClicked}
+          searchFilter={globalFilter ?? ""}
+          onSearchFilterChange={(event) => setGlobalFilter(event.target.value)}
+          setBranchFilter={setBranchFilter}
         />
         <Box
           flex={1}
@@ -144,80 +448,114 @@ const AdminUserManagementPage = (): React.ReactElement => {
           px="100px"
           pt="32px"
         >
-          <TableContainer border="1px" borderRadius="md" borderColor="gray.200">
-            <Table variant="brand">
-              <Tbody>
-                <UserManagementTableRow
-                  firstName="Amanda"
-                  lastName="Du 1"
-                  pronouns="She/Her"
-                  email="atdu@uwblueprint.org"
-                  phoneNumber="123-456-7890"
-                  emergencyContactName="Stephanie Smith"
-                  emergencyContactPhone="905-124-2313"
-                  emergencyContactEmail="stephaniesmith@gmail.com"
-                  totalHours="135"
-                  languages={["English", "French"]}
-                  skills={["Medical Terminology", "Faxing", "Microsoft Office"]}
-                  isVolunteer
-                  checked={row1Checked}
-                  onCheck={() => setRow1Checked(!row1Checked)}
-                  branches={branches}
-                  selectedBranches={selectedBranches}
-                  handleBranchMenuItemClicked={handleBranchMenuItemClicked}
-                />
-                <UserManagementTableRow
-                  firstName="Amanda"
-                  lastName="Du 2"
-                  pronouns="She/Her"
-                  email="atdu@uwblueprint.org"
-                  phoneNumber="123-456-7890"
-                  emergencyContactName="Stephanie Smith"
-                  emergencyContactPhone="905-124-2313"
-                  emergencyContactEmail="stephaniesmith@gmail.com"
-                  totalHours="135"
-                  languages={["English", "French"]}
-                  skills={["Medical Terminology", "Faxing", "Microsoft Office"]}
-                  isVolunteer
-                  checked={row2Checked}
-                  onCheck={() => setRow2Checked(!row2Checked)}
-                  branches={branches}
-                  selectedBranches={selectedBranches}
-                  handleBranchMenuItemClicked={handleBranchMenuItemClicked}
-                />
-                <UserManagementTableRow
-                  firstName="Amanda"
-                  lastName="Du 3"
-                  pronouns="She/Her"
-                  email="atdu@uwblueprint.org"
-                  phoneNumber="123-456-7890"
-                  emergencyContactName="Stephanie Smith"
-                  emergencyContactPhone="905-124-2313"
-                  emergencyContactEmail="stephaniesmith@gmail.com"
-                  languages={["English", "French"]}
-                  checked={row3Checked}
-                  onCheck={() => setRow3Checked(!row3Checked)}
-                  branches={branches}
-                  selectedBranches={selectedBranches}
-                  handleBranchMenuItemClicked={handleBranchMenuItemClicked}
-                  isVolunteer={false}
-                />
-              </Tbody>
-            </Table>
-          </TableContainer>
-          <Button
-            onClick={() =>
-              toast({
-                title: "User Branches Updated",
-                description: "7 user(s) added to new branch(es).",
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-              })
-            }
+          <TableContainer
+            border="1px"
+            borderRadius="md"
+            borderColor="gray.200"
+            bgColor="white"
           >
-            Add Users to Branch
-          </Button>
+            {loading ? (
+              <Loading />
+            ) : (
+              <ChakraTable variant="brand">
+                <TableCaption textAlign="right">
+                  <Flex alignItems="baseline" justifyContent="flex-end">
+                    <Text fontWeight="bold">
+                      {getPageRange(
+                        table.getState().pagination,
+                        table.getFilteredRowModel().rows.length,
+                      )}
+                    </Text>
+                    <Text pl={1} pr={6}>
+                      of {table.getPageCount()}
+                    </Text>
+                    <IconButton
+                      aria-label="Previous page"
+                      variant="ghost"
+                      color="gray.700"
+                      _hover={{
+                        bg: "transparent",
+                      }}
+                      _active={{
+                        bg: "transparent",
+                      }}
+                      icon={<ChevronLeftIcon />}
+                      onClick={() => table.previousPage()}
+                      disabled={!table.getCanPreviousPage()}
+                    />
+                    <IconButton
+                      aria-label="Next page"
+                      variant="ghost"
+                      color="gray.700"
+                      _hover={{
+                        bg: "transparent",
+                      }}
+                      _active={{
+                        bg: "transparent",
+                      }}
+                      icon={<ChevronRightIcon />}
+                      onClick={() => table.nextPage()}
+                      disabled={!table.getCanNextPage()}
+                    />
+                  </Flex>
+                </TableCaption>
+                <Thead>
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <Tr key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => (
+                        <Th key={header.id} colSpan={header.colSpan}>
+                          {header.isPlaceholder ? null : (
+                            <Box
+                              className={
+                                header.column.getCanSort()
+                                  ? "cursor-pointer select-none"
+                                  : ""
+                              }
+                              _hover={{
+                                cursor: "pointer",
+                              }}
+                              onClick={header.column.getToggleSortingHandler()}
+                            >
+                              {flexRender(
+                                header.column.columnDef.header,
+                                header.getContext(),
+                              )}
+                              <chakra.span pl="4">
+                                {sortIcon[
+                                  header.column.getIsSorted() as string
+                                ] ?? null}
+                              </chakra.span>
+                            </Box>
+                          )}
+                        </Th>
+                      ))}
+                    </Tr>
+                  ))}
+                </Thead>
+                <Tbody>
+                  {table.getRowModel().rows.map((row) => {
+                    return (
+                      <Tr
+                        key={row.id}
+                        bgColor={row.getIsSelected() ? "purple.50" : undefined}
+                      >
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <Td key={cell.id}>
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </Td>
+                          );
+                        })}
+                      </Tr>
+                    );
+                  })}
+                </Tbody>
+              </ChakraTable>
+            )}
+          </TableContainer>
         </Box>
       </Flex>
     </>

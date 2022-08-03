@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { ChangeEvent, Dispatch, SetStateAction, useState } from "react";
 import {
   VStack,
   HStack,
@@ -25,14 +25,27 @@ import AddVolunteerModal from "./AddVolunteerModal";
 import UserInvitesModal from "./UserInvitesModal";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 
+export enum AdminUserManagementTableTab {
+  Volunteers,
+  Admins,
+}
+
 type AdminUserManagementPageHeaderProps = {
   branches: BranchResponseDTO[];
-  onOpenProfileDrawer: () => void;
+  onOpenMultiUserBranchDrawer: () => void;
+  handleTabClicked: (tab: AdminUserManagementTableTab) => void;
+  onSearchFilterChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  searchFilter: string;
+  setBranchFilter: Dispatch<SetStateAction<BranchResponseDTO | undefined>>;
 };
 
 const AdminUserManagementPageHeader = ({
   branches,
-  onOpenProfileDrawer,
+  onOpenMultiUserBranchDrawer,
+  handleTabClicked,
+  onSearchFilterChange,
+  searchFilter,
+  setBranchFilter,
 }: AdminUserManagementPageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -57,7 +70,7 @@ const AdminUserManagementPageHeader = ({
         <HStack w="full" mb="16px">
           <Text textStyle="display-small-semibold">User Management</Text>
           <Spacer />
-          <Button variant="outline" onClick={onOpenProfileDrawer}>
+          <Button variant="outline" onClick={onOpenMultiUserBranchDrawer}>
             Edit Branch Access
           </Button>
           <Button onClick={() => setIsModalOpen(true)}>
@@ -108,6 +121,9 @@ const AdminUserManagementPageHeader = ({
                   borderColor: "currentColor",
                 }}
                 py="8px"
+                onClick={() =>
+                  handleTabClicked(AdminUserManagementTableTab.Volunteers)
+                }
               >
                 Volunteers
               </Tab>
@@ -120,6 +136,9 @@ const AdminUserManagementPageHeader = ({
                   borderColor: "currentColor",
                 }}
                 py="8px"
+                onClick={() =>
+                  handleTabClicked(AdminUserManagementTableTab.Admins)
+                }
               >
                 Admins
               </Tab>
@@ -131,11 +150,26 @@ const AdminUserManagementPageHeader = ({
               <InputLeftElement pointerEvents="none">
                 <SearchIcon color="gray.300" />
               </InputLeftElement>
-              <Input type="text" placeholder="Search" w="368px" />
+              <Input
+                type="text"
+                placeholder="Search"
+                w="368px"
+                onChange={onSearchFilterChange}
+                value={searchFilter}
+              />
             </InputGroup>
-            <Select placeholder="All branches">
+            <Select
+              placeholder="All branches"
+              onChange={(event) => {
+                setBranchFilter(
+                  branches.find((branch) => branch.id === event.target.value),
+                );
+              }}
+            >
               {branches.map((branch) => (
-                <option key={branch.id}>{branch.name}</option>
+                <option key={branch.id} value={branch.id}>
+                  {branch.name}
+                </option>
               ))}
             </Select>
           </HStack>

@@ -20,9 +20,8 @@ import {
 import React, { useState } from "react";
 
 import DeleteModal from "../DeleteModal";
-import BranchSelector from "../../pages/admin/user/MultiBranchSelector";
-
 import { BranchResponseDTO } from "../../../types/api/BranchTypes";
+import MultiBranchSelector from "../../pages/admin/user/MultiBranchSelector";
 
 type ProfileDrawerProps = {
   isOpen: boolean;
@@ -30,12 +29,12 @@ type ProfileDrawerProps = {
   firstName: string;
   lastName: string;
   pronouns: string;
+  dateOfBirth: string;
   email: string;
   phoneNumber: string;
   emergencyContactName: string;
   emergencyContactPhone: string;
   emergencyContactEmail: string;
-  totalHours?: string;
   languages: string[];
   skills?: string[];
   isVolunteer?: boolean;
@@ -50,12 +49,12 @@ const ProfileDrawer = ({
   firstName,
   lastName,
   pronouns,
+  dateOfBirth,
   email,
   phoneNumber,
   emergencyContactName,
   emergencyContactPhone,
   emergencyContactEmail,
-  totalHours,
   languages,
   skills,
   isVolunteer,
@@ -97,7 +96,8 @@ const ProfileDrawer = ({
             <></>
           )}
           <Box mx="6">
-            <BranchSelector
+            <MultiBranchSelector
+              userEmail={email}
               branches={branches}
               selectedBranches={selectedBranches}
               handleBranchMenuItemClicked={handleBranchMenuItemClicked}
@@ -113,22 +113,22 @@ const ProfileDrawer = ({
                 <Text>First Name</Text>
                 <Text>Last Name</Text>
                 <Text>Pronouns</Text>
+                <Text>Date of Birth</Text>
                 <Text>Email Address</Text>
                 <Text>Phone Number</Text>
                 <Text pb="70px">Emergency Contact</Text>
-                {isVolunteer ? <Text>Total Hours</Text> : <></>}
                 <Text>Language(s) Spoken</Text>
               </VStack>
               <VStack align="start" spacing="8px">
                 <Text>{firstName}</Text>
                 <Text>{lastName}</Text>
                 <Text>{pronouns}</Text>
+                <Text>{dateOfBirth}</Text>
                 <Text>{email}</Text>
                 <Text>{phoneNumber}</Text>
                 <Text>{emergencyContactName}</Text>
                 <Text>{emergencyContactEmail}</Text>
                 <Text>{emergencyContactPhone}</Text>
-                {isVolunteer ? <Text>{totalHours}</Text> : <></>}
                 <Text>{languages.join(", ")}</Text>
               </VStack>
             </HStack>
