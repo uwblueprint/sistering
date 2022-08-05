@@ -55,6 +55,7 @@ const PostingFormReviewPage = ({
   title,
 }: PostingFormPageProps): React.ReactElement => {
   const { branch, skills, employees, ...rest } = useContext(PostingContext);
+  const toast = useToast();
 
   const [createPosting, { loading: createPostingLoading }] = useMutation(
     CREATE_POSTING,
@@ -112,6 +113,13 @@ const PostingFormReviewPage = ({
         });
       }
     }
+    toast({
+      title: "Posting Published",
+      description: "Posting has been published to volunteers.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
     navigateToHome();
   };
   const submitDraftPostingForm = async () => {
@@ -150,6 +158,13 @@ const PostingFormReviewPage = ({
         });
       }
     }
+    toast({
+      title: "Posting drafted",
+      description: "Posting has been saved as a draft.",
+      status: "success",
+      duration: 9000,
+      isClosable: true,
+    });
     navigateToHome();
   };
 
@@ -164,7 +179,7 @@ const PostingFormReviewPage = ({
               position="fixed"
               bgColor="white"
               minW="100vw"
-              align="end"
+              alignItems="end"
               zIndex={1}
               bottom={0}
               left={0}
