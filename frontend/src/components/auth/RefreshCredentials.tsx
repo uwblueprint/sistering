@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { gql, useMutation } from "@apollo/client";
 
+import { useToast } from "@chakra-ui/react";
+
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
 
@@ -15,10 +17,22 @@ const RefreshCredentials = (): React.ReactElement => {
 
   const [refresh] = useMutation<{ refresh: string }>(REFRESH);
 
+  const toast = useToast();
+
   const onRefreshClick = async () => {
-    const success = await authAPIClient.refresh(refresh);
-    if (!success) {
-      setAuthenticatedUser(null);
+    try {
+      const success = await authAPIClient.refresh(refresh);
+      if (!success) {
+        setAuthenticatedUser(null);
+      }
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot refresh",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 

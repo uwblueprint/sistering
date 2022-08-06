@@ -13,6 +13,7 @@ import {
   MenuList,
   MenuItem,
   Link,
+  useToast,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
@@ -40,14 +41,25 @@ const LOGOUT = gql`
 const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [logout] = useMutation<{ logout: null }>(LOGOUT);
+  const toast = useToast();
 
   const onLogOutClick = async () => {
-    const success = await authAPIClient.logout(
-      String(authenticatedUser?.id),
-      logout,
-    );
-    if (success) {
-      setAuthenticatedUser(null);
+    try {
+      const success = await authAPIClient.logout(
+        String(authenticatedUser?.id),
+        logout,
+      );
+      if (success) {
+        setAuthenticatedUser(null);
+      }
+    } catch (error: unknown) {
+      toast({
+        title: "Unable to logout",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 

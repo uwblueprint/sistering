@@ -8,6 +8,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  useToast,
 } from "@chakra-ui/react";
 import React from "react";
 import {
@@ -60,17 +61,29 @@ const RemoveVolunteerModal = ({
     shift: ShiftSignupResponseDTO;
   }>(UPSERT_DELETE_SHIFT_SIGNUP);
 
+  const toast = useToast();
   const submitUpdateRequest = async () => {
-    await upsertDeleteShiftSignup({
-      variables: {
-        upsertDeleteShifts: {
-          upsertShiftSignups: [
-            { shiftId, userId, numVolunteers, note, status },
-          ],
-          deleteShiftSignups: [],
+    try {
+      await upsertDeleteShiftSignup({
+        variables: {
+          upsertDeleteShifts: {
+            upsertShiftSignups: [
+              { shiftId, userId, numVolunteers, note, status },
+            ],
+            deleteShiftSignups: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot upsert delete shifts",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+
     removeSignup(shiftId, userId);
   };
 

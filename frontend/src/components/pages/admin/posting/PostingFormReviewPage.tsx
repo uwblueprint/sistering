@@ -1,6 +1,13 @@
 import React, { useContext } from "react";
 import { useHistory } from "react-router-dom";
-import { Button, Box, HStack, useBoolean, VStack } from "@chakra-ui/react";
+import {
+  Button,
+  Box,
+  HStack,
+  useBoolean,
+  VStack,
+  useToast,
+} from "@chakra-ui/react";
 import { gql, useMutation } from "@apollo/client";
 
 import PostingFormReview from "../../../admin/posting/PostingFormReview";
@@ -69,22 +76,44 @@ const PostingFormReviewPage = ({
   };
 
   const history = useHistory();
+  const toast = useToast();
+
   const navigateToHome = () => history.push(HOME_PAGE);
   const submitPublishPostingForm = async () => {
     setIsDraftClicked.off();
     if (isEdit) {
-      await updatePosting({
-        variables: {
-          id: editPostingId,
-          posting: { ...postingInForm, status: "PUBLISHED" },
-        },
-      });
+      try {
+        await updatePosting({
+          variables: {
+            id: editPostingId,
+            posting: { ...postingInForm, status: "PUBLISHED" },
+          },
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Cannot update posting",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     } else {
-      await createPosting({
-        variables: {
-          posting: { ...postingInForm, status: "PUBLISHED" },
-        },
-      });
+      try {
+        await createPosting({
+          variables: {
+            posting: { ...postingInForm, status: "PUBLISHED" },
+          },
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Cannot create posting",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     }
     navigateToHome();
   };

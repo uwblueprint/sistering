@@ -1,5 +1,5 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Container, Divider, Text } from "@chakra-ui/react";
+import { Container, Divider, Text, useToast } from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import moment from "moment";
 import {
@@ -86,6 +86,7 @@ const EditAccountPage = (): React.ReactElement => {
     (EmployeeUserResponseDTO & VolunteerUserResponseDTO) | null
   >(null);
   const [profilePhoto, setProfilePhoto] = useState<string>("");
+  const toast = useToast();
 
   useQuery(
     authenticatedUser?.role !== Role.Volunteer
@@ -139,24 +140,44 @@ const EditAccountPage = (): React.ReactElement => {
   const isError = editEmployeeError || editVolunteerError;
 
   const onEmployeeEdit = async (employee: UpdateEmployeeUserDTO) => {
-    await editEmployee({
-      variables: {
-        id: user?.id,
-        employee,
-      },
-    });
+    try {
+      await editEmployee({
+        variables: {
+          id: user?.id,
+          employee,
+        },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot edit employee",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   const onVolunteerEdit = async (volunteer: UpdateVolunteerUserDTO) => {
-    await editVolunteer({
-      variables: {
-        id: user?.id,
-        volunteer: {
-          ...volunteer,
-          hireDate: user?.hireDate,
+    try {
+      await editVolunteer({
+        variables: {
+          id: user?.id,
+          volunteer: {
+            ...volunteer,
+            hireDate: user?.hireDate,
+          },
         },
-      },
-    });
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot edit volunteer",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   return (

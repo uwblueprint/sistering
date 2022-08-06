@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { JSONSchema7 } from "json-schema";
 import { Form } from "@rjsf/bootstrap-4";
 import { gql, useMutation } from "@apollo/client";
-
+import { useToast } from "@chakra-ui/react";
 import {
   EntityRequest,
   EntityResponse,
@@ -81,6 +81,8 @@ const CreateForm = (): React.ReactElement => {
     CREATE_ENTITY,
   );
 
+  const toast = useToast();
+
   if (data) {
     return <p>Created! ✔️</p>;
   }
@@ -98,12 +100,22 @@ const CreateForm = (): React.ReactElement => {
   };
 
   const onSubmit = async ({ formData }: { formData: EntityRequest }) => {
-    const graphQLResult = await createEntity({
-      variables: { entity: formData, file: fileField },
-    });
-    const result: EntityResponse | null =
-      graphQLResult.data?.createEntity ?? null;
-    setData(result);
+    try {
+      const graphQLResult = await createEntity({
+        variables: { entity: formData, file: fileField },
+      });
+      const result: EntityResponse | null =
+        graphQLResult.data?.createEntity ?? null;
+      setData(result);
+    } catch (error: unknown) {
+      toast({
+        title: "Unable to create entity",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
   return (
     <>

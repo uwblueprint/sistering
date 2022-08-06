@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { Redirect } from "react-router-dom";
 import { gql, useMutation } from "@apollo/client";
-import { Text } from "@chakra-ui/react";
+import { Text, useToast } from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import { HOME_PAGE } from "../../constants/Routes";
@@ -40,18 +40,29 @@ const Signup = (): React.ReactElement => {
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const toast = useToast();
 
   const [register] = useMutation<{ register: AuthenticatedUser }>(REGISTER);
 
   const onSignupClick = async () => {
-    const user: AuthenticatedUser = await authAPIClient.register(
-      firstName,
-      lastName,
-      email,
-      password,
-      register,
-    );
-    setAuthenticatedUser(user);
+    try {
+      const user: AuthenticatedUser = await authAPIClient.register(
+        firstName,
+        lastName,
+        email,
+        password,
+        register,
+      );
+      setAuthenticatedUser(user);
+    } catch (error: unknown) {
+      toast({
+        title: "Unable to signup",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   if (authenticatedUser) {

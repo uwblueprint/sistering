@@ -10,6 +10,7 @@ import {
   FormControl,
   FormLabel,
   Image,
+  useToast,
 } from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -41,18 +42,29 @@ const Login = (): React.ReactElement => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
+  const toast = useToast();
 
   const [login, { error: loginError }] = useMutation<{
     login: AuthenticatedUser;
   }>(LOGIN);
 
   const onLogInClick = async () => {
-    const user: AuthenticatedUser = await authAPIClient.login(
-      email,
-      password,
-      login,
-    );
-    setAuthenticatedUser(user);
+    try {
+      const user: AuthenticatedUser = await authAPIClient.login(
+        email,
+        password,
+        login,
+      );
+      setAuthenticatedUser(user);
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot login",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   const onForgotPasswordClick = () => {

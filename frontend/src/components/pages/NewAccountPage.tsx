@@ -1,4 +1,4 @@
-import { Container, Divider, Text } from "@chakra-ui/react";
+import { Container, Divider, Text, useToast } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useHistory } from "react-router-dom";
@@ -71,6 +71,8 @@ const NewAccountPage = (): React.ReactElement => {
 
   const history = useHistory();
 
+  const toast = useToast();
+
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token");
 
@@ -96,37 +98,77 @@ const NewAccountPage = (): React.ReactElement => {
   const isError = createEmployeeError || createVolunteerError;
 
   const onEmployeeCreate = async (employee: CreateEmployeeUserDTO) => {
-    await createEmployee({
-      variables: {
-        employee,
-      },
-    });
-
-    if (!createEmployeeError) {
-      await deleteUserInvite({
+    try {
+      await createEmployee({
         variables: {
-          email: userInvite?.email,
+          employee,
         },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot create employee",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
       });
     }
 
-    if (!deleteUserInviteError) {
-      history.push("/account-created");
+    if (!createEmployeeError) {
+      try {
+        await deleteUserInvite({
+          variables: {
+            email: userInvite?.email,
+          },
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Cannot delete associated user invite",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+
+      if (!deleteUserInviteError) {
+        history.push("/account-created");
+      }
     }
   };
 
   const onVolunteerCreate = async (volunteer: CreateVolunteerUserDTO) => {
-    await createVolunteer({
-      variables: {
-        volunteer,
-      },
-    });
-
-    if (!createVolunteerError) {
-      await deleteUserInvite({
+    try {
+      await createVolunteer({
         variables: {
-          email: userInvite?.email,
+          volunteer,
         },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot create volunteer",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+
+    try {
+      if (!createVolunteerError) {
+        await deleteUserInvite({
+          variables: {
+            email: userInvite?.email,
+          },
+        });
+      }
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot delete associated user invite",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
       });
     }
 

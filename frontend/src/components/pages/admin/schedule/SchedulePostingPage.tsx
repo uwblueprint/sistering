@@ -1,4 +1,4 @@
-import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
+import { Flex, Box, Text, Button, Spacer, useToast } from "@chakra-ui/react";
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
@@ -154,6 +154,8 @@ const SchedulePostingPage = (): React.ReactElement => {
   >([]);
   const [selectedDay, setSelectedDay] = useState<Date>();
 
+  const toast = useToast();
+
   useEffect(() => {
     const shiftsOfDay = shifts.filter((shift) =>
       moment.utc(shift.startTime).isSame(moment.utc(selectedDay), "day"),
@@ -290,20 +292,30 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
-    await submitSignups({
-      variables: {
-        upsertDeleteShifts: {
-          upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
-            shiftId: currentlyEditingShift.id,
-            userId: signup.volunteer.id,
-            note: signup.note,
-            numVolunteers: signup.numVolunteers,
-            status: signup.status,
-          })),
-          deleteShiftSignups: [],
+    try {
+      await submitSignups({
+        variables: {
+          upsertDeleteShifts: {
+            upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
+              shiftId: currentlyEditingShift.id,
+              userId: signup.volunteer.id,
+              note: signup.note,
+              numVolunteers: signup.numVolunteers,
+              status: signup.status,
+            })),
+            deleteShiftSignups: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot submit signups",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
 
     const shiftsCopy = cloneDeep(shifts);
     const shiftIndex = shiftsCopy.findIndex(

@@ -12,6 +12,7 @@ import {
   Text,
   Spacer,
   useBoolean,
+  useToast,
 } from "@chakra-ui/react";
 import { AddIcon } from "@chakra-ui/icons";
 
@@ -60,12 +61,24 @@ const BranchManagerModal = ({
     },
   );
 
+  const toast = useToast();
+
   const handleBranchCreate = async (branchName: string) => {
-    await createBranch({
-      variables: {
-        branch: { name: branchName },
-      },
-    });
+    try {
+      await createBranch({
+        variables: {
+          branch: { name: branchName },
+        },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot create branch",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   useQuery<BranchQueryResponse>(BRANCHES, {
