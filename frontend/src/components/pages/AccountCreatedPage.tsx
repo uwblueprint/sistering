@@ -1,13 +1,13 @@
 import React from "react";
 import { useHistory } from "react-router-dom";
-import { Text, Flex, Box, Button, Image } from "@chakra-ui/react";
+import { Text, Flex, Button, Image, VStack } from "@chakra-ui/react";
 import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 
 const AccountCreatedPage = (): React.ReactElement => {
   const history = useHistory();
   return (
     <Flex align="center" height="100vh">
-      <Box align="center" width="100vw">
+      <VStack align="center" width="100vw">
         <Image src={Sistering_Logo} alt="Sistering logo" />
         <Text fontSize="xl" fontWeight="bold" mt="20px">
           Account Successfully Created!
@@ -23,7 +23,7 @@ const AccountCreatedPage = (): React.ReactElement => {
         >
           Login
         </Button>
-      </Box>
+      </VStack>
     </Flex>
   );
 };
