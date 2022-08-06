@@ -137,8 +137,8 @@ const authorizedByAdminAndEmployee = () =>
 
 const graphQLMiddlewares = {
   Query: {
-    entity: authorizedByAllRoles(),
-    entities: authorizedByAllRoles(),
+    entity: authorizedByAllRoles(), // !DEPRECATED
+    entities: authorizedByAllRoles(), // !DEPRECATED
     userById: authorizedByAdmin(),
     userByEmail: authorizedByAdmin(),
     users: authorizedByAdmin(),
@@ -160,9 +160,10 @@ const graphQLMiddlewares = {
     getShiftSignupsForPosting: authorizedByAdmin(),
   },
   Mutation: {
-    createEntity: authorizedByAllRoles(),
-    updateEntity: authorizedByAllRoles(),
-    deleteEntity: authorizedByAllRoles(),
+    createEntity: authorizedByAllRoles(), // !DEPRECATED
+    updateEntity: authorizedByAllRoles(), // !DEPRECATED
+    deleteEntity: authorizedByAllRoles(), // !DEPRECATED
+    register: authorizedByAdmin(), // !DEPRECATED
     createUser: authorizedByAdmin(),
     updateUser: authorizedByAdmin(),
     deleteUserById: authorizedByAdmin(),
