@@ -10,7 +10,11 @@ import AdminHomepageHeader from "../../admin/AdminHomepageHeader";
 import AdminPostingCard from "../../admin/AdminPostingCard";
 import Loading from "../../common/Loading";
 import ErrorModal from "../../common/ErrorModal";
-import { AdminNavbarTabs, AdminPages } from "../../../constants/Tabs";
+import {
+  AdminNavbarTabs,
+  AdminPages,
+  EmployeeNavbarTabs,
+} from "../../../constants/Tabs";
 import { Role } from "../../../types/AuthTypes";
 import { PostingResponseDTO } from "../../../types/api/PostingTypes";
 import { getPostingFilterStatus } from "../../../utils/TypeUtils";
@@ -86,6 +90,7 @@ const filterAdminPosting = (
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
+  const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
   const [postings, setPostings] = useState<SimplePostingResponseDTO[] | null>(
     null,
   );
@@ -197,10 +202,10 @@ const AdminHomepage = (): React.ReactElement => {
       <Flex flexFlow="column" width="100%" height="100vh">
         <Navbar
           defaultIndex={Number(AdminPages.AdminSchedulePosting)}
-          tabs={AdminNavbarTabs}
+          tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}
         />
         <AdminHomepageHeader
-          isSuperAdmin={authenticatedUser?.role === Role.Admin}
+          isSuperAdmin={isSuperAdmin}
           selectStatusTab={setPostingStatusIndex}
           postingStatusNums={postingsByStatus.map(
             (postingsArr) => postingsArr.length,

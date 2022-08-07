@@ -13,7 +13,11 @@ import {
   UpsertSignupDTO,
 } from "../../../../types/api/SignupTypes";
 import Navbar from "../../../common/Navbar";
-import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
+import {
+  AdminNavbarTabs,
+  AdminPages,
+  EmployeeNavbarTabs,
+} from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
 import ErrorModal from "../../../common/ErrorModal";
@@ -129,6 +133,8 @@ const ShiftScheduleCalendar = ({
 const SchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const { authenticatedUser } = useContext(AuthContext);
+  const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
+
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -350,7 +356,7 @@ const SchedulePostingPage = (): React.ReactElement => {
   };
 
   const isReadOnly =
-    (authenticatedUser && authenticatedUser.role !== Role.Admin) ||
+    (authenticatedUser && !isSuperAdmin) ||
     getPostingFilterStatusBySignupStatuses(
       postingDetails?.status,
       new Date(postingDetails?.endDate),
@@ -373,7 +379,7 @@ const SchedulePostingPage = (): React.ReactElement => {
       )}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
-        tabs={AdminNavbarTabs}
+        tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}
       />
       {currentView === AdminScheduleViews.CalendarView ? (
         <Flex>
