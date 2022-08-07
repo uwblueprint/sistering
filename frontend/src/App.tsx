@@ -118,7 +118,7 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.ADMIN_HOMEPAGE}
-                  authorizedRoles={[Role.Admin]}
+                  authorizedRoles={[Role.Admin, Role.Employee]}
                   component={AdminHomepage}
                 />
                 <PrivateRoute
@@ -170,7 +170,7 @@ const App = (): React.ReactElement => {
                 <PrivateRoute
                   exact
                   path={Routes.ADMIN_POSTING_DETAILS}
-                  authorizedRoles={[Role.Admin]}
+                  authorizedRoles={[Role.Admin, Role.Employee]}
                   component={AdminPostingDetails}
                 />
                 <PrivateRoute

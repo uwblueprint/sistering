@@ -10,7 +10,11 @@ import AdminHomepageHeader from "../../admin/AdminHomepageHeader";
 import AdminPostingCard from "../../admin/AdminPostingCard";
 import Loading from "../../common/Loading";
 import ErrorModal from "../../common/ErrorModal";
-import { AdminNavbarTabs, AdminPages } from "../../../constants/Tabs";
+import {
+  AdminNavbarTabs,
+  AdminPages,
+  EmployeeNavbarTabs,
+} from "../../../constants/Tabs";
 import { Role } from "../../../types/AuthTypes";
 import { PostingResponseDTO } from "../../../types/api/PostingTypes";
 import { getPostingFilterStatus } from "../../../utils/TypeUtils";
@@ -82,10 +86,10 @@ const filterAdminPosting = (
   );
 };
 
-// TODO: hook up edit - do I need to create a new page? - we can probably follow up on this ticket
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
+  const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
   const [postings, setPostings] = useState<SimplePostingResponseDTO[] | null>(
     null,
   );
@@ -97,7 +101,9 @@ const AdminHomepage = (): React.ReactElement => {
     [], // past => 2
     [], // drafts => 3
   ]);
-  const [postingStatusIndex, setPostingStatusIndex] = useState<number>(0); // refer to above for index
+  const [postingStatusIndex, setPostingStatusIndex] = useState<number>(
+    isSuperAdmin ? 0 : 1,
+  ); // refer to above for index
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
   const [branchFilter, setBranchFilter] = useState<
@@ -219,10 +225,10 @@ const AdminHomepage = (): React.ReactElement => {
       <Flex flexFlow="column" width="100%" height="100vh">
         <Navbar
           defaultIndex={Number(AdminPages.AdminSchedulePosting)}
-          tabs={AdminNavbarTabs}
+          tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}
         />
         <AdminHomepageHeader
-          isSuperAdmin={authenticatedUser?.role === Role.Admin}
+          isSuperAdmin={isSuperAdmin}
           selectStatusTab={setPostingStatusIndex}
           postingStatusNums={postingsByStatus.map(
             (postingsArr) => postingsArr.length,

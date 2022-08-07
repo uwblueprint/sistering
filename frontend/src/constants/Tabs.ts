@@ -16,6 +16,13 @@ export const AdminNavbarTabs = [
   },
 ];
 
+export const EmployeeNavbarTabs = [
+  {
+    name: "Volunteer Postings",
+    route: ADMIN_HOMEPAGE,
+  },
+];
+
 export enum AdminPages {
   AdminSchedulePosting,
   AdminUserManagement,
