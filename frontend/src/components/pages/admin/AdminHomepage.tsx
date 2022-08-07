@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Flex, Box, SimpleGrid } from "@chakra-ui/react";
+import { Flex, Box, SimpleGrid, useToast } from "@chakra-ui/react";
 import { generatePath, useHistory } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import AuthContext from "../../../contexts/AuthContext";
@@ -111,6 +111,8 @@ const AdminHomepage = (): React.ReactElement => {
     },
   });
 
+  const toast = useToast();
+
   const navigateToAdminSchedule = (id: string) => {
     const route = generatePath(Routes.ADMIN_SCHEDULE_POSTING_PAGE, { id });
     history.push(route);
@@ -152,19 +154,39 @@ const AdminHomepage = (): React.ReactElement => {
   });
 
   const duplicatePostingById = async (postingId: string) => {
-    await duplicatePosting({
-      variables: {
-        postingId,
-      },
-    });
+    try {
+      await duplicatePosting({
+        variables: {
+          postingId,
+        },
+      });
+    } catch (err: unknown) {
+      toast({
+        title: "Cannot duplicate posting",
+        description: `${err}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   const deletePostingById = async (postingId: string) => {
-    await deletePosting({
-      variables: {
-        postingId,
-      },
-    });
+    try {
+      await deletePosting({
+        variables: {
+          postingId,
+        },
+      });
+    } catch (err: unknown) {
+      toast({
+        title: "Cannot delete posting",
+        description: `${err}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   // update postingsByStatus 2d array

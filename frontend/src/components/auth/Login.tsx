@@ -10,6 +10,7 @@ import {
   FormControl,
   FormLabel,
   Image,
+  useToast,
 } from "@chakra-ui/react";
 
 import authAPIClient from "../../APIClients/AuthAPIClient";
@@ -18,7 +19,6 @@ import { RESET_PASSWORD_PAGE, HOME_PAGE } from "../../constants/Routes";
 import AuthContext from "../../contexts/AuthContext";
 import { AuthenticatedUser } from "../../types/AuthTypes";
 
-import ErrorModal from "../common/ErrorModal";
 import AuthNavbar from "./AuthNavbar";
 
 import logo from "../../assets/Sistering_Logo.svg";
@@ -41,18 +41,29 @@ const Login = (): React.ReactElement => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const history = useHistory();
+  const toast = useToast();
 
-  const [login, { error: loginError }] = useMutation<{
+  const [login] = useMutation<{
     login: AuthenticatedUser;
   }>(LOGIN);
 
   const onLogInClick = async () => {
-    const user: AuthenticatedUser = await authAPIClient.login(
-      email,
-      password,
-      login,
-    );
-    setAuthenticatedUser(user);
+    try {
+      const user: AuthenticatedUser = await authAPIClient.login(
+        email,
+        password,
+        login,
+      );
+      setAuthenticatedUser(user);
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot login",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   const onForgotPasswordClick = () => {
@@ -66,11 +77,9 @@ const Login = (): React.ReactElement => {
   return (
     <Box>
       <AuthNavbar />
-      {loginError && <ErrorModal />}
       <Box width="100%" display="flex" flexDirection="row" height="100vh">
         <Box backgroundColor="background.white" flexGrow={4}>
           <Box maxWidth="480px" mt="8vh" mx="auto">
-            {loginError && <ErrorModal />}
             <Image src={logo} alt="Sistering logo" h={32} />
             <Box mx="43px" mb="36px">
               <Text textStyle="display-large" fontWeight="bold" mb={8}>
