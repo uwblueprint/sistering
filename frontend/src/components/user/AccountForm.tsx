@@ -421,16 +421,16 @@ const AccountForm = ({
                 }
               />
               <TextField
+                id="emergencyName"
+                label="Emergency Contact Name"
+                placeholder="First name"
+                isRequired
+              />
+              <TextField
                 id="emergencyNumber"
                 label="Emergency Contact Phone Number"
                 placeholder="(123) 456-7890"
                 type="tel"
-                isRequired
-              />
-              <TextField
-                id="emergencyName"
-                label="Emergency Contact Name"
-                placeholder="First name"
                 isRequired
               />
               <TextField
