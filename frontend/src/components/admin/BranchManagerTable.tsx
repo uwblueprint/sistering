@@ -15,7 +15,6 @@ import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
-import ErrorModal from "../common/ErrorModal";
 
 type BranchManagerTableProps = {
   branches: BranchResponseDTO[];
@@ -112,7 +111,6 @@ const BranchManagerTable = ({
 
   return (
     <>
-      {(updateBranchError || deleteBranchError) && <ErrorModal />}
       <EditModal
         title="Edit Branch Name"
         isOpen={isEditModalOpen}

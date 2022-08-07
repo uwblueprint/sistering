@@ -9,7 +9,6 @@ import {
   VolunteerUserResponseDTO,
   LANGUAGES,
 } from "../../types/api/UserType";
-import ErrorModal from "../common/ErrorModal";
 import Loading from "../common/Loading";
 import SignupNavbar from "../common/SignupNavbar";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
@@ -137,7 +136,6 @@ const EditAccountPage = (): React.ReactElement => {
   if (editEmployeeLoading || editVolunteerLoading) {
     return <Loading />;
   }
-  const isError = editEmployeeError || editVolunteerError;
 
   const onEmployeeEdit = async (employee: UpdateEmployeeUserDTO) => {
     try {
@@ -183,7 +181,6 @@ const EditAccountPage = (): React.ReactElement => {
   return (
     <>
       <SignupNavbar />
-      {isError && <ErrorModal />}
       <Container maxW="container.xl" align="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Account Creation

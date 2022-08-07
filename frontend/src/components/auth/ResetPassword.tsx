@@ -5,7 +5,6 @@ import { Box, Button, Input, Text, Image, useToast } from "@chakra-ui/react";
 import logo from "../../assets/Sistering_Logo.svg";
 
 import { DONE_RESET_PASSWORD_PAGE } from "../../constants/Routes";
-import ErrorModal from "../common/ErrorModal";
 import AuthNavbar from "./AuthNavbar";
 
 const RESET_PASSWORD = gql`
@@ -19,7 +18,7 @@ const ResetPassword = (): React.ReactElement => {
   const history = useHistory();
   const toast = useToast();
 
-  const [resetPassword, { error }] = useMutation<{ resetPassword: boolean }>(
+  const [resetPassword] = useMutation<{ resetPassword: boolean }>(
     RESET_PASSWORD,
   );
 
@@ -41,7 +40,6 @@ const ResetPassword = (): React.ReactElement => {
   return (
     <Box>
       <AuthNavbar />
-      {error && <ErrorModal />}
       <Box width="100%" display="flex" flexDirection="row" height="100vh">
         <Box backgroundColor="background.white" flexGrow={4}>
           <Box maxWidth="480px" mt="8vh" mx="auto">

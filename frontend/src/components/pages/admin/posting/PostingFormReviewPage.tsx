@@ -12,7 +12,6 @@ import { gql, useMutation } from "@apollo/client";
 
 import PostingFormReview from "../../../admin/posting/PostingFormReview";
 import SideNavBarWithTitle from "../../../common/SideNavbarWithTitle";
-import ErrorModal from "../../../common/ErrorModal";
 
 import { HOME_PAGE } from "../../../../constants/Routes";
 import PostingContext from "../../../../contexts/admin/PostingContext";
@@ -57,14 +56,12 @@ const PostingFormReviewPage = ({
 }: PostingFormPageProps): React.ReactElement => {
   const { branch, skills, employees, ...rest } = useContext(PostingContext);
 
-  const [
-    createPosting,
-    { loading: createPostingLoading, error: createPostingError },
-  ] = useMutation(CREATE_POSTING);
-  const [
-    updatePosting,
-    { loading: updatePostingLoading, error: updatePostingError },
-  ] = useMutation(UPDATE_POSTING);
+  const [createPosting, { loading: createPostingLoading }] = useMutation(
+    CREATE_POSTING,
+  );
+  const [updatePosting, { loading: updatePostingLoading }] = useMutation(
+    UPDATE_POSTING,
+  );
 
   const [isDraftClicked, setIsDraftClicked] = useBoolean();
 
@@ -120,25 +117,44 @@ const PostingFormReviewPage = ({
   const submitDraftPostingForm = async () => {
     setIsDraftClicked.on();
     if (isEdit) {
-      await updatePosting({
-        variables: {
-          id: editPostingId,
-          posting: { ...postingInForm, status: "DRAFT" },
-        },
-      });
+      try {
+        await updatePosting({
+          variables: {
+            id: editPostingId,
+            posting: { ...postingInForm, status: "DRAFT" },
+          },
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Cannot update posting",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     } else {
-      await createPosting({
-        variables: {
-          posting: { ...postingInForm, status: "DRAFT" },
-        },
-      });
+      try {
+        await createPosting({
+          variables: {
+            posting: { ...postingInForm, status: "DRAFT" },
+          },
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Cannot create posting",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     }
     navigateToHome();
   };
 
   return (
     <Box>
-      {(createPostingError || updatePostingError) && <ErrorModal />}
       <HStack alignItems="flex-start" spacing={0}>
         <SideNavBarWithTitle title={title} labels={steps} activeStep={2} />
         <VStack alignItems="flex-end">

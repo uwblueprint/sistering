@@ -18,7 +18,6 @@ import { AddIcon } from "@chakra-ui/icons";
 
 import BranchManagerTable from "./BranchManagerTable";
 import EditModal from "./EditModal";
-import ErrorModal from "../common/ErrorModal";
 import {
   BranchQueryResponse,
   BranchResponseDTO,
@@ -54,12 +53,9 @@ const BranchManagerModal = ({
     [],
   );
   const [isCreateModalOpen, setIsCreateModalOpen] = useBoolean(false);
-  const [createBranch, { error: createBranchError }] = useMutation(
-    CREATE_BRANCH,
-    {
-      refetchQueries: [{ query: BRANCHES }, "AdminHomepageHeader_Branches"],
-    },
-  );
+  const [createBranch] = useMutation(CREATE_BRANCH, {
+    refetchQueries: [{ query: BRANCHES }, "AdminHomepageHeader_Branches"],
+  });
 
   const toast = useToast();
 
@@ -90,7 +86,6 @@ const BranchManagerModal = ({
 
   return (
     <>
-      {createBranchError && <ErrorModal />}
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent maxW="1000px" h="700px" py="50px" px="70px">

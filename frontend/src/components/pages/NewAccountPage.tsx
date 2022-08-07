@@ -6,7 +6,6 @@ import SignupNavbar from "../common/SignupNavbar";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
 import Loading from "../common/Loading";
-import ErrorModal from "../common/ErrorModal";
 import {
   CreateEmployeeUserDTO,
   CreateVolunteerUserDTO,
@@ -95,7 +94,6 @@ const NewAccountPage = (): React.ReactElement => {
   if (createEmployeeLoading || createVolunteerLoading) {
     return <Loading />;
   }
-  const isError = createEmployeeError || createVolunteerError;
 
   const onEmployeeCreate = async (employee: CreateEmployeeUserDTO) => {
     try {
@@ -180,7 +178,6 @@ const NewAccountPage = (): React.ReactElement => {
   return (
     <>
       <SignupNavbar />
-      {isError && <ErrorModal />}
       <Container maxW="container.xl" align="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Account Creation
