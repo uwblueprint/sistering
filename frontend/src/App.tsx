@@ -115,7 +115,6 @@ const App = (): React.ReactElement => {
                   path={Routes.DONE_RESET_PASSWORD_PAGE}
                   component={DoneResetPassword}
                 />
-                {/* // TODO: employee refactor, should filter postings by scheduled and past states only */}
                 <PrivateRoute
                   exact
                   path={Routes.ADMIN_HOMEPAGE}
@@ -168,7 +167,6 @@ const App = (): React.ReactElement => {
                   authorizedRoles={[Role.Volunteer]}
                   component={VolunteerPostingAvailabilities}
                 />
-                {/* // TODO: employee refactor, should only be able to see scheduled or past posting, else kick */}
                 <PrivateRoute
                   exact
                   path={Routes.ADMIN_POSTING_DETAILS}

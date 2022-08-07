@@ -86,7 +86,6 @@ const filterAdminPosting = (
   );
 };
 
-// TODO(refactor-employee-access): For employee state, we should only show specific branches, no edit
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
@@ -102,7 +101,9 @@ const AdminHomepage = (): React.ReactElement => {
     [], // past => 2
     [], // drafts => 3
   ]);
-  const [postingStatusIndex, setPostingStatusIndex] = useState<number>(0); // refer to above for index
+  const [postingStatusIndex, setPostingStatusIndex] = useState<number>(
+    isSuperAdmin ? 0 : 1,
+  ); // refer to above for index
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
   const [branchFilter, setBranchFilter] = useState<

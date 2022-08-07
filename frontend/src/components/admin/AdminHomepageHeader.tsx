@@ -43,10 +43,12 @@ const AdminHomepageHeader = ({
 
   return (
     <>
-      <BranchManagerModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-      />
+      {!isSuperAdmin ? undefined : (
+        <BranchManagerModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
       <VStack alignItems="flex-start" px="100px" pt="48px" spacing={0}>
         <HStack w="full" mb="16px">
           <Text textStyle="display-small-semibold">Volunteer Postings</Text>
@@ -148,18 +150,20 @@ const AdminHomepageHeader = ({
                 </option>
               ))}
             </Select>
-            <IconButton
-              aria-label="Settings"
-              variant="ghost"
-              _hover={{
-                bg: "transparent",
-              }}
-              _active={{
-                bg: "transparent",
-              }}
-              icon={<SettingsIcon color="text.default" boxSize={5} />}
-              onClick={() => setIsModalOpen(true)}
-            />
+            {!isSuperAdmin ? undefined : (
+              <IconButton
+                aria-label="Settings"
+                variant="ghost"
+                _hover={{
+                  bg: "transparent",
+                }}
+                _active={{
+                  bg: "transparent",
+                }}
+                icon={<SettingsIcon color="text.default" boxSize={5} />}
+                onClick={() => setIsModalOpen(true)}
+              />
+            )}
           </HStack>
         </HStack>
       </VStack>
