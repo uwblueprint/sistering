@@ -292,30 +292,20 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
-    try {
-      await submitSignups({
-        variables: {
-          upsertDeleteShifts: {
-            upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
-              shiftId: currentlyEditingShift.id,
-              userId: signup.volunteer.id,
-              note: signup.note,
-              numVolunteers: signup.numVolunteers,
-              status: signup.status,
-            })),
-            deleteShiftSignups: [],
-          },
+    await submitSignups({
+      variables: {
+        upsertDeleteShifts: {
+          upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
+            shiftId: currentlyEditingShift.id,
+            userId: signup.volunteer.id,
+            note: signup.note,
+            numVolunteers: signup.numVolunteers,
+            status: signup.status,
+          })),
+          deleteShiftSignups: [],
         },
-      });
-    } catch (error: unknown) {
-      toast({
-        title: "Cannot submit signups",
-        description: `${error}`,
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
-    }
+      },
+    });
 
     const shiftsCopy = cloneDeep(shifts);
     const shiftIndex = shiftsCopy.findIndex(
