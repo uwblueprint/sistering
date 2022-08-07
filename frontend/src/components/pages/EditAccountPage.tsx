@@ -29,6 +29,8 @@ const EMPLOYEE_BY_ID = gql`
       pronouns
       phoneNumber
       emergencyContactPhone
+      emergencyContactEmail
+      emergencyContactName
       languages
       branches {
         id
@@ -49,6 +51,8 @@ const VOLUNTEER_BY_ID = gql`
       pronouns
       phoneNumber
       emergencyContactPhone
+      emergencyContactEmail
+      emergencyContactName
       hireDate
       skills {
         id
@@ -139,12 +143,13 @@ const EditAccountPage = (): React.ReactElement => {
   const isError = editEmployeeError || editVolunteerError;
 
   const onEmployeeEdit = async (employee: UpdateEmployeeUserDTO) => {
-    await editEmployee({
+    const results = await editEmployee({
       variables: {
         id: user?.id,
         employee,
       },
     });
+    console.log(results);
   };
 
   const onVolunteerEdit = async (volunteer: UpdateVolunteerUserDTO) => {
@@ -185,6 +190,8 @@ const EditAccountPage = (): React.ReactElement => {
             pronouns={user?.pronouns}
             phoneNumber={user?.phoneNumber}
             emergencyNumber={user?.emergencyContactPhone}
+            emergencyEmail={user?.emergencyContactEmail}
+            emergencyName={user?.emergencyContactName}
             prevLanguages={user?.languages?.map((language) => ({
               id: String(LANGUAGES.indexOf(language) + 1),
               name: language,

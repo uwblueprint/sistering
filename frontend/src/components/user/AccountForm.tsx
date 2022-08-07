@@ -55,6 +55,8 @@ type AccountFormProps = {
   pronouns?: string | null;
   phoneNumber?: string | null;
   emergencyNumber?: string | null;
+  emergencyName?: string | null;
+  emergencyEmail?: string | null;
   prevSkills?: SkillResponseDTO[];
   prevLanguages?: LanguageResponseDTO[];
   onEmployeeCreate?: (employee: CreateEmployeeUserDTO) => void;
@@ -73,6 +75,8 @@ type CreateAccountFormValues = {
   passwordConfirm: string;
   phoneNumber: string;
   emergencyNumber: string;
+  emergencyName: string;
+  emergencyEmail: string;
   skills: SkillResponseDTO[];
   languages: LanguageResponseDTO[];
   token: string | null;
@@ -95,6 +99,8 @@ const AccountForm = ({
   pronouns,
   phoneNumber,
   emergencyNumber,
+  emergencyName,
+  emergencyEmail,
   prevSkills,
   prevLanguages,
   onVolunteerCreate,
@@ -120,6 +126,8 @@ const AccountForm = ({
     passwordConfirm: "",
     phoneNumber: "",
     emergencyNumber: "",
+    emergencyName: "",
+    emergencyEmail: "",
     skills: [],
     languages: [],
     token,
@@ -132,6 +140,8 @@ const AccountForm = ({
     dateOfBirth: dateOfBirth || "",
     pronouns: pronouns || "",
     phoneNumber: phoneNumber || "",
+    emergencyName: emergencyName || "",
+    emergencyEmail: emergencyEmail || "",
     emergencyNumber: emergencyNumber || "",
     skills: prevSkills || [],
     languages: prevLanguages || [],
@@ -227,8 +237,8 @@ const AccountForm = ({
           lastName: values.lastName,
           email,
           phoneNumber: values.phoneNumber,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
+          emergencyContactEmail: values.emergencyEmail,
+          emergencyContactName: values.emergencyName,
           emergencyContactPhone: values.emergencyNumber,
           pronouns: values.pronouns,
           dateOfBirth: values.dateOfBirth,
@@ -247,8 +257,8 @@ const AccountForm = ({
           password: values.password,
           phoneNumber: values.phoneNumber,
           pronouns: values.pronouns,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
+          emergencyContactEmail: values.emergencyEmail,
+          emergencyContactName: values.emergencyName,
           emergencyContactPhone: values.emergencyNumber,
           hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
@@ -266,13 +276,14 @@ const AccountForm = ({
   const editAccount = (values: EditAccountFormValues): void => {
     if (onVolunteerEdit && onEmployeeEdit) {
       if (isAdmin) {
+        console.log(`eContactName: ${values.emergencyName}`);
         onEmployeeEdit({
           firstName: values.firstName,
           lastName: values.lastName,
           email,
           phoneNumber: values.phoneNumber,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
+          emergencyContactEmail: values.emergencyEmail,
+          emergencyContactName: values.emergencyName,
           emergencyContactPhone: values.emergencyNumber,
           pronouns: values.pronouns,
           dateOfBirth: values.dateOfBirth,
@@ -288,8 +299,8 @@ const AccountForm = ({
           email,
           phoneNumber: values.phoneNumber,
           pronouns: values.pronouns,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
+          emergencyContactEmail: values.emergencyEmail,
+          emergencyContactName: values.emergencyName,
           emergencyContactPhone: values.emergencyNumber,
           hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
@@ -382,6 +393,18 @@ const AccountForm = ({
                 label="Emergency Contact Phone Number"
                 placeholder="(123) 456-7890"
                 type="tel"
+                isRequired
+              />
+              <TextField
+                id="emergencyName"
+                label="Emergency Contact Name"
+                placeholder="First name"
+                isRequired
+              />
+              <TextField
+                id="emergencyEmail"
+                label="Emergency Contact Email"
+                placeholder="name@gmail.com"
                 isRequired
               />
               {/* Volunteer fields */}
