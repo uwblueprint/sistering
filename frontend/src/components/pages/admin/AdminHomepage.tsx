@@ -123,6 +123,11 @@ const AdminHomepage = (): React.ReactElement => {
     history.push(route);
   };
 
+  const navigateToPostingDetails = (id: string) => {
+    const route = generatePath(Routes.ADMIN_POSTING_DETAILS, { id });
+    history.push(route);
+  };
+
   useQuery<BranchQueryResponse>(BRANCHES, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
@@ -265,6 +270,9 @@ const AdminHomepage = (): React.ReactElement => {
                       }
                       navigateToEditPosting={() =>
                         navigateToEditPosting(posting.id)
+                      }
+                      navigateToPostingDetails={() =>
+                        navigateToPostingDetails(posting.id)
                       }
                       onDuplicate={() => duplicatePostingById(posting.id)}
                       onDelete={() => deletePostingById(posting.id)}

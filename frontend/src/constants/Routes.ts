@@ -2,8 +2,6 @@ export const HOME_PAGE = "/";
 
 export const LOGIN_PAGE = "/login";
 
-export const SIGNUP_PAGE = "/signup";
-
 export const CREATE_ACCOUNT_PAGE = "/create-account";
 
 export const ACCOUNT_CREATED_PAGE = "/account-created";
@@ -21,16 +19,6 @@ export const RESET_PASSWORD_SUCCESS_PAGE = "/password-reset-success";
 export const DONE_RESET_PASSWORD_PAGE = "/done-reset-password";
 
 export const NOT_FOUND_PAGE = "/not-found";
-
-export const EDIT_TEAM_PAGE = "/edit-team";
-
-export const DISPLAY_ENTITY_PAGE = "/entity";
-
-export const CREATE_ENTITY_PAGE = "/entity/create";
-
-export const UPDATE_ENTITY_PAGE = "/entity/update";
-
-export const HOOKS_PAGE = "/hooks";
 
 export const VOLUNTEER_POSTINGS_PAGE = "/volunteer/postings";
 

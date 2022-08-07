@@ -183,7 +183,7 @@ const EditAccountPage = (): React.ReactElement => {
       <SignupNavbar />
       <Container maxW="container.xl" align="left" mt={12}>
         <Text mb={2} textStyle="display-large">
-          Account Creation
+          Edit Profile
         </Text>
         <ProfilePhotoForm
           profilePhoto={profilePhoto}

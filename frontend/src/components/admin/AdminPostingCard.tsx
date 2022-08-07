@@ -34,6 +34,7 @@ type AdminPostingCardProps = {
   numVolunteers: number;
   navigateToAdminSchedule?: () => void;
   navigateToEditPosting?: () => void;
+  navigateToPostingDetails?: () => void;
   onDuplicate: () => void;
   onDelete: () => void;
 };
@@ -50,6 +51,7 @@ const AdminPostingCard = ({
   numVolunteers,
   navigateToAdminSchedule,
   navigateToEditPosting,
+  navigateToPostingDetails,
   onDuplicate,
   onDelete,
 }: AdminPostingCardProps): React.ReactElement => {
@@ -95,7 +97,12 @@ const AdminPostingCard = ({
               </Menu>
             )}
           </HStack>
-          <Text noOfLines={1} textStyle="heading">
+          <Text
+            noOfLines={1}
+            textStyle="heading"
+            cursor="pointer"
+            onClick={navigateToPostingDetails}
+          >
             {status === PostingFilterStatus.DRAFT && (
               <Box as="span" mr={1} color="red">
                 [DRAFT]
