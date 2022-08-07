@@ -29,6 +29,8 @@ const EMPLOYEE_BY_ID = gql`
       pronouns
       phoneNumber
       emergencyContactPhone
+      emergencyContactEmail
+      emergencyContactName
       languages
       branches {
         id
@@ -49,6 +51,8 @@ const VOLUNTEER_BY_ID = gql`
       pronouns
       phoneNumber
       emergencyContactPhone
+      emergencyContactEmail
+      emergencyContactName
       hireDate
       skills {
         id
@@ -185,6 +189,8 @@ const EditAccountPage = (): React.ReactElement => {
             pronouns={user?.pronouns}
             phoneNumber={user?.phoneNumber}
             emergencyNumber={user?.emergencyContactPhone}
+            emergencyEmail={user?.emergencyContactEmail}
+            emergencyName={user?.emergencyContactName}
             prevLanguages={user?.languages?.map((language) => ({
               id: String(LANGUAGES.indexOf(language) + 1),
               name: language,
