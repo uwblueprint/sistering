@@ -82,7 +82,7 @@ const filterAdminPosting = (
   );
 };
 
-// TODO: hook up edit - do I need to create a new page? - we can probably follow up on this ticket
+// TODO(refactor-employee-access): For employee state, we should only show specific branches, no edit
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);

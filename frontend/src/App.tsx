@@ -115,6 +115,7 @@ const App = (): React.ReactElement => {
                   path={Routes.DONE_RESET_PASSWORD_PAGE}
                   component={DoneResetPassword}
                 />
+
                 <PrivateRoute
                   exact
                   path={Routes.ADMIN_HOMEPAGE}
