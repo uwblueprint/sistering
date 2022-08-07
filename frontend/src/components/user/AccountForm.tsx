@@ -387,25 +387,6 @@ const AccountForm = ({
                 type="tel"
                 isRequired
               />
-              <TextField
-                id="emergencyNumber"
-                label="Emergency Contact Phone Number"
-                placeholder="(123) 456-7890"
-                type="tel"
-                isRequired
-              />
-              <TextField
-                id="emergencyName"
-                label="Emergency Contact Name"
-                placeholder="First name"
-                isRequired
-              />
-              <TextField
-                id="emergencyEmail"
-                label="Emergency Contact Email"
-                placeholder="name@gmail.com"
-                isRequired
-              />
               {/* Volunteer fields */}
               {!isAdmin && (
                 <SelectorField
@@ -438,6 +419,25 @@ const AccountForm = ({
                 onDeselect={(language) =>
                   deselectLanguage(language, values.languages, setFieldValue)
                 }
+              />
+              <TextField
+                id="emergencyNumber"
+                label="Emergency Contact Phone Number"
+                placeholder="(123) 456-7890"
+                type="tel"
+                isRequired
+              />
+              <TextField
+                id="emergencyName"
+                label="Emergency Contact Name"
+                placeholder="First name"
+                isRequired
+              />
+              <TextField
+                id="emergencyEmail"
+                label="Emergency Contact Email"
+                placeholder="name@gmail.com"
+                isRequired
               />
             </SimpleGrid>
             {mode === AccountFormMode.CREATE && (
