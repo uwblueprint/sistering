@@ -292,20 +292,30 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
-    await submitSignups({
-      variables: {
-        upsertDeleteShifts: {
-          upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
-            shiftId: currentlyEditingShift.id,
-            userId: signup.volunteer.id,
-            note: signup.note,
-            numVolunteers: signup.numVolunteers,
-            status: signup.status,
-          })),
-          deleteShiftSignups: [],
+    try {
+      await submitSignups({
+        variables: {
+          upsertDeleteShifts: {
+            upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
+              shiftId: currentlyEditingShift.id,
+              userId: signup.volunteer.id,
+              note: signup.note,
+              numVolunteers: signup.numVolunteers,
+              status: signup.status,
+            })),
+            deleteShiftSignups: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot submit signups",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
 
     const shiftsCopy = cloneDeep(shifts);
     const shiftIndex = shiftsCopy.findIndex(
@@ -370,9 +380,7 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
-      {(tableDataQueryError || submitSignupsError || postingError) && (
-        <ErrorModal />
-      )}
+      {(tableDataQueryError || postingError) && <ErrorModal />}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
         tabs={AdminNavbarTabs}
