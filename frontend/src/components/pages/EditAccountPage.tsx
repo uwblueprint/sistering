@@ -143,13 +143,12 @@ const EditAccountPage = (): React.ReactElement => {
   const isError = editEmployeeError || editVolunteerError;
 
   const onEmployeeEdit = async (employee: UpdateEmployeeUserDTO) => {
-    const results = await editEmployee({
+    await editEmployee({
       variables: {
         id: user?.id,
         employee,
       },
     });
-    console.log(results);
   };
 
   const onVolunteerEdit = async (volunteer: UpdateVolunteerUserDTO) => {

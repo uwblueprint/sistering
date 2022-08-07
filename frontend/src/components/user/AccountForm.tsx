@@ -276,7 +276,6 @@ const AccountForm = ({
   const editAccount = (values: EditAccountFormValues): void => {
     if (onVolunteerEdit && onEmployeeEdit) {
       if (isAdmin) {
-        console.log(`eContactName: ${values.emergencyName}`);
         onEmployeeEdit({
           firstName: values.firstName,
           lastName: values.lastName,
