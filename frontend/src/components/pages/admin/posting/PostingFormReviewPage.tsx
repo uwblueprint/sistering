@@ -55,7 +55,6 @@ const PostingFormReviewPage = ({
   title,
 }: PostingFormPageProps): React.ReactElement => {
   const { branch, skills, employees, ...rest } = useContext(PostingContext);
-  const toast = useToast();
 
   const [createPosting, { loading: createPostingLoading }] = useMutation(
     CREATE_POSTING,

@@ -158,16 +158,13 @@ const SchedulePostingPage = (): React.ReactElement => {
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
   );
-  const [
-    submitSignups,
-    { loading: submitSignupsLoading, error: submitSignupsError },
-  ] = useMutation(SUBMIT_SIGNUPS);
+  const [submitSignups, { loading: submitSignupsLoading }] = useMutation(
+    SUBMIT_SIGNUPS,
+  );
   const [sidePanelShifts, setSidePanelShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
   const [selectedDay, setSelectedDay] = useState<Date>();
-
-  const toast = useToast();
 
   useEffect(() => {
     const shiftsOfDay = shifts.filter((shift) =>
