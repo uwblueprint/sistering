@@ -22,7 +22,6 @@ const REFRESH_MUTATION = `
     refresh
   }
 `;
-
 const LOGOUT = `
   mutation Index_Logout($userId: ID!) {
     logout(userId: $userId)
@@ -30,15 +29,8 @@ const LOGOUT = `
 `;
 
 const logout = async (userId: string) => {
-  const { data: result } = await axios.post(
-    `${process.env.REACT_APP_BACKEND_URL}/graphql`,
-    { query: LOGOUT, variables: { userId } },
-    { withCredentials: true },
-  );
-
-  if (result?.data?.logout === null) {
-    localStorage.removeItem(AUTHENTICATED_USER_KEY);
-  }
+  localStorage.removeItem(AUTHENTICATED_USER_KEY);
+  window.location.reload();
 };
 
 const link = createUploadLink({
