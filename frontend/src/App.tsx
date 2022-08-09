@@ -105,14 +105,6 @@ const App = (): React.ReactElement => {
     hotjar.initialize(HJID, HSJV);
   }, []);
 
-  useEffect(() => {
-    authAPIClient.refresh(refresh).then((response) => {
-      if (!response.valueOf()) {
-        setAuthenticatedUser(null);
-      }
-    });
-  }, [refresh]);
-
   return (
     <ChakraProvider theme={customTheme}>
       <SampleContext.Provider value={sampleContext}>
