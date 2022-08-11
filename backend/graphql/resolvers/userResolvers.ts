@@ -56,6 +56,9 @@ const userResolvers = {
     ): Promise<UserInviteResponse> => {
       return userService.getUserInvite(uuid);
     },
+    getUserInvites: async (): Promise<Array<UserInviteResponse>> => {
+      return userService.getUserInvites();
+    },
     // VolunteerUsers
     volunteerUserById: async (
       _parent: undefined,

@@ -142,6 +142,7 @@ const graphQLMiddlewares = {
     userById: authorizedByAdmin(),
     userByEmail: authorizedByAdmin(),
     users: authorizedByAdmin(),
+    getUserInvites: authorizedByAdmin(),
     shift: authorizedByAdmin(),
     shifts: authorizedByAdmin(),
     shiftsByPosting: authorizedByAllRoles(),

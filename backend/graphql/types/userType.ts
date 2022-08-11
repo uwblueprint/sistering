@@ -94,6 +94,7 @@ const userType = gql`
     uuid: String!
     email: String!
     role: Role!
+    createdAt: DateTime!
   }
 
   input UpdateUserDTO {
@@ -179,6 +180,7 @@ const userType = gql`
     users: [UserDTO!]!
     usersCSV: String!
     getUserInvite(uuid: String!): UserInviteResponse!
+    getUserInvites: [UserInviteResponse!]!
     volunteerUserById(id: ID!): VolunteerUserResponseDTO!
     volunteerUserByEmail(email: String!): VolunteerUserResponseDTO!
     volunteerUsers: [VolunteerUserResponseDTO!]!

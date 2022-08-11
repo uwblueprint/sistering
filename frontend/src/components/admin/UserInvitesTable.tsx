@@ -11,8 +11,11 @@ import {
   Td,
   TableContainer,
   IconButton,
+  useToast,
 } from "@chakra-ui/react";
 import { CloseIcon } from "@chakra-ui/icons";
+import { gql, useMutation } from "@apollo/client";
+
 import { UserInviteDTO } from "../../types/api/UserInviteTypes";
 import {
   formatDateMonthYear,
@@ -24,10 +27,41 @@ type UserInvitesTableProps = {
   invites: UserInviteDTO[];
 };
 
+const DELETE_INVITE = gql`
+  mutation UserInvitesTable_deleteUserInvite($email: String!) {
+    deleteUserInvite(email: $email) {
+      uuid
+    }
+  }
+`;
+
 const UserInvitesTable = ({
   invites,
 }: UserInvitesTableProps): React.ReactElement => {
   const [selectedTab, setSelectedTab] = useState(Role.Volunteer);
+  const toast = useToast();
+
+  const [deleteUserInvite] = useMutation(DELETE_INVITE, {
+    refetchQueries: ["UserInvitesModal_getUserInvites"],
+  });
+  const handleDelete = async (userEmail: string) => {
+    try {
+      await deleteUserInvite({
+        variables: {
+          email: userEmail,
+        },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot delete user invite.",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+  };
+
   return (
     <TableContainer
       border="2px"
@@ -92,6 +126,9 @@ const UserInvitesTable = ({
                       bg: "transparent",
                     }}
                     icon={<CloseIcon color="text.default" boxSize="13px" />}
+                    onClick={async () => {
+                      await handleDelete(invite.email);
+                    }}
                   />
                 </Td>
               </Tr>
