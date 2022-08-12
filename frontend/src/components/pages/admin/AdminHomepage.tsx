@@ -3,6 +3,7 @@ import { Flex, Box, SimpleGrid, useToast } from "@chakra-ui/react";
 import { generatePath, useHistory } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import AuthContext from "../../../contexts/AuthContext";
+import PostingContextDispatcherContext from "../../../contexts/admin/PostingContextDispatcherContext";
 import * as Routes from "../../../constants/Routes";
 
 import Navbar from "../../common/Navbar";
@@ -89,6 +90,7 @@ const filterAdminPosting = (
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
+  const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
   const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
   const [postings, setPostings] = useState<SimplePostingResponseDTO[] | null>(
     null,
@@ -125,6 +127,7 @@ const AdminHomepage = (): React.ReactElement => {
   };
 
   const navigateToEditPosting = (id: string) => {
+    dispatchPostingUpdate({ type: "ADMIN_POSTING_RESET" });
     const route = generatePath(Routes.ADMIN_EDIT_POSTING_PAGE, { id });
     history.push(route);
   };

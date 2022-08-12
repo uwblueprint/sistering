@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useContext, useState } from "react";
 import {
   VStack,
   HStack,
@@ -17,6 +17,8 @@ import {
 import { AddIcon, SearchIcon, SettingsIcon } from "@chakra-ui/icons";
 import { useHistory } from "react-router-dom";
 import BranchManagerModal from "./BranchManagerModal";
+import { ADMIN_CREATE_POSTING_PAGE } from "../../constants/Routes";
+import PostingContextDispatcherContext from "../../contexts/admin/PostingContextDispatcherContext";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 
 type AdminHomepageHeaderProps = {
@@ -40,6 +42,7 @@ const AdminHomepageHeader = ({
 }: AdminHomepageHeaderProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const history = useHistory();
+  const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
 
   return (
     <>
@@ -54,7 +57,12 @@ const AdminHomepageHeader = ({
           <Text textStyle="display-small-semibold">Volunteer Postings</Text>
           <Spacer />
           {isSuperAdmin && (
-            <Button onClick={() => history.push("/admin/posting/create")}>
+            <Button
+              onClick={() => {
+                dispatchPostingUpdate({ type: "ADMIN_POSTING_RESET" });
+                history.push(ADMIN_CREATE_POSTING_PAGE);
+              }}
+            >
               <AddIcon boxSize={3} mr={3} />
               Create new posting
             </Button>
