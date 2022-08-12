@@ -19,6 +19,7 @@ type UserManagementTableProfileCellProps = {
   isVolunteer?: boolean;
   branches: BranchResponseDTO[];
   userBranches: BranchResponseDTO[];
+  refetchUsers: () => void;
 };
 
 const UserManagementTableProfileCell = ({
@@ -36,6 +37,7 @@ const UserManagementTableProfileCell = ({
   skills,
   branches,
   userBranches,
+  refetchUsers,
 }: UserManagementTableProfileCellProps): React.ReactElement => {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
@@ -84,6 +86,7 @@ const UserManagementTableProfileCell = ({
         branches={branches}
         selectedBranches={selectedBranches}
         handleBranchMenuItemClicked={handleBranchMenuItemClicked}
+        refetchUsers={refetchUsers}
       />
     </>
   );

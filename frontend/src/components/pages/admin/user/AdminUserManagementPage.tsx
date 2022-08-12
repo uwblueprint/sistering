@@ -223,7 +223,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
     AdminUserManagementTableTab.Volunteers,
   );
 
-  const { loading, error } = useQuery(USERS, {
+  const { loading, error, refetch } = useQuery(USERS, {
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {
       setAllEmployees(data.employeeUsers);
@@ -382,6 +382,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
               isVolunteer={isVolunteer}
               branches={branches}
               userBranches={userBranches}
+              refetchUsers={refetch}
             />
           );
         },
