@@ -125,7 +125,6 @@ const WeekViewShiftCalendar = ({
         initialDate={initialDate}
         selectConstraint={{ startTime: "0:00", endTime: "24:00" }}
         validRange={{
-          start: startDate,
           end: moment(endDate).add(1, "day").format("YYYY-MM-DD"),
         }}
       />
