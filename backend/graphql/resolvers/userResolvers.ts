@@ -1,8 +1,6 @@
 import nodemailerConfig from "../../nodemailer.config";
-import AuthService from "../../services/implementations/authService";
 import EmailService from "../../services/implementations/emailService";
 import UserService from "../../services/implementations/userService";
-import IAuthService from "../../services/interfaces/authService";
 import IEmailService from "../../services/interfaces/emailService";
 import IUserService from "../../services/interfaces/userService";
 import {
@@ -26,7 +24,6 @@ import {
 
 const userService: IUserService = new UserService();
 const emailService: IEmailService = new EmailService(nodemailerConfig);
-const authService: IAuthService = new AuthService(userService, emailService);
 
 const userResolvers = {
   Query: {
@@ -99,7 +96,6 @@ const userResolvers = {
       { user }: { user: CreateUserDTO },
     ): Promise<UserDTO> => {
       const newUser = await userService.createUser(user);
-      await authService.sendEmailVerificationLink(newUser.email);
       return newUser;
     },
     updateUser: async (
@@ -158,7 +154,6 @@ const userResolvers = {
       const newVolunteerUser = await userService.createVolunteerUser(
         volunteerUser,
       );
-      await authService.sendEmailVerificationLink(newVolunteerUser.email);
       return newVolunteerUser;
     },
 
@@ -194,7 +189,6 @@ const userResolvers = {
       const newEmployeeUser = await userService.createEmployeeUser(
         employeeUser,
       );
-      await authService.sendEmailVerificationLink(newEmployeeUser.email);
       return newEmployeeUser;
     },
 
