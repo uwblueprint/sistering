@@ -416,7 +416,7 @@ const SchedulePostingPage = (): React.ReactElement => {
         isClosable: true,
         variant: "subtle",
         containerStyle: {
-          minWidth: "75vw",
+          minWidth: "72vw",
         },
       });
     }
@@ -458,7 +458,7 @@ const SchedulePostingPage = (): React.ReactElement => {
               })
             )}
           </Box>
-          <Box w="400px" overflow="hidden">
+          <Box width="25vw" overflow="hidden">
             {displayVolunteerSidePanel ? (
               <VolunteerSidePanel
                 onVolunteerProfileClick={handleVolunteerProfileClick}
