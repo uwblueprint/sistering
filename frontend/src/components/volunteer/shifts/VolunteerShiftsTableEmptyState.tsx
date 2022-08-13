@@ -19,7 +19,7 @@ const VolunteerShiftsTableEmptyState = (): React.ReactElement => {
       <Tbody>
         <Tr>
           <Td>
-            <Container maxW="container.xl" minH="90vh">
+            <Container maxW="container.xl" minH="75vh">
               <VStack pt="25%">
                 <Text color="text.gray">No shifts to show</Text>
                 <Button

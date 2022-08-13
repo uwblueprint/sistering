@@ -58,7 +58,7 @@ const VolunteerShiftsPage = (): React.ReactElement => {
         defaultIndex={VolunteerPages.VolunteerShifts}
         tabs={VolunteerNavbarTabs}
       />
-      <Box bg="background.light" p={10} h="100vp">
+      <Box bg="background.light" p={10}>
         <Container
           maxW="container.xl"
           backgroundColor="background.white"
