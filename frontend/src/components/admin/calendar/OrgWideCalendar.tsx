@@ -23,8 +23,12 @@ type AdminOrgCalendarShiftsAndSignupsResponse = {
   shiftsWithSignupsAndVolunteers: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
 };
 
+type PostingId = {
+  id: string;
+};
+
 type AdminOrgCalendarPostings = {
-  postings: string[];
+  postings: PostingId[];
 };
 
 const ADMIN_ORG_CALENDAR_TABLE_DATA_QUERY = gql`
@@ -51,8 +55,8 @@ const ADMIN_ORG_CALENDAR_TABLE_DATA_QUERY = gql`
 `;
 
 const ADMIN_ORG_CALENDAR_POSTINGS = gql`
-  query AdminOrgCalendarPostings {
-    postings {
+  query AdminOrgCalendarPostings($id: ID!) {
+    postings(userId: $id) {
       id
     }
   }
@@ -120,16 +124,13 @@ const OrgWideCalendar = (): React.ReactElement => {
     {
       onCompleted: ({ shiftsWithSignupsAndVolunteers: shiftsData }) => {
         let scheduledShifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[] = [];
-
         scheduledShifts = shiftsData.filter(
           (shift) =>
-            (userPostings.includes(shift.postingId) || isSuperAdmin) &&
+            userPostings.includes(shift.postingId) &&
             shift.signups.length > 0 &&
             shift.signups[0].status === "PUBLISHED",
         );
-
         setShifts(scheduledShifts);
-
         if (shiftsData.length) {
           const firstDay = scheduledShifts[0]?.startTime;
           setSelectedDay(firstDay);
@@ -148,8 +149,9 @@ const OrgWideCalendar = (): React.ReactElement => {
     error: postingsQueryError,
     loading: postingsLoading,
   } = useQuery<AdminOrgCalendarPostings>(ADMIN_ORG_CALENDAR_POSTINGS, {
+    variables: { id: authenticatedUser?.id },
     onCompleted: ({ postings }) => {
-      setUserPostings(postings);
+      setUserPostings(postings.map((posting) => posting.id));
       getShiftsAndSignups();
     },
     fetchPolicy: "no-cache",

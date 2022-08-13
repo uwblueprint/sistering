@@ -139,15 +139,15 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
-                  path={Routes.VOLUNTEER_POSTING_AVAILABILITIES}
-                  authorizedRoles={[Role.Volunteer]}
-                  component={VolunteerPostingAvailabilities}
-                />
-                <PrivateRoute
-                  exact
                   path={Routes.VOLUNTEER_POSTING_DETAILS}
                   authorizedRoles={[Role.Volunteer]}
                   component={VolunteerPostingDetails}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.VOLUNTEER_POSTING_AVAILABILITIES}
+                  authorizedRoles={[Role.Volunteer]}
+                  component={VolunteerPostingAvailabilities}
                 />
                 <PrivateRoute
                   exact
@@ -193,15 +193,15 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
-                  path={Routes.ADMIN_SCHEDULE_POSTING_REVIEW_PAGE}
-                  authorizedRoles={[Role.Admin]}
-                  component={AdminSchedulePostingReviewPage}
-                />
-                <PrivateRoute
-                  exact
                   path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
                   authorizedRoles={[Role.Admin, Role.Employee]}
                   component={SchedulePostingPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.ADMIN_SCHEDULE_POSTING_REVIEW_PAGE}
+                  authorizedRoles={[Role.Admin]}
+                  component={AdminSchedulePostingReviewPage}
                 />
                 <Route exact path="*" component={NotFound} />
               </Switch>
