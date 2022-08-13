@@ -139,15 +139,15 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
-                  path={Routes.VOLUNTEER_POSTING_DETAILS}
-                  authorizedRoles={[Role.Volunteer]}
-                  component={VolunteerPostingDetails}
-                />
-                <PrivateRoute
-                  exact
                   path={Routes.VOLUNTEER_POSTING_AVAILABILITIES}
                   authorizedRoles={[Role.Volunteer]}
                   component={VolunteerPostingAvailabilities}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.VOLUNTEER_POSTING_DETAILS}
+                  authorizedRoles={[Role.Volunteer]}
+                  component={VolunteerPostingDetails}
                 />
                 <PrivateRoute
                   exact
@@ -175,12 +175,6 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
-                  path={Routes.ADMIN_POSTING_DETAILS}
-                  authorizedRoles={[Role.Admin, Role.Employee]}
-                  component={AdminPostingDetails}
-                />
-                <PrivateRoute
-                  exact
                   path={Routes.ADMIN_CREATE_POSTING_PAGE}
                   authorizedRoles={[Role.Admin]}
                   component={CreatePostingPage}
@@ -193,15 +187,21 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
-                  path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
+                  path={Routes.ADMIN_POSTING_DETAILS}
                   authorizedRoles={[Role.Admin, Role.Employee]}
-                  component={SchedulePostingPage}
+                  component={AdminPostingDetails}
                 />
                 <PrivateRoute
                   exact
                   path={Routes.ADMIN_SCHEDULE_POSTING_REVIEW_PAGE}
                   authorizedRoles={[Role.Admin]}
                   component={AdminSchedulePostingReviewPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
+                  authorizedRoles={[Role.Admin, Role.Employee]}
+                  component={SchedulePostingPage}
                 />
                 <Route exact path="*" component={NotFound} />
               </Switch>

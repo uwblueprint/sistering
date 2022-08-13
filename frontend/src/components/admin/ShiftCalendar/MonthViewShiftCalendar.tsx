@@ -39,8 +39,11 @@ const MonthViewShiftCalendar = ({
   useEffect(() => {
     const sortedEventsList = sortEvents(events);
     setSortedEvents(sortedEventsList);
-    if (moment(selectedMonth).diff(moment(new Date(0)), "days") === 0) {
-      setSelectedMonth(getFirstDayOfMonth(sortedEventsList[0]?.start));
+    if (
+      moment(selectedMonth).diff(moment(new Date(0)), "days") === 0 &&
+      sortedEventsList.length > 0
+    ) {
+      setSelectedMonth(getFirstDayOfMonth(sortedEventsList[0].start));
     }
   }, [events, selectedMonth]);
 
