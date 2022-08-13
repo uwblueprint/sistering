@@ -1,4 +1,4 @@
-import { Container, Divider, Text } from "@chakra-ui/react";
+import { Container, Divider, Text, useToast } from "@chakra-ui/react";
 import React, { useState } from "react";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import { useHistory } from "react-router-dom";
@@ -6,7 +6,6 @@ import SignupNavbar from "../common/SignupNavbar";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
 import Loading from "../common/Loading";
-import ErrorModal from "../common/ErrorModal";
 import {
   CreateEmployeeUserDTO,
   CreateVolunteerUserDTO,
@@ -70,6 +69,8 @@ const NewAccountPage = (): React.ReactElement => {
 
   const history = useHistory();
 
+  const toast = useToast();
+
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token");
 
@@ -92,40 +93,79 @@ const NewAccountPage = (): React.ReactElement => {
   if (createEmployeeLoading || createVolunteerLoading) {
     return <Loading />;
   }
-  const isError = createEmployeeError || createVolunteerError;
 
   const onEmployeeCreate = async (employee: CreateEmployeeUserDTO) => {
-    await createEmployee({
-      variables: {
-        employee,
-      },
-    });
-
-    if (!createEmployeeError) {
-      await deleteUserInvite({
+    try {
+      await createEmployee({
         variables: {
-          email: userInvite?.email,
+          employee,
         },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot create employee",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
       });
     }
 
-    if (!deleteUserInviteError) {
-      history.push("/account-created");
+    if (!createEmployeeError) {
+      try {
+        await deleteUserInvite({
+          variables: {
+            email: userInvite?.email,
+          },
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Cannot delete associated user invite",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
+
+      if (!deleteUserInviteError) {
+        history.push("/account-created");
+      }
     }
   };
 
   const onVolunteerCreate = async (volunteer: CreateVolunteerUserDTO) => {
-    await createVolunteer({
-      variables: {
-        volunteer,
-      },
-    });
-
-    if (!createVolunteerError) {
-      await deleteUserInvite({
+    try {
+      await createVolunteer({
         variables: {
-          email: userInvite?.email,
+          volunteer,
         },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot create volunteer",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+
+    try {
+      if (!createVolunteerError) {
+        await deleteUserInvite({
+          variables: {
+            email: userInvite?.email,
+          },
+        });
+      }
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot delete associated user invite",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
       });
     }
 
@@ -137,8 +177,7 @@ const NewAccountPage = (): React.ReactElement => {
   return (
     <>
       <SignupNavbar />
-      {isError && <ErrorModal />}
-      <Container maxW="container.xl" align="left" mt={12}>
+      <Container maxW="container.xl" alignItems="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Account Creation
         </Text>

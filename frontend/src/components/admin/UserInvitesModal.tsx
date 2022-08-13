@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Modal,
   ModalBody,
@@ -8,19 +8,43 @@ import {
   ModalOverlay,
   Text,
 } from "@chakra-ui/react";
+import { gql, useQuery } from "@apollo/client";
 
 import UserInvitesTable from "./UserInvitesTable";
-import { Role } from "../../types/AuthTypes";
+import {
+  UserInviteDTO,
+  UserInvitesQueryResponse,
+} from "../../types/api/UserInviteTypes";
 
 type UserInvitesModalProps = {
   isOpen: boolean;
   onClose(): void;
 };
 
+const INVITES = gql`
+  query UserInvitesModal_getUserInvites {
+    getUserInvites {
+      uuid
+      email
+      role
+      createdAt
+    }
+  }
+`;
+
 const UserInvitesModal = ({
   isOpen,
   onClose,
 }: UserInvitesModalProps): React.ReactElement => {
+  const [userInvites, setUserInvites] = useState<UserInviteDTO[]>([]);
+
+  useQuery<UserInvitesQueryResponse>(INVITES, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setUserInvites(data.getUserInvites);
+    },
+  });
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
@@ -31,23 +55,7 @@ const UserInvitesModal = ({
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody overflow="auto">
-            <UserInvitesTable
-              invites={[
-                // TODO: populate with invitations query
-                {
-                  email: "admin@email",
-                  createdAt: new Date(),
-                  role: Role.Admin,
-                  uuid: "uuid",
-                },
-                {
-                  email: "volunteer@email",
-                  createdAt: new Date(),
-                  role: Role.Volunteer,
-                  uuid: "uuid",
-                },
-              ]}
-            />
+            <UserInvitesTable invites={userInvites} />
           </ModalBody>
         </ModalContent>
       </Modal>

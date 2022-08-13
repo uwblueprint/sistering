@@ -1,6 +1,8 @@
 import React, { useContext } from "react";
 import { gql, useMutation } from "@apollo/client";
 
+import { useToast } from "@chakra-ui/react";
+
 import authAPIClient from "../../APIClients/AuthAPIClient";
 import AuthContext from "../../contexts/AuthContext";
 
@@ -14,14 +16,24 @@ const Logout = (): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
 
   const [logout] = useMutation<{ logout: null }>(LOGOUT);
-
+  const toast = useToast();
   const onLogOutClick = async () => {
-    const success = await authAPIClient.logout(
-      String(authenticatedUser?.id),
-      logout,
-    );
-    if (success) {
-      setAuthenticatedUser(null);
+    try {
+      const success = await authAPIClient.logout(
+        String(authenticatedUser?.id),
+        logout,
+      );
+      if (success) {
+        setAuthenticatedUser(null);
+      }
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot logout",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 

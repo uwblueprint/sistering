@@ -137,32 +137,34 @@ const authorizedByAdminAndEmployee = () =>
 
 const graphQLMiddlewares = {
   Query: {
-    entity: authorizedByAllRoles(),
-    entities: authorizedByAllRoles(),
+    entity: authorizedByAllRoles(), // !DEPRECATED
+    entities: authorizedByAllRoles(), // !DEPRECATED
     userById: authorizedByAdmin(),
     userByEmail: authorizedByAdmin(),
     users: authorizedByAdmin(),
+    getUserInvites: authorizedByAdmin(),
     shift: authorizedByAdmin(),
     shifts: authorizedByAdmin(),
-    shiftsByPosting: authorizedByAdminAndVolunteer(),
+    shiftsByPosting: authorizedByAllRoles(),
     shiftsWithSignupsAndVolunteersByPosting: authorizedByAllRoles(),
     posting: authorizedByAllRoles(),
-    postings: authorizedByAdminAndVolunteer(),
+    postings: authorizedByAllRoles(),
     volunteerUserById: authorizedByAdminAndVolunteer(),
     volunteerUserByEmail: authorizedByAdminAndVolunteer(),
     volunteerUsers: authorizedByAdmin(),
     employeeUserById: authorizedByAdminAndEmployee(),
     employeeUserByEmail: authorizedByAdminAndEmployee(),
     employeeUsers: authorizedByAdmin(),
-    branch: authorizedByAdmin(),
-    branches: authorizedByAdmin(),
+    branch: authorizedByAdminAndEmployee(),
+    branches: authorizedByAdminAndEmployee(),
     getShiftSignupsForUser: authorizedByAdminAndVolunteer(),
     getShiftSignupsForPosting: authorizedByAdmin(),
   },
   Mutation: {
-    createEntity: authorizedByAllRoles(),
-    updateEntity: authorizedByAllRoles(),
-    deleteEntity: authorizedByAllRoles(),
+    createEntity: authorizedByAllRoles(), // !DEPRECATED
+    updateEntity: authorizedByAllRoles(), // !DEPRECATED
+    deleteEntity: authorizedByAllRoles(), // !DEPRECATED
+    register: authorizedByAdmin(), // !DEPRECATED
     createUser: authorizedByAdmin(),
     updateUser: authorizedByAdmin(),
     deleteUserById: authorizedByAdmin(),

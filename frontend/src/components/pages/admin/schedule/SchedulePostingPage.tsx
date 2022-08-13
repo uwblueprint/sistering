@@ -1,6 +1,6 @@
-import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
+import { Flex, Box, Text, Button, Spacer, useToast } from "@chakra-ui/react";
 import React, { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
 
@@ -13,7 +13,11 @@ import {
   UpsertSignupDTO,
 } from "../../../../types/api/SignupTypes";
 import Navbar from "../../../common/Navbar";
-import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
+import {
+  AdminNavbarTabs,
+  AdminPages,
+  EmployeeNavbarTabs,
+} from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
 import ErrorModal from "../../../common/ErrorModal";
@@ -22,11 +26,16 @@ import AdminScheduleTable from "../../../admin/schedule/AdminScheduleTable";
 import ScheduleSidePanel from "../../../admin/schedule/ScheduleSidePanel";
 import VolunteerSidePanel from "../../../admin/schedule/volunteersidepanel/VolunteerSidePanel";
 import Loading from "../../../common/Loading";
-import { getUTCDateForDateTimeString } from "../../../../utils/DateTimeUtils";
+import {
+  getUTCDateForDateTimeString,
+  isPast,
+} from "../../../../utils/DateTimeUtils";
 import AuthContext from "../../../../contexts/AuthContext";
 import { Role } from "../../../../types/AuthTypes";
 import { getPostingFilterStatusBySignupStatuses } from "../../../../utils/TypeUtils";
 import { PostingFilterStatus } from "../../../../types/PostingTypes";
+import { ADMIN_HOMEPAGE } from "../../../../constants/Routes";
+import { PostingDataQueryResponse } from "../../../../types/api/PostingTypes";
 
 type AdminScheduleTableDataQueryResponse = {
   shiftsWithSignupsAndVolunteersByPosting: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
@@ -99,6 +108,8 @@ const POSTING = gql`
   }
 `;
 
+const CLOSING_DATE_NOT_PASSED_TOAST_ID = "closing-date-not-passed";
+
 const ShiftScheduleCalendar = ({
   shifts,
   onDayClick,
@@ -127,8 +138,12 @@ const ShiftScheduleCalendar = ({
   );
 
 const SchedulePostingPage = (): React.ReactElement => {
+  const toast = useToast();
+  const history = useHistory();
   const { id } = useParams<{ id: string }>();
   const { authenticatedUser } = useContext(AuthContext);
+  const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
+
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -145,10 +160,9 @@ const SchedulePostingPage = (): React.ReactElement => {
   const [currentView, setCurrentView] = useState<AdminScheduleViews>(
     AdminScheduleViews.CalendarView,
   );
-  const [
-    submitSignups,
-    { loading: submitSignupsLoading, error: submitSignupsError },
-  ] = useMutation(SUBMIT_SIGNUPS);
+  const [submitSignups, { loading: submitSignupsLoading }] = useMutation(
+    SUBMIT_SIGNUPS,
+  );
   const [sidePanelShifts, setSidePanelShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -197,7 +211,7 @@ const SchedulePostingPage = (): React.ReactElement => {
     error: postingError,
     loading: postingLoading,
     data: { posting: postingDetails } = {},
-  } = useQuery(POSTING, {
+  } = useQuery<PostingDataQueryResponse>(POSTING, {
     variables: { id },
     fetchPolicy: "cache-and-network",
   });
@@ -290,20 +304,30 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
-    await submitSignups({
-      variables: {
-        upsertDeleteShifts: {
-          upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
-            shiftId: currentlyEditingShift.id,
-            userId: signup.volunteer.id,
-            note: signup.note,
-            numVolunteers: signup.numVolunteers,
-            status: signup.status,
-          })),
-          deleteShiftSignups: [],
+    try {
+      await submitSignups({
+        variables: {
+          upsertDeleteShifts: {
+            upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
+              shiftId: currentlyEditingShift.id,
+              userId: signup.volunteer.id,
+              note: signup.note,
+              numVolunteers: signup.numVolunteers,
+              status: signup.status,
+            })),
+            deleteShiftSignups: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot submit signups",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
 
     const shiftsCopy = cloneDeep(shifts);
     const shiftIndex = shiftsCopy.findIndex(
@@ -335,7 +359,7 @@ const SchedulePostingPage = (): React.ReactElement => {
     );
 
     if (publishedSignups.length) {
-      await submitSignups({
+      const response = await submitSignups({
         variables: {
           upsertDeleteShifts: {
             upsertShiftSignups: publishedSignups,
@@ -343,6 +367,17 @@ const SchedulePostingPage = (): React.ReactElement => {
           },
         },
       });
+
+      if (response.errors == null) {
+        toast({
+          title: "Schedule Published",
+          description: "Schedule has been published to volunteers.",
+          status: "success",
+          duration: 9000,
+          isClosable: true,
+        });
+        history.push(ADMIN_HOMEPAGE);
+      }
     }
 
     setShifts(shiftsCopy);
@@ -350,7 +385,8 @@ const SchedulePostingPage = (): React.ReactElement => {
   };
 
   const isReadOnly =
-    (authenticatedUser && authenticatedUser.role !== Role.Admin) ||
+    postingDetails === undefined ||
+    (authenticatedUser && !isSuperAdmin) ||
     getPostingFilterStatusBySignupStatuses(
       postingDetails?.status,
       new Date(postingDetails?.endDate),
@@ -359,6 +395,10 @@ const SchedulePostingPage = (): React.ReactElement => {
       ),
     ) === PostingFilterStatus.PAST;
 
+  const isPostingClosed =
+    postingDetails === undefined ||
+    isPast(new Date(postingDetails.autoClosingDate));
+
   useEffect(() => {
     return () => {
       setVolunteerId("");
@@ -366,14 +406,38 @@ const SchedulePostingPage = (): React.ReactElement => {
     };
   }, []);
 
+  useEffect(() => {
+    if (
+      !isPostingClosed &&
+      postingDetails !== undefined &&
+      !toast.isActive(CLOSING_DATE_NOT_PASSED_TOAST_ID)
+    ) {
+      toast({
+        id: CLOSING_DATE_NOT_PASSED_TOAST_ID,
+        title:
+          "Changes to this page cannot be made until posting closing date has passed",
+        status: "error",
+        position: "bottom-left",
+        duration: 10000,
+        isClosable: true,
+        variant: "subtle",
+        containerStyle: {
+          minWidth: "72vw",
+        },
+      });
+    }
+  }, [isPostingClosed, postingDetails, toast]);
+
+  if (postingLoading || postingDetails === undefined) {
+    return <Loading />;
+  }
+
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
-      {(tableDataQueryError || submitSignupsError || postingError) && (
-        <ErrorModal />
-      )}
+      {(tableDataQueryError || postingError) && <ErrorModal />}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
-        tabs={AdminNavbarTabs}
+        tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}
       />
       {currentView === AdminScheduleViews.CalendarView ? (
         <Flex>
@@ -388,6 +452,7 @@ const SchedulePostingPage = (): React.ReactElement => {
                 setCurrentView(AdminScheduleViews.ReviewView)
               }
               isReadOnly={isReadOnly}
+              isNotOpenForReview={!isPostingClosed}
             />
             {tableDataLoading || postingLoading ? (
               <Loading />
@@ -399,7 +464,7 @@ const SchedulePostingPage = (): React.ReactElement => {
               })
             )}
           </Box>
-          <Box w="400px" overflow="hidden">
+          <Box width="25vw" overflow="hidden">
             {displayVolunteerSidePanel ? (
               <VolunteerSidePanel
                 onVolunteerProfileClick={handleVolunteerProfileClick}
@@ -417,6 +482,7 @@ const SchedulePostingPage = (): React.ReactElement => {
                 selectedShift={selectedShift}
                 setSelectedShift={setSelectedShift}
                 isReadOnly={isReadOnly}
+                isNotOpenForReview={!isPostingClosed}
                 onVolunteerProfileClick={handleVolunteerProfileClick}
               />
             )}
@@ -446,8 +512,8 @@ const SchedulePostingPage = (): React.ReactElement => {
           </Flex>
           {shifts.length > 0 && (
             <AdminScheduleTable
-              startDate={postingDetails?.startDate}
-              endDate={postingDetails?.endDate}
+              startDate={new Date(postingDetails.startDate)}
+              endDate={new Date(postingDetails.endDate)}
               shifts={shifts.sort()}
               removeSignup={removeSignup}
             />

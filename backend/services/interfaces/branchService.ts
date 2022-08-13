@@ -42,6 +42,30 @@ interface IBranchService {
    * @throws Error if branch deletion fails
    */
   deleteBranch(branchId: string): Promise<string>;
+
+  /**
+   * Update branches of a user by their email.
+   * @param email user's email
+   * @param branchIds the new branches associated with the user
+   * @returns id of updated user
+   * @throws Error if branch update fails
+   */
+  updateUserBranchesByEmail(
+    email: string,
+    branchIds: string[],
+  ): Promise<number>;
+
+  /**
+   * Append branches of multiple users by their email.
+   * @param emails users' email
+   * @param branchIds the new branches to add for the users
+   * @returns whether operation successful
+   * @throws Error if branch update fails
+   */
+  appendBranchesForMultipleUsersByEmail(
+    emails: string[],
+    branchIds: string[],
+  ): Promise<boolean>;
 }
 
 export default IBranchService;

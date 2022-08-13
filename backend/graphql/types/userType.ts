@@ -23,6 +23,8 @@ const userType = gql`
     lastName: String!
     email: String!
     role: Role!
+    dateOfBirth: Date
+    pronouns: String!
   }
 
   type VolunteerUserResponseDTO {
@@ -37,7 +39,7 @@ const userType = gql`
     emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     skills: [SkillResponseDTO!]!
     branches: [BranchResponseDTO!]!
     languages: [Language]!
@@ -54,7 +56,7 @@ const userType = gql`
     emergencyContactEmail: String
     hireDate: Date
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     languages: [Language]!
   }
 
@@ -68,6 +70,8 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
+    dateOfBirth: Date
+    pronouns: String!
     branches: [BranchResponseDTO!]!
     languages: [Language]!
   }
@@ -82,12 +86,15 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
+    dateOfBirth: Date
+    pronouns: String!
   }
 
   type UserInviteResponse {
     uuid: String!
     email: String!
     role: Role!
+    createdAt: DateTime!
   }
 
   input UpdateUserDTO {
@@ -99,6 +106,8 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
+    dateOfBirth: Date
+    pronouns: String!
   }
 
   input CreateVolunteerUserDTO {
@@ -112,7 +121,7 @@ const userType = gql`
     password: String!
     hireDate: Date!
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     skills: [ID!]!
     branches: [ID!]!
     languages: [Language]!
@@ -129,7 +138,7 @@ const userType = gql`
     emergencyContactEmail: String
     hireDate: Date!
     dateOfBirth: Date
-    pronouns: String
+    pronouns: String!
     skills: [ID!]!
     branches: [ID!]!
     languages: [Language]!
@@ -143,6 +152,8 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
+    dateOfBirth: Date
+    pronouns: String!
     password: String!
     branches: [ID!]!
     languages: [Language]!
@@ -157,6 +168,8 @@ const userType = gql`
     emergencyContactName: String
     emergencyContactPhone: String
     emergencyContactEmail: String
+    dateOfBirth: Date
+    pronouns: String!
     branches: [ID!]!
     languages: [Language]!
   }
@@ -167,6 +180,7 @@ const userType = gql`
     users: [UserDTO!]!
     usersCSV: String!
     getUserInvite(uuid: String!): UserInviteResponse!
+    getUserInvites: [UserInviteResponse!]!
     volunteerUserById(id: ID!): VolunteerUserResponseDTO!
     volunteerUserByEmail(email: String!): VolunteerUserResponseDTO!
     volunteerUsers: [VolunteerUserResponseDTO!]!

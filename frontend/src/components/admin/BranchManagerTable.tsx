@@ -9,12 +9,12 @@ import {
   Tag,
   IconButton,
   useBoolean,
+  useToast,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
-import ErrorModal from "../common/ErrorModal";
 
 type BranchManagerTableProps = {
   branches: BranchResponseDTO[];
@@ -47,50 +47,64 @@ const BranchManagerTable = ({
     setSelectedBranch,
   ] = useState<BranchResponseDTO | null>(null);
 
-  const [updateBranch, { error: updateBranchError }] = useMutation(
-    UPDATE_BRANCH,
-    {
-      refetchQueries: [
-        "BranchManagerModal_Branches",
-        "AdminHomepageHeader_Branches",
-      ],
-    },
-  );
+  const toast = useToast();
+  const [updateBranch] = useMutation(UPDATE_BRANCH, {
+    refetchQueries: [
+      "BranchManagerModal_Branches",
+      "AdminHomepageHeader_Branches",
+    ],
+  });
 
-  const [deleteBranch, { error: deleteBranchError }] = useMutation(
-    DELETE_BRANCH,
-    {
-      refetchQueries: [
-        "BranchManagerModal_Branches",
-        "AdminHomepageHeader_Branches",
-      ],
-    },
-  );
+  const [deleteBranch] = useMutation(DELETE_BRANCH, {
+    refetchQueries: [
+      "BranchManagerModal_Branches",
+      "AdminHomepageHeader_Branches",
+    ],
+  });
 
   const handleBranchUpdate = async (branchName: string) => {
     if (selectedBranch) {
-      await updateBranch({
-        variables: {
-          id: selectedBranch.id,
-          branch: { name: branchName },
-        },
-      });
+      try {
+        await updateBranch({
+          variables: {
+            id: selectedBranch.id,
+            branch: { name: branchName },
+          },
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Cannot update branch",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     }
   };
 
   const handleBranchDelete = async () => {
     if (selectedBranch) {
-      await deleteBranch({
-        variables: {
-          id: selectedBranch.id,
-        },
-      });
+      try {
+        await deleteBranch({
+          variables: {
+            id: selectedBranch.id,
+          },
+        });
+      } catch (error: unknown) {
+        toast({
+          title: "Cannot delete branch",
+          description: `${error}`,
+          status: "error",
+          duration: 9000,
+          isClosable: true,
+        });
+      }
     }
   };
 
   return (
     <>
-      {(updateBranchError || deleteBranchError) && <ErrorModal />}
       <EditModal
         title="Edit Branch Name"
         isOpen={isEditModalOpen}

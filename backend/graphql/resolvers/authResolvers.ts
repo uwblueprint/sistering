@@ -43,7 +43,6 @@ const authResolvers = {
         user.password,
       );
       const { refreshToken, ...rest } = authDTO;
-      await authService.sendEmailVerificationLink(user.email);
       res.cookie("refreshToken", refreshToken, cookieOptions);
       return rest;
     },

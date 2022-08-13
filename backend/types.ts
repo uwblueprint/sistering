@@ -17,6 +17,7 @@ export type UserInviteResponse = {
   email: string;
   role: Role;
   uuid: string;
+  createdAt: Date;
 };
 
 export type UserDTO = {
@@ -30,6 +31,8 @@ export type UserDTO = {
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
   emergencyContactEmail: string | null;
+  dateOfBirth: Date | null;
+  pronouns: string;
 };
 
 export type PostingDTO = {
@@ -64,8 +67,6 @@ export type PostingResponseDTO = Omit<
 export type VolunteerDTO = {
   id: string;
   hireDate: Date;
-  dateOfBirth: Date | null;
-  pronouns: string | null;
   skills: SkillResponseDTO[];
   branches: BranchResponseDTO[];
 };

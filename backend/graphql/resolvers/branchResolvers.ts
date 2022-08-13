@@ -36,6 +36,21 @@ const branchResolvers = {
     ): Promise<string> => {
       return branchService.deleteBranch(id);
     },
+    updateUserBranchesByEmail: async (
+      _parent: undefined,
+      { email, branchIds }: { email: string; branchIds: string[] },
+    ): Promise<number> => {
+      return branchService.updateUserBranchesByEmail(email, branchIds);
+    },
+    appendBranchesForMultipleUsersByEmail: async (
+      _parent: undefined,
+      { emails, branchIds }: { emails: string[]; branchIds: string[] },
+    ): Promise<boolean> => {
+      return branchService.appendBranchesForMultipleUsersByEmail(
+        emails,
+        branchIds,
+      );
+    },
   },
 };
 

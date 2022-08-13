@@ -12,6 +12,8 @@ import {
   MenuButton,
   MenuList,
   MenuItem,
+  Link,
+  useToast,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
@@ -39,14 +41,25 @@ const LOGOUT = gql`
 const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
   const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
   const [logout] = useMutation<{ logout: null }>(LOGOUT);
+  const toast = useToast();
 
   const onLogOutClick = async () => {
-    const success = await authAPIClient.logout(
-      String(authenticatedUser?.id),
-      logout,
-    );
-    if (success) {
-      setAuthenticatedUser(null);
+    try {
+      const success = await authAPIClient.logout(
+        String(authenticatedUser?.id),
+        logout,
+      );
+      if (success) {
+        setAuthenticatedUser(null);
+      }
+    } catch (error: unknown) {
+      toast({
+        title: "Unable to logout",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
     }
   };
 
@@ -60,7 +73,13 @@ const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
   return (
     <Box px="90px" boxShadow="md">
       <Flex h="80px" alignItems="center" justifyContent="space-between">
-        <Image src={Sistering_Logo} alt="Sistering logo" h={14} />
+        <Link
+          href="/"
+          _focus={{ boxShadow: "none" }}
+          _hover={{ transform: "scale(1.1)" }}
+        >
+          <Image src={Sistering_Logo} alt="Sistering logo" h={14} />
+        </Link>
         <Tabs defaultIndex={defaultIndex} alignSelf="flex-end">
           <TabList>
             {tabs.map((tab) => (
