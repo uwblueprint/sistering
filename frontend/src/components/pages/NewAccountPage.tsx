@@ -178,7 +178,7 @@ const NewAccountPage = (): React.ReactElement => {
   return (
     <>
       <SignupNavbar />
-      <Container maxW="container.xl" align="left" mt={12}>
+      <Container maxW="container.xl" alignItems="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Account Creation
         </Text>

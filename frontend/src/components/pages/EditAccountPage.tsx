@@ -108,35 +108,35 @@ const EditAccountPage = (): React.ReactElement => {
     },
   );
 
-  const [
-    editEmployee,
-    { loading: editEmployeeLoading, error: editEmployeeError },
-  ] = useMutation(UPDATE_EMPLOYEE_USER, {
-    refetchQueries: () => [
-      {
-        query: EMPLOYEE_BY_ID,
-        variables: {
-          id: authenticatedUser?.id,
+  const [editEmployee, { loading: editEmployeeLoading }] = useMutation(
+    UPDATE_EMPLOYEE_USER,
+    {
+      refetchQueries: () => [
+        {
+          query: EMPLOYEE_BY_ID,
+          variables: {
+            id: authenticatedUser?.id,
+          },
         },
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
+      ],
+      awaitRefetchQueries: true,
+    },
+  );
 
-  const [
-    editVolunteer,
-    { loading: editVolunteerLoading, error: editVolunteerError },
-  ] = useMutation(UPDATE_VOLUNTEER_USER, {
-    refetchQueries: () => [
-      {
-        query: VOLUNTEER_BY_ID,
-        variables: {
-          id: authenticatedUser?.id,
+  const [editVolunteer, { loading: editVolunteerLoading }] = useMutation(
+    UPDATE_VOLUNTEER_USER,
+    {
+      refetchQueries: () => [
+        {
+          query: VOLUNTEER_BY_ID,
+          variables: {
+            id: authenticatedUser?.id,
+          },
         },
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
+      ],
+      awaitRefetchQueries: true,
+    },
+  );
 
   if (editEmployeeLoading || editVolunteerLoading) {
     return <Loading />;
@@ -186,7 +186,7 @@ const EditAccountPage = (): React.ReactElement => {
   return (
     <>
       <SignupNavbar />
-      <Container maxW="container.xl" align="left" mt={12}>
+      <Container maxW="container.xl" alignItems="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Edit Profile
         </Text>

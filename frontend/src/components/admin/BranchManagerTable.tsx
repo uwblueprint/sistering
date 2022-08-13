@@ -48,25 +48,19 @@ const BranchManagerTable = ({
   ] = useState<BranchResponseDTO | null>(null);
 
   const toast = useToast();
-  const [updateBranch, { error: updateBranchError }] = useMutation(
-    UPDATE_BRANCH,
-    {
-      refetchQueries: [
-        "BranchManagerModal_Branches",
-        "AdminHomepageHeader_Branches",
-      ],
-    },
-  );
+  const [updateBranch] = useMutation(UPDATE_BRANCH, {
+    refetchQueries: [
+      "BranchManagerModal_Branches",
+      "AdminHomepageHeader_Branches",
+    ],
+  });
 
-  const [deleteBranch, { error: deleteBranchError }] = useMutation(
-    DELETE_BRANCH,
-    {
-      refetchQueries: [
-        "BranchManagerModal_Branches",
-        "AdminHomepageHeader_Branches",
-      ],
-    },
-  );
+  const [deleteBranch] = useMutation(DELETE_BRANCH, {
+    refetchQueries: [
+      "BranchManagerModal_Branches",
+      "AdminHomepageHeader_Branches",
+    ],
+  });
 
   const handleBranchUpdate = async (branchName: string) => {
     if (selectedBranch) {
