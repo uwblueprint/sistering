@@ -10,13 +10,19 @@ import {
   LANGUAGES,
 } from "../../types/api/UserType";
 import Loading from "../common/Loading";
-import SignupNavbar from "../common/SignupNavbar";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
 
 import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 import getTitleCaseForOneWord from "../../utils/StringUtils";
+import Navbar from "../common/Navbar";
+import {
+  AdminNavbarTabs,
+  AdminPages,
+  EmployeeNavbarTabs,
+  VolunteerNavbarTabs,
+} from "../../constants/Tabs";
 
 const EMPLOYEE_BY_ID = gql`
   query EmployeeUserById($id: ID!) {
@@ -84,6 +90,7 @@ const UPDATE_VOLUNTEER_USER = gql`
 `;
 const EditAccountPage = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
+  const [userRole] = useState(authenticatedUser?.role);
 
   const [key, setKey] = useState<number>(0); // Used to force a re-render
   const [user, setUser] = useState<
@@ -185,7 +192,17 @@ const EditAccountPage = (): React.ReactElement => {
 
   return (
     <>
-      <SignupNavbar />
+      <Navbar
+        defaultIndex={Number(AdminPages.AdminSchedulePosting)}
+        tabs={
+          // eslint-disable-next-line no-nested-ternary
+          userRole === Role.Admin
+            ? AdminNavbarTabs
+            : userRole === Role.Employee
+            ? EmployeeNavbarTabs
+            : VolunteerNavbarTabs
+        }
+      />
       <Container maxW="container.xl" alignItems="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Edit Profile
