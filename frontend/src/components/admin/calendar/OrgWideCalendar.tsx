@@ -195,7 +195,7 @@ const OrgWideCalendar = (): React.ReactElement => {
   } = useQuery<AdminOrgCalendarPostings>(ADMIN_ORG_CALENDAR_POSTINGS, {
     variables: { id: authenticatedUser?.id },
     onCompleted: ({ postings }) => {
-      setUserPostings(postings);
+      setUserPostings(postings.map((posting) => posting.id));
       getShiftsAndSignups();
     },
     fetchPolicy: "no-cache",
