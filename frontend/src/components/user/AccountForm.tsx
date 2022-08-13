@@ -389,21 +389,26 @@ const AccountForm = ({
                 isRequired
               />
               {/* Volunteer fields */}
-              {!isAdmin && (
-                <SelectorField
-                  id="skills"
-                  label="Skills"
-                  values={values.skills}
-                  options={skills}
-                  placeholder="Select Skills"
-                  tooltip={<Text>Search and select skills you have.</Text>}
-                  onSelect={(skill) =>
-                    selectSkill(skill, values.skills, setFieldValue)
-                  }
-                  onDeselect={(skill) =>
-                    deselectSkill(skill, values.skills, setFieldValue)
-                  }
-                />
+              {!isAdmin ? (
+                <>
+                  <Box />
+                  <SelectorField
+                    id="skills"
+                    label="Skills"
+                    values={values.skills}
+                    options={skills}
+                    placeholder="Select Skills"
+                    tooltip={<Text>Search and select skills you have.</Text>}
+                    onSelect={(skill) =>
+                      selectSkill(skill, values.skills, setFieldValue)
+                    }
+                    onDeselect={(skill) =>
+                      deselectSkill(skill, values.skills, setFieldValue)
+                    }
+                  />
+                </>
+              ) : (
+                <Box />
               )}
               <SelectorField
                 id="languages"
