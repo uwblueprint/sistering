@@ -22,13 +22,8 @@ const REFRESH_MUTATION = `
     refresh
   }
 `;
-const LOGOUT = `
-  mutation Index_Logout($userId: ID!) {
-    logout(userId: $userId)
-  }
-`;
 
-const logout = async (userId: string) => {
+const logout = async () => {
   localStorage.removeItem(AUTHENTICATED_USER_KEY);
   window.location.reload();
 };
@@ -69,9 +64,7 @@ const authLink = setContext(async (_, { headers }) => {
         );
         token = accessToken;
       } catch {
-        await logout(
-          String(getLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "id")),
-        );
+        await logout();
       }
     }
   }
