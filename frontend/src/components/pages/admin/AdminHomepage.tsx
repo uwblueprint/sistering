@@ -1,8 +1,9 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Flex, Box, SimpleGrid } from "@chakra-ui/react";
+import { Flex, Box, SimpleGrid, useToast } from "@chakra-ui/react";
 import { generatePath, useHistory } from "react-router-dom";
 import { gql, useMutation, useQuery } from "@apollo/client";
 import AuthContext from "../../../contexts/AuthContext";
+import PostingContextDispatcherContext from "../../../contexts/admin/PostingContextDispatcherContext";
 import * as Routes from "../../../constants/Routes";
 
 import Navbar from "../../common/Navbar";
@@ -10,7 +11,11 @@ import AdminHomepageHeader from "../../admin/AdminHomepageHeader";
 import AdminPostingCard from "../../admin/AdminPostingCard";
 import Loading from "../../common/Loading";
 import ErrorModal from "../../common/ErrorModal";
-import { AdminNavbarTabs, AdminPages } from "../../../constants/Tabs";
+import {
+  AdminNavbarTabs,
+  AdminPages,
+  EmployeeNavbarTabs,
+} from "../../../constants/Tabs";
 import { Role } from "../../../types/AuthTypes";
 import { PostingResponseDTO } from "../../../types/api/PostingTypes";
 import { getPostingFilterStatus } from "../../../utils/TypeUtils";
@@ -82,10 +87,11 @@ const filterAdminPosting = (
   );
 };
 
-// TODO: hook up edit - do I need to create a new page? - we can probably follow up on this ticket
 const AdminHomepage = (): React.ReactElement => {
   const history = useHistory();
   const { authenticatedUser } = useContext(AuthContext);
+  const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
+  const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
   const [postings, setPostings] = useState<SimplePostingResponseDTO[] | null>(
     null,
   );
@@ -97,7 +103,9 @@ const AdminHomepage = (): React.ReactElement => {
     [], // past => 2
     [], // drafts => 3
   ]);
-  const [postingStatusIndex, setPostingStatusIndex] = useState<number>(0); // refer to above for index
+  const [postingStatusIndex, setPostingStatusIndex] = useState<number>(
+    isSuperAdmin ? 0 : 1,
+  ); // refer to above for index
   const [searchFilter, setSearchFilter] = useState<string>("");
   const [branches, setBranches] = useState<BranchResponseDTO[]>([]);
   const [branchFilter, setBranchFilter] = useState<
@@ -111,13 +119,21 @@ const AdminHomepage = (): React.ReactElement => {
     },
   });
 
+  const toast = useToast();
+
   const navigateToAdminSchedule = (id: string) => {
     const route = generatePath(Routes.ADMIN_SCHEDULE_POSTING_PAGE, { id });
     history.push(route);
   };
 
   const navigateToEditPosting = (id: string) => {
+    dispatchPostingUpdate({ type: "ADMIN_POSTING_RESET" });
     const route = generatePath(Routes.ADMIN_EDIT_POSTING_PAGE, { id });
+    history.push(route);
+  };
+
+  const navigateToPostingDetails = (id: string) => {
+    const route = generatePath(Routes.ADMIN_POSTING_DETAILS, { id });
     history.push(route);
   };
 
@@ -147,19 +163,39 @@ const AdminHomepage = (): React.ReactElement => {
   });
 
   const duplicatePostingById = async (postingId: string) => {
-    await duplicatePosting({
-      variables: {
-        postingId,
-      },
-    });
+    try {
+      await duplicatePosting({
+        variables: {
+          postingId,
+        },
+      });
+    } catch (err: unknown) {
+      toast({
+        title: "Cannot duplicate posting",
+        description: `${err}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   const deletePostingById = async (postingId: string) => {
-    await deletePosting({
-      variables: {
-        postingId,
-      },
-    });
+    try {
+      await deletePosting({
+        variables: {
+          postingId,
+        },
+      });
+    } catch (err: unknown) {
+      toast({
+        title: "Cannot delete posting",
+        description: `${err}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
 
   // update postingsByStatus 2d array
@@ -192,10 +228,10 @@ const AdminHomepage = (): React.ReactElement => {
       <Flex flexFlow="column" width="100%" height="100vh">
         <Navbar
           defaultIndex={Number(AdminPages.AdminSchedulePosting)}
-          tabs={AdminNavbarTabs}
+          tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}
         />
         <AdminHomepageHeader
-          isSuperAdmin={authenticatedUser?.role === Role.Admin}
+          isSuperAdmin={isSuperAdmin}
           selectStatusTab={setPostingStatusIndex}
           postingStatusNums={postingsByStatus.map(
             (postingsArr) => postingsArr.length,
@@ -243,6 +279,9 @@ const AdminHomepage = (): React.ReactElement => {
                       }
                       navigateToEditPosting={() =>
                         navigateToEditPosting(posting.id)
+                      }
+                      navigateToPostingDetails={() =>
+                        navigateToPostingDetails(posting.id)
                       }
                       onDuplicate={() => duplicatePostingById(posting.id)}
                       onDelete={() => deletePostingById(posting.id)}

@@ -88,35 +88,6 @@ class AuthService implements IAuthService {
     }
   }
 
-  async sendEmailVerificationLink(email: string): Promise<void> {
-    if (!this.emailService) {
-      const errorMessage =
-        "Attempted to call sendEmailVerificationLink but this instance of AuthService does not have an EmailService instance";
-      Logger.error(errorMessage);
-      throw new Error(errorMessage);
-    }
-
-    try {
-      const emailVerificationLink = await firebaseAdmin
-        .auth()
-        .generateEmailVerificationLink(email);
-      const emailBody = `
-      Hello,
-      <br><br>
-      Please click the following link to verify your email and activate your account.
-      <strong>This link is only valid for 1 hour.</strong>
-      <br><br>
-      <a href=${emailVerificationLink}>Verify email</a>`;
-
-      this.emailService.sendEmail(email, "Verify your email", emailBody);
-    } catch (error: unknown) {
-      Logger.error(
-        `Failed to generate email verification link for user with email ${email}`,
-      );
-      throw error;
-    }
-  }
-
   async isAuthorizedByRole(
     accessToken: string,
     roles: Set<Role>,

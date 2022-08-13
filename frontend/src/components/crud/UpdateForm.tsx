@@ -3,6 +3,8 @@ import { JSONSchema7 } from "json-schema";
 import { Form } from "@rjsf/bootstrap-4";
 import { gql, useMutation } from "@apollo/client";
 
+import { useToast } from "@chakra-ui/react";
+
 import {
   EntityRequest,
   EntityResponse,
@@ -86,6 +88,7 @@ const UpdateForm = (): React.ReactElement => {
   const [data, setData] = useState<EntityResponse | null>(null);
   const [fileField, setFileField] = useState<File | null>(null);
   const [formFields, setFormFields] = useState<EntityRequest | null>(null);
+  const toast = useToast();
 
   const [updateEntity] = useMutation<{ updateEntity: EntityResponse }>(
     UPDATE_ENTITY,
@@ -110,16 +113,27 @@ const UpdateForm = (): React.ReactElement => {
   const onSubmit = async ({ formData }: { formData: EntityResponse }) => {
     const { id, ...entityData } = formData;
 
-    const graphQLResult = await updateEntity({
-      variables: {
-        id: formData.id,
-        entity: entityData as EntityRequest,
-        file: fileField,
-      },
-    });
-    const result: EntityResponse | null =
-      graphQLResult.data?.updateEntity ?? null;
-    setData(result);
+    try {
+      const graphQLResult = await updateEntity({
+        variables: {
+          id: formData.id,
+          entity: entityData as EntityRequest,
+          file: fileField,
+        },
+      });
+
+      const result: EntityResponse | null =
+        graphQLResult.data?.updateEntity ?? null;
+      setData(result);
+    } catch (error: unknown) {
+      toast({
+        title: "Unable to create entity",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
   };
   return (
     <>

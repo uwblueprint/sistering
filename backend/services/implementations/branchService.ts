@@ -1,8 +1,10 @@
+import * as firebaseAdmin from "firebase-admin";
 import { PrismaClient, Branch } from "@prisma/client";
 import IBranchService from "../interfaces/branchService";
 import { BranchRequestDTO, BranchResponseDTO } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import convertToNumberIds from "../../utilities/typeUtils";
 
 const prisma = new PrismaClient();
 
@@ -118,6 +120,118 @@ class BranchService implements IBranchService {
       );
       throw error;
     }
+  }
+
+  async updateUserBranchesByEmail(
+    email: string,
+    branchIds: string[],
+  ): Promise<number> {
+    let userId = -1;
+    try {
+      const firebaseUser = await firebaseAdmin.auth().getUserByEmail(email);
+      const user = await prisma.user.findUnique({
+        where: {
+          authId: firebaseUser.uid,
+        },
+        include: {
+          employee: true,
+          volunteer: true,
+        },
+      });
+      if (!user) {
+        throw new Error(`userId with authID ${firebaseUser.uid} not found.`);
+      }
+      userId = user.id;
+
+      // Update employee branches
+      if (user.employee !== null) {
+        await prisma.employee.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            branches: {
+              set: [], // setting the related branches to be [] before connecting the passed in values
+              connect: convertToNumberIds(branchIds),
+            },
+          },
+        });
+      }
+      // Update volunteer branches
+      if (user.volunteer !== null) {
+        await prisma.volunteer.update({
+          where: {
+            id: userId,
+          },
+          data: {
+            branches: {
+              set: [], // setting the related branches to be [] before connecting the passed in values
+              connect: convertToNumberIds(branchIds),
+            },
+          },
+        });
+      }
+    } catch (error: unknown) {
+      Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+
+    return userId;
+  }
+
+  async appendBranchesForMultipleUsersByEmail(
+    emails: string[],
+    branchIds: string[],
+  ): Promise<boolean> {
+    try {
+      emails.forEach(async (email) => {
+        const firebaseUser = await firebaseAdmin.auth().getUserByEmail(email);
+        const user = await prisma.user.findUnique({
+          where: {
+            authId: firebaseUser.uid,
+          },
+          include: {
+            employee: true,
+            volunteer: true,
+          },
+        });
+        if (!user) {
+          throw new Error(`userId with authID ${firebaseUser.uid} not found.`);
+        }
+
+        // Update employee branches
+        if (user.employee !== null) {
+          await prisma.employee.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              branches: {
+                connect: convertToNumberIds(branchIds),
+              },
+            },
+          });
+        }
+        // Update volunteer branches
+        if (user.volunteer !== null) {
+          await prisma.volunteer.update({
+            where: {
+              id: user.id,
+            },
+            data: {
+              branches: {
+                connect: convertToNumberIds(branchIds),
+              },
+            },
+          });
+        }
+      });
+    } catch (error: unknown) {
+      Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+
+    return true;
   }
 }
 

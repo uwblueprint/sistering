@@ -17,34 +17,40 @@ import { gql, useMutation } from "@apollo/client";
 import colors from "../../../../theme/colors";
 import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
 
-type MultiBranchSelectorProps = {
-  userEmail: string;
+type MultiUserBranchSelectAdderProps = {
+  userEmails: string[];
   branches: BranchResponseDTO[];
   selectedBranches: BranchResponseDTO[];
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
+  onSave: () => void;
 };
 
-const UPDATE_USER_BRANCHES = gql`
+const BULK_ADD_USER_BRANCHES = gql`
   mutation MultiBranchSelector_UpdateUserBranches(
-    $email: String!
+    $emails: [String!]!
     $branchIds: [ID!]!
   ) {
-    updateUserBranchesByEmail(email: $email, branchIds: $branchIds)
+    appendBranchesForMultipleUsersByEmail(
+      emails: $emails
+      branchIds: $branchIds
+    )
   }
 `;
 
-const MultiBranchSelector = ({
-  userEmail,
+const MultiUserBranchSelectAdder = ({
+  userEmails,
   branches,
   selectedBranches,
   handleBranchMenuItemClicked,
-}: MultiBranchSelectorProps): React.ReactElement => {
+  onSave,
+}: MultiUserBranchSelectAdderProps): React.ReactElement => {
   const toast = useToast();
   const [isEditingBranches, setIsEditingBranches] = useState(false);
 
-  const [updateUserBranches] = useMutation(UPDATE_USER_BRANCHES, {
+  const [bulkAddUserBranches] = useMutation(BULK_ADD_USER_BRANCHES, {
+    refetchQueries: ["AdminUserManagementPage_Users"],
     variables: {
-      email: userEmail,
+      emails: userEmails,
       branchIds: selectedBranches.map((branch) => branch.id),
     },
   });
@@ -52,16 +58,24 @@ const MultiBranchSelector = ({
   const handleEditSaveButtonClicked = async () => {
     if (isEditingBranches) {
       try {
-        await updateUserBranches();
+        await bulkAddUserBranches();
+        toast({
+          title: "User Branches Updated",
+          description: `${userEmails.length} user(s) added to new branch(es).`,
+          status: "success",
+          duration: 5000,
+          isClosable: true,
+        });
       } catch (error: unknown) {
         toast({
-          title: "Failed to update user branches.",
+          title: "Failed to add branches for users.",
           description: `${error}`,
           status: "error",
           duration: 9000,
           isClosable: true,
         });
       }
+      onSave();
     }
     setIsEditingBranches(!isEditingBranches);
   };
@@ -69,7 +83,7 @@ const MultiBranchSelector = ({
   return (
     <Box>
       <Flex justifyContent="space-between" alignItems="center">
-        <Text fontWeight="bold">Branches</Text>
+        <Text fontWeight="bold">Add a Branch</Text>
         {isEditingBranches ? (
           <Button
             variant="outline"
@@ -140,4 +154,4 @@ const MultiBranchSelector = ({
   );
 };
 
-export default MultiBranchSelector;
+export default MultiUserBranchSelectAdder;

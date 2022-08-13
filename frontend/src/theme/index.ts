@@ -131,6 +131,11 @@ const customTheme = extendTheme(
                 },
               },
             },
+            caption: {
+              borderTop: "2px",
+              borderColor: "background.dark",
+              borderCollapse: "collapse",
+            },
           },
         },
       },

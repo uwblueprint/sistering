@@ -29,6 +29,7 @@ import {
 import TextField from "./fields/TextField";
 import SelectorField from "./fields/SelectorField";
 import { LanguageResponseDTO } from "../../types/api/LanguageTypes";
+import getTitleCaseForOneWord from "../../utils/StringUtils";
 
 export enum AccountFormMode {
   CREATE,
@@ -55,6 +56,8 @@ type AccountFormProps = {
   pronouns?: string | null;
   phoneNumber?: string | null;
   emergencyNumber?: string | null;
+  emergencyName?: string | null;
+  emergencyEmail?: string | null;
   prevSkills?: SkillResponseDTO[];
   prevLanguages?: LanguageResponseDTO[];
   onEmployeeCreate?: (employee: CreateEmployeeUserDTO) => void;
@@ -73,6 +76,8 @@ type CreateAccountFormValues = {
   passwordConfirm: string;
   phoneNumber: string;
   emergencyNumber: string;
+  emergencyName: string;
+  emergencyEmail: string;
   skills: SkillResponseDTO[];
   languages: LanguageResponseDTO[];
   token: string | null;
@@ -95,6 +100,8 @@ const AccountForm = ({
   pronouns,
   phoneNumber,
   emergencyNumber,
+  emergencyName,
+  emergencyEmail,
   prevSkills,
   prevLanguages,
   onVolunteerCreate,
@@ -120,6 +127,8 @@ const AccountForm = ({
     passwordConfirm: "",
     phoneNumber: "",
     emergencyNumber: "",
+    emergencyName: "",
+    emergencyEmail: "",
     skills: [],
     languages: [],
     token,
@@ -132,6 +141,8 @@ const AccountForm = ({
     dateOfBirth: dateOfBirth || "",
     pronouns: pronouns || "",
     phoneNumber: phoneNumber || "",
+    emergencyName: emergencyName || "",
+    emergencyEmail: emergencyEmail || "",
     emergencyNumber: emergencyNumber || "",
     skills: prevSkills || [],
     languages: prevLanguages || [],
@@ -153,7 +164,7 @@ const AccountForm = ({
     const newLanguages: LanguageResponseDTO[] = LANGUAGES.map(
       (language, i) => ({
         id: String(i + 1),
-        name: language,
+        name: getTitleCaseForOneWord(language),
       }),
     );
     setLanguages(newLanguages);
@@ -227,9 +238,11 @@ const AccountForm = ({
           lastName: values.lastName,
           email,
           phoneNumber: values.phoneNumber,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
+          emergencyContactEmail: values.emergencyEmail,
+          emergencyContactName: values.emergencyName,
           emergencyContactPhone: values.emergencyNumber,
+          pronouns: values.pronouns,
+          dateOfBirth: values.dateOfBirth,
           password: values.password,
           languages: values.languages.map(
             (language) => LANGUAGES[Number(language.id) - 1],
@@ -245,8 +258,8 @@ const AccountForm = ({
           password: values.password,
           phoneNumber: values.phoneNumber,
           pronouns: values.pronouns,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
+          emergencyContactEmail: values.emergencyEmail,
+          emergencyContactName: values.emergencyName,
           emergencyContactPhone: values.emergencyNumber,
           hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
@@ -269,9 +282,11 @@ const AccountForm = ({
           lastName: values.lastName,
           email,
           phoneNumber: values.phoneNumber,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
+          emergencyContactEmail: values.emergencyEmail,
+          emergencyContactName: values.emergencyName,
           emergencyContactPhone: values.emergencyNumber,
+          pronouns: values.pronouns,
+          dateOfBirth: values.dateOfBirth,
           languages: values.languages.map(
             (language) => LANGUAGES[Number(language.id) - 1],
           ),
@@ -284,8 +299,8 @@ const AccountForm = ({
           email,
           phoneNumber: values.phoneNumber,
           pronouns: values.pronouns,
-          emergencyContactEmail: "",
-          emergencyContactName: "",
+          emergencyContactEmail: values.emergencyEmail,
+          emergencyContactName: values.emergencyName,
           emergencyContactPhone: values.emergencyNumber,
           hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
@@ -373,13 +388,6 @@ const AccountForm = ({
                 type="tel"
                 isRequired
               />
-              <TextField
-                id="emergencyNumber"
-                label="Emergency Contact Phone Number"
-                placeholder="(123) 456-7890"
-                type="tel"
-                isRequired
-              />
               {/* Volunteer fields */}
               {!isAdmin && (
                 <SelectorField
@@ -412,6 +420,25 @@ const AccountForm = ({
                 onDeselect={(language) =>
                   deselectLanguage(language, values.languages, setFieldValue)
                 }
+              />
+              <TextField
+                id="emergencyName"
+                label="Emergency Contact Name"
+                placeholder="First name"
+                isRequired
+              />
+              <TextField
+                id="emergencyNumber"
+                label="Emergency Contact Phone Number"
+                placeholder="(123) 456-7890"
+                type="tel"
+                isRequired
+              />
+              <TextField
+                id="emergencyEmail"
+                label="Emergency Contact Email"
+                placeholder="name@gmail.com"
+                isRequired
               />
             </SimpleGrid>
             {mode === AccountFormMode.CREATE && (

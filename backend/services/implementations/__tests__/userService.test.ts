@@ -9,12 +9,14 @@ const testUsers = [
     lastName: "Pan",
     authId: "123",
     role: Role.ADMIN,
+    pronouns: "They/them",
   },
   {
     firstName: "Wendy",
     lastName: "Darling",
     authId: "321",
     role: Role.ADMIN,
+    pronouns: "They/them",
   },
 ];
 

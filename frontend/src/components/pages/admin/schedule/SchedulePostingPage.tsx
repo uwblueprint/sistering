@@ -1,4 +1,4 @@
-import { Flex, Box, Text, Button, Spacer } from "@chakra-ui/react";
+import { Flex, Box, Text, Button, Spacer, useToast } from "@chakra-ui/react";
 import React, { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
@@ -13,7 +13,11 @@ import {
   UpsertSignupDTO,
 } from "../../../../types/api/SignupTypes";
 import Navbar from "../../../common/Navbar";
-import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
+import {
+  AdminNavbarTabs,
+  AdminPages,
+  EmployeeNavbarTabs,
+} from "../../../../constants/Tabs";
 import AdminSchedulePageHeader from "../../../admin/schedule/AdminSchedulePageHeader";
 import AdminPostingScheduleHeader from "../../../admin/schedule/AdminPostingScheduleHeader";
 import ErrorModal from "../../../common/ErrorModal";
@@ -129,6 +133,8 @@ const ShiftScheduleCalendar = ({
 const SchedulePostingPage = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
   const { authenticatedUser } = useContext(AuthContext);
+  const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
+
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -153,6 +159,8 @@ const SchedulePostingPage = (): React.ReactElement => {
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
   const [selectedDay, setSelectedDay] = useState<Date>();
+
+  const toast = useToast();
 
   useEffect(() => {
     const shiftsOfDay = shifts.filter((shift) =>
@@ -290,20 +298,30 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   const handleSidePanelSaveClick = async () => {
     if (!currentlyEditingShift) return;
-    await submitSignups({
-      variables: {
-        upsertDeleteShifts: {
-          upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
-            shiftId: currentlyEditingShift.id,
-            userId: signup.volunteer.id,
-            note: signup.note,
-            numVolunteers: signup.numVolunteers,
-            status: signup.status,
-          })),
-          deleteShiftSignups: [],
+    try {
+      await submitSignups({
+        variables: {
+          upsertDeleteShifts: {
+            upsertShiftSignups: currentlyEditingShift.signups.map((signup) => ({
+              shiftId: currentlyEditingShift.id,
+              userId: signup.volunteer.id,
+              note: signup.note,
+              numVolunteers: signup.numVolunteers,
+              status: signup.status,
+            })),
+            deleteShiftSignups: [],
+          },
         },
-      },
-    });
+      });
+    } catch (error: unknown) {
+      toast({
+        title: "Cannot submit signups",
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
 
     const shiftsCopy = cloneDeep(shifts);
     const shiftIndex = shiftsCopy.findIndex(
@@ -350,7 +368,7 @@ const SchedulePostingPage = (): React.ReactElement => {
   };
 
   const isReadOnly =
-    (authenticatedUser && authenticatedUser.role !== Role.Admin) ||
+    (authenticatedUser && !isSuperAdmin) ||
     getPostingFilterStatusBySignupStatuses(
       postingDetails?.status,
       new Date(postingDetails?.endDate),
@@ -368,12 +386,10 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
-      {(tableDataQueryError || submitSignupsError || postingError) && (
-        <ErrorModal />
-      )}
+      {(tableDataQueryError || postingError) && <ErrorModal />}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
-        tabs={AdminNavbarTabs}
+        tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}
       />
       {currentView === AdminScheduleViews.CalendarView ? (
         <Flex>

@@ -1,3 +1,4 @@
+import { DEFAULT_POSTING_CONTEXT } from "../contexts/admin/PostingContext";
 import {
   PostingContextAction,
   PostingContextType,
@@ -73,6 +74,10 @@ export default (
       return {
         ...state,
         recurrenceInterval: action.value,
+      };
+    case "ADMIN_POSTING_RESET":
+      return {
+        ...DEFAULT_POSTING_CONTEXT,
       };
     default:
       return state;

@@ -20,6 +20,7 @@ import {
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
 import { getWeekDiff } from "../../utilities/dateUtils";
+import convertToNumberIds from "../../utilities/typeUtils";
 
 const prisma = new PrismaClient();
 
@@ -48,12 +49,8 @@ export const convertToSkillResponseDTO = (
   });
 };
 
-const convertToNumberIds = (ids: string[]): { id: number }[] => {
-  return ids.map((id: string) => {
-    return {
-      id: Number(id),
-    };
-  });
+const isInviteExpired = (createdDate: Date): boolean => {
+  return getWeekDiff(createdDate, new Date()) >= 2;
 };
 
 class UserService implements IUserService {
@@ -88,6 +85,8 @@ class UserService implements IUserService {
       emergencyContactName: user.emergencyContactName,
       emergencyContactPhone: user.emergencyContactPhone,
       emergencyContactEmail: user.emergencyContactEmail,
+      pronouns: user.pronouns,
+      dateOfBirth: user.dateOfBirth,
     };
   }
 
@@ -122,6 +121,8 @@ class UserService implements IUserService {
       emergencyContactName: user.emergencyContactName,
       emergencyContactPhone: user.emergencyContactPhone,
       emergencyContactEmail: user.emergencyContactEmail,
+      pronouns: user.pronouns,
+      dateOfBirth: user.dateOfBirth,
     };
   }
 
@@ -207,6 +208,8 @@ class UserService implements IUserService {
             emergencyContactName: user.emergencyContactName,
             emergencyContactPhone: user.emergencyContactPhone,
             emergencyContactEmail: user.emergencyContactEmail,
+            pronouns: user.pronouns,
+            dateOfBirth: user.dateOfBirth,
           };
         }),
       );
@@ -245,6 +248,8 @@ class UserService implements IUserService {
             emergencyContactName: user.emergencyContactName,
             emergencyContactPhone: user.emergencyContactPhone,
             emergencyContactEmail: user.emergencyContactEmail,
+            pronouns: user.pronouns,
+            dateOfBirth: user.dateOfBirth,
           },
         });
       } catch (postgresError) {
@@ -278,6 +283,8 @@ class UserService implements IUserService {
       emergencyContactName: newUser.emergencyContactName,
       emergencyContactPhone: newUser.emergencyContactPhone,
       emergencyContactEmail: newUser.emergencyContactEmail,
+      pronouns: newUser.pronouns,
+      dateOfBirth: newUser.dateOfBirth,
     };
   }
 
@@ -304,6 +311,8 @@ class UserService implements IUserService {
             emergencyContactName: user.emergencyContactName,
             emergencyContactPhone: user.emergencyContactPhone,
             emergencyContactEmail: user.emergencyContactEmail,
+            pronouns: user.pronouns,
+            dateOfBirth: user.dateOfBirth,
           },
         }),
       ]);
@@ -332,6 +341,8 @@ class UserService implements IUserService {
               emergencyContactName: oldUser.emergencyContactName,
               emergencyContactPhone: oldUser.emergencyContactPhone,
               emergencyContactEmail: oldUser.emergencyContactEmail,
+              pronouns: oldUser.pronouns,
+              dateOfBirth: oldUser.dateOfBirth,
             },
           });
         } catch (postgresError: unknown) {
@@ -362,6 +373,8 @@ class UserService implements IUserService {
       emergencyContactName: user.emergencyContactName,
       emergencyContactPhone: user.emergencyContactPhone,
       emergencyContactEmail: user.emergencyContactEmail,
+      pronouns: user.pronouns,
+      dateOfBirth: user.dateOfBirth,
     };
   }
 
@@ -388,6 +401,8 @@ class UserService implements IUserService {
               emergencyContactName: deletedUser.emergencyContactName,
               emergencyContactPhone: deletedUser.emergencyContactPhone,
               emergencyContactEmail: deletedUser.emergencyContactEmail,
+              pronouns: deletedUser.pronouns,
+              dateOfBirth: deletedUser.dateOfBirth,
             },
           });
         } catch (postgresError: unknown) {
@@ -435,6 +450,8 @@ class UserService implements IUserService {
               emergencyContactName: deletedUser.emergencyContactName,
               emergencyContactPhone: deletedUser.emergencyContactPhone,
               emergencyContactEmail: deletedUser.emergencyContactEmail,
+              pronouns: deletedUser.pronouns,
+              dateOfBirth: deletedUser.dateOfBirth,
             },
           });
         } catch (postgresError: unknown) {
@@ -489,6 +506,7 @@ class UserService implements IUserService {
         uuid: userInvite.uuid,
         role: userInvite.role.toString() as Role,
         email: userInvite.email,
+        createdAt: userInvite.createdAt,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -496,6 +514,44 @@ class UserService implements IUserService {
       );
       throw error;
     }
+  }
+
+  async getUserInvites(): Promise<Array<UserInviteResponse>> {
+    let userInvites: Array<UserInviteResponse> = [];
+    try {
+      const expiredInvitesUuids: Array<string> = [];
+
+      const invites = await prisma.userInvite.findMany();
+      invites.forEach((invite) => {
+        if (isInviteExpired(invite.createdAt)) {
+          expiredInvitesUuids.push(invite.uuid);
+        } else {
+          userInvites.push(invite);
+        }
+      });
+
+      await prisma.userInvite.deleteMany({
+        where: { uuid: { in: expiredInvitesUuids } },
+      });
+
+      userInvites = await Promise.all(
+        userInvites.map((invite) => {
+          return {
+            uuid: invite.uuid,
+            role: invite.role.toString() as Role,
+            email: invite.email,
+            createdAt: invite.createdAt,
+          };
+        }),
+      );
+    } catch (error: unknown) {
+      Logger.error(
+        `Failed to get user invite. Reason = ${getErrorMessage(error)}`,
+      );
+      throw error;
+    }
+
+    return userInvites;
   }
 
   async createUserInvite(
@@ -532,6 +588,7 @@ class UserService implements IUserService {
         email: userInvite.email,
         role: userInvite.role.toString() as Role,
         uuid: userInvite.uuid,
+        createdAt: userInvite.createdAt,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -552,6 +609,7 @@ class UserService implements IUserService {
         email: userInvite.email,
         role: userInvite.role.toString() as Role,
         uuid: userInvite.uuid,
+        createdAt: userInvite.createdAt,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -591,9 +649,9 @@ class UserService implements IUserService {
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
+        dateOfBirth: user.dateOfBirth,
+        pronouns: user.pronouns,
         hireDate: volunteer.hireDate,
-        dateOfBirth: volunteer.dateOfBirth,
-        pronouns: volunteer.pronouns,
         languages: user.languages,
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
@@ -641,9 +699,9 @@ class UserService implements IUserService {
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
+        dateOfBirth: user.dateOfBirth,
+        pronouns: user.pronouns,
         hireDate: volunteer.hireDate,
-        dateOfBirth: volunteer.dateOfBirth,
-        pronouns: volunteer.pronouns,
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
         languages: user.languages,
@@ -745,11 +803,11 @@ class UserService implements IUserService {
             emergencyContactName: volunteerUser.emergencyContactName,
             emergencyContactPhone: volunteerUser.emergencyContactPhone,
             emergencyContactEmail: volunteerUser.emergencyContactEmail,
+            pronouns: volunteerUser.pronouns,
+            dateOfBirth: volunteerUser.dateOfBirth,
             volunteer: {
               create: {
                 hireDate: volunteerUser.hireDate,
-                pronouns: volunteerUser.pronouns ?? "",
-                dateOfBirth: volunteerUser.dateOfBirth,
                 branches: {
                   connect: convertToNumberIds(volunteerUser.branches),
                 },
@@ -777,10 +835,6 @@ class UserService implements IUserService {
           email: firebaseUser.email ?? "",
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           hireDate: volunteer!.hireDate,
-          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-          dateOfBirth: volunteer!.dateOfBirth,
-          /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-          pronouns: volunteer!.pronouns,
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           skills: convertToSkillResponseDTO(volunteer!.skills),
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
@@ -836,8 +890,6 @@ class UserService implements IUserService {
           },
           data: {
             hireDate: volunteerUser.hireDate,
-            pronouns: volunteerUser.pronouns ?? "",
-            dateOfBirth: volunteerUser.dateOfBirth ?? "",
             branches: {
               set: [], // setting the related branches to be [] before connecting the passed in values
               connect: convertToNumberIds(volunteerUser.branches),
@@ -856,6 +908,8 @@ class UserService implements IUserService {
                 emergencyContactName: volunteerUser.emergencyContactName,
                 emergencyContactPhone: volunteerUser.emergencyContactPhone,
                 emergencyContactEmail: volunteerUser.emergencyContactEmail,
+                pronouns: volunteerUser.pronouns,
+                dateOfBirth: volunteerUser.dateOfBirth ?? "",
               },
             },
           },
@@ -880,8 +934,6 @@ class UserService implements IUserService {
           id: String(user.id),
           email: updatedFirebaseUser.email ?? "",
           hireDate: updatedVolunteerUser.hireDate,
-          dateOfBirth: updatedVolunteerUser.dateOfBirth,
-          pronouns: updatedVolunteerUser.pronouns,
           skills: convertToSkillResponseDTO(updatedVolunteerUser.skills),
           branches: convertToBranchResponseDTO(updatedVolunteerUser.branches),
         };
@@ -894,10 +946,6 @@ class UserService implements IUserService {
             data: {
               /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
               hireDate: oldVolunteerUser!.hireDate,
-              /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-              pronouns: oldVolunteerUser!.pronouns,
-              /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-              dateOfBirth: oldVolunteerUser!.dateOfBirth,
               branches: {
                 /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                 connect: oldVolunteerUser!.branches,
@@ -925,6 +973,10 @@ class UserService implements IUserService {
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   emergencyContactEmail: oldVolunteerUser!.user
                     .emergencyContactEmail,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  pronouns: oldVolunteerUser!.user.pronouns,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  dateOfBirth: oldVolunteerUser!.user.dateOfBirth,
                 },
               },
             },
@@ -979,14 +1031,12 @@ class UserService implements IUserService {
               emergencyContactName: deletedVolunteerUser.emergencyContactName,
               emergencyContactPhone: deletedVolunteerUser.emergencyContactPhone,
               emergencyContactEmail: deletedVolunteerUser.emergencyContactEmail,
+              pronouns: deletedVolunteerUser.pronouns,
+              dateOfBirth: deletedVolunteerUser.dateOfBirth ?? "",
               volunteer: {
                 create: {
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   hireDate: deletedVolunteer!.hireDate,
-                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                  pronouns: deletedVolunteer!.pronouns ?? "",
-                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
-                  dateOfBirth: deletedVolunteer!.dateOfBirth ?? "",
                   branches: {
                     /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                     connect: deletedVolunteer!.branches.map((b) => {
@@ -1062,6 +1112,8 @@ class UserService implements IUserService {
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
         branches: convertToBranchResponseDTO(employee.branches),
+        pronouns: user.pronouns,
+        dateOfBirth: user.dateOfBirth,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -1107,6 +1159,8 @@ class UserService implements IUserService {
         role: user.role,
         languages: user.languages,
         branches: convertToBranchResponseDTO(employee.branches),
+        pronouns: user.pronouns,
+        dateOfBirth: user.dateOfBirth,
       };
     } catch (error: unknown) {
       Logger.error(
@@ -1201,6 +1255,8 @@ class UserService implements IUserService {
             emergencyContactName: employeeUser.emergencyContactName,
             emergencyContactPhone: employeeUser.emergencyContactPhone,
             emergencyContactEmail: employeeUser.emergencyContactEmail,
+            pronouns: employeeUser.pronouns,
+            dateOfBirth: employeeUser.dateOfBirth,
             employee: {
               create: {
                 branches: {
@@ -1282,6 +1338,8 @@ class UserService implements IUserService {
               emergencyContactPhone: employeeUser.emergencyContactPhone,
               emergencyContactEmail: employeeUser.emergencyContactEmail,
               languages: employeeUser.languages,
+              pronouns: employeeUser.pronouns,
+              dateOfBirth: employeeUser.dateOfBirth,
             },
           },
           branches: {
@@ -1335,6 +1393,10 @@ class UserService implements IUserService {
                   /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
                   emergencyContactEmail: oldEmployeeUser!.user
                     .emergencyContactEmail,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  pronouns: oldEmployeeUser!.user.pronouns,
+                  /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+                  dateOfBirth: oldEmployeeUser!.user.dateOfBirth,
                 },
               },
               branches: {
@@ -1393,6 +1455,8 @@ class UserService implements IUserService {
               emergencyContactName: deletedEmployeeUser.emergencyContactName,
               emergencyContactPhone: deletedEmployeeUser.emergencyContactPhone,
               emergencyContactEmail: deletedEmployeeUser.emergencyContactEmail,
+              pronouns: deletedEmployeeUser.pronouns,
+              dateOfBirth: deletedEmployeeUser.dateOfBirth,
               employee: {
                 create: {
                   branches: {

@@ -7,7 +7,6 @@ import { ChevronLeftIcon } from "@chakra-ui/icons";
 import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PostingDetails from "../../../common/PostingDetails";
 import ErrorModal from "../../../common/ErrorModal";
-import { ADMIN_SCHEDULE_POSTING_NAV } from "../../../../constants/Routes";
 
 const POSTING = gql`
   query AdminPostingDetails_Posting($id: ID!) {
@@ -58,11 +57,9 @@ const AdminPostingDetails = (): React.ReactElement => {
             <Button
               leftIcon={<ChevronLeftIcon />}
               variant="link"
-              onClick={() =>
-                history.push(`${ADMIN_SCHEDULE_POSTING_NAV}/${id}`)
-              }
+              onClick={() => history.goBack()}
             >
-              Back to editing
+              Back
             </Button>
           </Flex>
         </Container>
