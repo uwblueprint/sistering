@@ -20,10 +20,10 @@ export const NOT_FOUND_PAGE = "/not-found";
 
 export const VOLUNTEER_POSTINGS_PAGE = "/volunteer/postings";
 
+export const VOLUNTEER_POSTING_DETAILS = "/volunteer/posting/:id";
+
 export const VOLUNTEER_POSTING_AVAILABILITIES =
   "/volunteer/posting/:id/availabilities";
-
-export const VOLUNTEER_POSTING_DETAILS = "/volunteer/posting/:id";
 
 export const VOLUNTEER_SHIFTS_PAGE = "/volunteer/shifts";
 

@@ -193,6 +193,18 @@ const App = (): React.ReactElement => {
                 />
                 <PrivateRoute
                   exact
+                  path={Routes.ADMIN_CREATE_POSTING_PAGE}
+                  authorizedRoles={[Role.Admin]}
+                  component={CreatePostingPage}
+                />
+                <PrivateRoute
+                  exact
+                  path={Routes.ADMIN_EDIT_POSTING_PAGE}
+                  authorizedRoles={[Role.Admin]}
+                  component={EditPostingPage}
+                />
+                <PrivateRoute
+                  exact
                   path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
                   authorizedRoles={[Role.Admin, Role.Employee]}
                   component={SchedulePostingPage}
