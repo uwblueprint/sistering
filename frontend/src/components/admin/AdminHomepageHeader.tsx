@@ -17,7 +17,10 @@ import {
 import { AddIcon, SearchIcon, SettingsIcon } from "@chakra-ui/icons";
 import { useHistory } from "react-router-dom";
 import BranchManagerModal from "./BranchManagerModal";
-import { ADMIN_CREATE_POSTING_PAGE } from "../../constants/Routes";
+import {
+  ADMIN_CREATE_POSTING_PAGE,
+  ADMIN_ORG_WIDE_CALENDAR,
+} from "../../constants/Routes";
 import PostingContextDispatcherContext from "../../contexts/admin/PostingContextDispatcherContext";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 
@@ -56,17 +59,25 @@ const AdminHomepageHeader = ({
         <HStack w="full" mb="16px">
           <Text textStyle="display-small-semibold">Volunteer Postings</Text>
           <Spacer />
-          {isSuperAdmin && (
+          <HStack>
             <Button
-              onClick={() => {
-                dispatchPostingUpdate({ type: "ADMIN_POSTING_RESET" });
-                history.push(ADMIN_CREATE_POSTING_PAGE);
-              }}
+              variant="outline"
+              onClick={() => history.push(ADMIN_ORG_WIDE_CALENDAR)}
             >
-              <AddIcon boxSize={3} mr={3} />
-              Create new posting
+              View Calendar
             </Button>
-          )}
+            {isSuperAdmin && (
+              <Button
+                onClick={() => {
+                  dispatchPostingUpdate({ type: "ADMIN_POSTING_RESET" });
+                  history.push(ADMIN_CREATE_POSTING_PAGE);
+                }}
+              >
+                <AddIcon boxSize={3} mr={3} />
+                Create new posting
+              </Button>
+            )}
+          </HStack>
         </HStack>
         <HStack w="full" alignItems="flex-start" spacing={0}>
           <Tabs pt="10px">
