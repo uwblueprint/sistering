@@ -144,7 +144,7 @@ model Shift {
 model Signup {
   shift         Shift        @relation(fields: [shiftId], references: [id], onDelete: Cascade)
   shiftId       Int          @map("shifts_id")
-  user          User         @relation(fields: [userId], references: [id])
+  user          User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        Int
   status        SignupStatus
   numVolunteers Int          @default(1) @map("num_volunteers")
