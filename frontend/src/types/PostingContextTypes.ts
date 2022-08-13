@@ -76,4 +76,7 @@ export type PostingContextAction =
   | {
       type: "ADMIN_POSTING_EDIT_RECURRENCE_INTERVAL";
       value: RecurrenceInterval;
+    }
+  | {
+      type: "ADMIN_POSTING_RESET";
     };
