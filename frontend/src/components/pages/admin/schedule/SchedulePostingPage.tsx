@@ -108,6 +108,8 @@ const POSTING = gql`
   }
 `;
 
+const CLOSING_DATE_NOT_PASSED_TOAST_ID = "closing-date-not-passed";
+
 const ShiftScheduleCalendar = ({
   shifts,
   onDayClick,
@@ -393,7 +395,6 @@ const SchedulePostingPage = (): React.ReactElement => {
       ),
     ) === PostingFilterStatus.PAST;
 
-  // TODO: If posting is closed, we want to disable action to review registrants
   const isPostingClosed =
     postingDetails === undefined ||
     isPast(new Date(postingDetails.autoClosingDate));
@@ -406,13 +407,18 @@ const SchedulePostingPage = (): React.ReactElement => {
   }, []);
 
   useEffect(() => {
-    if (!isPostingClosed && postingDetails !== undefined) {
+    if (
+      !isPostingClosed &&
+      postingDetails !== undefined &&
+      !toast.isActive(CLOSING_DATE_NOT_PASSED_TOAST_ID)
+    ) {
       toast({
+        id: CLOSING_DATE_NOT_PASSED_TOAST_ID,
         title:
           "Changes to this page cannot be made until posting closing date has passed",
         status: "error",
         position: "bottom-left",
-        duration: null,
+        duration: 10000,
         isClosable: true,
         variant: "subtle",
         containerStyle: {
