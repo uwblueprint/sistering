@@ -29,6 +29,7 @@ import {
 import TextField from "./fields/TextField";
 import SelectorField from "./fields/SelectorField";
 import { LanguageResponseDTO } from "../../types/api/LanguageTypes";
+import getTitleCaseForOneWord from "../../utils/StringUtils";
 
 export enum AccountFormMode {
   CREATE,
@@ -163,7 +164,7 @@ const AccountForm = ({
     const newLanguages: LanguageResponseDTO[] = LANGUAGES.map(
       (language, i) => ({
         id: String(i + 1),
-        name: language,
+        name: getTitleCaseForOneWord(language),
       }),
     );
     setLanguages(newLanguages);

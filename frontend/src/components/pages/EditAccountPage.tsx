@@ -16,6 +16,7 @@ import ProfilePhotoForm from "../user/ProfilePhotoForm";
 
 import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
+import getTitleCaseForOneWord from "../../utils/StringUtils";
 
 const EMPLOYEE_BY_ID = gql`
   query EmployeeUserById($id: ID!) {
@@ -211,7 +212,7 @@ const EditAccountPage = (): React.ReactElement => {
             emergencyName={user?.emergencyContactName}
             prevLanguages={user?.languages?.map((language) => ({
               id: String(LANGUAGES.indexOf(language) + 1),
-              name: language,
+              name: getTitleCaseForOneWord(language),
             }))}
             prevSkills={user?.skills}
             onEmployeeEdit={onEmployeeEdit}
