@@ -40,6 +40,7 @@ const shiftType = gql`
     shift(id: ID!): ShiftResponseDTO!
     shifts: [ShiftResponseDTO!]!
     shiftsByPosting(postingId: ID!): [ShiftResponseDTO!]!
+    shiftsWithSignupsAndVolunteers: [ShiftWithSignupAndVolunteerResponseDTO!]!
     shiftsWithSignupsAndVolunteersByPosting(
       postingId: ID!
       userId: ID

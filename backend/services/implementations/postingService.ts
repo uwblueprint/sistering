@@ -24,7 +24,7 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
-import IShiftService from "../interfaces/IShiftService";
+import IShiftService from "../interfaces/shiftService";
 import { getInterval } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();

@@ -40,6 +40,15 @@ interface IShiftService {
   getShiftsByPosting(postingId: string): Promise<ShiftResponseDTO[]>;
 
   /**
+   * Gets all shift, signup, and volunteer info for all postings
+   * @returns array of ShiftWithSignupAndVolunteerResponseDTOs
+   * @throws Error if the shift retrieval fails
+   */
+  getShiftsWithSignupsAndVolunteers(): Promise<
+    ShiftWithSignupAndVolunteerResponseDTO[]
+  >;
+
+  /**
    * Gets all shift, signup and volunteer info for a given posting id, user
    * id, and signup status
    * @param postingId the target posting's id
