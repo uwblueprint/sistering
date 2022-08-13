@@ -1,9 +1,7 @@
-import React, { useEffect } from "react";
-import { Text, Box, Flex, Avatar, Button } from "@chakra-ui/react";
-
+import React from "react";
+import { Box, Flex, Avatar } from "@chakra-ui/react";
 
 const ProfilePhotoForm = (): React.ReactElement => {
-
   return (
     <Box ml={4}>
       <Flex alignItems="center">

@@ -142,8 +142,7 @@ const NewAccountPage = (): React.ReactElement => {
         <Text mb={2} textStyle="display-large">
           Account Creation
         </Text>
-        <ProfilePhotoForm
-        />
+        <ProfilePhotoForm />
         <Divider my={8} />
         <AccountForm
           mode={AccountFormMode.CREATE}
