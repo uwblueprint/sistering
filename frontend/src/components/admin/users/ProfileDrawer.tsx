@@ -42,7 +42,6 @@ type ProfileDrawerProps = {
   branches: BranchResponseDTO[];
   selectedBranches: BranchResponseDTO[];
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
-  refetchUsers: () => void;
 };
 
 const DELETE_VOLUNTEER_USER_BY_EMAIL = gql`
@@ -75,13 +74,15 @@ const ProfileDrawer = ({
   branches,
   selectedBranches,
   handleBranchMenuItemClicked,
-  refetchUsers,
 }: ProfileDrawerProps): React.ReactElement => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteUserByEmail] = useMutation(
     isVolunteer
       ? DELETE_VOLUNTEER_USER_BY_EMAIL
       : DELETE_EMPLOYEE_USER_BY_EMAIL,
+    {
+      refetchQueries: ["AdminUserManagementPage_Users"],
+    },
   );
 
   const onDeleteUser = async () => {
@@ -91,7 +92,6 @@ const ProfileDrawer = ({
       },
     });
     onClose();
-    refetchUsers();
   };
 
   return (
