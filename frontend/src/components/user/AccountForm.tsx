@@ -47,7 +47,6 @@ const SKILLS = gql`
 type AccountFormProps = {
   mode: AccountFormMode;
   isAdmin: boolean; // False if user is a volunteer
-  profilePhoto: string;
   firstName?: string;
   lastName?: string;
   email?: string;
@@ -64,7 +63,6 @@ type AccountFormProps = {
 };
 
 type CreateAccountFormValues = {
-  profilePhoto: string;
   firstName: string;
   lastName: string;
   dateOfBirth: string;
@@ -87,7 +85,6 @@ const AccountForm = ({
   mode,
   isAdmin,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  profilePhoto, // TODO: Integrate Profile Picture into form submittion
   firstName,
   lastName,
   email,
@@ -111,7 +108,6 @@ const AccountForm = ({
   const token = queryParams.get("token");
 
   const createInitialValues: CreateAccountFormValues = {
-    profilePhoto,
     firstName: "",
     lastName: "",
     dateOfBirth: "",
@@ -126,7 +122,6 @@ const AccountForm = ({
   };
 
   const editInitialValues: EditAccountFormValues = {
-    profilePhoto,
     firstName: firstName || "",
     lastName: lastName || "",
     dateOfBirth: dateOfBirth || "",

@@ -83,7 +83,6 @@ const EditAccountPage = (): React.ReactElement => {
   const [user, setUser] = useState<
     (EmployeeUserResponseDTO & VolunteerUserResponseDTO) | null
   >(null);
-  const [profilePhoto, setProfilePhoto] = useState<string>("");
 
   useQuery(
     authenticatedUser?.role !== Role.Volunteer
@@ -166,8 +165,6 @@ const EditAccountPage = (): React.ReactElement => {
           Account Creation
         </Text>
         <ProfilePhotoForm
-          profilePhoto={profilePhoto}
-          setProfilePhoto={setProfilePhoto}
         />
         <Divider my={8} />
         {user && (
@@ -175,7 +172,6 @@ const EditAccountPage = (): React.ReactElement => {
             key={key}
             mode={AccountFormMode.EDIT}
             isAdmin={authenticatedUser?.role !== Role.Volunteer}
-            profilePhoto={profilePhoto}
             firstName={user?.firstName}
             lastName={user?.lastName}
             email={user?.email}
