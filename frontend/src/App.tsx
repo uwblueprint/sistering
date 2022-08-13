@@ -65,12 +65,6 @@ const TRACKING_ID = "G-DF2BP4T8YQ";
 const HJID = 2949419;
 const HSJV = 6;
 
-const REFRESH = gql`
-  mutation Refresh {
-    refresh
-  }
-`;
-
 ReactGA.initialize(TRACKING_ID);
 
 const App = (): React.ReactElement => {
@@ -94,8 +88,6 @@ const App = (): React.ReactElement => {
     postingContextReducer,
     DEFAULT_POSTING_CONTEXT,
   );
-
-  const [refresh] = useMutation<{ refresh: string }>(REFRESH);
 
   useEffect(() => {
     ReactGA.pageview(window.location.pathname + window.location.search);
