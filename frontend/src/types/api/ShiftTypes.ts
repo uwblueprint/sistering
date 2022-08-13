@@ -31,10 +31,7 @@ export type ShiftWithSignupAndVolunteerResponseDTO = ShiftResponseDTO & {
   signups: SignupsAndVolunteerResponseDTO[];
 };
 
-export type AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO = Omit<
-  ShiftDTO,
-  "postingId"
-> & {
+export type AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO = ShiftDTO & {
   signups: AdminSchedulingSignupsAndVolunteerResponseDTO[];
 };
 

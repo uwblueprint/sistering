@@ -1,4 +1,4 @@
-import { gql, useQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { Box, Flex } from "@chakra-ui/react";
 import moment from "moment";
 import React, { useContext, useEffect, useState } from "react";
@@ -14,12 +14,17 @@ import { getUTCDateForDateTimeString } from "../../../utils/DateTimeUtils";
 import ErrorModal from "../../common/ErrorModal";
 import Loading from "../../common/Loading";
 import Navbar from "../../common/Navbar";
+import AdminSchedulePageHeader from "../schedule/AdminSchedulePageHeader";
 import ScheduleSidePanel from "../schedule/ScheduleSidePanel";
 import VolunteerSidePanel from "../schedule/volunteersidepanel/VolunteerSidePanel";
 import MonthViewShiftCalendar from "../ShiftCalendar/MonthViewShiftCalendar";
 
 type AdminOrgCalendarShiftsAndSignupsResponse = {
   shiftsWithSignupsAndVolunteers: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+};
+
+type AdminOrgCalendarPostings = {
+  postings: string[];
 };
 
 const ADMIN_ORG_CALENDAR_TABLE_DATA_QUERY = gql`
@@ -45,9 +50,50 @@ const ADMIN_ORG_CALENDAR_TABLE_DATA_QUERY = gql`
   }
 `;
 
+const ADMIN_ORG_CALENDAR_POSTINGS = gql`
+  query AdminOrgCalendarPostings {
+    postings {
+      id
+    }
+  }
+`;
+
+const ReadOnlyScheduleSidePanel = ({
+  shifts,
+  selectedShift,
+  setSelectedShift,
+  handleVolunteerProfileClick,
+}: {
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
+  selectedShift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO;
+  setSelectedShift: React.Dispatch<
+    React.SetStateAction<AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO>
+  >;
+  handleVolunteerProfileClick: (
+    isDisplayingVolunteer: boolean,
+    userId: string,
+  ) => void;
+}) => {
+  return (
+    <ScheduleSidePanel
+      shifts={shifts}
+      onEditSignupsClick={() => {}}
+      onSelectAllSignupsClick={() => {}}
+      onSignupCheckboxClick={() => {}}
+      onSaveSignupsClick={async () => {}}
+      submitSignupsLoading={false}
+      selectedShift={selectedShift}
+      setSelectedShift={setSelectedShift}
+      isReadOnly
+      onVolunteerProfileClick={handleVolunteerProfileClick}
+    />
+  );
+};
+
 const OrgWideCalendar = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
   const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
+  const [userPostings, setUserPostings] = useState<string[]>([]);
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -66,17 +112,26 @@ const OrgWideCalendar = (): React.ReactElement => {
     false,
   );
 
-  const {
-    error: tableDataQueryError,
-    loading: tableDataLoading,
-  } = useQuery<AdminOrgCalendarShiftsAndSignupsResponse>(
+  const [
+    getShiftsAndSignups,
+    { error: tableDataQueryError, loading: tableDataLoading },
+  ] = useLazyQuery<AdminOrgCalendarShiftsAndSignupsResponse>(
     ADMIN_ORG_CALENDAR_TABLE_DATA_QUERY,
     {
       onCompleted: ({ shiftsWithSignupsAndVolunteers: shiftsData }) => {
-        setShifts(shiftsData);
+        let scheduledShifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[] = [];
+
+        scheduledShifts = shiftsData.filter(
+          (shift) =>
+            (userPostings.includes(shift.postingId) || isSuperAdmin) &&
+            shift.signups.length > 0 &&
+            shift.signups[0].status === "PUBLISHED",
+        );
+
+        setShifts(scheduledShifts);
 
         if (shiftsData.length) {
-          const firstDay = shiftsData[0]?.startTime;
+          const firstDay = scheduledShifts[0]?.startTime;
           setSelectedDay(firstDay);
           setSidePanelShifts(
             shiftsData.filter((shift) =>
@@ -88,6 +143,17 @@ const OrgWideCalendar = (): React.ReactElement => {
       fetchPolicy: "no-cache",
     },
   );
+
+  const {
+    error: postingsQueryError,
+    loading: postingsLoading,
+  } = useQuery<AdminOrgCalendarPostings>(ADMIN_ORG_CALENDAR_POSTINGS, {
+    onCompleted: ({ postings }) => {
+      setUserPostings(postings);
+      getShiftsAndSignups();
+    },
+    fetchPolicy: "no-cache",
+  });
 
   useEffect(() => {
     const shiftsOfDay = shifts.filter((shift) =>
@@ -127,7 +193,11 @@ const OrgWideCalendar = (): React.ReactElement => {
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
-      {tableDataQueryError && <ErrorModal /> /* TODO: error */}
+      {
+        (tableDataQueryError || postingsQueryError) && (
+          <ErrorModal />
+        ) /* TODO: error */
+      }
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
         tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}
@@ -135,26 +205,25 @@ const OrgWideCalendar = (): React.ReactElement => {
 
       <Flex>
         <Box flex={1}>
-          {tableDataLoading ? ( // TODO: loading
+          <AdminSchedulePageHeader branchName="Organization-Wide" />
+          {tableDataLoading || postingsLoading ? ( // TODO: loading
             <Loading />
           ) : (
-            shifts.length > 0 && (
-              <MonthViewShiftCalendar
-                events={shifts.map((shift) => {
-                  return {
-                    id: shift.id,
-                    start: getUTCDateForDateTimeString(
-                      shift.startTime.toString(),
-                    ),
-                    end: getUTCDateForDateTimeString(shift.endTime.toString()),
-                    groupId: "", // TODO: Add groupId for saved/unsaved
-                  };
-                })}
-                shifts={shifts}
-                onDayClick={handleDayClick}
-                onShiftClick={handleShiftClick}
-              />
-            )
+            <MonthViewShiftCalendar
+              events={shifts.map((shift) => {
+                return {
+                  id: shift.id,
+                  start: getUTCDateForDateTimeString(
+                    shift.startTime.toString(),
+                  ),
+                  end: getUTCDateForDateTimeString(shift.endTime.toString()),
+                  groupId: "",
+                };
+              })}
+              shifts={shifts}
+              onDayClick={handleDayClick}
+              onShiftClick={handleShiftClick}
+            />
           )}
         </Box>
         <Box w="400px" overflow="hidden">
@@ -164,19 +233,12 @@ const OrgWideCalendar = (): React.ReactElement => {
               volunteerId={volunteerId}
             />
           ) : (
-            <ScheduleSidePanel
-              shifts={sidePanelShifts}
-              currentlyEditingShift={selectedShift}
-              onEditSignupsClick={() => {}}
-              onSelectAllSignupsClick={() => {}}
-              onSignupCheckboxClick={() => {}}
-              onSaveSignupsClick={async () => {}}
-              submitSignupsLoading={false}
-              selectedShift={selectedShift}
-              setSelectedShift={setSelectedShift}
-              isReadOnly
-              onVolunteerProfileClick={handleVolunteerProfileClick}
-            />
+            ReadOnlyScheduleSidePanel({
+              shifts: sidePanelShifts,
+              selectedShift,
+              setSelectedShift,
+              handleVolunteerProfileClick,
+            })
           )}
         </Box>
       </Flex>

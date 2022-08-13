@@ -1,5 +1,5 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@chakra-ui/icons";
-import { Box, Button, Flex, Select, Spacer } from "@chakra-ui/react";
+import { Box, Button, Center, Flex, Select, Spacer } from "@chakra-ui/react";
 import moment from "moment";
 import React, { useEffect } from "react";
 import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
@@ -40,7 +40,7 @@ const MonthViewShiftCalendar = ({
     const sortedEventsList = sortEvents(events);
     setSortedEvents(sortedEventsList);
     if (moment(selectedMonth).diff(moment(new Date(0)), "days") === 0) {
-      setSelectedMonth(getFirstDayOfMonth(sortedEventsList[0].start));
+      setSelectedMonth(getFirstDayOfMonth(sortedEventsList[0]?.start));
     }
   }, [events, selectedMonth]);
 
@@ -125,7 +125,7 @@ const MonthViewShiftCalendar = ({
       />
     </Box>
   ) : (
-    <Box>No events to display</Box>
+    <Center mt={8}>No events to display</Center>
   );
 };
 
