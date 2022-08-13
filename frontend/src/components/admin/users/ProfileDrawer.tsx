@@ -168,10 +168,6 @@ const ProfileDrawer = ({
         </DrawerBody>
         <Divider />
         <DrawerFooter>
-          {/* this button might be removed depending on reset pw flow */}
-          <Button variant="outline" mr={3}>
-            Reset password
-          </Button>
           <Button colorScheme="red" onClick={() => setOpenDeleteModal(true)}>
             Remove user
           </Button>
