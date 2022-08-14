@@ -14,6 +14,7 @@ import { getUTCDateForDateTimeString } from "../../../utils/DateTimeUtils";
 import ErrorModal from "../../common/ErrorModal";
 import Loading from "../../common/Loading";
 import Navbar from "../../common/Navbar";
+import AdminPostingScheduleHeader from "../schedule/AdminPostingScheduleHeader";
 import AdminSchedulePageHeader from "../schedule/AdminSchedulePageHeader";
 import ScheduleSidePanel from "../schedule/ScheduleSidePanel";
 import VolunteerSidePanel from "../schedule/volunteersidepanel/VolunteerSidePanel";
@@ -23,12 +24,17 @@ type AdminOrgCalendarShiftsAndSignupsResponse = {
   shiftsWithSignupsAndVolunteers: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[];
 };
 
-type PostingId = {
+type AdminOrgCalendarPosting = {
   id: string;
+  title: string;
+  branch: {
+    id: string;
+    name: string;
+  };
 };
 
 type AdminOrgCalendarPostings = {
-  postings: PostingId[];
+  postings: AdminOrgCalendarPosting[];
 };
 
 const ADMIN_ORG_CALENDAR_TABLE_DATA_QUERY = gql`
@@ -58,6 +64,11 @@ const ADMIN_ORG_CALENDAR_POSTINGS = gql`
   query AdminOrgCalendarPostings($id: ID!) {
     postings(userId: $id) {
       id
+      title
+      branch {
+        id
+        name
+      }
     }
   }
 `;
@@ -94,10 +105,39 @@ const ReadOnlyScheduleSidePanel = ({
   );
 };
 
+const ReadOnlyAdminPostingScheduleHeader = ({
+  selectedShift,
+  userPostings,
+}: {
+  selectedShift: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO;
+  userPostings: AdminOrgCalendarPosting[];
+}): React.ReactElement => {
+  return selectedShift ? (
+    <AdminPostingScheduleHeader
+      postingID={Number(selectedShift.postingId)}
+      postingName={
+        userPostings.find(
+          (userPosting) => userPosting.id === selectedShift.postingId,
+        )?.title || ""
+      }
+      onReviewClick={() => {}}
+      isReadOnly
+    />
+  ) : (
+    <Box
+      height="77px"
+      borderBottomWidth="2px"
+      borderBottomColor="background.dark"
+    />
+  );
+};
+
 const OrgWideCalendar = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
   const [isSuperAdmin] = useState(authenticatedUser?.role === Role.Admin);
-  const [userPostings, setUserPostings] = useState<string[]>([]);
+  const [userPostings, setUserPostings] = useState<AdminOrgCalendarPosting[]>(
+    [],
+  );
   const [shifts, setShifts] = useState<
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
@@ -126,7 +166,9 @@ const OrgWideCalendar = (): React.ReactElement => {
         let scheduledShifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[] = [];
         scheduledShifts = shiftsData.filter(
           (shift) =>
-            userPostings.includes(shift.postingId) &&
+            userPostings
+              .map((posting) => posting.id)
+              .includes(shift.postingId) &&
             shift.signups.length > 0 &&
             shift.signups[0].status === "PUBLISHED",
         );
@@ -151,7 +193,7 @@ const OrgWideCalendar = (): React.ReactElement => {
   } = useQuery<AdminOrgCalendarPostings>(ADMIN_ORG_CALENDAR_POSTINGS, {
     variables: { id: authenticatedUser?.id },
     onCompleted: ({ postings }) => {
-      setUserPostings(postings.map((posting) => posting.id));
+      setUserPostings(postings);
       getShiftsAndSignups();
     },
     fetchPolicy: "no-cache",
@@ -203,7 +245,19 @@ const OrgWideCalendar = (): React.ReactElement => {
 
       <Flex>
         <Box flex={1}>
-          <AdminSchedulePageHeader branchName="Organization-Wide" />
+          <AdminSchedulePageHeader
+            branchName={
+              selectedShift
+                ? userPostings.find(
+                    (userPosting) => userPosting.id === selectedShift.postingId,
+                  )?.branch.name || "Organization-Wide"
+                : "Organization-Wide"
+            }
+          />
+          {ReadOnlyAdminPostingScheduleHeader({
+            selectedShift,
+            userPostings,
+          })}
           {tableDataLoading || postingsLoading ? (
             <Loading />
           ) : (
