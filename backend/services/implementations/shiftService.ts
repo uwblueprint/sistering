@@ -9,6 +9,7 @@ import {
 } from "@prisma/client";
 import { Promise as BluebirdPromise } from "bluebird";
 
+import moment from "moment";
 import IShiftService from "../interfaces/IShiftService";
 import {
   ShiftBulkRequestDTO,
@@ -51,6 +52,15 @@ type ShiftWithSignupAndVolunteers = Shift & {
 
 class ShiftService implements IShiftService {
   /* eslint-disable class-methods-use-this */
+
+  getTimeBlocksOnAfterEarliestDate(
+    timeBlocks: TimeBlock[],
+    earliestDate: Date,
+  ): TimeBlock[] {
+    return timeBlocks.filter((shift) =>
+      moment(shift.startTime).isSameOrAfter(earliestDate),
+    );
+  }
 
   isSameDate(date1: Date, date2: Date): boolean {
     return (
@@ -172,10 +182,7 @@ class ShiftService implements IShiftService {
       const filteredShifts = shifts;
 
       // Skip shifts that are redundant (same start/end times)
-      filteredShifts.times = this.getValidUniqueTimeBlocks(
-        shifts.times,
-        shifts.startDate,
-      );
+      filteredShifts.times = this.getValidUniqueTimeBlocks(shifts.times);
 
       // Check that input times are valid
       const [valid, errorMessage] = this.validateTimeBlocks(
@@ -184,7 +191,10 @@ class ShiftService implements IShiftService {
       if (!valid) throw new Error(errorMessage);
 
       // Build shiftTimes object
-      return this.buildTimeBlocks(filteredShifts);
+      return this.getTimeBlocksOnAfterEarliestDate(
+        this.buildTimeBlocks(filteredShifts),
+        shifts.startDate,
+      );
     } catch (error) {
       Logger.error(
         `Failed to create shift. Reason = ${getErrorMessage(error)}`,
@@ -193,17 +203,9 @@ class ShiftService implements IShiftService {
     }
   }
 
-  getValidUniqueTimeBlocks(
-    times: TimeBlock[],
-    earliestDate: Date,
-  ): TimeBlock[] {
-    // Skip shifts that occur before start date
-    const valid = times.filter(
-      (shift) => shift.startTime.getTime() >= earliestDate.getTime(),
-    );
-
+  getValidUniqueTimeBlocks(times: TimeBlock[]): TimeBlock[] {
     // Skip redundant shifts
-    return [...new Set(valid.map((time) => JSON.stringify(time)))]
+    return [...new Set(times.map((time) => JSON.stringify(time)))]
       .map((time) => JSON.parse(time))
       .map(({ startTime, endTime }) => {
         return {
