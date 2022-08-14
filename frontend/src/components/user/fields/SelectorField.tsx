@@ -11,6 +11,7 @@ import {
 } from "@chakra-ui/react";
 import { Field } from "formik";
 import React from "react";
+import TagsPopover from "../../common/TagsPopover";
 
 export type Item = {
   id: string;
@@ -74,12 +75,34 @@ const SelectorField = ({
         </Text>
         <Flex wrap="wrap">
           {values.length > 0 ? (
-            values.map((value) => (
-              <Tag variant="brand" key={value.id} mb={2} mr={3} py={1} px={3}>
-                {value.name}
-                <TagCloseButton onClick={() => onDeselect(value.id)} />
-              </Tag>
-            ))
+            <>
+              {values.slice(0, 3).map((value) => (
+                <Tag variant="brand" key={value.id} mr={3} py={1} px={3}>
+                  {value.name}
+                  <TagCloseButton onClick={() => onDeselect(value.id)} />
+                </Tag>
+              ))}
+              {values.length > 3 && (
+                <TagsPopover
+                  variant="brand"
+                  header={label}
+                  displayLength={3}
+                  tags={values.map((value) => (
+                    <Tag
+                      variant="brand"
+                      key={value.id}
+                      mr={3}
+                      py={1}
+                      mb={2}
+                      px={3}
+                    >
+                      {value.name}
+                      <TagCloseButton onClick={() => onDeselect(value.id)} />
+                    </Tag>
+                  ))}
+                />
+              )}
+            </>
           ) : (
             <Text>No {label.toLowerCase()} selected.</Text>
           )}

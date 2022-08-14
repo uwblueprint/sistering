@@ -125,7 +125,7 @@ const AdminPostingCard = ({
               <Icon as={BsPeopleFill} w={6} pr={2} />
               {status === PostingFilterStatus.DRAFT
                 ? "Not accepting registrants"
-                : `${numVolunteers} volunteers`}
+                : `${numVolunteers} volunteer${numVolunteers > 1 ? "s" : ""}`}
             </Box>
           </HStack>
           <Box w="100%" h="100%" mt="16px !important" mb="4px !important">

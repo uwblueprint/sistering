@@ -12,18 +12,24 @@ import {
 
 type TagsPopoverProps = {
   header: string;
+  variant: string;
+  height?: string;
+  displayLength: number;
   tags: React.ReactElement[];
 };
 
 const TagsPopover: React.FC<TagsPopoverProps> = ({
   header,
   tags,
+  variant,
+  height,
+  displayLength,
 }: TagsPopoverProps) => {
   return (
-    <Popover placement="top">
+    <Popover trigger="hover" placement="top-end">
       <PopoverTrigger>
-        <Tag variant="brand" height="32px" mr={4}>
-          +{tags.length - 2}
+        <Tag variant={variant} mr={4}>
+          +{tags.length - displayLength}
         </Tag>
       </PopoverTrigger>
       <PopoverContent>

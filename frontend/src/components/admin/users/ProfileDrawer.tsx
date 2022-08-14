@@ -23,6 +23,7 @@ import { gql, useMutation } from "@apollo/client";
 import DeleteModal from "../DeleteModal";
 import { BranchResponseDTO } from "../../../types/api/BranchTypes";
 import MultiBranchSelector from "../../pages/admin/user/MultiBranchSelector";
+import TagsPopover from "../../common/TagsPopover";
 
 type ProfileDrawerProps = {
   isOpen: boolean;
@@ -113,13 +114,37 @@ const ProfileDrawer = ({
                   <Text textStyle="body-bold" mb="2">
                     Skills
                   </Text>
-                  <>
-                    {skills?.map((skill) => (
-                      <Tag variant="outline" key={skill} mb="10px" mr="10px">
-                        {skill}
-                      </Tag>
-                    ))}
-                  </>
+
+                  {skills && skills.length > 0 ? (
+                    <>
+                      {skills?.slice(0, 4).map((skill) => (
+                        <Tag variant="outline" key={skill} mb="10px" mr="10px">
+                          {skill}
+                        </Tag>
+                      ))}
+                      {skills && skills.length > 4 && (
+                        <TagsPopover
+                          variant="outline"
+                          header="Skills"
+                          displayLength={4}
+                          tags={skills.map((skill) => (
+                            <Tag
+                              variant="outline"
+                              key={skill}
+                              mb="10px"
+                              mr="10px"
+                            >
+                              {skill}
+                            </Tag>
+                          ))}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <Text textStyle="body-regular" fontSize="14px">
+                      No skills listed.
+                    </Text>
+                  )}
                 </Box>
                 <Divider my="2" />
               </>

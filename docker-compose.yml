@@ -1,4 +1,4 @@
-version: "3.7"
+version: '3.7'
 
 services:
   frontend:
@@ -25,6 +25,7 @@ services:
       - /app/node_modules
     ports:
       - 5000:5000
+      - 5555:5555
     dns:
       - 8.8.8.8
     depends_on:
@@ -45,7 +46,7 @@ services:
     environment:
       - POSTGRES_MULTIPLE_DATABASES=${POSTGRES_DB_DEV},${POSTGRES_DB_TEST}
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
       interval: 5s
       timeout: 5s
       retries: 5
