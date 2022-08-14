@@ -36,7 +36,6 @@ import { AuthenticatedUser, Role } from "./types/AuthTypes";
 import VolunteerShiftsPage from "./components/pages/volunteer/shift/VolunteerShiftsPage";
 import SchedulePostingPage from "./components/pages/admin/schedule/SchedulePostingPage";
 import VolunteerPostingAvailabilities from "./components/pages/volunteer/posting/VolunteerPostingAvailabilities";
-import AdminSchedulePostingReviewPage from "./components/pages/admin/schedule/AdminSchedulePostingReviewPage";
 import CreateAccountPage from "./components/pages/CreateAccountPage";
 import PasswordResetSuccessPage from "./components/auth/PasswordResetSuccess";
 import NewAccountPage from "./components/pages/NewAccountPage";
@@ -197,12 +196,6 @@ const App = (): React.ReactElement => {
                   path={Routes.ADMIN_SCHEDULE_POSTING_PAGE}
                   authorizedRoles={[Role.Admin, Role.Employee]}
                   component={SchedulePostingPage}
-                />
-                <PrivateRoute
-                  exact
-                  path={Routes.ADMIN_SCHEDULE_POSTING_REVIEW_PAGE}
-                  authorizedRoles={[Role.Admin]}
-                  component={AdminSchedulePostingReviewPage}
                 />
                 <Route exact path="*" component={NotFound} />
               </Switch>
