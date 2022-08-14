@@ -248,7 +248,7 @@ const OrgWideCalendar = (): React.ReactElement => {
           <AdminSchedulePageHeader
             branchName={
               userPostings.find(
-                (userPosting) => userPosting.id === selectedShift.postingId,
+                (userPosting) => userPosting.id === selectedShift?.postingId,
               )?.branch.name || "Organization-Wide"
             }
           />
