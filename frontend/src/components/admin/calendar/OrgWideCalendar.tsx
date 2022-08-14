@@ -100,6 +100,7 @@ const ReadOnlyScheduleSidePanel = ({
       selectedShift={selectedShift}
       setSelectedShift={setSelectedShift}
       isReadOnly
+      isNotOpenForReview
       onVolunteerProfileClick={handleVolunteerProfileClick}
     />
   );
@@ -121,6 +122,7 @@ const ReadOnlyAdminPostingScheduleHeader = ({
         )?.title || ""
       }
       onReviewClick={() => {}}
+      isNotOpenForReview
       isReadOnly
     />
   ) : (

@@ -10,7 +10,7 @@ import {
 import { Promise as BluebirdPromise } from "bluebird";
 
 import moment from "moment";
-import IShiftService from "../interfaces/IShiftService";
+import IShiftService from "../interfaces/shiftService";
 import {
   ShiftBulkRequestDTO,
   ShiftBulkRequestWithoutPostingId,
