@@ -195,11 +195,7 @@ const OrgWideCalendar = (): React.ReactElement => {
 
   return (
     <Flex flexFlow="column" width="100%" height="100vh">
-      {
-        (tableDataQueryError || postingsQueryError) && (
-          <ErrorModal />
-        ) /* TODO: error */
-      }
+      {(tableDataQueryError || postingsQueryError) && <ErrorModal />}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
         tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}
@@ -208,7 +204,7 @@ const OrgWideCalendar = (): React.ReactElement => {
       <Flex>
         <Box flex={1}>
           <AdminSchedulePageHeader branchName="Organization-Wide" />
-          {tableDataLoading || postingsLoading ? ( // TODO: loading
+          {tableDataLoading || postingsLoading ? (
             <Loading />
           ) : (
             <MonthViewShiftCalendar
