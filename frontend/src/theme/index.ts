@@ -124,13 +124,6 @@ const customTheme = extendTheme(
               borderColor: "background.dark",
               borderCollapse: "collapse",
             },
-            tr: {
-              _last: {
-                td: {
-                  borderBottom: "none",
-                },
-              },
-            },
             caption: {
               borderTop: "2px",
               borderColor: "background.dark",
