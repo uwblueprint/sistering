@@ -16,7 +16,7 @@ import {
 } from "@chakra-ui/react";
 import { AddIcon, SearchIcon, SettingsIcon } from "@chakra-ui/icons";
 import { useHistory } from "react-router-dom";
-import BranchManagerModal from "./BranchManagerModal";
+import SettingManagerModal from "./SettingManagerModal";
 import {
   ADMIN_CREATE_POSTING_PAGE,
   ADMIN_ORG_WIDE_CALENDAR,
@@ -50,7 +50,7 @@ const AdminHomepageHeader = ({
   return (
     <>
       {!isSuperAdmin ? undefined : (
-        <BranchManagerModal
+        <SettingManagerModal
           isOpen={isModalOpen}
           onClose={() => setIsModalOpen(false)}
         />

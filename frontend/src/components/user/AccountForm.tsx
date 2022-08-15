@@ -37,7 +37,7 @@ export enum AccountFormMode {
 }
 
 const SKILLS = gql`
-  query BranchManagerModal_Skills {
+  query AccountForm_Skills {
     skills {
       id
       name

@@ -50,14 +50,14 @@ const BranchManagerTable = ({
   const toast = useToast();
   const [updateBranch] = useMutation(UPDATE_BRANCH, {
     refetchQueries: [
-      "BranchManagerModal_Branches",
+      "SettingManagerModal_Branches",
       "AdminHomepageHeader_Branches",
     ],
   });
 
   const [deleteBranch] = useMutation(DELETE_BRANCH, {
     refetchQueries: [
-      "BranchManagerModal_Branches",
+      "SettingManagerModal_Branches",
       "AdminHomepageHeader_Branches",
     ],
   });

@@ -45,11 +45,11 @@ const SkillsManagerTable = ({
 
   const toast = useToast();
   const [updateSkill] = useMutation(UPDATE_SKILL, {
-    refetchQueries: ["BranchManagerModal_Skills"],
+    refetchQueries: ["SettingManagerModal_Skills"],
   });
 
   const [deleteSkill] = useMutation(DELETE_SKILL, {
-    refetchQueries: ["BranchManagerModal_Skills"],
+    refetchQueries: ["SettingManagerModal_Skills"],
   });
 
   const handleSkillUpdate = async (skillName: string) => {
