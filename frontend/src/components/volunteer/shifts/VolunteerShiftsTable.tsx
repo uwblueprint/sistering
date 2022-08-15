@@ -69,6 +69,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       borderRadius="12px"
       border="2px"
       borderColor="background.dark"
+      minH="784px"
     >
       <HStack justifyContent="space-between" px={12}>
         <Tabs pt={8} onChange={(index) => setIsShowUpcomingShifts(index === 0)}>
