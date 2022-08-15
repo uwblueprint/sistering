@@ -170,6 +170,20 @@ class BranchService implements IBranchService {
             },
           },
         });
+        await prisma.signup.deleteMany({
+          where: {
+            userId: {
+              equals: userId,
+            },
+            shift: {
+              posting: {
+                branchId: {
+                  notIn: branchIds.map((id) => Number(id)),
+                },
+              },
+            },
+          },
+        });
       }
     } catch (error: unknown) {
       Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);

@@ -53,6 +53,10 @@ const UserManagementTableProfileCell = ({
     }
   };
 
+  const resetSelectedBranches = () => {
+    setSelectedBranches(userBranches);
+  };
+
   return (
     <>
       <Tooltip label="View details" placement="bottom-start">
@@ -84,6 +88,7 @@ const UserManagementTableProfileCell = ({
         branches={branches}
         selectedBranches={selectedBranches}
         handleBranchMenuItemClicked={handleBranchMenuItemClicked}
+        resetSelectedBranches={resetSelectedBranches}
       />
     </>
   );
