@@ -7,6 +7,7 @@ type AdminPostingScheduleHeaderProps = {
   postingID: number;
   onReviewClick: () => void;
   isReadOnly: boolean;
+  isNotOpenForReview: boolean;
 };
 
 const AdminPostingScheduleHeader = ({
@@ -14,6 +15,7 @@ const AdminPostingScheduleHeader = ({
   postingID,
   onReviewClick,
   isReadOnly,
+  isNotOpenForReview,
 }: AdminPostingScheduleHeaderProps): React.ReactElement => {
   const history = useHistory();
 
@@ -41,7 +43,11 @@ const AdminPostingScheduleHeader = ({
             View Posting
           </Button>
           {isReadOnly ? undefined : (
-            <Button textStyle="button-semibold" onClick={onReviewClick}>
+            <Button
+              textStyle="button-semibold"
+              onClick={onReviewClick}
+              disabled={isNotOpenForReview}
+            >
               Review
             </Button>
           )}

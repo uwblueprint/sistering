@@ -51,7 +51,6 @@ type GetUserInviteResponse = {
 };
 
 const NewAccountPage = (): React.ReactElement => {
-  const [profilePhoto, setProfilePhoto] = useState<string>("");
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const [
     createEmployee,
@@ -178,20 +177,16 @@ const NewAccountPage = (): React.ReactElement => {
   return (
     <>
       <SignupNavbar />
-      <Container maxW="container.xl" align="left" mt={12}>
+      <Container maxW="container.xl" alignItems="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Account Creation
         </Text>
-        <ProfilePhotoForm
-          profilePhoto={profilePhoto}
-          setProfilePhoto={setProfilePhoto}
-        />
+        <ProfilePhotoForm />
         <Divider my={8} />
         <AccountForm
           mode={AccountFormMode.CREATE}
           isAdmin={isAdmin}
           email={userInvite?.email}
-          profilePhoto={profilePhoto}
           onEmployeeCreate={onEmployeeCreate}
           onVolunteerCreate={onVolunteerCreate}
         />

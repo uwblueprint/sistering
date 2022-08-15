@@ -492,7 +492,6 @@ const PostingFormBasicInfo: React.FC<PostingFormBasicInfoProps> = ({
               <FormControl>
                 <FormLabel textStyle="body-regular">Selected Skills</FormLabel>
                 <Flex
-                  spacing={0}
                   minHeight="32px"
                   wrap="wrap"
                   mb={skillsError ? ERROR_MESSAGE_HEIGHT : "0px"}
@@ -558,7 +557,6 @@ const PostingFormBasicInfo: React.FC<PostingFormBasicInfoProps> = ({
                   Appointed Contacts
                 </FormLabel>
                 <Flex
-                  spacing={0}
                   minHeight="32px"
                   wrap="wrap"
                   mb={employeesError ? ERROR_MESSAGE_HEIGHT : "0px"}

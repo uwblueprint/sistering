@@ -10,13 +10,19 @@ import {
   LANGUAGES,
 } from "../../types/api/UserType";
 import Loading from "../common/Loading";
-import SignupNavbar from "../common/SignupNavbar";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
 import ProfilePhotoForm from "../user/ProfilePhotoForm";
 
 import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
 import getTitleCaseForOneWord from "../../utils/StringUtils";
+import Navbar from "../common/Navbar";
+import {
+  AdminNavbarTabs,
+  AdminPages,
+  EmployeeNavbarTabs,
+  VolunteerNavbarTabs,
+} from "../../constants/Tabs";
 
 const EMPLOYEE_BY_ID = gql`
   query EmployeeUserById($id: ID!) {
@@ -84,12 +90,12 @@ const UPDATE_VOLUNTEER_USER = gql`
 `;
 const EditAccountPage = (): React.ReactElement => {
   const { authenticatedUser } = useContext(AuthContext);
+  const [userRole] = useState(authenticatedUser?.role);
 
   const [key, setKey] = useState<number>(0); // Used to force a re-render
   const [user, setUser] = useState<
     (EmployeeUserResponseDTO & VolunteerUserResponseDTO) | null
   >(null);
-  const [profilePhoto, setProfilePhoto] = useState<string>("");
   const toast = useToast();
 
   useQuery(
@@ -108,35 +114,35 @@ const EditAccountPage = (): React.ReactElement => {
     },
   );
 
-  const [
-    editEmployee,
-    { loading: editEmployeeLoading, error: editEmployeeError },
-  ] = useMutation(UPDATE_EMPLOYEE_USER, {
-    refetchQueries: () => [
-      {
-        query: EMPLOYEE_BY_ID,
-        variables: {
-          id: authenticatedUser?.id,
+  const [editEmployee, { loading: editEmployeeLoading }] = useMutation(
+    UPDATE_EMPLOYEE_USER,
+    {
+      refetchQueries: () => [
+        {
+          query: EMPLOYEE_BY_ID,
+          variables: {
+            id: authenticatedUser?.id,
+          },
         },
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
+      ],
+      awaitRefetchQueries: true,
+    },
+  );
 
-  const [
-    editVolunteer,
-    { loading: editVolunteerLoading, error: editVolunteerError },
-  ] = useMutation(UPDATE_VOLUNTEER_USER, {
-    refetchQueries: () => [
-      {
-        query: VOLUNTEER_BY_ID,
-        variables: {
-          id: authenticatedUser?.id,
+  const [editVolunteer, { loading: editVolunteerLoading }] = useMutation(
+    UPDATE_VOLUNTEER_USER,
+    {
+      refetchQueries: () => [
+        {
+          query: VOLUNTEER_BY_ID,
+          variables: {
+            id: authenticatedUser?.id,
+          },
         },
-      },
-    ],
-    awaitRefetchQueries: true,
-  });
+      ],
+      awaitRefetchQueries: true,
+    },
+  );
 
   if (editEmployeeLoading || editVolunteerLoading) {
     return <Loading />;
@@ -185,22 +191,28 @@ const EditAccountPage = (): React.ReactElement => {
 
   return (
     <>
-      <SignupNavbar />
-      <Container maxW="container.xl" align="left" mt={12}>
+      <Navbar
+        defaultIndex={Number(AdminPages.AdminSchedulePosting)}
+        tabs={
+          // eslint-disable-next-line no-nested-ternary
+          userRole === Role.Admin
+            ? AdminNavbarTabs
+            : userRole === Role.Employee
+            ? EmployeeNavbarTabs
+            : VolunteerNavbarTabs
+        }
+      />
+      <Container maxW="container.xl" alignItems="left" mt={12}>
         <Text mb={2} textStyle="display-large">
           Edit Profile
         </Text>
-        <ProfilePhotoForm
-          profilePhoto={profilePhoto}
-          setProfilePhoto={setProfilePhoto}
-        />
+        <ProfilePhotoForm />
         <Divider my={8} />
         {user && (
           <AccountForm
             key={key}
             mode={AccountFormMode.EDIT}
             isAdmin={authenticatedUser?.role !== Role.Volunteer}
-            profilePhoto={profilePhoto}
             firstName={user?.firstName}
             lastName={user?.lastName}
             email={user?.email}

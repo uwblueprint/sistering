@@ -14,6 +14,7 @@ type AdminScheduleVolunteerTableProps = {
   onEditSaveClick: () => void;
   submitSignupsLoading: boolean;
   isReadOnly: boolean;
+  isNotOpenForReview: boolean;
   onVolunteerProfileClick: (
     isDisplayingVolunteer: boolean,
     userId: string,
@@ -29,6 +30,7 @@ const AdminScheduleVolunteerTable = ({
   onEditSaveClick,
   submitSignupsLoading,
   isReadOnly,
+  isNotOpenForReview,
   onVolunteerProfileClick,
 }: AdminScheduleVolunteerTableProps): React.ReactElement => {
   const [signupsToDisplay, setSignupsToDisplay] = useState<
@@ -69,6 +71,7 @@ const AdminScheduleVolunteerTable = ({
               px="18px"
               fontSize="12px"
               lineHeight="100%"
+              disabled={isNotOpenForReview}
               onClick={onEditSaveClick}
               isLoading={submitSignupsLoading}
             >
@@ -81,9 +84,9 @@ const AdminScheduleVolunteerTable = ({
             <Text
               textStyle="button-semibold"
               fontSize="12px"
-              color="violet"
+              color={isEditing ? "violet" : "purple.600"}
               textDecor="underline"
-              cursor="pointer"
+              cursor={isEditing ? "pointer" : "not-allowed"}
               onClick={onSelectAllSignupsClick}
             >
               Select All

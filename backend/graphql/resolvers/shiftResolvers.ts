@@ -1,6 +1,6 @@
 import { SignupStatus } from "@prisma/client";
 import ShiftService from "../../services/implementations/shiftService";
-import IShiftService from "../../services/interfaces/IShiftService";
+import IShiftService from "../../services/interfaces/shiftService";
 import {
   ShiftBulkRequestDTO,
   ShiftRequestDTO,
@@ -26,6 +26,11 @@ const shiftResolvers = {
       { postingId }: { postingId: string },
     ): Promise<ShiftResponseDTO[]> => {
       return shiftService.getShiftsByPosting(postingId);
+    },
+    shiftsWithSignupsAndVolunteers: async (): Promise<
+      ShiftWithSignupAndVolunteerResponseDTO[]
+    > => {
+      return shiftService.getShiftsWithSignupsAndVolunteers();
     },
     shiftsWithSignupsAndVolunteersByPosting: async (
       _parent: undefined,
