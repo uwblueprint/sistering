@@ -10,7 +10,7 @@ import {
 import { Promise as BluebirdPromise } from "bluebird";
 
 import moment from "moment";
-import IShiftService from "../interfaces/IShiftService";
+import IShiftService from "../interfaces/shiftService";
 import {
   ShiftBulkRequestDTO,
   ShiftBulkRequestWithoutPostingId,
@@ -295,6 +295,44 @@ class ShiftService implements IShiftService {
       Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
       throw error;
     }
+  }
+
+  async getShiftsWithSignupsAndVolunteers(): Promise<
+    ShiftWithSignupAndVolunteerResponseDTO[]
+  > {
+    let shifts: ShiftWithSignupAndVolunteers[] = [];
+    try {
+      shifts = await prisma.shift.findMany({
+        include: {
+          signups: {
+            include: {
+              user: {
+                include: {
+                  volunteer: true,
+                },
+              },
+            },
+          },
+        },
+      });
+    } catch (error) {
+      Logger.error(`Failed to get shifts. Reason = ${getErrorMessage(error)}`);
+      throw error;
+    }
+
+    return shifts.map((shift) => ({
+      id: String(shift.id),
+      postingId: String(shift.postingId),
+      startTime: shift.startTime,
+      endTime: shift.endTime,
+      signups: shift.signups.map((shiftSignup) =>
+        this.convertSignupResponeWithUserAndVolunteerToDTO(
+          shiftSignup,
+          shift.startTime,
+          shift.endTime,
+        ),
+      ),
+    }));
   }
 
   async getShiftsWithSignupAndVolunteerForPosting(

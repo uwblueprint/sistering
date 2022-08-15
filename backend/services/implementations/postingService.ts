@@ -7,6 +7,7 @@ import {
   Shift,
   PostingStatus as PrismaPostingStatus,
   Signup,
+  Role,
 } from "@prisma/client";
 import IPostingService from "../interfaces/postingService";
 import IUserService from "../interfaces/userService";
@@ -24,7 +25,7 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
-import IShiftService from "../interfaces/IShiftService";
+import IShiftService from "../interfaces/shiftService";
 import { getInterval } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
@@ -156,8 +157,25 @@ class PostingService implements IPostingService {
 
   async getUserBranchesByUserId(userId: string): Promise<number[]> {
     try {
-      const volunteer = await this.userService.getVolunteerUserById(userId);
-      return volunteer.branches.map((branch: BranchResponseDTO) => +branch.id);
+      const user = await this.userService.getUserById(userId);
+      switch (user.role) {
+        case Role.ADMIN: {
+          const branches = await prisma.branch.findMany();
+          return branches.map((branch) => branch.id);
+        }
+        case Role.EMPLOYEE: {
+          const employee = await this.userService.getEmployeeUserById(userId);
+          return employee.branches.map((branch: BranchResponseDTO) =>
+            Number(branch.id),
+          );
+        }
+        default: {
+          const volunteer = await this.userService.getVolunteerUserById(userId);
+          return volunteer.branches.map((branch: BranchResponseDTO) =>
+            Number(branch.id),
+          );
+        }
+      }
     } catch (error: unknown) {
       Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
       throw error;

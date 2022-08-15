@@ -1,6 +1,6 @@
 import PostingService from "../../services/implementations/postingService";
 import IPostingService from "../../services/interfaces/postingService";
-import IShiftService from "../../services/interfaces/IShiftService";
+import IShiftService from "../../services/interfaces/shiftService";
 import ShiftService from "../../services/implementations/shiftService";
 import UserService from "../../services/implementations/userService";
 import IUserService from "../../services/interfaces/userService";
