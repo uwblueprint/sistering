@@ -23,22 +23,9 @@ const REFRESH_MUTATION = `
   }
 `;
 
-const LOGOUT = `
-  mutation Index_Logout($userId: ID!) {
-    logout(userId: $userId)
-  }
-`;
-
-const logout = async (userId: string) => {
-  const { data: result } = await axios.post(
-    `${process.env.REACT_APP_BACKEND_URL}/graphql`,
-    { query: LOGOUT, variables: { userId } },
-    { withCredentials: true },
-  );
-
-  if (result?.data?.logout === null) {
-    localStorage.removeItem(AUTHENTICATED_USER_KEY);
-  }
+const logout = async () => {
+  localStorage.removeItem(AUTHENTICATED_USER_KEY);
+  window.location.reload();
 };
 
 const link = createUploadLink({
@@ -77,9 +64,7 @@ const authLink = setContext(async (_, { headers }) => {
         );
         token = accessToken;
       } catch {
-        await logout(
-          String(getLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "id")),
-        );
+        await logout();
       }
     }
   }

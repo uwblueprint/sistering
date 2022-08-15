@@ -59,6 +59,7 @@ const App = (): React.ReactElement => {
   useEffect(() => {
     ReactGA.pageview(window.location.pathname + window.location.search);
   }, []);
+
   useEffect(() => {
     hotjar.initialize(HJID, HSJV);
   }, []);
