@@ -96,7 +96,6 @@ const EditAccountPage = (): React.ReactElement => {
   const [user, setUser] = useState<
     (EmployeeUserResponseDTO & VolunteerUserResponseDTO) | null
   >(null);
-  const [profilePhoto, setProfilePhoto] = useState<string>("");
   const toast = useToast();
 
   useQuery(
@@ -207,17 +206,13 @@ const EditAccountPage = (): React.ReactElement => {
         <Text mb={2} textStyle="display-large">
           Edit Profile
         </Text>
-        <ProfilePhotoForm
-          profilePhoto={profilePhoto}
-          setProfilePhoto={setProfilePhoto}
-        />
+        <ProfilePhotoForm />
         <Divider my={8} />
         {user && (
           <AccountForm
             key={key}
             mode={AccountFormMode.EDIT}
             isAdmin={authenticatedUser?.role !== Role.Volunteer}
-            profilePhoto={profilePhoto}
             firstName={user?.firstName}
             lastName={user?.lastName}
             email={user?.email}
