@@ -384,6 +384,7 @@ const AccountForm = ({
                 isRequired
               />
               {/* Volunteer fields */}
+              <Box />
               {!isAdmin && (
                 <SelectorField
                   id="skills"
