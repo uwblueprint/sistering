@@ -24,17 +24,17 @@ type VolunteerShiftsTableProps = {
 
 const UPCOMING_SHIFTS = 0;
 const PENDING_SHIFTS = 1;
-const UNAVAILABLE_SHIFTS = 2;
+const FILLED_SHIFTS = 2;
 
 const VolunteerShiftsTableContent = ({
   upcomingShifts,
   pendingShifts,
-  unavailableShifts,
+  filledShifts,
   tabIndex,
 }: {
   upcomingShifts: ShiftSignupPostingResponseDTO[];
   pendingShifts: ShiftSignupPostingResponseDTO[];
-  unavailableShifts: ShiftSignupPostingResponseDTO[];
+  filledShifts: ShiftSignupPostingResponseDTO[];
   tabIndex: number;
 }): React.ReactElement => {
   if (tabIndex === UPCOMING_SHIFTS && upcomingShifts.length > 0) {
@@ -66,8 +66,8 @@ const VolunteerShiftsTableContent = ({
       </Table>
     );
   }
-  if (tabIndex === UNAVAILABLE_SHIFTS && unavailableShifts.length > 0) {
-    return <VolunteerUpcomingShiftsTable shifts={unavailableShifts} />;
+  if (tabIndex === FILLED_SHIFTS && filledShifts.length > 0) {
+    return <VolunteerUpcomingShiftsTable shifts={filledShifts} />;
   }
   return <VolunteerShiftsTableEmptyState />;
 };
@@ -89,9 +89,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
 
   const pendingShifts = shifts
     .filter(
-      (shift) =>
-        (shift.status === "PENDING" || shift.status === "CONFIRMED") &&
-        moment(shift.autoClosingDate, "YYYY-MM-DD").isSameOrAfter(),
+      (shift) => shift.status === "PENDING" || shift.status === "CONFIRMED",
     )
     .filter((shift) => {
       if (filter === "all") {
@@ -100,12 +98,8 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       return moment().isSame(moment(shift.autoClosingDate), filter);
     });
 
-  const unavailableShifts = shifts
-    .filter(
-      (shift) =>
-        (shift.status === "PENDING" || shift.status === "CONFIRMED") &&
-        moment(shift.autoClosingDate, "YYYY-MM-DD").isBefore(),
-    )
+  const filledShifts = shifts
+    .filter((shift) => shift.status === "CANCELED")
     .filter((shift) => {
       if (filter === "all") {
         return true;
@@ -136,7 +130,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
           <TabList borderBottom="none">
             <Tab>Upcoming Shifts</Tab>
             <Tab>Requests Pending Confirmation</Tab>
-            <Tab>Unavailable Shifts</Tab>
+            <Tab>Filled Shifts</Tab>
           </TabList>
         </Tabs>
         <HStack>
@@ -155,7 +149,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       <VolunteerShiftsTableContent
         upcomingShifts={upcomingShifts}
         pendingShifts={pendingShifts}
-        unavailableShifts={unavailableShifts}
+        filledShifts={filledShifts}
         tabIndex={tabIndex}
       />
     </Box>
