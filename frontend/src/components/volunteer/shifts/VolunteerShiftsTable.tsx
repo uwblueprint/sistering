@@ -22,11 +22,61 @@ type VolunteerShiftsTableProps = {
   shifts: ShiftSignupPostingResponseDTO[];
 };
 
+const UPCOMING_SHIFTS = 0;
+const PENDING_SHIFTS = 1;
+const FILLED_SHIFTS = 2;
+
+const VolunteerShiftsTableContent = ({
+  upcomingShifts,
+  pendingShifts,
+  filledShifts,
+  tabIndex,
+}: {
+  upcomingShifts: ShiftSignupPostingResponseDTO[];
+  pendingShifts: ShiftSignupPostingResponseDTO[];
+  filledShifts: ShiftSignupPostingResponseDTO[];
+  tabIndex: number;
+}): React.ReactElement => {
+  if (tabIndex === UPCOMING_SHIFTS && upcomingShifts.length > 0) {
+    return <VolunteerUpcomingShiftsTable shifts={upcomingShifts} />;
+  }
+  if (tabIndex === PENDING_SHIFTS && pendingShifts.length > 0) {
+    const uniquePostingIds = new Set();
+
+    const uniquePostings = pendingShifts.filter((shift) => {
+      if (uniquePostingIds.has(shift.postingId)) {
+        return false;
+      }
+      uniquePostingIds.add(shift.postingId);
+      return true;
+    });
+
+    return (
+      <Table variant="brand">
+        <Tbody>
+          {uniquePostings.map((shift, idx) => (
+            <VolunteerPendingShiftsTableRow
+              key={idx}
+              postingName={shift.postingTitle}
+              postingId={shift.postingId}
+              deadline={shift.autoClosingDate}
+            />
+          ))}
+        </Tbody>
+      </Table>
+    );
+  }
+  if (tabIndex === FILLED_SHIFTS && filledShifts.length > 0) {
+    return <VolunteerUpcomingShiftsTable shifts={filledShifts} />;
+  }
+  return <VolunteerShiftsTableEmptyState />;
+};
+
 const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
   shifts,
 }: VolunteerShiftsTableProps) => {
   const [filter, setFilter] = useState<FilterType>("week");
-  const [isShowUpcomingShifts, setIsShowUpcomingShifts] = useState(true);
+  const [tabIndex, setTabIndex] = useState(UPCOMING_SHIFTS);
 
   const upcomingShifts = shifts
     .filter((shift) => shift.status === "PUBLISHED")
@@ -48,20 +98,19 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       return moment().isSame(moment(shift.autoClosingDate), filter);
     });
 
+  const filledShifts = shifts
+    .filter((shift) => shift.status === "CANCELED")
+    .filter((shift) => {
+      if (filter === "all") {
+        return true;
+      }
+      return moment().isSame(moment(shift.autoClosingDate), filter);
+    });
+
   const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value: FilterType = e.target.value as FilterType;
     setFilter(value);
   };
-
-  const uniquePostingIds = new Set();
-
-  const uniquePostings = pendingShifts.filter((shift) => {
-    if (uniquePostingIds.has(shift.postingId)) {
-      return false;
-    }
-    uniquePostingIds.add(shift.postingId);
-    return true;
-  });
 
   return (
     <Box
@@ -71,11 +120,17 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       borderColor="background.dark"
       h="784px"
     >
-      <HStack justifyContent="space-between" px={12}>
-        <Tabs pt={8} onChange={(index) => setIsShowUpcomingShifts(index === 0)}>
+      <HStack
+        justifyContent="space-between"
+        px={12}
+        borderBottom="2px"
+        borderColor="background.dark"
+      >
+        <Tabs pt={8} onChange={(index) => setTabIndex(index)}>
           <TabList borderBottom="none">
             <Tab>Upcoming Shifts</Tab>
             <Tab>Requests Pending Confirmation</Tab>
+            <Tab>Filled Shifts</Tab>
           </TabList>
         </Tabs>
         <HStack>
@@ -91,25 +146,12 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
           </Select>
         </HStack>
       </HStack>
-      {/* eslint-disable-next-line no-nested-ternary */}
-      {isShowUpcomingShifts && upcomingShifts.length > 0 ? (
-        <VolunteerUpcomingShiftsTable shifts={upcomingShifts} />
-      ) : !isShowUpcomingShifts && pendingShifts.length > 0 ? (
-        <Table variant="brand">
-          <Tbody>
-            {uniquePostings.map((shift, idx) => (
-              <VolunteerPendingShiftsTableRow
-                key={idx}
-                postingName={shift.postingTitle}
-                postingId={shift.postingId}
-                deadline={shift.autoClosingDate}
-              />
-            ))}
-          </Tbody>
-        </Table>
-      ) : (
-        <VolunteerShiftsTableEmptyState />
-      )}
+      <VolunteerShiftsTableContent
+        upcomingShifts={upcomingShifts}
+        pendingShifts={pendingShifts}
+        filledShifts={filledShifts}
+        tabIndex={tabIndex}
+      />
     </Box>
   );
 };

@@ -104,6 +104,7 @@ const POSTING = gql`
       startDate
       endDate
       status
+      autoClosingDate
     }
   }
 `;
