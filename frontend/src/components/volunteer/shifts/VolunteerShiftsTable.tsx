@@ -118,7 +118,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
       borderRadius="12px"
       border="2px"
       borderColor="background.dark"
-      h="784px"
+      minH="784px"
     >
       <HStack
         justifyContent="space-between"
