@@ -11,5 +11,4 @@ RUN yarn install
 COPY . ./
 
 EXPOSE 5000
-EXPOSE 5555
 ENTRYPOINT ["yarn", "dev"]
