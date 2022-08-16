@@ -172,7 +172,7 @@ const OrgWideCalendar = (): React.ReactElement => {
               .map((posting) => posting.id)
               .includes(shift.postingId) &&
             shift.signups.length > 0 &&
-            shift.signups[0].status === "PUBLISHED",
+            shift.signups.some((signup) => signup.status === "PUBLISHED"),
         );
         setShifts(scheduledShifts);
         if (shiftsData.length) {
