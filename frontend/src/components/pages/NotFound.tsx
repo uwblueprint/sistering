@@ -24,7 +24,7 @@ const NotFound = (): React.ReactElement => {
         Sorry, we can&apos;t find the page you&apos;re looking for.{" "}
       </Text>
       <Text textStyle="caption" mb={8}>
-        Try refreshing this page to reload or press the button below to return
+        Press the button below to return
         to the main page.
       </Text>
       <Button fontSize="16px" width="70%" onClick={() => history.push("/")}>
