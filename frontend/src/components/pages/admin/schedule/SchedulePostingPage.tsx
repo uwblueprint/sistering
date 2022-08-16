@@ -421,9 +421,9 @@ const SchedulePostingPage = (): React.ReactElement => {
         duration: 10000,
         isClosable: true,
         variant: "subtle",
-        containerStyle: {
-          minWidth: "72vw",
-        },
+        // containerStyle: {
+        //   minWidth: "72vw",
+        // },
       });
     }
   }, [isPostingClosed, postingDetails, toast]);
