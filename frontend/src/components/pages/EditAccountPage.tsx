@@ -197,8 +197,6 @@ const EditAccountPage = (): React.ReactElement => {
     }
   };
 
-  console.log(user);
-
   return (
     <>
       <Navbar
@@ -221,11 +219,10 @@ const EditAccountPage = (): React.ReactElement => {
           <HStack mt={6}>
             {user.branches.map((branch) => (
               <Tag
+                key={branch.id}
                 size="lg"
-                key="lg"
                 borderRadius="full"
                 variant="brand"
-                colorScheme="red"
               >
                 <TagLabel>{branch.name}</TagLabel>
               </Tag>
