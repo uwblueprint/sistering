@@ -237,10 +237,10 @@ const EditAccountPage = (): React.ReactElement => {
             isAdmin={authenticatedUser?.role !== Role.Volunteer}
             firstName={user.firstName}
             lastName={user.lastName}
-            email={user?.email}
+            email={user.email}
             dateOfBirth={
               user.dateOfBirth
-                ? moment(user?.dateOfBirth).format("YYYY-MM-DD")
+                ? moment(user.dateOfBirth).format("YYYY-MM-DD")
                 : ""
             }
             pronouns={user.pronouns}
