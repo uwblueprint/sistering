@@ -42,6 +42,7 @@ type ProfileDrawerProps = {
   branches: BranchResponseDTO[];
   selectedBranches: BranchResponseDTO[];
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
+  resetSelectedBranches: () => void;
 };
 
 const DELETE_VOLUNTEER_USER_BY_EMAIL = gql`
@@ -74,6 +75,7 @@ const ProfileDrawer = ({
   branches,
   selectedBranches,
   handleBranchMenuItemClicked,
+  resetSelectedBranches,
 }: ProfileDrawerProps): React.ReactElement => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteUserByEmail] = useMutation(
@@ -95,7 +97,15 @@ const ProfileDrawer = ({
   };
 
   return (
-    <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="sm">
+    <Drawer
+      isOpen={isOpen}
+      placement="right"
+      onClose={() => {
+        resetSelectedBranches();
+        onClose();
+      }}
+      size="sm"
+    >
       <DrawerOverlay />
       <DrawerContent>
         <DrawerBody p={0}>
@@ -128,6 +138,7 @@ const ProfileDrawer = ({
             )}
             <Box mx="6">
               <MultiBranchSelector
+                isVolunteer={isVolunteer}
                 userEmail={email}
                 branches={branches}
                 selectedBranches={selectedBranches}
