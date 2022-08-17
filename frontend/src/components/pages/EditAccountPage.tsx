@@ -1,5 +1,13 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Container, Divider, Text, useToast } from "@chakra-ui/react";
+import {
+  Container,
+  Divider,
+  HStack,
+  Tag,
+  TagLabel,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import moment from "moment";
 import {
@@ -207,26 +215,44 @@ const EditAccountPage = (): React.ReactElement => {
           Edit Profile
         </Text>
         <ProfilePhotoForm />
-        <Divider my={8} />
+        {user && (
+          <HStack mt={6}>
+            {user.branches.map((branch) => (
+              <Tag
+                key={branch.id}
+                size="lg"
+                borderRadius="full"
+                variant="brand"
+              >
+                <TagLabel>{branch.name}</TagLabel>
+              </Tag>
+            ))}
+          </HStack>
+        )}
+        <Divider my={6} />
         {user && (
           <AccountForm
             key={key}
             mode={AccountFormMode.EDIT}
             isAdmin={authenticatedUser?.role !== Role.Volunteer}
-            firstName={user?.firstName}
-            lastName={user?.lastName}
-            email={user?.email}
-            dateOfBirth={moment(user?.dateOfBirth).format("YYYY-MM-DD")}
-            pronouns={user?.pronouns}
-            phoneNumber={user?.phoneNumber}
-            emergencyNumber={user?.emergencyContactPhone}
-            emergencyEmail={user?.emergencyContactEmail}
-            emergencyName={user?.emergencyContactName}
-            prevLanguages={user?.languages?.map((language) => ({
+            firstName={user.firstName}
+            lastName={user.lastName}
+            email={user.email}
+            dateOfBirth={
+              user.dateOfBirth
+                ? moment(user.dateOfBirth).format("YYYY-MM-DD")
+                : ""
+            }
+            pronouns={user.pronouns}
+            phoneNumber={user.phoneNumber}
+            emergencyNumber={user.emergencyContactPhone}
+            emergencyEmail={user.emergencyContactEmail}
+            emergencyName={user.emergencyContactName}
+            prevLanguages={user.languages.map((language) => ({
               id: String(LANGUAGES.indexOf(language) + 1),
               name: getTitleCaseForOneWord(language),
             }))}
-            prevSkills={user?.skills}
+            prevSkills={user.skills}
             onEmployeeEdit={onEmployeeEdit}
             onVolunteerEdit={onVolunteerEdit}
           />
