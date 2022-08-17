@@ -35,7 +35,6 @@ const VolunteerSkillsSection: React.FC<VolunteerSkillsSectionProps> = ({
               {skills.length > 3 && (
                 <TagsPopover
                   variant="outline"
-                  height="16px"
                   header="Skills"
                   displayLength={3}
                   tags={skills.map((skill) => (

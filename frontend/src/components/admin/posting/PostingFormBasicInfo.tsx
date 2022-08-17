@@ -516,7 +516,6 @@ const PostingFormBasicInfo: React.FC<PostingFormBasicInfoProps> = ({
                     <TagsPopover
                       header="Selected Skills"
                       variant="brand"
-                      height="32px"
                       displayLength={2}
                       tags={selectedSkills.map((skillId) => (
                         <Tag
@@ -594,7 +593,6 @@ const PostingFormBasicInfo: React.FC<PostingFormBasicInfoProps> = ({
                     <TagsPopover
                       header="Appointed Contacts"
                       variant="brand"
-                      height="32px"
                       displayLength={2}
                       tags={selectedEmployees.map((employeeId) => (
                         <Tag

@@ -13,7 +13,6 @@ import {
 type TagsPopoverProps = {
   header: string;
   variant: string;
-  height?: string;
   displayLength: number;
   tags: React.ReactElement[];
 };
@@ -22,7 +21,6 @@ const TagsPopover: React.FC<TagsPopoverProps> = ({
   header,
   tags,
   variant,
-  height,
   displayLength,
 }: TagsPopoverProps) => {
   return (
