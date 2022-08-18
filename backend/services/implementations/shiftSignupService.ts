@@ -47,7 +47,18 @@ class ShiftSignupService implements IShiftSignupService {
         ],
       };
       const shiftSignups = await prisma.signup.findMany({
-        where: filter,
+        where: {
+          AND: [
+            filter,
+            {
+              shift: {
+                posting: {
+                  endDate: { gt: new Date() },
+                },
+              },
+            },
+          ],
+        },
         include: {
           shift: {
             include: {
