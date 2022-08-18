@@ -1,6 +1,7 @@
 import React from "react";
-import { Box, Tag, Text, VStack } from "@chakra-ui/react";
+import { Box, Tag, Text, VStack, Flex } from "@chakra-ui/react";
 import { SkillResponseDTO } from "../../../../types/api/SkillTypes";
+import TagsPopover from "../../../common/TagsPopover";
 
 type VolunteerSkillsSectionProps = {
   skills: SkillResponseDTO[];
@@ -24,11 +25,27 @@ const VolunteerSkillsSection: React.FC<VolunteerSkillsSectionProps> = ({
       <Text textStyle="body-bold">Skills</Text>
       <Box>
         {skills.length > 0 ? (
-          skills?.map((skill) => (
-            <Tag key={skill.name} variant="outline" mr={2} mt={2}>
-              {skill.name}
-            </Tag>
-          ))
+          <Flex>
+            {skills.slice(0, 3).map((skill) => (
+              <Tag key={skill.name} variant="outline" mr={2} mt={2}>
+                {skill.name}
+              </Tag>
+            ))}
+            <Box mt="auto">
+              {skills.length > 3 && (
+                <TagsPopover
+                  variant="outline"
+                  header="Skills"
+                  displayLength={3}
+                  tags={skills.map((skill) => (
+                    <Tag variant="outline" key={skill.name} mr={2} mt={2}>
+                      {skill.name}
+                    </Tag>
+                  ))}
+                />
+              )}
+            </Box>
+          </Flex>
         ) : (
           <Text textStyle="body-regular" fontSize="14px">
             No skills listed.
