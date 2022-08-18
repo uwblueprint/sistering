@@ -1,19 +1,8 @@
 import { BranchResponseDTO } from "./BranchTypes";
 import { SkillResponseDTO } from "./SkillTypes";
+import { LanguageResponseDTO } from "./LanguageTypes";
 
 export type Role = "ADMIN" | "VOLUNTEER" | "EMPLOYEE";
-
-export const LANGUAGES = [
-  "ENGLISH",
-  "FRENCH",
-  "ITALIAN",
-  "CHINESE",
-  "SPANISH",
-  "HINDI",
-  "RUSSIAN",
-] as const;
-type LanguageTuple = typeof LANGUAGES;
-export type Language = LanguageTuple[number];
 
 export type UserDTO = {
   id: string;
@@ -22,7 +11,7 @@ export type UserDTO = {
   email: string | undefined;
   role: Role;
   phoneNumber: string | null;
-  languages: Language[];
+  languages: LanguageResponseDTO[];
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
   emergencyContactEmail: string | null;
@@ -37,10 +26,14 @@ export type VolunteerDTO = {
   skills: SkillResponseDTO[];
 };
 
-export type VolunteerUserRequestDTO = Omit<UserDTO, "branches" | "role"> &
+export type VolunteerUserRequestDTO = Omit<
+  UserDTO,
+  "branches" | "role" | "languages"
+> &
   Omit<VolunteerDTO, "skills"> & {
     skills: string[];
     branches: string[];
+    languages: string[];
   };
 
 export type VolunteerUserResponseDTO = Omit<UserDTO, "email"> &
@@ -64,9 +57,13 @@ export type EmployeeDTO = {
   id: string;
 };
 
-export type EmployeeUserRequestDTO = Omit<UserDTO, "branches" | "role"> &
+export type EmployeeUserRequestDTO = Omit<
+  UserDTO,
+  "branches" | "role" | "languages"
+> &
   EmployeeDTO & {
     branches: string[];
+    languages: string[];
   };
 
 export type EmployeeUserResponseDTO = UserDTO & EmployeeDTO;

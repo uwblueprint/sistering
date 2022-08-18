@@ -15,7 +15,6 @@ import {
   UpdateVolunteerUserDTO,
   EmployeeUserResponseDTO,
   VolunteerUserResponseDTO,
-  LANGUAGES,
 } from "../../types/api/UserType";
 import Loading from "../common/Loading";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
@@ -23,7 +22,6 @@ import ProfilePhotoForm from "../user/ProfilePhotoForm";
 
 import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
-import getTitleCaseForOneWord from "../../utils/StringUtils";
 import Navbar from "../common/Navbar";
 import {
   AdminNavbarTabs,
@@ -45,7 +43,10 @@ const EMPLOYEE_BY_ID = gql`
       emergencyContactPhone
       emergencyContactEmail
       emergencyContactName
-      languages
+      languages {
+        id
+        name
+      }
       branches {
         id
         name
@@ -72,7 +73,10 @@ const VOLUNTEER_BY_ID = gql`
         id
         name
       }
-      languages
+      languages {
+        id
+        name
+      }
       branches {
         id
         name
@@ -248,10 +252,7 @@ const EditAccountPage = (): React.ReactElement => {
             emergencyNumber={user.emergencyContactPhone}
             emergencyEmail={user.emergencyContactEmail}
             emergencyName={user.emergencyContactName}
-            prevLanguages={user.languages.map((language) => ({
-              id: String(LANGUAGES.indexOf(language) + 1),
-              name: getTitleCaseForOneWord(language),
-            }))}
+            prevLanguages={user.languages}
             prevSkills={user.skills}
             onEmployeeEdit={onEmployeeEdit}
             onVolunteerEdit={onVolunteerEdit}

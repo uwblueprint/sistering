@@ -13,68 +13,62 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { BranchResponseDTO } from "../../types/api/BranchTypes";
+import { LanguageResponseDTO } from "../../types/api/LanguageTypes";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 
-type BranchManagerTableProps = {
-  branches: BranchResponseDTO[];
+type LanguageManagerTableProps = {
+  languages: LanguageResponseDTO[];
 };
 
-const UPDATE_BRANCH = gql`
-  mutation BranchManagerTable_UpdateBranch(
+const UPDATE_SKILL = gql`
+  mutation LanguageManagerTable_UpdateLanguage(
     $id: ID!
-    $branch: BranchRequestDTO!
+    $language: LanguageRequestDTO!
   ) {
-    updateBranch(id: $id, branch: $branch) {
+    updateLanguage(id: $id, language: $language) {
       id
     }
   }
 `;
 
-const DELETE_BRANCH = gql`
-  mutation BranchManagerTable_DeleteBranch($id: ID!) {
-    deleteBranch(id: $id)
+const DELETE_SKILL = gql`
+  mutation LanguageManagerTable_DeleteLanguage($id: ID!) {
+    deleteLanguage(id: $id)
   }
 `;
 
-const BranchManagerTable = ({
-  branches,
-}: BranchManagerTableProps): React.ReactElement => {
+const LanguageManagerTable = ({
+  languages,
+}: LanguageManagerTableProps): React.ReactElement => {
   const [isEditModalOpen, setIsEditModalOpen] = useBoolean(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useBoolean(false);
   const [
-    selectedBranch,
-    setSelectedBranch,
-  ] = useState<BranchResponseDTO | null>(null);
+    selectedLanguage,
+    setSelectedLanguage,
+  ] = useState<LanguageResponseDTO | null>(null);
 
   const toast = useToast();
-  const [updateBranch] = useMutation(UPDATE_BRANCH, {
-    refetchQueries: [
-      "SettingManagerModal_Branches",
-      "AdminHomepageHeader_Branches",
-    ],
+  const [updateLanguage] = useMutation(UPDATE_SKILL, {
+    refetchQueries: ["SettingManagerModal_Languages"],
   });
 
-  const [deleteBranch] = useMutation(DELETE_BRANCH, {
-    refetchQueries: [
-      "SettingManagerModal_Branches",
-      "AdminHomepageHeader_Branches",
-    ],
+  const [deleteLanguage] = useMutation(DELETE_SKILL, {
+    refetchQueries: ["SettingManagerModal_Languages"],
   });
 
-  const handleBranchUpdate = async (branchName: string) => {
-    if (selectedBranch) {
+  const handleLanguageUpdate = async (languageName: string) => {
+    if (selectedLanguage) {
       try {
-        await updateBranch({
+        await updateLanguage({
           variables: {
-            id: selectedBranch.id,
-            branch: { name: branchName },
+            id: selectedLanguage.id,
+            language: { name: languageName },
           },
         });
       } catch (error: unknown) {
         toast({
-          title: "Cannot update branch",
+          title: "Cannot update language",
           description: `${error}`,
           status: "error",
           duration: 9000,
@@ -84,17 +78,17 @@ const BranchManagerTable = ({
     }
   };
 
-  const handleBranchDelete = async () => {
-    if (selectedBranch) {
+  const handleLanguageDelete = async () => {
+    if (selectedLanguage) {
       try {
-        await deleteBranch({
+        await deleteLanguage({
           variables: {
-            id: selectedBranch.id,
+            id: selectedLanguage.id,
           },
         });
       } catch (error: unknown) {
         toast({
-          title: "Cannot delete branch",
+          title: "Cannot delete language",
           description: `${error}`,
           status: "error",
           duration: 9000,
@@ -107,26 +101,26 @@ const BranchManagerTable = ({
   return (
     <>
       <EditModal
-        title="Edit Branch Name"
+        title="Edit Language Name"
         isOpen={isEditModalOpen}
-        content={selectedBranch ? selectedBranch.name : ""}
+        content={selectedLanguage ? selectedLanguage.name : ""}
         onClose={() => {
           setIsEditModalOpen.off();
-          setSelectedBranch(null);
+          setSelectedLanguage(null);
         }}
-        onEdit={handleBranchUpdate}
+        onEdit={handleLanguageUpdate}
       />
       <DeleteModal
-        title="Delete Branch?"
+        title="Delete Language?"
         isOpen={isDeleteModalOpen}
-        body={`Are you sure you want to permanently delete the branch "${
-          selectedBranch ? selectedBranch.name : ""
+        body={`Are you sure you want to permanently delete the language "${
+          selectedLanguage ? selectedLanguage.name : ""
         }"?`}
         onClose={() => {
           setIsDeleteModalOpen.off();
-          setSelectedBranch(null);
+          setSelectedLanguage(null);
         }}
-        onDelete={handleBranchDelete}
+        onDelete={handleLanguageDelete}
       />
       <Box maxHeight="500px" overflow="auto">
         <TableContainer
@@ -136,14 +130,14 @@ const BranchManagerTable = ({
         >
           <Table variant="brand">
             <Tbody>
-              {branches.map((branch) => (
-                <Tr key={Number(branch.id)}>
+              {languages.map((language) => (
+                <Tr key={Number(language.id)}>
                   <Td>
-                    <Tag>{branch.name}</Tag>
+                    <Tag variant="brand">{language.name}</Tag>
                   </Td>
                   <Td textAlign="end">
                     <IconButton
-                      aria-label="Edit branch"
+                      aria-label="Edit language"
                       variant="ghost"
                       _hover={{
                         bg: "transparent",
@@ -154,11 +148,11 @@ const BranchManagerTable = ({
                       icon={<EditIcon color="text.default" boxSize="24px" />}
                       onClick={() => {
                         setIsEditModalOpen.on();
-                        setSelectedBranch(branch);
+                        setSelectedLanguage(language);
                       }}
                     />
                     <IconButton
-                      aria-label="Delete branch"
+                      aria-label="Delete language"
                       variant="ghost"
                       _hover={{
                         bg: "transparent",
@@ -169,7 +163,7 @@ const BranchManagerTable = ({
                       icon={<DeleteIcon color="text.default" boxSize="24px" />}
                       onClick={() => {
                         setIsDeleteModalOpen.on();
-                        setSelectedBranch(branch);
+                        setSelectedLanguage(language);
                       }}
                     />
                   </Td>
@@ -183,4 +177,4 @@ const BranchManagerTable = ({
   );
 };
 
-export default BranchManagerTable;
+export default LanguageManagerTable;
