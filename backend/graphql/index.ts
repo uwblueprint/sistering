@@ -18,9 +18,10 @@ import postingResolvers from "./resolvers/postingResolvers";
 import postingType from "./types/postingType";
 import skillResolvers from "./resolvers/skillResolvers";
 import skillType from "./types/skillType";
-
 import branchResolvers from "./resolvers/branchResolvers";
 import branchType from "./types/branchType";
+import languageResolvers from "./resolvers/languageResolvers";
+import languageType from "./types/languageType";
 
 const query = gql`
   scalar Date
@@ -112,6 +113,7 @@ const executableSchema = makeExecutableSchema({
     skillType,
     postingType,
     branchType,
+    languageType,
   ],
   resolvers: merge(
     { Date: dateScalar },
@@ -124,6 +126,7 @@ const executableSchema = makeExecutableSchema({
     postingResolvers,
     skillResolvers,
     branchResolvers,
+    languageResolvers,
   ),
 });
 
@@ -193,6 +196,9 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
+    createLanguage: authorizedByAdmin(),
+    updateLanguage: authorizedByAdmin(),
+    deleteLanguage: authorizedByAdmin(),
     upsertDeleteShiftSignups: authorizedByAdminAndVolunteer(),
   },
 };

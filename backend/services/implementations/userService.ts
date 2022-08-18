@@ -1,6 +1,6 @@
 /* eslint-disable class-methods-use-this */
 import * as firebaseAdmin from "firebase-admin";
-import { PrismaClient, User, Skill, Branch } from "@prisma/client";
+import { PrismaClient, User, Skill, Branch, Language } from "@prisma/client";
 import IUserService from "../interfaces/userService";
 import {
   CreateUserDTO,
@@ -15,6 +15,7 @@ import {
   EmployeeUserResponseDTO,
   UpdateEmployeeUserDTO,
   UserInviteResponse,
+  LanguageResponseDTO,
   Role,
 } from "../../types";
 import logger from "../../utilities/logger";
@@ -49,19 +50,33 @@ export const convertToSkillResponseDTO = (
   });
 };
 
+export const convertToLanguageResponseDTO = (
+  languages: Language[],
+): LanguageResponseDTO[] => {
+  return languages.map((language: Skill) => {
+    return {
+      id: String(language.id),
+      name: language.name,
+    };
+  });
+};
+
 const isInviteExpired = (createdDate: Date): boolean => {
   return getWeekDiff(createdDate, new Date()) >= 2;
 };
 
 class UserService implements IUserService {
   async getUserById(userId: string): Promise<UserDTO> {
-    let user: User | null;
+    let user;
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
       user = await prisma.user.findUnique({
         where: {
           id: Number(userId),
+        },
+        include: {
+          languages: true,
         },
       });
 
@@ -81,7 +96,7 @@ class UserService implements IUserService {
       email: firebaseUser.email ?? "",
       role: user.role,
       phoneNumber: user.phoneNumber,
-      languages: user.languages,
+      languages: convertToLanguageResponseDTO(user.languages),
       emergencyContactName: user.emergencyContactName,
       emergencyContactPhone: user.emergencyContactPhone,
       emergencyContactEmail: user.emergencyContactEmail,
@@ -91,7 +106,7 @@ class UserService implements IUserService {
   }
 
   async getUserByEmail(email: string): Promise<UserDTO> {
-    let user: User | null;
+    let user;
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
@@ -99,6 +114,9 @@ class UserService implements IUserService {
       user = await prisma.user.findUnique({
         where: {
           authId: firebaseUser.uid,
+        },
+        include: {
+          languages: true,
         },
       });
 
@@ -117,7 +135,7 @@ class UserService implements IUserService {
       email: firebaseUser.email ?? "",
       role: user.role,
       phoneNumber: user.phoneNumber,
-      languages: user.languages,
+      languages: convertToLanguageResponseDTO(user.languages),
       emergencyContactName: user.emergencyContactName,
       emergencyContactPhone: user.emergencyContactPhone,
       emergencyContactEmail: user.emergencyContactEmail,
@@ -182,7 +200,9 @@ class UserService implements IUserService {
   async getUsers(): Promise<Array<UserDTO>> {
     let userDtos: Array<UserDTO> = [];
     try {
-      const users: Array<User> = await prisma.user.findMany();
+      const users = await prisma.user.findMany({
+        include: { languages: true },
+      });
 
       userDtos = await Promise.all(
         users.map(async (user) => {
@@ -204,7 +224,7 @@ class UserService implements IUserService {
             email: firebaseUser.email ?? "",
             role: user.role,
             phoneNumber: user.phoneNumber,
-            languages: user.languages,
+            languages: convertToLanguageResponseDTO(user.languages),
             emergencyContactName: user.emergencyContactName,
             emergencyContactPhone: user.emergencyContactPhone,
             emergencyContactEmail: user.emergencyContactEmail,
@@ -226,7 +246,7 @@ class UserService implements IUserService {
     authId?: string,
     signUpMethod = "PASSWORD",
   ): Promise<UserDTO> {
-    let newUser: User;
+    let newUser;
     let firebaseUser: firebaseAdmin.auth.UserRecord;
 
     try {
@@ -244,12 +264,17 @@ class UserService implements IUserService {
             authId: firebaseUser.uid,
             role: user.role,
             phoneNumber: user.phoneNumber,
-            languages: user.languages,
+            languages: {
+              connect: convertToNumberIds(user.languages),
+            },
             emergencyContactName: user.emergencyContactName,
             emergencyContactPhone: user.emergencyContactPhone,
             emergencyContactEmail: user.emergencyContactEmail,
             pronouns: user.pronouns,
             dateOfBirth: user.dateOfBirth,
+          },
+          include: {
+            languages: true,
           },
         });
       } catch (postgresError) {
@@ -279,7 +304,7 @@ class UserService implements IUserService {
       email: firebaseUser.email ?? "",
       role: newUser.role,
       phoneNumber: newUser.phoneNumber,
-      languages: newUser.languages,
+      languages: convertToLanguageResponseDTO(newUser.languages),
       emergencyContactName: newUser.emergencyContactName,
       emergencyContactPhone: newUser.emergencyContactPhone,
       emergencyContactEmail: newUser.emergencyContactEmail,
@@ -290,12 +315,16 @@ class UserService implements IUserService {
 
   async updateUserById(userId: string, user: UpdateUserDTO): Promise<UserDTO> {
     let updatedFirebaseUser: firebaseAdmin.auth.UserRecord;
+    let updatedUser;
 
     try {
-      const [oldUser] = await prisma.$transaction([
+      const [oldUser, updated] = await prisma.$transaction([
         prisma.user.findUnique({
           where: {
             id: Number(userId),
+          },
+          include: {
+            languages: true,
           },
         }),
         prisma.user.update({
@@ -307,15 +336,22 @@ class UserService implements IUserService {
             lastName: user.lastName,
             role: user.role,
             phoneNumber: user.phoneNumber,
-            languages: user.languages,
+            languages: {
+              set: [],
+              connect: convertToNumberIds(user.languages),
+            },
             emergencyContactName: user.emergencyContactName,
             emergencyContactPhone: user.emergencyContactPhone,
             emergencyContactEmail: user.emergencyContactEmail,
             pronouns: user.pronouns,
             dateOfBirth: user.dateOfBirth,
           },
+          include: {
+            languages: true,
+          },
         }),
       ]);
+      updatedUser = updated;
 
       if (!oldUser) {
         throw new Error(`userId ${userId} not found.`);
@@ -337,7 +373,14 @@ class UserService implements IUserService {
               lastName: oldUser.lastName,
               role: oldUser.role,
               phoneNumber: oldUser.phoneNumber,
-              languages: oldUser.languages,
+              languages: {
+                set: [],
+                connect: oldUser.languages.map((l) => {
+                  return {
+                    id: Number(l.id),
+                  };
+                }),
+              },
               emergencyContactName: oldUser.emergencyContactName,
               emergencyContactPhone: oldUser.emergencyContactPhone,
               emergencyContactEmail: oldUser.emergencyContactEmail,
@@ -369,7 +412,7 @@ class UserService implements IUserService {
       email: updatedFirebaseUser.email ?? "",
       role: user.role,
       phoneNumber: user.phoneNumber,
-      languages: user.languages,
+      languages: convertToLanguageResponseDTO(updatedUser.languages),
       emergencyContactName: user.emergencyContactName,
       emergencyContactPhone: user.emergencyContactPhone,
       emergencyContactEmail: user.emergencyContactEmail,
@@ -380,9 +423,12 @@ class UserService implements IUserService {
 
   async deleteUserById(userId: string): Promise<void> {
     try {
-      const deletedUser: User | null = await prisma.user.delete({
+      const deletedUser = await prisma.user.delete({
         where: {
           id: Number(userId),
+        },
+        include: {
+          languages: true,
         },
       });
       try {
@@ -397,7 +443,13 @@ class UserService implements IUserService {
               authId: deletedUser.authId,
               role: deletedUser.role,
               phoneNumber: deletedUser.phoneNumber,
-              languages: deletedUser.languages,
+              languages: {
+                connect: deletedUser.languages.map((l) => {
+                  return {
+                    id: Number(l.id),
+                  };
+                }),
+              },
               emergencyContactName: deletedUser.emergencyContactName,
               emergencyContactPhone: deletedUser.emergencyContactPhone,
               emergencyContactEmail: deletedUser.emergencyContactEmail,
@@ -428,9 +480,12 @@ class UserService implements IUserService {
       const firebaseUser: firebaseAdmin.auth.UserRecord = await firebaseAdmin
         .auth()
         .getUserByEmail(email);
-      const deletedUser: User | null = await prisma.user.delete({
+      const deletedUser = await prisma.user.delete({
         where: {
           authId: firebaseUser.uid,
+        },
+        include: {
+          languages: true,
         },
       });
 
@@ -446,7 +501,13 @@ class UserService implements IUserService {
               authId: deletedUser.authId,
               role: deletedUser.role,
               phoneNumber: deletedUser.phoneNumber,
-              languages: deletedUser.languages,
+              languages: {
+                connect: deletedUser.languages.map((l) => {
+                  return {
+                    id: Number(l.id),
+                  };
+                }),
+              },
               emergencyContactName: deletedUser.emergencyContactName,
               emergencyContactPhone: deletedUser.emergencyContactPhone,
               emergencyContactEmail: deletedUser.emergencyContactEmail,
@@ -628,7 +689,11 @@ class UserService implements IUserService {
         include: {
           branches: true,
           skills: true,
-          user: true,
+          user: {
+            include: {
+              languages: true,
+            },
+          },
         },
       });
 
@@ -652,7 +717,7 @@ class UserService implements IUserService {
         dateOfBirth: user.dateOfBirth,
         pronouns: user.pronouns,
         hireDate: volunteer.hireDate,
-        languages: user.languages,
+        languages: convertToLanguageResponseDTO(user.languages),
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
       };
@@ -674,6 +739,7 @@ class UserService implements IUserService {
           authId: firebaseUser.uid,
         },
         include: {
+          languages: true,
           volunteer: {
             include: {
               branches: true,
@@ -704,7 +770,7 @@ class UserService implements IUserService {
         hireDate: volunteer.hireDate,
         skills: convertToSkillResponseDTO(volunteer.skills),
         branches: convertToBranchResponseDTO(volunteer.branches),
-        languages: user.languages,
+        languages: convertToLanguageResponseDTO(user.languages),
       };
     } catch (error: unknown) {
       Logger.error(
@@ -720,7 +786,11 @@ class UserService implements IUserService {
     try {
       const volunteers = await prisma.volunteer.findMany({
         include: {
-          user: true,
+          user: {
+            include: {
+              languages: true,
+            },
+          },
           branches: true,
           skills: true,
         },
@@ -737,7 +807,7 @@ class UserService implements IUserService {
             ...volunteer,
             id: String(volunteer.id),
             email: firebaseUser.email ?? "",
-            languages: volunteer.user.languages,
+            languages: convertToLanguageResponseDTO(volunteer.user.languages),
             skills: convertToSkillResponseDTO(volunteer.skills),
             branches: convertToBranchResponseDTO(volunteer.branches),
           };
@@ -799,7 +869,9 @@ class UserService implements IUserService {
             authId: firebaseUser.uid,
             role: "VOLUNTEER",
             phoneNumber: volunteerUser.phoneNumber,
-            languages: volunteerUser.languages,
+            languages: {
+              connect: convertToNumberIds(volunteerUser.languages),
+            },
             emergencyContactName: volunteerUser.emergencyContactName,
             emergencyContactPhone: volunteerUser.emergencyContactPhone,
             emergencyContactEmail: volunteerUser.emergencyContactEmail,
@@ -818,6 +890,7 @@ class UserService implements IUserService {
             },
           },
           include: {
+            languages: true,
             volunteer: {
               include: {
                 branches: true,
@@ -832,6 +905,7 @@ class UserService implements IUserService {
         return {
           ...newUser,
           id: String(newUser.id),
+          languages: convertToLanguageResponseDTO(newUser.languages),
           email: firebaseUser.email ?? "",
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           hireDate: volunteer!.hireDate,
@@ -904,7 +978,10 @@ class UserService implements IUserService {
                 lastName: volunteerUser.lastName,
                 role: "VOLUNTEER",
                 phoneNumber: volunteerUser.phoneNumber,
-                languages: volunteerUser.languages,
+                languages: {
+                  set: [],
+                  connect: convertToNumberIds(volunteerUser.languages),
+                },
                 emergencyContactName: volunteerUser.emergencyContactName,
                 emergencyContactPhone: volunteerUser.emergencyContactPhone,
                 emergencyContactEmail: volunteerUser.emergencyContactEmail,
@@ -916,7 +993,11 @@ class UserService implements IUserService {
           include: {
             branches: true,
             skills: true,
-            user: true,
+            user: {
+              include: {
+                languages: true,
+              },
+            },
           },
         }),
       ]);
@@ -932,6 +1013,7 @@ class UserService implements IUserService {
         return {
           ...user,
           id: String(user.id),
+          languages: convertToLanguageResponseDTO(user.languages),
           email: updatedFirebaseUser.email ?? "",
           hireDate: updatedVolunteerUser.hireDate,
           skills: convertToSkillResponseDTO(updatedVolunteerUser.skills),
@@ -1006,6 +1088,7 @@ class UserService implements IUserService {
           id: Number(userId),
         },
         include: {
+          languages: true,
           volunteer: {
             include: {
               branches: true,
@@ -1027,7 +1110,13 @@ class UserService implements IUserService {
               authId: deletedVolunteerUser.authId,
               role: deletedVolunteerUser.role,
               phoneNumber: deletedVolunteerUser.phoneNumber,
-              languages: deletedVolunteerUser.languages,
+              languages: {
+                connect: deletedVolunteerUser.languages.map((l) => {
+                  return {
+                    id: Number(l.id),
+                  };
+                }),
+              },
               emergencyContactName: deletedVolunteerUser.emergencyContactName,
               emergencyContactPhone: deletedVolunteerUser.emergencyContactPhone,
               emergencyContactEmail: deletedVolunteerUser.emergencyContactEmail,
@@ -1088,7 +1177,11 @@ class UserService implements IUserService {
       const employee = await prisma.employee.findUnique({
         where: { id: Number(userId) },
         include: {
-          user: true,
+          user: {
+            include: {
+              languages: true,
+            },
+          },
           branches: true,
         },
       });
@@ -1107,7 +1200,7 @@ class UserService implements IUserService {
         lastName: user.lastName,
         role: user.role,
         phoneNumber: user.phoneNumber,
-        languages: user.languages,
+        languages: convertToLanguageResponseDTO(user.languages),
         emergencyContactName: user.emergencyContactName,
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
@@ -1133,6 +1226,7 @@ class UserService implements IUserService {
           authId: firebaseUser.uid,
         },
         include: {
+          languages: true,
           employee: {
             include: {
               branches: true,
@@ -1157,7 +1251,7 @@ class UserService implements IUserService {
         emergencyContactPhone: user.emergencyContactPhone,
         emergencyContactEmail: user.emergencyContactEmail,
         role: user.role,
-        languages: user.languages,
+        languages: convertToLanguageResponseDTO(user.languages),
         branches: convertToBranchResponseDTO(employee.branches),
         pronouns: user.pronouns,
         dateOfBirth: user.dateOfBirth,
@@ -1176,7 +1270,11 @@ class UserService implements IUserService {
     try {
       const employees = await prisma.employee.findMany({
         include: {
-          user: true,
+          user: {
+            include: {
+              languages: true,
+            },
+          },
           branches: true,
         },
       });
@@ -1191,6 +1289,7 @@ class UserService implements IUserService {
             ...employee.user,
             ...employee,
             id: String(employee.id),
+            languages: convertToLanguageResponseDTO(employee.user.languages),
             email: firebaseUser.email ?? "",
             branches: convertToBranchResponseDTO(employee.branches),
           };
@@ -1257,6 +1356,9 @@ class UserService implements IUserService {
             emergencyContactEmail: employeeUser.emergencyContactEmail,
             pronouns: employeeUser.pronouns,
             dateOfBirth: employeeUser.dateOfBirth,
+            languages: {
+              connect: convertToNumberIds(employeeUser.languages),
+            },
             employee: {
               create: {
                 branches: {
@@ -1266,6 +1368,7 @@ class UserService implements IUserService {
             },
           },
           include: {
+            languages: true,
             employee: {
               include: {
                 branches: true,
@@ -1283,6 +1386,7 @@ class UserService implements IUserService {
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
           branches: convertToBranchResponseDTO(employee!.branches),
           /* eslint-disable-next-line @typescript-eslint/no-non-null-assertion */
+          languages: convertToBranchResponseDTO(newUser.languages),
         };
       } catch (postgresError) {
         try {
@@ -1337,7 +1441,10 @@ class UserService implements IUserService {
               emergencyContactName: employeeUser.emergencyContactName,
               emergencyContactPhone: employeeUser.emergencyContactPhone,
               emergencyContactEmail: employeeUser.emergencyContactEmail,
-              languages: employeeUser.languages,
+              languages: {
+                set: [],
+                connect: convertToNumberIds(employeeUser.languages),
+              },
               pronouns: employeeUser.pronouns,
               dateOfBirth: employeeUser.dateOfBirth,
             },
@@ -1349,7 +1456,11 @@ class UserService implements IUserService {
         },
         include: {
           branches: true,
-          user: true,
+          user: {
+            include: {
+              languages: true,
+            },
+          },
         },
       });
       try {
@@ -1366,6 +1477,7 @@ class UserService implements IUserService {
           id: String(user.id),
           email: updatedFirebaseUser.email ?? "",
           branches: convertToSkillResponseDTO(updatedEmployeeUser.branches),
+          languages: convertToLanguageResponseDTO(user.languages),
         };
       } catch (error: unknown) {
         try {

@@ -1,12 +1,4 @@
 export type Role = "ADMIN" | "VOLUNTEER" | "EMPLOYEE";
-export type Language =
-  | "ENGLISH"
-  | "FRENCH"
-  | "ITALIAN"
-  | "CHINESE"
-  | "SPANISH"
-  | "HINDI"
-  | "RUSSIAN";
 
 export type Token = {
   accessToken: string;
@@ -27,7 +19,7 @@ export type UserDTO = {
   email: string;
   role: Role;
   phoneNumber: string | null;
-  languages: Language[];
+  languages: LanguageResponseDTO[];
   emergencyContactName: string | null;
   emergencyContactPhone: string | null;
   emergencyContactEmail: string | null;
@@ -75,6 +67,7 @@ export type VolunteerUserRequestDTO = UserDTO &
   Omit<VolunteerDTO, "skills" | "branches"> & {
     skills: string[];
     branches: string[];
+    languages: string[];
   };
 
 export type VolunteerUserResponseDTO = UserDTO & VolunteerDTO;
@@ -93,6 +86,7 @@ export type EmployeeUserDTO = {
 export type EmployeeUserRequestDTO = UserDTO &
   EmployeeUserDTO & {
     branches: string[];
+    languages: string[];
   };
 
 export type EmployeeUserResponseDTO = UserDTO &
@@ -107,9 +101,14 @@ export type CreateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id"> & {
 
 export type UpdateEmployeeUserDTO = Omit<EmployeeUserRequestDTO, "id">;
 
-export type CreateUserDTO = Omit<UserDTO, "id"> & { password: string };
+export type CreateUserDTO = Omit<UserDTO, "id" | "languages"> & {
+  password: string;
+  languages: string[];
+};
 
-export type UpdateUserDTO = Omit<UserDTO, "id">;
+export type UpdateUserDTO = Omit<UserDTO, "id" | "languages"> & {
+  languages: string[];
+};
 
 export type RegisterUserDTO = Omit<CreateUserDTO, "role">;
 
@@ -150,7 +149,10 @@ export type PostingWithShiftsRequestDTO = PostingRequestDTO & {
 };
 
 export type SignupsAndVolunteerResponseDTO = ShiftSignupResponseDTO & {
-  volunteer: Omit<VolunteerUserResponseDTO, "skills" | "branches" | "email">;
+  volunteer: Omit<
+    VolunteerUserResponseDTO,
+    "skills" | "branches" | "languages" | "email"
+  >;
 };
 
 export type ShiftWithSignupAndVolunteerResponseDTO = ShiftResponseDTO & {
@@ -218,6 +220,15 @@ export type BranchDTO = {
 export type BranchRequestDTO = Omit<BranchDTO, "id">;
 
 export type BranchResponseDTO = BranchDTO;
+
+export type LanguageDTO = {
+  id: string;
+  name: string;
+};
+
+export type LanguageRequestDTO = Omit<LanguageDTO, "id">;
+
+export type LanguageResponseDTO = LanguageDTO;
 
 export type Letters = "A" | "B" | "C" | "D";
 

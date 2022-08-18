@@ -74,16 +74,6 @@ enum Role {
   EMPLOYEE
 }
 
-enum Language {
-  ENGLISH
-  FRENCH
-  ITALIAN
-  CHINESE
-  SPANISH
-  HINDI
-  RUSSIAN
-}
-
 model Posting {
   id              Int           @id @default(autoincrement())
   branchId        Int           @map("branch_id")
@@ -126,6 +116,16 @@ model Branch {
   updatedAt  DateTime    @updatedAt
 
   @@map("branches")
+}
+
+model Language {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  users      User[]
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+
+  @@map("languages")
 }
 
 model Shift {
