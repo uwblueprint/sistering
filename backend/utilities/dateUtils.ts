@@ -1,6 +1,9 @@
 import moment from "moment";
 import { RecurrenceInterval } from "../types";
 
+const UTC_EDT_OFFSET_HOURS = 4;
+const UTC_EST_OFFSET_HOURS = 5;
+
 export const addDays = (date: Date, daysToAdd: number): Date => {
   return new Date(new Date().setDate(date.getDate() + daysToAdd));
 };
@@ -30,4 +33,14 @@ export const getInterval = (recurrence: RecurrenceInterval): number => {
     default:
       throw new Error(`Invalid recurrence ${recurrence}`);
   }
+};
+
+export const getTodayForTZIgnoredUTC = (date: Date = new Date()): Date => {
+  return moment(date)
+    .subtract(
+      moment().isDST() ? UTC_EDT_OFFSET_HOURS : UTC_EST_OFFSET_HOURS,
+      "hours",
+    )
+    .startOf("day")
+    .toDate();
 };

@@ -9,6 +9,7 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import { getTodayForTZIgnoredUTC } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -39,6 +40,15 @@ class ShiftSignupService implements IShiftSignupService {
           {
             userId: Number(userId),
           },
+          {
+            shift: {
+              posting: {
+                endDate: {
+                  gte: getTodayForTZIgnoredUTC(),
+                },
+              },
+            },
+          },
           signupStatus
             ? {
                 status: signupStatus,
@@ -47,18 +57,7 @@ class ShiftSignupService implements IShiftSignupService {
         ],
       };
       const shiftSignups = await prisma.signup.findMany({
-        where: {
-          AND: [
-            filter,
-            {
-              shift: {
-                posting: {
-                  endDate: { gt: new Date() },
-                },
-              },
-            },
-          ],
-        },
+        where: filter,
         include: {
           shift: {
             include: {
