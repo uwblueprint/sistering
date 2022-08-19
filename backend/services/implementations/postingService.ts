@@ -26,7 +26,10 @@ import {
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
 import IShiftService from "../interfaces/shiftService";
-import { getInterval } from "../../utilities/dateUtils";
+import {
+  getInterval,
+  getTodayForTZIgnoredUTC,
+} from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -61,7 +64,7 @@ type EnumPostingStatusFilter = {
 };
 
 type DateTimeFilter = {
-  gt?: Date;
+  gte?: Date;
 };
 
 type PostingWhereInput = {
@@ -251,7 +254,11 @@ class PostingService implements IPostingService {
     return prisma.$transaction(async (prismaClient) => {
       const filter: PostingWhereInput[] = [];
       if (closingDate !== undefined) {
-        filter.push({ autoClosingDate: { gt: closingDate } });
+        filter.push({
+          autoClosingDate: {
+            gte: getTodayForTZIgnoredUTC(closingDate),
+          },
+        });
       }
       if (statuses !== undefined) {
         filter.push({ status: { in: statuses } });
