@@ -40,7 +40,7 @@ class LanguageService implements ILanguageService {
   async getLanguages(): Promise<LanguageResponseDTO[]> {
     try {
       const languages: Array<Language> = await prisma.language.findMany({
-        orderBy: [{ id: "asc" }],
+        orderBy: [{ name: "asc" }],
       });
       return languages.map((language) => ({
         id: String(language.id),

@@ -63,7 +63,7 @@ export type VolunteerDTO = {
   branches: BranchResponseDTO[];
 };
 
-export type VolunteerUserRequestDTO = UserDTO &
+export type VolunteerUserRequestDTO = Omit<UserDTO, "languages"> &
   Omit<VolunteerDTO, "skills" | "branches"> & {
     skills: string[];
     branches: string[];
@@ -83,7 +83,7 @@ export type EmployeeUserDTO = {
   id: string;
 };
 
-export type EmployeeUserRequestDTO = UserDTO &
+export type EmployeeUserRequestDTO = Omit<UserDTO, "languages"> &
   EmployeeUserDTO & {
     branches: string[];
     languages: string[];

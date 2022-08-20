@@ -53,7 +53,7 @@ export const convertToSkillResponseDTO = (
 export const convertToLanguageResponseDTO = (
   languages: Language[],
 ): LanguageResponseDTO[] => {
-  return languages.map((language: Skill) => {
+  return languages.map((language: Language) => {
     return {
       id: String(language.id),
       name: language.name,

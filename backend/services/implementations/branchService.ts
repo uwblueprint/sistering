@@ -40,7 +40,7 @@ class BranchService implements IBranchService {
   async getBranches(): Promise<BranchResponseDTO[]> {
     try {
       const branches: Array<Branch> = await prisma.branch.findMany({
-        orderBy: [{ id: "asc" }],
+        orderBy: [{ name: "asc" }],
       });
       return branches.map((branch) => ({
         id: String(branch.id),

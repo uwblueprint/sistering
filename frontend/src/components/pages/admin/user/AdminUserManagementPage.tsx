@@ -350,7 +350,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
                 rowEmgEmail = user.emergencyContactEmail ?? "N/A";
                 rowEmgName = user.emergencyContactName ?? "N/A";
                 rowEmgPhone = user.emergencyContactPhone ?? "N/A";
-                rowLangs = user.languages?.map((language) => language.name);
+                rowLangs = user.languages.map((language) => language.name);
                 rowSkills = user.skills?.map((skill) => skill.name);
                 userBranches = user.branches;
                 return true;
@@ -364,7 +364,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
                 rowEmgEmail = user.emergencyContactEmail ?? "N/A";
                 rowEmgName = user.emergencyContactName ?? "N/A";
                 rowEmgPhone = user.emergencyContactPhone ?? "N/A";
-                rowLangs = user.languages?.map((language) => language.name);
+                rowLangs = user.languages.map((language) => language.name);
                 userBranches = user.branches;
                 return true;
               }
