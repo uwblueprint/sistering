@@ -21,6 +21,7 @@ import { AddIcon } from "@chakra-ui/icons";
 
 import BranchManagerTable from "./BranchManagerTable";
 import SkillsManagerTable from "./SkillsManagerTable";
+import LanguageManagerTable from "./LanguageManagerTable";
 import EditModal from "./EditModal";
 import {
   BranchQueryResponse,
@@ -30,10 +31,15 @@ import {
   SkillQueryResponse,
   SkillResponseDTO,
 } from "../../types/api/SkillTypes";
+import {
+  LanguageQueryResponse,
+  LanguageResponseDTO,
+} from "../../types/api/LanguageTypes";
 
 enum SettingManagerTab {
   Branch,
   Skill,
+  Language,
 }
 
 type SettingManagerModalProps = {
@@ -49,7 +55,6 @@ const BRANCHES = gql`
     }
   }
 `;
-
 const CREATE_BRANCH = gql`
   mutation SettingManagerModal_CreateBranch($branch: BranchRequestDTO!) {
     createBranch(branch: $branch) {
@@ -66,10 +71,25 @@ const SKILLS = gql`
     }
   }
 `;
-
 const CREATE_SKILL = gql`
   mutation SettingManagerModal_CreateSkill($skill: SkillRequestDTO!) {
     createSkill(skill: $skill) {
+      id
+    }
+  }
+`;
+
+const LANGUAGES = gql`
+  query SettingManagerModal_Languages {
+    languages {
+      id
+      name
+    }
+  }
+`;
+const CREATE_LANGUAGE = gql`
+  mutation SettingManagerModal_CreateLanguage($language: LanguageRequestDTO!) {
+    createLanguage(language: $language) {
       id
     }
   }
@@ -88,27 +108,39 @@ const SettingManagerModal = ({
     [],
   );
   const [currentSkills, setCurrentSkills] = useState<SkillResponseDTO[]>([]);
+  const [currentLanguages, setCurrentLanguages] = useState<
+    LanguageResponseDTO[]
+  >([]);
   const [createBranch] = useMutation(CREATE_BRANCH, {
     refetchQueries: [{ query: BRANCHES }, "AdminHomepageHeader_Branches"],
   });
   const [createSkill] = useMutation(CREATE_SKILL, {
     refetchQueries: [{ query: SKILLS }],
   });
+  const [createLanguage] = useMutation(CREATE_LANGUAGE, {
+    refetchQueries: [{ query: LANGUAGES }],
+  });
 
   const toast = useToast();
 
-  const handleBranchSkillCreate = async (branchOrSkillName: string) => {
+  const handleCreate = async (name: string) => {
     try {
       if (selectedTab === SettingManagerTab.Branch) {
         await createBranch({
           variables: {
-            branch: { name: branchOrSkillName },
+            branch: { name },
           },
         });
       } else if (selectedTab === SettingManagerTab.Skill) {
         await createSkill({
           variables: {
-            skill: { name: branchOrSkillName },
+            skill: { name },
+          },
+        });
+      } else if (selectedTab === SettingManagerTab.Language) {
+        await createLanguage({
+          variables: {
+            language: { name },
           },
         });
       }
@@ -137,13 +169,20 @@ const SettingManagerModal = ({
     },
   });
 
+  useQuery<LanguageQueryResponse>(LANGUAGES, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setCurrentLanguages(data.languages);
+    },
+  });
+
   return (
     <>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent maxW="1000px" h="700px" py="50px" px="70px">
           <ModalCloseButton />
-          <ModalBody overflow="auto">
+          <ModalBody>
             <Tabs>
               <HStack alignItems="flex-start">
                 <TabList mb="40px">
@@ -151,13 +190,19 @@ const SettingManagerModal = ({
                     fontSize="24px"
                     onClick={() => setSelectedTab(SettingManagerTab.Branch)}
                   >
-                    Branch
+                    Branches
                   </Tab>
                   <Tab
                     fontSize="24px"
                     onClick={() => setSelectedTab(SettingManagerTab.Skill)}
                   >
                     Skills
+                  </Tab>
+                  <Tab
+                    fontSize="24px"
+                    onClick={() => setSelectedTab(SettingManagerTab.Language)}
+                  >
+                    Languages
                   </Tab>
                 </TabList>
                 <Spacer />
@@ -167,7 +212,7 @@ const SettingManagerModal = ({
                     isOpen={isCreateModalOpen}
                     content=""
                     onClose={setIsCreateModalOpen.off}
-                    onEdit={handleBranchSkillCreate}
+                    onEdit={handleCreate}
                   />
                   <AddIcon boxSize={3} mr={3} />
                   Add a {SettingManagerTab[selectedTab]}
@@ -179,6 +224,9 @@ const SettingManagerModal = ({
                 </TabPanel>
                 <TabPanel p={0}>
                   <SkillsManagerTable skills={currentSkills} />
+                </TabPanel>
+                <TabPanel p={0}>
+                  <LanguageManagerTable languages={currentLanguages} />
                 </TabPanel>
               </TabPanels>
             </Tabs>

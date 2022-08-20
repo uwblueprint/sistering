@@ -1,4 +1,4 @@
-import { Language } from "./UserType";
+import { LanguageResponseDTO } from "./LanguageTypes";
 import { BranchResponseDTO } from "./BranchTypes";
 
 export type EmployeeUserDTO = {
@@ -14,7 +14,7 @@ export type EmployeeUserDTO = {
   pronouns: string | null;
   dateOfBirth: string | null;
   branches: BranchResponseDTO[];
-  languages: Language[];
+  languages: LanguageResponseDTO[];
 };
 
 export type EmployeeUserResponseDTO = EmployeeUserDTO;

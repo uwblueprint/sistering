@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { gql, useMutation } from "@apollo/client";
 import {
+  Box,
   Table,
   Tbody,
   Tr,
@@ -16,12 +17,12 @@ import { SkillResponseDTO } from "../../types/api/SkillTypes";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 
-type SkillManagerTableProps = {
+type SkillsManagerTableProps = {
   skills: SkillResponseDTO[];
 };
 
 const UPDATE_SKILL = gql`
-  mutation BranchManagerTable_UpdateSkill($id: ID!, $skill: SkillRequestDTO!) {
+  mutation SkillsManagerTable_UpdateSkill($id: ID!, $skill: SkillRequestDTO!) {
     updateSkill(id: $id, skill: $skill) {
       id
     }
@@ -29,14 +30,14 @@ const UPDATE_SKILL = gql`
 `;
 
 const DELETE_SKILL = gql`
-  mutation BranchManagerTable_DeleteSkill($id: ID!) {
+  mutation SkillsManagerTable_DeleteSkill($id: ID!) {
     deleteSkill(id: $id)
   }
 `;
 
 const SkillsManagerTable = ({
   skills,
-}: SkillManagerTableProps): React.ReactElement => {
+}: SkillsManagerTableProps): React.ReactElement => {
   const [isEditModalOpen, setIsEditModalOpen] = useBoolean(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useBoolean(false);
   const [selectedSkill, setSelectedSkill] = useState<SkillResponseDTO | null>(
@@ -117,55 +118,57 @@ const SkillsManagerTable = ({
         }}
         onDelete={handleSkillDelete}
       />
-      <TableContainer
-        border="2px"
-        borderRadius="12px"
-        borderColor="background.dark"
-      >
-        <Table variant="brand">
-          <Tbody>
-            {skills.map((skill) => (
-              <Tr key={Number(skill.id)}>
-                <Td>
-                  <Tag variant="brand">{skill.name}</Tag>
-                </Td>
-                <Td textAlign="end">
-                  <IconButton
-                    aria-label="Edit skill"
-                    variant="ghost"
-                    _hover={{
-                      bg: "transparent",
-                    }}
-                    _active={{
-                      bg: "transparent",
-                    }}
-                    icon={<EditIcon color="text.default" boxSize="24px" />}
-                    onClick={() => {
-                      setIsEditModalOpen.on();
-                      setSelectedSkill(skill);
-                    }}
-                  />
-                  <IconButton
-                    aria-label="Delete skill"
-                    variant="ghost"
-                    _hover={{
-                      bg: "transparent",
-                    }}
-                    _active={{
-                      bg: "transparent",
-                    }}
-                    icon={<DeleteIcon color="text.default" boxSize="24px" />}
-                    onClick={() => {
-                      setIsDeleteModalOpen.on();
-                      setSelectedSkill(skill);
-                    }}
-                  />
-                </Td>
-              </Tr>
-            ))}
-          </Tbody>
-        </Table>
-      </TableContainer>
+      <Box maxHeight="500px" overflow="auto">
+        <TableContainer
+          border="2px"
+          borderRadius="12px"
+          borderColor="background.dark"
+        >
+          <Table variant="brand">
+            <Tbody>
+              {skills.map((skill) => (
+                <Tr key={Number(skill.id)}>
+                  <Td>
+                    <Tag variant="brand">{skill.name}</Tag>
+                  </Td>
+                  <Td textAlign="end">
+                    <IconButton
+                      aria-label="Edit skill"
+                      variant="ghost"
+                      _hover={{
+                        bg: "transparent",
+                      }}
+                      _active={{
+                        bg: "transparent",
+                      }}
+                      icon={<EditIcon color="text.default" boxSize="24px" />}
+                      onClick={() => {
+                        setIsEditModalOpen.on();
+                        setSelectedSkill(skill);
+                      }}
+                    />
+                    <IconButton
+                      aria-label="Delete skill"
+                      variant="ghost"
+                      _hover={{
+                        bg: "transparent",
+                      }}
+                      _active={{
+                        bg: "transparent",
+                      }}
+                      icon={<DeleteIcon color="text.default" boxSize="24px" />}
+                      onClick={() => {
+                        setIsDeleteModalOpen.on();
+                        setSelectedSkill(skill);
+                      }}
+                    />
+                  </Td>
+                </Tr>
+              ))}
+            </Tbody>
+          </Table>
+        </TableContainer>
+      </Box>
     </>
   );
 };

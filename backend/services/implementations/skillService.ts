@@ -38,7 +38,7 @@ class SkillService implements ISkillService {
   async getSkills(): Promise<SkillResponseDTO[]> {
     try {
       const skills: Array<Skill> = await prisma.skill.findMany({
-        orderBy: [{ id: "asc" }],
+        orderBy: [{ name: "asc" }],
       });
       return skills.map((skill) => ({
         id: String(skill.id),

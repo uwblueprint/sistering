@@ -11,7 +11,7 @@ import {
   Text,
   UnorderedList,
 } from "@chakra-ui/react";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import moment from "moment";
 
 import { useHistory } from "react-router-dom";
@@ -22,14 +22,15 @@ import {
 import {
   CreateEmployeeUserDTO,
   CreateVolunteerUserDTO,
-  LANGUAGES,
   UpdateEmployeeUserDTO,
   UpdateVolunteerUserDTO,
 } from "../../types/api/UserType";
+import {
+  LanguageResponseDTO,
+  LanguageQueryResponse,
+} from "../../types/api/LanguageTypes";
 import TextField from "./fields/TextField";
 import SelectorField from "./fields/SelectorField";
-import { LanguageResponseDTO } from "../../types/api/LanguageTypes";
-import getTitleCaseForOneWord from "../../utils/StringUtils";
 
 export enum AccountFormMode {
   CREATE,
@@ -39,6 +40,15 @@ export enum AccountFormMode {
 const SKILLS = gql`
   query AccountForm_Skills {
     skills {
+      id
+      name
+    }
+  }
+`;
+
+const LANGUAGES = gql`
+  query AccountForm_Languages {
+    languages {
       id
       name
     }
@@ -155,15 +165,12 @@ const AccountForm = ({
     },
   });
 
-  useEffect(() => {
-    const newLanguages: LanguageResponseDTO[] = LANGUAGES.map(
-      (language, i) => ({
-        id: String(i + 1),
-        name: getTitleCaseForOneWord(language),
-      }),
-    );
-    setLanguages(newLanguages);
-  }, []);
+  useQuery<LanguageQueryResponse>(LANGUAGES, {
+    fetchPolicy: "cache-and-network",
+    onCompleted: (data) => {
+      setLanguages(data.languages);
+    },
+  });
 
   const selectSkill = (
     skill: string,
@@ -239,9 +246,7 @@ const AccountForm = ({
           pronouns: values.pronouns,
           dateOfBirth: values.dateOfBirth,
           password: values.password,
-          languages: values.languages.map(
-            (language) => LANGUAGES[Number(language.id) - 1],
-          ),
+          languages: values.languages.map((language) => language.id),
           branches: [],
           token: values.token,
         });
@@ -259,9 +264,7 @@ const AccountForm = ({
           hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
-          languages: values.languages.map(
-            (language) => LANGUAGES[Number(language.id) - 1],
-          ),
+          languages: values.languages.map((language) => language.id),
           branches: [],
           token: values.token,
         });
@@ -282,9 +285,7 @@ const AccountForm = ({
           emergencyContactPhone: values.emergencyNumber,
           pronouns: values.pronouns,
           dateOfBirth: values.dateOfBirth,
-          languages: values.languages.map(
-            (language) => LANGUAGES[Number(language.id) - 1],
-          ),
+          languages: values.languages.map((language) => language.id),
           branches: [],
         });
       } else {
@@ -300,9 +301,7 @@ const AccountForm = ({
           hireDate: moment(new Date()).format("YYYY-MM-DD"),
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
-          languages: values.languages.map(
-            (language) => LANGUAGES[Number(language.id) - 1],
-          ),
+          languages: values.languages.map((language) => language.id),
           branches: [],
         });
       }

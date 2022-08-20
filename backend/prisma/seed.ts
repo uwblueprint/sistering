@@ -31,6 +31,16 @@ enum Skills {
   Yoga = "Yoga",
 }
 
+enum Languages {
+  English = "English",
+  French = "French",
+  Italian = "Italian",
+  Chinese = "Chinese",
+  Spanish = "Spanish",
+  Hindi = "Hindi",
+  Russian = "Russian",
+}
+
 const employeeUsers = [
   {
     firstName: "Edna",
@@ -38,6 +48,7 @@ const employeeUsers = [
     authId: process.env.EMPLOYEE_UID,
     role: Role.EMPLOYEE,
     branches: [{ name: Branches.Kitchen }],
+    languages: [{ name: Languages.English }],
   },
   {
     firstName: "Emma",
@@ -45,6 +56,7 @@ const employeeUsers = [
     authId: process.env.EMPLOYEE1_UID,
     role: Role.EMPLOYEE,
     branches: [{ name: Branches.Arts }],
+    languages: [{ name: Languages.English }, { name: Languages.French }],
   },
 ];
 
@@ -56,6 +68,11 @@ const volunteerUsers = [
     role: Role.VOLUNTEER,
     dateOfBirth: new Date("August 19, 2000 23:15:30"),
     pronouns: "they/them",
+    languages: [
+      { name: Languages.English },
+      { name: Languages.French },
+      { name: Languages.Chinese },
+    ],
     volunteer: {
       hireDate: new Date(),
       branches: [{ name: Branches.Arts }],
@@ -74,6 +91,7 @@ const volunteerUsers = [
     role: Role.VOLUNTEER,
     dateOfBirth: new Date("August 19, 2000 23:15:30"),
     pronouns: "she/her",
+    languages: [{ name: Languages.Hindi }, { name: Languages.Russian }],
     volunteer: {
       hireDate: addDays(new Date(), -7),
       branches: [{ name: Branches.Kitchen }],
@@ -190,6 +208,18 @@ const main = async () => {
   );
 
   await prisma.$transaction(
+    Object.values(Languages).map((languageName) =>
+      prisma.language.upsert({
+        where: { name: languageName },
+        update: {},
+        create: {
+          name: languageName,
+        },
+      }),
+    ),
+  );
+
+  await prisma.$transaction(
     adminUsers.map((user) => {
       if (!user.authId) {
         throw new Error(
@@ -231,6 +261,9 @@ const main = async () => {
           authId: employee.authId,
           role: employee.role,
           pronouns: "they/them",
+          languages: {
+            connect: employee.languages,
+          },
           employee: {
             create: {
               branches: {
@@ -267,6 +300,9 @@ const main = async () => {
           authId: user.authId,
           role: user.role,
           pronouns: "they/them",
+          languages: {
+            connect: user.languages,
+          },
           volunteer: {
             create: {
               ...user.volunteer,
