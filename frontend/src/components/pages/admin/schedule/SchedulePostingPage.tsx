@@ -1,4 +1,12 @@
-import { Flex, Box, Text, Button, Spacer, useToast } from "@chakra-ui/react";
+import {
+  Flex,
+  Box,
+  Text,
+  Button,
+  Spacer,
+  Tooltip,
+  useToast,
+} from "@chakra-ui/react";
 import React, { useState, useEffect, useContext } from "react";
 import { useHistory, useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
@@ -138,6 +146,22 @@ const ShiftScheduleCalendar = ({
     />
   );
 
+const checkHasConfirmedSignup = (
+  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[],
+): boolean => {
+  for (let i = 0; i < shifts.length; i += 1) {
+    for (let j = 0; j < shifts[i].signups.length; j += 1) {
+      if (
+        shifts[i].signups[j].status === "CONFIRMED" ||
+        shifts[i].signups[j].status === "PUBLISHED"
+      ) {
+        return true;
+      }
+    }
+  }
+  return false;
+};
+
 const SchedulePostingPage = (): React.ReactElement => {
   const toast = useToast();
   const history = useHistory();
@@ -168,6 +192,7 @@ const SchedulePostingPage = (): React.ReactElement => {
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
   const [selectedDay, setSelectedDay] = useState<Date>();
+  const [hasConfirmedSignup, setHasConfirmedSignup] = useState<boolean>(false);
 
   useEffect(() => {
     const shiftsOfDay = shifts.filter((shift) =>
@@ -438,6 +463,10 @@ const SchedulePostingPage = (): React.ReactElement => {
     }
   }, [isPostingClosed, postingDetails, toast]);
 
+  useEffect(() => {
+    setHasConfirmedSignup(checkHasConfirmedSignup(shifts));
+  }, [shifts]);
+
   if (postingLoading || postingDetails === undefined) {
     return <Loading />;
   }
@@ -518,7 +547,19 @@ const SchedulePostingPage = (): React.ReactElement => {
           <Flex pb={6}>
             <Text textStyle="display-medium">{postingDetails?.title}</Text>
             <Spacer />
-            <Button onClick={handleOnPublishClick}>Publish schedule</Button>
+            <Tooltip
+              hasArrow
+              label="Must have at least one signup"
+              shouldWrapChildren
+              isDisabled={hasConfirmedSignup}
+            >
+              <Button
+                onClick={handleOnPublishClick}
+                disabled={!hasConfirmedSignup}
+              >
+                Publish schedule
+              </Button>
+            </Tooltip>
           </Flex>
           {shifts.length > 0 && (
             <AdminScheduleTable
