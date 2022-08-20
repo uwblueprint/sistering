@@ -60,7 +60,7 @@ export const formatDateStringYearAbbrWeekday = (
  */
 export const formatDateMonthDay = (dateStringInput: string): string => {
   const inputAsDate = new Date(dateStringInput);
-  return moment(inputAsDate).format("dddd, MMM D");
+  return moment(inputAsDate).utc().format("dddd, MMM D");
 };
 
 /**
