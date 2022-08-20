@@ -343,11 +343,11 @@ const SchedulePostingPage = (): React.ReactElement => {
 
   const handleOnPublishClick = async () => {
     const shiftsCopy = cloneDeep(shifts);
-    const publishedSignups: UpsertSignupDTO[] = [];
+    const upsertSignups: UpsertSignupDTO[] = [];
     shiftsCopy.forEach((shift, shiftIndex) =>
       shift.signups.forEach((signup, signupIndex) => {
         if (signup.status === "CONFIRMED") {
-          publishedSignups.push({
+          upsertSignups.push({
             shiftId: shift.id,
             userId: signup.volunteer.id,
             status: "PUBLISHED",
@@ -355,15 +355,24 @@ const SchedulePostingPage = (): React.ReactElement => {
             note: signup.note,
           });
           shiftsCopy[shiftIndex].signups[signupIndex].status = "PUBLISHED";
+        } else if (signup.status === "PENDING") {
+          upsertSignups.push({
+            shiftId: shift.id,
+            userId: signup.volunteer.id,
+            status: "CANCELED",
+            numVolunteers: signup.numVolunteers,
+            note: signup.note,
+          });
+          shiftsCopy[shiftIndex].signups[signupIndex].status = "CANCELED";
         }
       }),
     );
 
-    if (publishedSignups.length) {
+    if (upsertSignups.length) {
       const response = await submitSignups({
         variables: {
           upsertDeleteShifts: {
-            upsertShiftSignups: publishedSignups,
+            upsertShiftSignups: upsertSignups,
             deleteShiftSignups: [],
           },
         },
