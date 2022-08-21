@@ -6,7 +6,7 @@ import Sistering_Logo from "../../assets/Sistering_Logo.svg";
 const AccountCreatedPage = (): React.ReactElement => {
   const history = useHistory();
   return (
-    <Flex align="center" height="100vh">
+    <Flex align="center" minH="100vh">
       <VStack align="center" width="100vw">
         <Image src={Sistering_Logo} alt="Sistering logo" />
         <Text fontSize="xl" fontWeight="bold" mt="20px">

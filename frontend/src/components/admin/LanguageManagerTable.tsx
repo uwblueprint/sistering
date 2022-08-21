@@ -131,7 +131,10 @@ const LanguageManagerTable = ({
           <Table variant="brand">
             <Tbody>
               {languages.map((language) => (
-                <Tr key={Number(language.id)}>
+                <Tr
+                  key={Number(language.id)}
+                  _last={{ td: { borderBottom: "none" } }}
+                >
                   <Td>
                     <Tag variant="brand">{language.name}</Tag>
                   </Td>

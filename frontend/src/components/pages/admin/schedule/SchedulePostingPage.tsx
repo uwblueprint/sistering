@@ -469,7 +469,7 @@ const SchedulePostingPage = (): React.ReactElement => {
   }
 
   return (
-    <Flex flexFlow="column" width="100%" height="100vh">
+    <Flex flexFlow="column" width="100%" minH="100vh">
       {(tableDataQueryError || postingError) && <ErrorModal />}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}

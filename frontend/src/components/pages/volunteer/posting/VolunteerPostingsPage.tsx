@@ -138,13 +138,7 @@ const VolunteerPostingsPage = (): React.ReactElement => {
         defaultIndex={VolunteerPages.VolunteerPostings}
         tabs={VolunteerNavbarTabs}
       />
-      <Box
-        bg="background.light"
-        pt="48px"
-        px="101px"
-        pb="64px"
-        minHeight="100vh"
-      >
+      <Box bg="background.light" pt="48px" px="101px" pb="64px" minH="100vh">
         <Box maxW="1280px" mx="auto">
           <HStack justify="space-between" pb="24px">
             <Text textStyle="display-small-semibold">Events</Text>

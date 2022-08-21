@@ -40,7 +40,7 @@ const ResetPassword = (): React.ReactElement => {
   return (
     <Box>
       <AuthNavbar />
-      <Box width="100%" display="flex" flexDirection="row" height="100vh">
+      <Box width="100%" display="flex" flexDirection="row" minH="100vh">
         <Box backgroundColor="background.white" flexGrow={4}>
           <Box maxWidth="480px" mt="8vh" mx="auto">
             <Image src={logo} alt="Sistering logo" h={32} />

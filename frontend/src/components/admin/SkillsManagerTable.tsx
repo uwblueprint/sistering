@@ -127,7 +127,10 @@ const SkillsManagerTable = ({
           <Table variant="brand">
             <Tbody>
               {skills.map((skill) => (
-                <Tr key={Number(skill.id)}>
+                <Tr
+                  key={Number(skill.id)}
+                  _last={{ td: { borderBottom: "none" } }}
+                >
                   <Td>
                     <Tag variant="brand">{skill.name}</Tag>
                   </Td>
