@@ -22,15 +22,12 @@ const CreateAccountPage = (): React.ReactElement => {
               Please follow the steps to activate your sistering account. We
               look forward to working with you.
             </Text>
-            <Button color="violet" width="100%">
-              <Text
-                color="background.white"
-                onClick={() =>
-                  history.push(`${NEW_ACCOUNT_PAGE}?token=${token}`)
-                }
-              >
-                Continue
-              </Text>
+            <Button
+              color="violet"
+              width="100%"
+              onClick={() => history.push(`${NEW_ACCOUNT_PAGE}?token=${token}`)}
+            >
+              <Text color="background.white">Continue</Text>
             </Button>
           </Box>
         </Box>
