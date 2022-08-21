@@ -18,8 +18,8 @@ import { gql, useMutation } from "@apollo/client";
 
 import { UserInviteDTO } from "../../types/api/UserInviteTypes";
 import {
-  formatDateMonthYear,
-  formatTimeHourMinutes,
+  formatInLocalDateMonthYear,
+  formatInLocalTimeHourMinutes,
 } from "../../utils/DateTimeUtils";
 import { Role } from "../../types/AuthTypes";
 
@@ -92,7 +92,7 @@ const UserInvitesTable = ({
               borderColor: "currentColor",
             }}
             py="8px"
-            onClick={() => setSelectedTab(Role.Admin)}
+            onClick={() => setSelectedTab(Role.Employee)}
           >
             Admins
           </Tab>
@@ -113,8 +113,8 @@ const UserInvitesTable = ({
             .map((invite, i) => (
               <Tr key={i}>
                 <Td>{invite.email}</Td>
-                <Td>{formatDateMonthYear(invite.createdAt)}</Td>
-                <Td>{formatTimeHourMinutes(invite.createdAt)}</Td>
+                <Td>{formatInLocalDateMonthYear(invite.createdAt)}</Td>
+                <Td>{formatInLocalTimeHourMinutes(invite.createdAt)}</Td>
                 <Td textAlign="end">
                   <IconButton
                     aria-label="Cancel invite"

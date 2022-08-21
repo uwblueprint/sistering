@@ -4,7 +4,7 @@ import { generatePath, useHistory } from "react-router-dom";
 
 import {
   getElapsedHours,
-  formatTimeHourMinutes,
+  formatRawTimeHourMinutes,
 } from "../../../utils/DateTimeUtils";
 import { VOLUNTEER_POSTING_DETAILS } from "../../../constants/Routes";
 
@@ -25,8 +25,8 @@ const VolunteerUpcomingShiftsTableRow: React.FC<VolunteerUpcomingShiftsTableRowP
 
   const start = new Date(startTime);
   const end = new Date(endTime);
-  const startString = formatTimeHourMinutes(start);
-  const endString = formatTimeHourMinutes(end);
+  const startString = formatRawTimeHourMinutes(start);
+  const endString = formatRawTimeHourMinutes(end);
 
   const time = `${startString} - ${endString}`;
   const elaspedHours = getElapsedHours(start, end);

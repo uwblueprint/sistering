@@ -4,7 +4,7 @@ import { FilterType } from "../types/DateFilterTypes";
 // REFERENCE: https://momentjs.com/docs/#/displaying/
 
 /**
- * @param {Date} date
+ * @param {Date} date from frontend
  * @returns corresponding time string string in format hh:mm:(a/p)m
  */
 export const formatTimeHourMinutes = (date: Date): string => {
@@ -12,11 +12,29 @@ export const formatTimeHourMinutes = (date: Date): string => {
 };
 
 /**
- * @param {Date} date
- * @returns corresponding time string string in format DD/MM/YY
+ * @param {Date} date from backend
+ * @returns corresponding time string string in format hh:mm:(a/p)m ignoring
+ * timezone
  */
-export const formatDateMonthYear = (date: Date): string => {
-  return moment(date).format("DD/MM/YY");
+export const formatRawTimeHourMinutes = (date: Date): string => {
+  return moment(date).format("h:mma");
+};
+
+/**
+ * @param {Date} date
+ * @returns corresponding time string string in format hh:mm:(a/p)m in
+ * local time such that it respects the UTC timezone
+ */
+export const formatInLocalTimeHourMinutes = (date: Date): string => {
+  return moment.utc(date).local().format("h:mma");
+};
+
+/**
+ * @param {Date} date
+ * @returns corresponding local time string string in format DD/MM/YY
+ */
+export const formatInLocalDateMonthYear = (date: Date): string => {
+  return moment.utc(date).local().format("DD/MM/YY");
 };
 
 /**
@@ -65,17 +83,14 @@ export const formatDateMonthDay = (dateStringInput: string): string => {
 
 /**
  * currently only supports filter by week and month
- * @param start a date string on the frontend
+ * @param end a date string fetched from backend
  * @param filterType type of filter (week or month)
  * @returns a boolean representing whether the specified date is within the range
  */
-export const dateInRange = (start: string, filterType: FilterType): boolean => {
-  const MS_PER_WEEK = 7 * 24 * 60 * 60 * 1000;
-  const startDate = new Date(start);
+export const dateInRange = (end: string, filterType: FilterType): boolean => {
   return (
-    startDate.getTime() - Date.now() >= 0 &&
-    startDate.getTime() - Date.now() <
-      (filterType === "week" ? MS_PER_WEEK : MS_PER_WEEK * 4)
+    moment(end).utc().isSameOrAfter(new Date(), "day") &&
+    (filterType === "all" || moment(end).utc().isSame(new Date(), filterType))
   );
 };
 
@@ -209,5 +224,15 @@ export const isEventPosting = (startDate: Date, endDate: Date): boolean => {
  * @returns false if the date is in the future
  */
 export const isPast = (date: Date): boolean => {
-  return moment(date).isBefore(moment().toDate());
+  return moment(moment(date).utc().format("YYYY-MM-DD")).isBefore(
+    moment(moment().format("YYYY-MM-DD")),
+  );
+};
+/**
+ * Returns date from UTC date time ignoring timezone
+ * @param  {Date} date UTC date from backend
+ * @returns Date
+ */
+export const getDateFromUTCDateTime = (date: Date): Date => {
+  return moment(moment(date).utc().format("YYYY-MM-DD")).toDate();
 };

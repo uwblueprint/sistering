@@ -15,7 +15,7 @@ import moment from "moment";
 import RichTextDisplay from "../common/RichText/RichTextDisplay";
 import {
   formatDateStringYear,
-  formatTimeHourMinutes,
+  formatRawTimeHourMinutes,
 } from "../../utils/DateTimeUtils";
 import { SkillResponseDTO } from "../../types/api/SkillTypes";
 import { PostingRecurrenceType } from "../../types/PostingTypes";
@@ -90,9 +90,9 @@ const PostingCard = ({
             <TimeIcon w={4} pr={1} />
             {type === "OPPORTUNITY"
               ? "See posting details"
-              : `${formatTimeHourMinutes(
+              : `${formatRawTimeHourMinutes(
                   new Date(eventFirstTime),
-                )} - ${formatTimeHourMinutes(new Date(eventLatestTime))}`}
+                )} - ${formatRawTimeHourMinutes(new Date(eventLatestTime))}`}
           </Text>
           <Box textStyle="caption">
             <CalendarIcon w={4} pr={1} />

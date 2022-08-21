@@ -10,12 +10,12 @@ import {
   HStack,
   Tbody,
 } from "@chakra-ui/react";
-import moment from "moment";
 import { ShiftSignupPostingResponseDTO } from "../../../types/api/ShiftSignupTypes";
 import { FilterType } from "../../../types/DateFilterTypes";
 import VolunteerUpcomingShiftsTable from "./VolunteerUpcomingShiftsTable";
 import VolunteerPendingShiftsTableRow from "./VolunteerPendingShiftsTableRow";
 import VolunteerShiftsTableEmptyState from "./VolunteerShiftsTableEmptyState";
+import { dateInRange } from "../../../utils/DateTimeUtils";
 
 type VolunteerShiftsTableProps = {
   // The schedule prop should be sorted by date in ascending order.
@@ -80,32 +80,17 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
 
   const upcomingShifts = shifts
     .filter((shift) => shift.status === "PUBLISHED")
-    .filter((shift) => {
-      if (filter === "all") {
-        return true;
-      }
-      return moment().isSame(moment(shift.shiftStartTime), filter);
-    });
+    .filter((shift) => dateInRange(shift.shiftStartTime, filter));
 
   const pendingShifts = shifts
     .filter(
       (shift) => shift.status === "PENDING" || shift.status === "CONFIRMED",
     )
-    .filter((shift) => {
-      if (filter === "all") {
-        return true;
-      }
-      return moment().isSame(moment(shift.autoClosingDate), filter);
-    });
+    .filter((shift) => dateInRange(shift.autoClosingDate, filter));
 
   const filledShifts = shifts
     .filter((shift) => shift.status === "CANCELED")
-    .filter((shift) => {
-      if (filter === "all") {
-        return true;
-      }
-      return moment().isSame(moment(shift.autoClosingDate), filter);
-    });
+    .filter((shift) => dateInRange(shift.shiftStartTime, filter));
 
   const changeFilter = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const value: FilterType = e.target.value as FilterType;

@@ -27,6 +27,7 @@ import {
 import AUTHENTICATED_USER_KEY from "../../../../constants/AuthConstants";
 import { AuthenticatedUser } from "../../../../types/AuthTypes";
 import { getLocalStorageObj } from "../../../../utils/LocalStorageUtils";
+import { getDateFromUTCDateTime } from "../../../../utils/DateTimeUtils";
 
 const SHIFTS_WITH_SIGNUPS_BY_POSTING = gql`
   query VolunteerPostingAvailabilities_ShiftsWithSignupsByPosting(
@@ -203,14 +204,16 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
           postingShifts={
             shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]
           }
-          postingStartDate={
+          postingStartDate={getDateFromUTCDateTime(
             new Date(
               Date.parse((postingDetails as PostingResponseDTO).startDate),
-            )
-          }
-          postingEndDate={
-            new Date(Date.parse((postingDetails as PostingResponseDTO).endDate))
-          }
+            ),
+          )}
+          postingEndDate={getDateFromUTCDateTime(
+            new Date(
+              Date.parse((postingDetails as PostingResponseDTO).endDate),
+            ),
+          )}
           selectedShifts={shiftSignups}
           setSelectedShifts={setShiftSignups}
           deleteSignups={deleteSignups}

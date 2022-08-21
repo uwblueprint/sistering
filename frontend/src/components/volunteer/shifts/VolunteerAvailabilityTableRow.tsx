@@ -8,7 +8,7 @@ import {
 import { CheckIcon } from "@chakra-ui/icons";
 import React from "react";
 import {
-  formatTimeHourMinutes,
+  formatRawTimeHourMinutes,
   getElapsedHours,
 } from "../../../utils/DateTimeUtils";
 import { ShiftWithSignupAndVolunteerResponseDTO } from "../../../types/api/ShiftTypes";
@@ -66,9 +66,12 @@ const VolunteerAvailabilityTableRow = ({
           setChecked(event.target.checked);
         }}
       >
-        {`${formatTimeHourMinutes(shift.startTime)} -  ${formatTimeHourMinutes(
+        {`${formatRawTimeHourMinutes(
+          shift.startTime,
+        )} - ${formatRawTimeHourMinutes(shift.endTime)} (${getElapsedHours(
+          shift.startTime,
           shift.endTime,
-        )} (${getElapsedHours(shift.startTime, shift.endTime)} hrs)`}
+        )} hrs)`}
       </Checkbox>
       <InputGroup>
         <Input
