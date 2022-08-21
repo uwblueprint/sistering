@@ -52,7 +52,7 @@ const VolunteerShiftsPage = (): React.ReactElement => {
   });
 
   return (
-    <Flex h="100vh" flexFlow="column" bg="background.light">
+    <Flex minH="100vh" flexFlow="column" bg="background.light">
       {error && <ErrorModal />}
       <Navbar
         defaultIndex={VolunteerPages.VolunteerShifts}

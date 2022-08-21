@@ -10,7 +10,7 @@ const NotFound = (): React.ReactElement => {
   return (
     <Flex
       mx="auto"
-      h="100vh"
+      minH="100vh"
       direction="column"
       align="center"
       justify="center"

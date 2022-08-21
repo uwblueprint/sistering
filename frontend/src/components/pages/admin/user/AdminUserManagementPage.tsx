@@ -433,7 +433,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
         }}
         handleBranchMenuItemClicked={handleMultiUserBranchMenuItemClicked}
       />
-      <Flex flexFlow="column" width="100%" height="100vh">
+      <Flex flexFlow="column" width="100%" minH="100vh">
         <Navbar
           defaultIndex={Number(AdminPages.AdminUserManagement)}
           tabs={AdminNavbarTabs}
