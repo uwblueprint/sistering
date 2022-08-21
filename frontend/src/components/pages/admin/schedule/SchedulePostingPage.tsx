@@ -531,7 +531,6 @@ const SchedulePostingPage = (): React.ReactElement => {
           alignItems="center"
           px="100px"
           pt={14}
-          minH="100vh"
         >
           <Button
             onClick={() => setCurrentView(AdminScheduleViews.CalendarView)}
