@@ -20,7 +20,10 @@ import {
 import { formatDateStringYear } from "../../utils/DateTimeUtils";
 import { Role } from "../../types/AuthTypes";
 import DeleteModal from "./DeleteModal";
-import { PostingFilterStatus } from "../../types/PostingTypes";
+import {
+  PostingFilterStatus,
+  PostingRecurrenceType,
+} from "../../types/PostingTypes";
 
 type AdminPostingCardProps = {
   status: PostingFilterStatus;
@@ -32,6 +35,7 @@ type AdminPostingCardProps = {
   autoClosingDate: string;
   branchName: string;
   numVolunteers: number;
+  type: PostingRecurrenceType;
   navigateToAdminSchedule?: () => void;
   navigateToEditPosting?: () => void;
   navigateToPostingDetails?: () => void;
@@ -49,6 +53,7 @@ const AdminPostingCard = ({
   autoClosingDate,
   branchName,
   numVolunteers,
+  type,
   navigateToAdminSchedule,
   navigateToEditPosting,
   navigateToPostingDetails,
@@ -56,6 +61,17 @@ const AdminPostingCard = ({
   onDelete,
 }: AdminPostingCardProps): React.ReactElement => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const getPostingDateRange = (): string => {
+    if ((startDate && endDate) || status === PostingFilterStatus.DRAFT) {
+      if (type === "OPPORTUNITY") {
+        return `${formatDateStringYear(startDate)} - ${formatDateStringYear(
+          endDate,
+        )}`;
+      }
+      return formatDateStringYear(startDate);
+    }
+    return "No date(s) selected";
+  };
 
   return (
     <>
@@ -113,11 +129,7 @@ const AdminPostingCard = ({
           <HStack spacing={4}>
             <Box textStyle="caption">
               <CalendarIcon w={6} pr={2} />
-              {(startDate && endDate) || status === PostingFilterStatus.DRAFT
-                ? `${formatDateStringYear(startDate)} - ${formatDateStringYear(
-                    endDate,
-                  )}`
-                : "No date(s) selected"}
+              {getPostingDateRange()}
             </Box>
           </HStack>
           <HStack>

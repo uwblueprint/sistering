@@ -8,7 +8,7 @@ import { FilterType } from "../types/DateFilterTypes";
  * @returns corresponding time string string in format hh:mm:(a/p)m
  */
 export const formatTimeHourMinutes = (date: Date): string => {
-  return moment.utc(date).format("h:mma");
+  return moment(date).format("h:mma");
 };
 
 /**
