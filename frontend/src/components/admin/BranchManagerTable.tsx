@@ -137,7 +137,10 @@ const BranchManagerTable = ({
           <Table variant="brand">
             <Tbody>
               {branches.map((branch) => (
-                <Tr key={Number(branch.id)}>
+                <Tr
+                  key={Number(branch.id)}
+                  _last={{ td: { borderBottom: "none" } }}
+                >
                   <Td>
                     <Tag>{branch.name}</Tag>
                   </Td>

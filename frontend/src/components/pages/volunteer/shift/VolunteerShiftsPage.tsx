@@ -52,13 +52,13 @@ const VolunteerShiftsPage = (): React.ReactElement => {
   });
 
   return (
-    <Flex h="100vh" flexFlow="column">
+    <Flex h="100vh" flexFlow="column" bg="background.light">
       {error && <ErrorModal />}
       <Navbar
         defaultIndex={VolunteerPages.VolunteerShifts}
         tabs={VolunteerNavbarTabs}
       />
-      <Box bg="background.light" p={10}>
+      <Box p={10}>
         <Container
           maxW="container.xl"
           backgroundColor="background.white"

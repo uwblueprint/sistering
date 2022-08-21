@@ -129,7 +129,7 @@ const VolunteerShiftsTable: React.FC<VolunteerShiftsTableProps> = ({
         <Tabs pt={8} onChange={(index) => setTabIndex(index)}>
           <TabList borderBottom="none">
             <Tab>Upcoming Shifts</Tab>
-            <Tab>Requests Pending Confirmation</Tab>
+            <Tab>Pending Shifts</Tab>
             <Tab>Filled Shifts</Tab>
           </TabList>
         </Tabs>
