@@ -151,10 +151,7 @@ const checkHasConfirmedSignup = (
 ): boolean => {
   for (let i = 0; i < shifts.length; i += 1) {
     for (let j = 0; j < shifts[i].signups.length; j += 1) {
-      if (
-        shifts[i].signups[j].status === "CONFIRMED" ||
-        shifts[i].signups[j].status === "PUBLISHED"
-      ) {
+      if (shifts[i].signups[j].status in ["CONFIRMED", "PUBLISHED"]) {
         return true;
       }
     }
