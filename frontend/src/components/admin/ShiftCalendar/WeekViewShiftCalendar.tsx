@@ -34,6 +34,7 @@ type ShiftCalendarProps = {
   initialDate?: string;
   startDate: string;
   endDate: string;
+  isRecurringEvents?: boolean;
 };
 
 const WeekViewShiftCalendar = ({
@@ -46,6 +47,7 @@ const WeekViewShiftCalendar = ({
   initialDate,
   startDate,
   endDate,
+  isRecurringEvents,
 }: ShiftCalendarProps): React.ReactElement => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
@@ -125,6 +127,10 @@ const WeekViewShiftCalendar = ({
         initialDate={initialDate}
         selectConstraint={{ startTime: "0:00", endTime: "24:00" }}
         validRange={{
+          start:
+            !isRecurringEvents || moment(startDate).isSame(endDate, "week")
+              ? startDate
+              : undefined,
           end: moment(endDate).add(1, "day").format("YYYY-MM-DD"),
         }}
       />
