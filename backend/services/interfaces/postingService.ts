@@ -11,7 +11,7 @@ interface IPostingService {
    * @returns a postingDTO with posting's information
    * @throws Error if posting retrieval fails
    */
-  getPosting(postingId: string): Promise<PostingResponseDTO>;
+  getPosting(postingId: string, userId?: string): Promise<PostingResponseDTO>;
 
   /**
    * Get all posting information (possibly paginated in the future) filtered by optional parameters

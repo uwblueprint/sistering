@@ -195,7 +195,10 @@ class PostingService implements IPostingService {
     );
   }
 
-  async getPosting(postingId: string): Promise<PostingResponseDTO> {
+  async getPosting(
+    postingId: string,
+    userId?: string,
+  ): Promise<PostingResponseDTO> {
     try {
       const posting = await prisma.posting.findUnique({
         where: {
@@ -215,6 +218,13 @@ class PostingService implements IPostingService {
 
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
+      }
+
+      if (userId !== undefined) {
+        const userBranchIds = await this.getUserBranchesByUserId(userId);
+        if (!userBranchIds.includes(posting.branch.id)) {
+          throw new Error(`User is not part of ${posting.branch.name} branch.`);
+        }
       }
 
       const employeeUsers = await this.convertToEmployeeUserResponseDTO(

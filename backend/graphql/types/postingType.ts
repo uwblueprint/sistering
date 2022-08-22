@@ -60,7 +60,7 @@ const postingType = gql`
   }
 
   extend type Query {
-    posting(id: ID!): PostingResponseDTO!
+    posting(id: ID!, userId: ID): PostingResponseDTO!
     postings(
       closingDate: Date
       statuses: [PostingStatus!]

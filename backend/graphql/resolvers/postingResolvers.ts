@@ -21,9 +21,9 @@ const postingResolvers = {
   Query: {
     posting: async (
       _parent: undefined,
-      { id }: { id: string },
+      { id, userId }: { id: string; userId?: string },
     ): Promise<PostingResponseDTO> => {
-      return postingService.getPosting(id);
+      return postingService.getPosting(id, userId);
     },
     postings: async (
       _parent: undefined,
