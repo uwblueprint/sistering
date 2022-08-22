@@ -17,13 +17,13 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 
-import { formatDateStringYear } from "../../utils/DateTimeUtils";
+import {
+  formatDateStringYear,
+  isEventPosting,
+} from "../../utils/DateTimeUtils";
 import { Role } from "../../types/AuthTypes";
 import DeleteModal from "./DeleteModal";
-import {
-  PostingFilterStatus,
-  PostingRecurrenceType,
-} from "../../types/PostingTypes";
+import { PostingFilterStatus } from "../../types/PostingTypes";
 
 type AdminPostingCardProps = {
   status: PostingFilterStatus;
@@ -35,7 +35,6 @@ type AdminPostingCardProps = {
   autoClosingDate: string;
   branchName: string;
   numVolunteers: number;
-  type: PostingRecurrenceType;
   navigateToAdminSchedule?: () => void;
   navigateToEditPosting?: () => void;
   navigateToPostingDetails?: () => void;
@@ -53,7 +52,6 @@ const AdminPostingCard = ({
   autoClosingDate,
   branchName,
   numVolunteers,
-  type,
   navigateToAdminSchedule,
   navigateToEditPosting,
   navigateToPostingDetails,
@@ -63,7 +61,7 @@ const AdminPostingCard = ({
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
   const getPostingDateRange = (): string => {
     if ((startDate && endDate) || status === PostingFilterStatus.DRAFT) {
-      if (type === "OPPORTUNITY") {
+      if (!isEventPosting(new Date(startDate), new Date(endDate))) {
         return `${formatDateStringYear(startDate)} - ${formatDateStringYear(
           endDate,
         )}`;

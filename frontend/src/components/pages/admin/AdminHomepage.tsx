@@ -24,7 +24,6 @@ import {
   BranchQueryResponse,
   BranchResponseDTO,
 } from "../../../types/api/BranchTypes";
-import { isEventPosting } from "../../../utils/DateTimeUtils";
 
 type SimplePostingResponseDTO = Omit<PostingResponseDTO, "employees" | "type">;
 
@@ -275,14 +274,6 @@ const AdminHomepage = (): React.ReactElement => {
                       autoClosingDate={posting.autoClosingDate}
                       branchName={posting.branch.name}
                       numVolunteers={posting.numVolunteers}
-                      type={
-                        isEventPosting(
-                          new Date(posting.startDate),
-                          new Date(posting.endDate),
-                        )
-                          ? "EVENT"
-                          : "OPPORTUNITY"
-                      }
                       navigateToAdminSchedule={() =>
                         navigateToAdminSchedule(posting.id)
                       }
