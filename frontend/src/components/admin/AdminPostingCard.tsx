@@ -17,7 +17,10 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 
-import { formatDateStringYear } from "../../utils/DateTimeUtils";
+import {
+  formatDateStringYear,
+  isEventPosting,
+} from "../../utils/DateTimeUtils";
 import { Role } from "../../types/AuthTypes";
 import DeleteModal from "./DeleteModal";
 import { PostingFilterStatus } from "../../types/PostingTypes";
@@ -56,6 +59,17 @@ const AdminPostingCard = ({
   onDelete,
 }: AdminPostingCardProps): React.ReactElement => {
   const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);
+  const getPostingDateRange = (): string => {
+    if ((startDate && endDate) || status === PostingFilterStatus.DRAFT) {
+      if (!isEventPosting(new Date(startDate), new Date(endDate))) {
+        return `${formatDateStringYear(startDate)} - ${formatDateStringYear(
+          endDate,
+        )}`;
+      }
+      return formatDateStringYear(startDate);
+    }
+    return "No date(s) selected";
+  };
 
   return (
     <>
@@ -113,11 +127,7 @@ const AdminPostingCard = ({
           <HStack spacing={4}>
             <Box textStyle="caption">
               <CalendarIcon w={6} pr={2} />
-              {(startDate && endDate) || status === PostingFilterStatus.DRAFT
-                ? `${formatDateStringYear(startDate)} - ${formatDateStringYear(
-                    endDate,
-                  )}`
-                : "No date(s) selected"}
+              {getPostingDateRange()}
             </Box>
           </HStack>
           <HStack>
