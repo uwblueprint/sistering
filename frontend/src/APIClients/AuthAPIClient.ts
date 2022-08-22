@@ -3,6 +3,7 @@ import {
   MutationFunctionOptions,
   OperationVariables,
 } from "@apollo/client";
+import axios from "axios";
 import AUTHENTICATED_USER_KEY from "../constants/AuthConstants";
 import { AuthenticatedUser } from "../types/AuthTypes";
 import { setLocalStorageObjProperty } from "../utils/LocalStorageUtils";
@@ -76,38 +77,20 @@ const register = async (
   return user;
 };
 
-type LogoutFunction = (
-  options?:
-    | MutationFunctionOptions<
-        {
-          logout: null;
-        },
-        OperationVariables
-      >
-    | undefined,
-) => Promise<
-  FetchResult<
-    {
-      logout: null;
-    },
-    Record<string, unknown>,
-    Record<string, unknown>
-  >
->;
-
-const logout = async (
-  authenticatedUserId: string,
-  logoutFunction: LogoutFunction,
-): Promise<boolean> => {
-  const result = await logoutFunction({
-    variables: { userId: authenticatedUserId },
-  });
-  let success = false;
-  if (result.data?.logout === null) {
-    success = true;
-    localStorage.removeItem(AUTHENTICATED_USER_KEY);
+const LOGOUT = `
+  mutation Index_Logout($userId: ID!) {
+    logout(userId: $userId)
   }
-  return success;
+`;
+
+const logout = (userId: string): void => {
+  axios.post(
+    `${process.env.REACT_APP_BACKEND_URL}/graphql`,
+    { query: LOGOUT, variables: { userId } },
+    { withCredentials: true },
+  );
+  localStorage.removeItem(AUTHENTICATED_USER_KEY);
+  window.location.reload();
 };
 
 type RefreshFunction = (
