@@ -1,5 +1,13 @@
 import { gql, useMutation, useQuery } from "@apollo/client";
-import { Container, Divider, Text, useToast } from "@chakra-ui/react";
+import {
+  Container,
+  Divider,
+  HStack,
+  Tag,
+  TagLabel,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
 import React, { useContext, useState } from "react";
 import moment from "moment";
 import {
@@ -7,7 +15,6 @@ import {
   UpdateVolunteerUserDTO,
   EmployeeUserResponseDTO,
   VolunteerUserResponseDTO,
-  LANGUAGES,
 } from "../../types/api/UserType";
 import Loading from "../common/Loading";
 import AccountForm, { AccountFormMode } from "../user/AccountForm";
@@ -15,7 +22,6 @@ import ProfilePhotoForm from "../user/ProfilePhotoForm";
 
 import AuthContext from "../../contexts/AuthContext";
 import { Role } from "../../types/AuthTypes";
-import getTitleCaseForOneWord from "../../utils/StringUtils";
 import Navbar from "../common/Navbar";
 import {
   AdminNavbarTabs,
@@ -37,7 +43,10 @@ const EMPLOYEE_BY_ID = gql`
       emergencyContactPhone
       emergencyContactEmail
       emergencyContactName
-      languages
+      languages {
+        id
+        name
+      }
       branches {
         id
         name
@@ -64,7 +73,10 @@ const VOLUNTEER_BY_ID = gql`
         id
         name
       }
-      languages
+      languages {
+        id
+        name
+      }
       branches {
         id
         name
@@ -207,26 +219,41 @@ const EditAccountPage = (): React.ReactElement => {
           Edit Profile
         </Text>
         <ProfilePhotoForm />
-        <Divider my={8} />
+        {user && (
+          <HStack mt={6}>
+            {user.branches.map((branch) => (
+              <Tag
+                key={branch.id}
+                size="lg"
+                borderRadius="full"
+                variant="brand"
+              >
+                <TagLabel>{branch.name}</TagLabel>
+              </Tag>
+            ))}
+          </HStack>
+        )}
+        <Divider my={6} />
         {user && (
           <AccountForm
             key={key}
             mode={AccountFormMode.EDIT}
             isAdmin={authenticatedUser?.role !== Role.Volunteer}
-            firstName={user?.firstName}
-            lastName={user?.lastName}
-            email={user?.email}
-            dateOfBirth={moment(user?.dateOfBirth).format("YYYY-MM-DD")}
-            pronouns={user?.pronouns}
-            phoneNumber={user?.phoneNumber}
-            emergencyNumber={user?.emergencyContactPhone}
-            emergencyEmail={user?.emergencyContactEmail}
-            emergencyName={user?.emergencyContactName}
-            prevLanguages={user?.languages?.map((language) => ({
-              id: String(LANGUAGES.indexOf(language) + 1),
-              name: getTitleCaseForOneWord(language),
-            }))}
-            prevSkills={user?.skills}
+            firstName={user.firstName}
+            lastName={user.lastName}
+            email={user.email}
+            dateOfBirth={
+              user.dateOfBirth
+                ? moment(user.dateOfBirth).format("YYYY-MM-DD")
+                : ""
+            }
+            pronouns={user.pronouns}
+            phoneNumber={user.phoneNumber}
+            emergencyNumber={user.emergencyContactPhone}
+            emergencyEmail={user.emergencyContactEmail}
+            emergencyName={user.emergencyContactName}
+            prevLanguages={user.languages}
+            prevSkills={user.skills}
             onEmployeeEdit={onEmployeeEdit}
             onVolunteerEdit={onVolunteerEdit}
           />

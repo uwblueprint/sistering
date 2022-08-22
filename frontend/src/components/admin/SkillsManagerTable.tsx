@@ -13,68 +13,58 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
-import { BranchResponseDTO } from "../../types/api/BranchTypes";
+import { SkillResponseDTO } from "../../types/api/SkillTypes";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
 
-type BranchManagerTableProps = {
-  branches: BranchResponseDTO[];
+type SkillsManagerTableProps = {
+  skills: SkillResponseDTO[];
 };
 
-const UPDATE_BRANCH = gql`
-  mutation BranchManagerTable_UpdateBranch(
-    $id: ID!
-    $branch: BranchRequestDTO!
-  ) {
-    updateBranch(id: $id, branch: $branch) {
+const UPDATE_SKILL = gql`
+  mutation SkillsManagerTable_UpdateSkill($id: ID!, $skill: SkillRequestDTO!) {
+    updateSkill(id: $id, skill: $skill) {
       id
     }
   }
 `;
 
-const DELETE_BRANCH = gql`
-  mutation BranchManagerTable_DeleteBranch($id: ID!) {
-    deleteBranch(id: $id)
+const DELETE_SKILL = gql`
+  mutation SkillsManagerTable_DeleteSkill($id: ID!) {
+    deleteSkill(id: $id)
   }
 `;
 
-const BranchManagerTable = ({
-  branches,
-}: BranchManagerTableProps): React.ReactElement => {
+const SkillsManagerTable = ({
+  skills,
+}: SkillsManagerTableProps): React.ReactElement => {
   const [isEditModalOpen, setIsEditModalOpen] = useBoolean(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useBoolean(false);
-  const [
-    selectedBranch,
-    setSelectedBranch,
-  ] = useState<BranchResponseDTO | null>(null);
+  const [selectedSkill, setSelectedSkill] = useState<SkillResponseDTO | null>(
+    null,
+  );
 
   const toast = useToast();
-  const [updateBranch] = useMutation(UPDATE_BRANCH, {
-    refetchQueries: [
-      "SettingManagerModal_Branches",
-      "AdminHomepageHeader_Branches",
-    ],
+  const [updateSkill] = useMutation(UPDATE_SKILL, {
+    refetchQueries: ["SettingManagerModal_Skills"],
   });
 
-  const [deleteBranch] = useMutation(DELETE_BRANCH, {
-    refetchQueries: [
-      "SettingManagerModal_Branches",
-      "AdminHomepageHeader_Branches",
-    ],
+  const [deleteSkill] = useMutation(DELETE_SKILL, {
+    refetchQueries: ["SettingManagerModal_Skills"],
   });
 
-  const handleBranchUpdate = async (branchName: string) => {
-    if (selectedBranch) {
+  const handleSkillUpdate = async (skillName: string) => {
+    if (selectedSkill) {
       try {
-        await updateBranch({
+        await updateSkill({
           variables: {
-            id: selectedBranch.id,
-            branch: { name: branchName },
+            id: selectedSkill.id,
+            skill: { name: skillName },
           },
         });
       } catch (error: unknown) {
         toast({
-          title: "Cannot update branch",
+          title: "Cannot update skill",
           description: `${error}`,
           status: "error",
           duration: 9000,
@@ -84,17 +74,17 @@ const BranchManagerTable = ({
     }
   };
 
-  const handleBranchDelete = async () => {
-    if (selectedBranch) {
+  const handleSkillDelete = async () => {
+    if (selectedSkill) {
       try {
-        await deleteBranch({
+        await deleteSkill({
           variables: {
-            id: selectedBranch.id,
+            id: selectedSkill.id,
           },
         });
       } catch (error: unknown) {
         toast({
-          title: "Cannot delete branch",
+          title: "Cannot delete skill",
           description: `${error}`,
           status: "error",
           duration: 9000,
@@ -107,26 +97,26 @@ const BranchManagerTable = ({
   return (
     <>
       <EditModal
-        title="Edit Branch Name"
+        title="Edit Skill Name"
         isOpen={isEditModalOpen}
-        content={selectedBranch ? selectedBranch.name : ""}
+        content={selectedSkill ? selectedSkill.name : ""}
         onClose={() => {
           setIsEditModalOpen.off();
-          setSelectedBranch(null);
+          setSelectedSkill(null);
         }}
-        onEdit={handleBranchUpdate}
+        onEdit={handleSkillUpdate}
       />
       <DeleteModal
-        title="Delete Branch?"
+        title="Delete Skill?"
         isOpen={isDeleteModalOpen}
-        body={`Are you sure you want to permanently delete the branch "${
-          selectedBranch ? selectedBranch.name : ""
+        body={`Are you sure you want to permanently delete the skill "${
+          selectedSkill ? selectedSkill.name : ""
         }"?`}
         onClose={() => {
           setIsDeleteModalOpen.off();
-          setSelectedBranch(null);
+          setSelectedSkill(null);
         }}
-        onDelete={handleBranchDelete}
+        onDelete={handleSkillDelete}
       />
       <Box maxHeight="500px" overflow="auto">
         <TableContainer
@@ -136,17 +126,17 @@ const BranchManagerTable = ({
         >
           <Table variant="brand">
             <Tbody>
-              {branches.map((branch) => (
+              {skills.map((skill) => (
                 <Tr
-                  key={Number(branch.id)}
+                  key={Number(skill.id)}
                   _last={{ td: { borderBottom: "none" } }}
                 >
                   <Td>
-                    <Tag>{branch.name}</Tag>
+                    <Tag variant="brand">{skill.name}</Tag>
                   </Td>
                   <Td textAlign="end">
                     <IconButton
-                      aria-label="Edit branch"
+                      aria-label="Edit skill"
                       variant="ghost"
                       _hover={{
                         bg: "transparent",
@@ -157,11 +147,11 @@ const BranchManagerTable = ({
                       icon={<EditIcon color="text.default" boxSize="24px" />}
                       onClick={() => {
                         setIsEditModalOpen.on();
-                        setSelectedBranch(branch);
+                        setSelectedSkill(skill);
                       }}
                     />
                     <IconButton
-                      aria-label="Delete branch"
+                      aria-label="Delete skill"
                       variant="ghost"
                       _hover={{
                         bg: "transparent",
@@ -172,7 +162,7 @@ const BranchManagerTable = ({
                       icon={<DeleteIcon color="text.default" boxSize="24px" />}
                       onClick={() => {
                         setIsDeleteModalOpen.on();
-                        setSelectedBranch(branch);
+                        setSelectedSkill(skill);
                       }}
                     />
                   </Td>
@@ -186,4 +176,4 @@ const BranchManagerTable = ({
   );
 };
 
-export default BranchManagerTable;
+export default SkillsManagerTable;

@@ -7,16 +7,6 @@ const userType = gql`
     EMPLOYEE
   }
 
-  enum Language {
-    ENGLISH
-    FRENCH
-    ITALIAN
-    CHINESE
-    SPANISH
-    HINDI
-    RUSSIAN
-  }
-
   type UserDTO {
     id: ID!
     firstName: String!
@@ -42,7 +32,7 @@ const userType = gql`
     pronouns: String!
     skills: [SkillResponseDTO!]!
     branches: [BranchResponseDTO!]!
-    languages: [Language]!
+    languages: [LanguageResponseDTO!]!
   }
 
   type VolunteerUserResponseNoSkillsBranchesEmailDTO {
@@ -57,7 +47,7 @@ const userType = gql`
     hireDate: Date
     dateOfBirth: Date
     pronouns: String!
-    languages: [Language]!
+    languages: [LanguageResponseDTO!]!
   }
 
   type EmployeeUserResponseDTO {
@@ -73,7 +63,7 @@ const userType = gql`
     dateOfBirth: Date
     pronouns: String!
     branches: [BranchResponseDTO!]!
-    languages: [Language]!
+    languages: [LanguageResponseDTO!]!
   }
 
   input CreateUserDTO {
@@ -124,7 +114,7 @@ const userType = gql`
     pronouns: String!
     skills: [ID!]!
     branches: [ID!]!
-    languages: [Language]!
+    languages: [ID!]!
     token: String!
   }
 
@@ -141,7 +131,7 @@ const userType = gql`
     pronouns: String!
     skills: [ID!]!
     branches: [ID!]!
-    languages: [Language]!
+    languages: [ID!]!
   }
 
   input CreateEmployeeUserDTO {
@@ -156,7 +146,7 @@ const userType = gql`
     pronouns: String!
     password: String!
     branches: [ID!]!
-    languages: [Language]!
+    languages: [ID!]!
     token: String!
   }
 
@@ -171,7 +161,7 @@ const userType = gql`
     dateOfBirth: Date
     pronouns: String!
     branches: [ID!]!
-    languages: [Language]!
+    languages: [ID!]!
   }
 
   extend type Query {

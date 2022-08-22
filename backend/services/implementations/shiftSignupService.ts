@@ -9,6 +9,7 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
+import { getTodayForTZIgnoredUTC } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
 
@@ -38,6 +39,15 @@ class ShiftSignupService implements IShiftSignupService {
         AND: [
           {
             userId: Number(userId),
+          },
+          {
+            shift: {
+              posting: {
+                endDate: {
+                  gte: getTodayForTZIgnoredUTC(),
+                },
+              },
+            },
           },
           signupStatus
             ? {

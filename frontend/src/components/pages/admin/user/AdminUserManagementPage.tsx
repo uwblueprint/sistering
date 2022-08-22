@@ -54,7 +54,6 @@ import {
 } from "../../../../types/api/BranchTypes";
 import { AdminNavbarTabs, AdminPages } from "../../../../constants/Tabs";
 import UserManagementTableProfileCell from "../../../admin/users/UserManagementTableProfileCell";
-import getTitleCaseForOneWord from "../../../../utils/StringUtils";
 import MultiUserBranchDrawer from "./MultiUserBranchDrawer";
 
 const USERS = gql`
@@ -73,7 +72,10 @@ const USERS = gql`
         id
         name
       }
-      languages
+      languages {
+        id
+        name
+      }
     }
     volunteerUsers {
       firstName
@@ -93,7 +95,10 @@ const USERS = gql`
         id
         name
       }
-      languages
+      languages {
+        id
+        name
+      }
     }
   }
 `;
@@ -345,7 +350,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
                 rowEmgEmail = user.emergencyContactEmail ?? "N/A";
                 rowEmgName = user.emergencyContactName ?? "N/A";
                 rowEmgPhone = user.emergencyContactPhone ?? "N/A";
-                rowLangs = user.languages;
+                rowLangs = user.languages.map((language) => language.name);
                 rowSkills = user.skills?.map((skill) => skill.name);
                 userBranches = user.branches;
                 return true;
@@ -359,7 +364,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
                 rowEmgEmail = user.emergencyContactEmail ?? "N/A";
                 rowEmgName = user.emergencyContactName ?? "N/A";
                 rowEmgPhone = user.emergencyContactPhone ?? "N/A";
-                rowLangs = user.languages;
+                rowLangs = user.languages.map((language) => language.name);
                 userBranches = user.branches;
                 return true;
               }
@@ -377,7 +382,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
               emergencyContactName={rowEmgName ?? "N/A"}
               emergencyContactPhone={rowEmgPhone ?? "N/A"}
               emergencyContactEmail={rowEmgEmail ?? "N/A"}
-              languages={rowLangs.map((lang) => getTitleCaseForOneWord(lang))}
+              languages={rowLangs}
               skills={rowSkills}
               isVolunteer={isVolunteer}
               branches={branches}
@@ -428,7 +433,7 @@ const AdminUserManagementPage = (): React.ReactElement => {
         }}
         handleBranchMenuItemClicked={handleMultiUserBranchMenuItemClicked}
       />
-      <Flex flexFlow="column" width="100%" height="100vh">
+      <Flex flexFlow="column" width="100%" minH="100vh">
         <Navbar
           defaultIndex={Number(AdminPages.AdminUserManagement)}
           tabs={AdminNavbarTabs}

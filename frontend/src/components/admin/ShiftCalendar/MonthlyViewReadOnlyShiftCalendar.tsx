@@ -94,7 +94,6 @@ const MonthlyViewShiftCalendar = ({
         dayMaxEvents={3}
         displayEventEnd
         dayCellClassNames={(day: DayCellContentArg) => applyCellClasses(day)}
-        editable
         dateClick={({ date }) => onDayClick(date)}
         eventClick={onEventClick}
         eventColor={colors.violet}

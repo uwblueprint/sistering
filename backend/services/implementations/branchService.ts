@@ -40,7 +40,7 @@ class BranchService implements IBranchService {
   async getBranches(): Promise<BranchResponseDTO[]> {
     try {
       const branches: Array<Branch> = await prisma.branch.findMany({
-        orderBy: [{ id: "asc" }],
+        orderBy: [{ name: "asc" }],
       });
       return branches.map((branch) => ({
         id: String(branch.id),
@@ -167,6 +167,20 @@ class BranchService implements IBranchService {
             branches: {
               set: [], // setting the related branches to be [] before connecting the passed in values
               connect: convertToNumberIds(branchIds),
+            },
+          },
+        });
+        await prisma.signup.deleteMany({
+          where: {
+            userId: {
+              equals: userId,
+            },
+            shift: {
+              posting: {
+                branchId: {
+                  notIn: branchIds.map((id) => Number(id)),
+                },
+              },
             },
           },
         });

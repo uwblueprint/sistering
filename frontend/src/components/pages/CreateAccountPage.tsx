@@ -10,7 +10,7 @@ const CreateAccountPage = (): React.ReactElement => {
   const token = queryParams.get("token");
 
   return (
-    <Box width="100%" display="flex" flexDirection="row" height="100vh">
+    <Box width="100%" display="flex" flexDirection="row" minH="100vh">
       <Box backgroundColor="background.white" flexGrow={4}>
         <Box maxWidth="480px" mt="8vh" mx="auto">
           <Image src={Sistering_Logo} alt="Sistering logo" h={32} />
@@ -22,15 +22,12 @@ const CreateAccountPage = (): React.ReactElement => {
               Please follow the steps to activate your sistering account. We
               look forward to working with you.
             </Text>
-            <Button color="violet" width="100%">
-              <Text
-                color="background.white"
-                onClick={() =>
-                  history.push(`${NEW_ACCOUNT_PAGE}?token=${token}`)
-                }
-              >
-                Continue
-              </Text>
+            <Button
+              color="violet"
+              width="100%"
+              onClick={() => history.push(`${NEW_ACCOUNT_PAGE}?token=${token}`)}
+            >
+              <Text color="background.white">Continue</Text>
             </Button>
           </Box>
         </Box>

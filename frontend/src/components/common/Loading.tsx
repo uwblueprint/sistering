@@ -3,7 +3,7 @@ import { Box, Center, Spinner, Text } from "@chakra-ui/react";
 
 const Loading: React.FC = () => {
   return (
-    <Center h="100vh">
+    <Center minH="100vh">
       <Box textAlign="center">
         <Spinner
           thickness="6px"

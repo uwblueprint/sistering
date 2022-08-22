@@ -23,6 +23,7 @@ import { gql, useMutation } from "@apollo/client";
 import DeleteModal from "../DeleteModal";
 import { BranchResponseDTO } from "../../../types/api/BranchTypes";
 import MultiBranchSelector from "../../pages/admin/user/MultiBranchSelector";
+import TagsPopover from "../../common/TagsPopover";
 
 type ProfileDrawerProps = {
   isOpen: boolean;
@@ -42,6 +43,7 @@ type ProfileDrawerProps = {
   branches: BranchResponseDTO[];
   selectedBranches: BranchResponseDTO[];
   handleBranchMenuItemClicked: (item: BranchResponseDTO) => void;
+  resetSelectedBranches: () => void;
 };
 
 const DELETE_VOLUNTEER_USER_BY_EMAIL = gql`
@@ -74,6 +76,7 @@ const ProfileDrawer = ({
   branches,
   selectedBranches,
   handleBranchMenuItemClicked,
+  resetSelectedBranches,
 }: ProfileDrawerProps): React.ReactElement => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
   const [deleteUserByEmail] = useMutation(
@@ -95,7 +98,15 @@ const ProfileDrawer = ({
   };
 
   return (
-    <Drawer isOpen={isOpen} placement="right" onClose={onClose} size="sm">
+    <Drawer
+      isOpen={isOpen}
+      placement="right"
+      onClose={() => {
+        resetSelectedBranches();
+        onClose();
+      }}
+      size="sm"
+    >
       <DrawerOverlay />
       <DrawerContent>
         <DrawerBody p={0}>
@@ -113,13 +124,37 @@ const ProfileDrawer = ({
                   <Text textStyle="body-bold" mb="2">
                     Skills
                   </Text>
-                  <>
-                    {skills?.map((skill) => (
-                      <Tag variant="outline" key={skill} mb="10px" mr="10px">
-                        {skill}
-                      </Tag>
-                    ))}
-                  </>
+
+                  {skills && skills.length > 0 ? (
+                    <>
+                      {skills?.slice(0, 4).map((skill) => (
+                        <Tag variant="outline" key={skill} mb="10px" mr="10px">
+                          {skill}
+                        </Tag>
+                      ))}
+                      {skills && skills.length > 4 && (
+                        <TagsPopover
+                          variant="outline"
+                          header="Skills"
+                          displayLength={4}
+                          tags={skills.map((skill) => (
+                            <Tag
+                              variant="outline"
+                              key={skill}
+                              mb="10px"
+                              mr="10px"
+                            >
+                              {skill}
+                            </Tag>
+                          ))}
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <Text textStyle="body-regular" fontSize="14px">
+                      No skills listed.
+                    </Text>
+                  )}
                 </Box>
                 <Divider my="2" />
               </>
@@ -128,6 +163,7 @@ const ProfileDrawer = ({
             )}
             <Box mx="6">
               <MultiBranchSelector
+                isVolunteer={isVolunteer}
                 userEmail={email}
                 branches={branches}
                 selectedBranches={selectedBranches}

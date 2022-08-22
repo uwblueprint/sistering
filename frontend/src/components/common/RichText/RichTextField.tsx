@@ -406,7 +406,7 @@ const RichTextField: FunctionComponent<RichTextFieldProps> = (
         borderRadius="sm"
         borderColor={editorBorderColor}
         p="5px"
-        maxW="container.md"
+        maxW="100%"
         sx={{
           ...fontSizeObject,
           ".public-DraftEditorPlaceholder-root": {
