@@ -62,7 +62,7 @@ const ADMIN_ORG_CALENDAR_TABLE_DATA_QUERY = gql`
 
 const ADMIN_ORG_CALENDAR_POSTINGS = gql`
   query AdminOrgCalendarPostings($id: ID!) {
-    postings(userId: $id) {
+    postings {
       id
       title
       branch {
@@ -193,7 +193,6 @@ const OrgWideCalendar = (): React.ReactElement => {
     error: postingsQueryError,
     loading: postingsLoading,
   } = useQuery<AdminOrgCalendarPostings>(ADMIN_ORG_CALENDAR_POSTINGS, {
-    variables: { id: authenticatedUser?.id },
     onCompleted: ({ postings }) => {
       setUserPostings(postings);
       getShiftsAndSignups();

@@ -1,8 +1,7 @@
-import React, { useState, useLayoutEffect, useContext } from "react";
+import React, { useState, useLayoutEffect } from "react";
 import { generatePath, useHistory } from "react-router-dom";
 import { gql, useQuery } from "@apollo/client";
 import { Box, HStack, Select, Text } from "@chakra-ui/react";
-import AuthContext from "../../../../contexts/AuthContext";
 
 import {
   VOLUNTEER_POSTING_AVAILABILITIES,
@@ -36,9 +35,8 @@ const POSTINGS = gql`
   query VolunteerPostingsPage_postings(
     $closingDate: Date!
     $statuses: [PostingStatus!]!
-    $userId: ID!
   ) {
-    postings(closingDate: $closingDate, statuses: $statuses, userId: $userId) {
+    postings(closingDate: $closingDate, statuses: $statuses) {
       id
       branch {
         id
@@ -70,7 +68,6 @@ const VolunteerPostingsPage = (): React.ReactElement => {
     Posting[] | null
   >(null);
   const [filter, setFilter] = useState<FilterType>("week");
-  const { authenticatedUser } = useContext(AuthContext);
 
   const { error } = useQuery(POSTINGS, {
     variables: {
@@ -78,7 +75,6 @@ const VolunteerPostingsPage = (): React.ReactElement => {
         .toISOString()
         .split("T")[0],
       statuses: ["PUBLISHED" as PostingStatus],
-      userId: authenticatedUser?.id,
     },
     fetchPolicy: "cache-and-network",
     onCompleted: (data) => {

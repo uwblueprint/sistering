@@ -177,11 +177,11 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
     }
   };
 
-  return !isPageLoading && !shiftsByPosting ? (
+  return (!isPageLoading && !shiftsByPosting) || postingError ? (
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" pt={14} px={100} minH="100vh">
-      {(shiftError || postingError || hasSubmitError) && <ErrorModal />}
+      {(shiftError || hasSubmitError) && <ErrorModal />}
       <Button
         onClick={() => history.push(`/volunteer/posting/${id}`)}
         variant="link"
