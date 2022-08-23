@@ -95,8 +95,8 @@ const BranchManagerTable = ({
         });
       } catch (error: unknown) {
         toast({
-          title: "Cannot delete branch",
-          description: `${error}`,
+          title: `Cannot delete branch: "${selectedBranch.name}"`,
+          description: `Branch is still referenced by existing postings.`,
           status: "error",
           duration: 9000,
           isClosable: true,
