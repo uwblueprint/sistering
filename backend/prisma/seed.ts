@@ -24,17 +24,17 @@ enum Branches {
   Git_Branch = "Git Branch",
   Acupuncture_Bodywork_Meditation_Mindfulness_Message = "Acupuncture, Bodywork, Meditation, Mindfulness, Massage",
   Admin_Reception = "Admin/Reception",
-  Beading_Jewellery_Making = "Beading/Jewellery Making", 
+  Beading_Jewellery_Making = "Beading/Jewellery Making",
   Community_Garden = "Community Garden",
   Creative_Writing_Drama_and_Spoken_Word_InKind_Donation = "Creative Writing, Drama and Spoken Word In-Kind Donation",
-  Enterprise_and_Entrepreneurship = "Enterprise and Entrepreneurship", 
-  ESL = "ESL / English Conversation", 
-  Fundraising = "Fundraising", 
-  Beauty_and_Empowerment = "Hair Styling and Beauty/Spa Night (Beauty and Empowerment)", 
-  Kitchen_Prep = "Kitchen Prep", 
+  Enterprise_and_Entrepreneurship = "Enterprise and Entrepreneurship",
+  ESL = "ESL / English Conversation",
+  Fundraising = "Fundraising",
+  Beauty_and_Empowerment = "Hair Styling and Beauty/Spa Night (Beauty and Empowerment)",
+  Kitchen_Prep = "Kitchen Prep",
   Medical_Reception_Admin = "Medical Reception Admin",
-  Art_and_Music_Therapy = "Art and Music Therapy", 
-  Quilting = "Quilting", 
+  Art_and_Music_Therapy = "Art and Music Therapy",
+  Quilting = "Quilting",
   Yoga = "Yoga",
 }
 
@@ -241,7 +241,7 @@ const main = async () => {
             `Test admin auth id for ${user.firstName} is not in environment variables.`,
           );
         }
-  
+
         return prisma.user.upsert({
           where: { authId: user.authId },
           update: {},
@@ -258,7 +258,7 @@ const main = async () => {
         });
       }),
     );
-  
+
     const seedEmployees = await prisma.$transaction(
       employeeUsers.map((employee) => {
         if (!employee.authId) {
@@ -266,7 +266,7 @@ const main = async () => {
             `Test employee auth id for ${employee.firstName} is not in environment variables.`,
           );
         }
-  
+
         return prisma.user.upsert({
           where: { authId: employee.authId },
           update: {},
@@ -297,7 +297,7 @@ const main = async () => {
         });
       }),
     );
-  
+
     const seedVolunteers = await prisma.$transaction(
       volunteerUsers.map((user) => {
         if (!user.authId) {
@@ -305,7 +305,7 @@ const main = async () => {
             `Test volunteer auth id for ${user.firstName} is not in environment variables.`,
           );
         }
-  
+
         return prisma.user.upsert({
           where: { authId: user.authId },
           update: {},
@@ -329,7 +329,7 @@ const main = async () => {
         });
       }),
     );
-  
+
     const seedPostings = await prisma.$transaction(
       postings.map((posting, i) => {
         return prisma.posting.create({
@@ -351,10 +351,10 @@ const main = async () => {
         });
       }),
     );
-  
+
     const signupTransactions = seedPostings.map((posting, index) => {
       const oddShifts = posting.shifts.filter((_, i) => i % 2 === 0);
-  
+
       return oddShifts.map((shift) =>
         prisma.signup.upsert({
           where: {
@@ -374,10 +374,9 @@ const main = async () => {
         }),
       );
     });
-  
+
     await prisma.$transaction(signupTransactions.flat());
   }
- 
 };
 
 main()
