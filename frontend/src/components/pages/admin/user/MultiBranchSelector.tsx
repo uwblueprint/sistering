@@ -18,6 +18,7 @@ import { gql, useMutation } from "@apollo/client";
 import colors from "../../../../theme/colors";
 import { BranchResponseDTO } from "../../../../types/api/BranchTypes";
 import DeleteModal from "../../../admin/DeleteModal";
+import OverflownText from "../../../common/OverflownText";
 
 type MultiBranchSelectorProps = {
   userEmail: string;
@@ -121,7 +122,7 @@ const MultiBranchSelector = ({
                 {selectedBranches.length}{" "}
                 {selectedBranches.length === 1 ? "branch" : "branches"}
               </MenuButton>
-              <MenuList>
+              <MenuList maxH="400px" maxW="448px" overflowY="scroll">
                 <MenuOptionGroup
                   title="Branch Access"
                   type="checkbox"
@@ -134,7 +135,7 @@ const MultiBranchSelector = ({
                         value={branch.id}
                         onClick={() => handleBranchMenuItemClicked(branch)}
                       >
-                        {branch.name}
+                        <Text>{branch.name}</Text>
                       </MenuItemOption>
                     );
                   })}
@@ -145,7 +146,7 @@ const MultiBranchSelector = ({
             selectedBranches.map((branch) => {
               return (
                 <Tag key={branch.id} size="md" height="32px" mr={4} mb={2}>
-                  {branch.name}
+                  <OverflownText>{branch.name}</OverflownText>
                 </Tag>
               );
             })

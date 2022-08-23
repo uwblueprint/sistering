@@ -16,6 +16,7 @@ import { EditIcon, DeleteIcon } from "@chakra-ui/icons";
 import { BranchResponseDTO } from "../../types/api/BranchTypes";
 import EditModal from "./EditModal";
 import DeleteModal from "./DeleteModal";
+import OverflownText from "../common/OverflownText";
 
 type BranchManagerTableProps = {
   branches: BranchResponseDTO[];
@@ -142,7 +143,9 @@ const BranchManagerTable = ({
                   _last={{ td: { borderBottom: "none" } }}
                 >
                   <Td>
-                    <Tag>{branch.name}</Tag>
+                    <Tag>
+                      <OverflownText maxW="500px">{branch.name}</OverflownText>
+                    </Tag>
                   </Td>
                   <Td textAlign="end">
                     <IconButton
