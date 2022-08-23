@@ -47,8 +47,8 @@ const VolunteerPostingDetails = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
 
   const {
-    loading,
-    error: postingDetailError,
+    loading: postingDetailsLoading,
+    error: postingDetailsError,
     data: { posting: postingDetails } = {},
   } = useQuery(POSTING, {
     variables: { id },
@@ -60,7 +60,7 @@ const VolunteerPostingDetails = (): React.ReactElement => {
     history.push(route);
   };
 
-  return (!loading && !postingDetails) || postingDetailError ? (
+  return (!postingDetailsLoading && !postingDetails) || postingDetailsError ? (
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" py={7} px={10} minH="100vh">
@@ -86,7 +86,7 @@ const VolunteerPostingDetails = (): React.ReactElement => {
           centerContent
           borderRadius={10}
         >
-          {loading ? (
+          {postingDetailsLoading ? (
             <Loading />
           ) : (
             <PostingDetails

@@ -211,17 +211,29 @@ class PostingService implements IPostingService {
         throw new Error(`userId with authId ${decodedIdToken.uid} not found.`);
       }
 
-      if (user.role === Role.VOLUNTEER) {
-        const volunteer = await this.userService.getVolunteerUserById(
-          String(user.id),
-        );
+      if (user.role === Role.VOLUNTEER || user.role === Role.EMPLOYEE) {
+        const volunteerOrEmployee =
+          user.role === Role.VOLUNTEER
+            ? await this.userService.getVolunteerUserById(String(user.id))
+            : await this.userService.getEmployeeUserById(String(user.id));
         if (
-          volunteer.branches.filter(
+          volunteerOrEmployee.branches.filter(
             (branch: BranchResponseDTO) =>
               Number(branch.id) === posting.branch.id,
           ).length === 0
         ) {
           throw new Error(`User is not part of ${posting.branch.name} branch.`);
+        }
+        if (
+          user.role === Role.EMPLOYEE &&
+          !(
+            posting.status === "DRAFT" ||
+            isPostingScheduledBySignups(
+              posting.shifts.flatMap((shift) => shift.signups),
+            )
+          )
+        ) {
+          throw new Error(`Posting is still in draft or unscheduled.`);
         }
       }
 
@@ -259,14 +271,14 @@ class PostingService implements IPostingService {
     closingDate?: Date,
     statuses?: PostingStatus[],
   ): Promise<PostingResponseDTO[]> {
-    const accessToken = getAccessToken(context.req);
-    const decodedIdToken: firebaseAdmin.auth.DecodedIdToken = await firebaseAdmin
-      .auth()
-      .verifyIdToken(accessToken || "", true);
-
     return prisma.$transaction(async (prismaClient) => {
-      const filter: PostingWhereInput[] = [];
       try {
+        const accessToken = getAccessToken(context.req);
+        const decodedIdToken: firebaseAdmin.auth.DecodedIdToken = await firebaseAdmin
+          .auth()
+          .verifyIdToken(accessToken || "", true);
+
+        const filter: PostingWhereInput[] = [];
         const user = await prismaClient.user.findUnique({
           where: {
             authId: decodedIdToken.uid,

@@ -61,7 +61,7 @@ const ADMIN_ORG_CALENDAR_TABLE_DATA_QUERY = gql`
 `;
 
 const ADMIN_ORG_CALENDAR_POSTINGS = gql`
-  query AdminOrgCalendarPostings($id: ID!) {
+  query AdminOrgCalendarPostings {
     postings {
       id
       title

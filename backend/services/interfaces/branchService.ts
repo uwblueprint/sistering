@@ -1,3 +1,4 @@
+import { ExpressContext } from "apollo-server-express";
 import { BranchRequestDTO, BranchResponseDTO } from "../../types";
 
 interface IBranchService {
@@ -14,7 +15,7 @@ interface IBranchService {
    * @returns array of BranchDTOs
    * @throws Error if branch retrieval fails
    */
-  getBranches(): Promise<BranchResponseDTO[]>;
+  getBranches(context: ExpressContext): Promise<BranchResponseDTO[]>;
 
   /**
    * Create a branch
