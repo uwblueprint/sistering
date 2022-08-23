@@ -1,6 +1,6 @@
 import React from "react";
 import { VStack, Text, Select } from "@chakra-ui/react";
-import { formatTimeHourMinutes } from "../../../utils/DateTimeUtils";
+import { formatRawTimeHourMinutes } from "../../../utils/DateTimeUtils";
 import { AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO } from "../../../types/api/ShiftTypes";
 
 type ShiftTimeHeaderProps = {
@@ -35,9 +35,9 @@ const ShiftTimeHeader: React.FC<ShiftTimeHeaderProps> = ({
       >
         {shifts.map((shift, i) => (
           <option key={i} value={shift.id}>
-            {`${formatTimeHourMinutes(
+            {`${formatRawTimeHourMinutes(
               shift.startTime,
-            )} - ${formatTimeHourMinutes(shift.endTime)}`}
+            )} - ${formatRawTimeHourMinutes(shift.endTime)}`}
           </option>
         ))}
       </Select>

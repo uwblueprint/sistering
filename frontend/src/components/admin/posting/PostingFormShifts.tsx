@@ -46,11 +46,13 @@ const PostingFormShifts: React.FC<PostingFormShiftsProps> = ({
     endDate: endDateFromCtx,
     times: timesFromCtx,
     recurrenceInterval: recurrenceIntervalFromCtx,
+    autoClosingDate: autoClosingDateFromCtx,
   } = useContext(PostingContext);
   const dispatchPostingUpdate = useContext(PostingContextDispatcherContext);
 
   const [startDate, setStartDate] = useState<string>(startDateFromCtx);
   const [endDate, setEndDate] = useState<string>(endDateFromCtx);
+  const [autoClosingDate] = useState<string>(autoClosingDateFromCtx);
   const [recurrenceInterval, setRecurrenceInterval] = useState<
     RecurrenceInterval | ""
   >(recurrenceIntervalFromCtx);
@@ -178,6 +180,11 @@ const PostingFormShifts: React.FC<PostingFormShiftsProps> = ({
       );
       setEndDateErrorMessage(
         "Please ensure that end date is after start date.",
+      );
+    }
+    if (autoClosingDate >= startDate) {
+      setStartDateErrorMessage(
+        "Please select a start date after the sign up period.",
       );
     }
 

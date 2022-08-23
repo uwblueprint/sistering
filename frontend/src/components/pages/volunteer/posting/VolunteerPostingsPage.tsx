@@ -88,24 +88,10 @@ const VolunteerPostingsPage = (): React.ReactElement => {
   });
 
   useLayoutEffect(() => {
-    let filteredPostings;
-    switch (filter) {
-      case "month":
-        filteredPostings = unfilteredPostings?.filter((posting) =>
-          dateInRange(posting.startDate, "month"),
-        );
-        setPostings(filteredPostings ?? null);
-        break;
-      case "all":
-        setPostings(unfilteredPostings);
-        break;
-      default:
-        filteredPostings = unfilteredPostings?.filter((posting) =>
-          dateInRange(posting.startDate, "week"),
-        );
-        setPostings(filteredPostings ?? null);
-        break;
-    }
+    const filteredPostings = unfilteredPostings?.filter((posting) =>
+      dateInRange(posting.autoClosingDate, filter),
+    );
+    setPostings(filteredPostings ?? null);
   }, [filter, unfilteredPostings]);
 
   const navigateToDetails = (id: string) => {
