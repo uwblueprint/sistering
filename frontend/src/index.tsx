@@ -6,6 +6,7 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import { createUploadLink } from "apollo-upload-client";
 import { setContext } from "@apollo/client/link/context";
 
+import authAPIClient from "./APIClients/AuthAPIClient";
 import AUTHENTICATED_USER_KEY from "./constants/AuthConstants";
 import { AuthenticatedUser, DecodedJWT } from "./types/AuthTypes";
 import {
@@ -22,11 +23,6 @@ const REFRESH_MUTATION = `
     refresh
   }
 `;
-
-const logout = async () => {
-  localStorage.removeItem(AUTHENTICATED_USER_KEY);
-  window.location.reload();
-};
 
 const link = createUploadLink({
   uri: `${process.env.REACT_APP_BACKEND_URL}/graphql`,
@@ -64,7 +60,9 @@ const authLink = setContext(async (_, { headers }) => {
         );
         token = accessToken;
       } catch {
-        await logout();
+        authAPIClient.logout(
+          String(getLocalStorageObjProperty(AUTHENTICATED_USER_KEY, "id")),
+        );
       }
     }
   }

@@ -1,5 +1,4 @@
 import React, { useContext } from "react";
-import { gql, useMutation } from "@apollo/client";
 import { useHistory } from "react-router-dom";
 import {
   Flex,
@@ -13,7 +12,6 @@ import {
   MenuList,
   MenuItem,
   Link,
-  useToast,
 } from "@chakra-ui/react";
 import { ChevronDownIcon } from "@chakra-ui/icons";
 
@@ -32,36 +30,8 @@ type NavbarProps = {
   tabs: TabInfo[];
 };
 
-const LOGOUT = gql`
-  mutation Logout($userId: ID!) {
-    logout(userId: $userId)
-  }
-`;
-
 const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
-  const { authenticatedUser, setAuthenticatedUser } = useContext(AuthContext);
-  const [logout] = useMutation<{ logout: null }>(LOGOUT);
-  const toast = useToast();
-
-  const onLogOutClick = async () => {
-    try {
-      const success = await authAPIClient.logout(
-        String(authenticatedUser?.id),
-        logout,
-      );
-      if (success) {
-        setAuthenticatedUser(null);
-      }
-    } catch (error: unknown) {
-      toast({
-        title: "Unable to logout",
-        description: `${error}`,
-        status: "error",
-        duration: 9000,
-        isClosable: true,
-      });
-    }
-  };
+  const { authenticatedUser } = useContext(AuthContext);
 
   const userName = `${authenticatedUser?.firstName} ${authenticatedUser?.lastName}`;
   const history = useHistory();
@@ -113,7 +83,11 @@ const Navbar = ({ tabs, defaultIndex }: NavbarProps): React.ReactElement => {
           </MenuButton>
           <MenuList textStyle="caption" color="black">
             <MenuItem onClick={navigateToEditProfile}>Profile</MenuItem>
-            <MenuItem onClick={onLogOutClick}>Logout</MenuItem>
+            <MenuItem
+              onClick={() => authAPIClient.logout(authenticatedUser?.id ?? "")}
+            >
+              Logout
+            </MenuItem>
           </MenuList>
         </Menu>
       </Flex>
