@@ -100,7 +100,7 @@ const AdminUserManagementPageHeader = ({
                 fontWeight="medium"
                 onClick={onOpenForEmployee}
               >
-                Add new administrator
+                Add new employee
               </MenuItem>
               <AddAdminModal
                 isOpen={isOpenForEmployee}
@@ -140,7 +140,7 @@ const AdminUserManagementPageHeader = ({
                   handleTabClicked(AdminUserManagementTableTab.Admins)
                 }
               >
-                Admins
+                Employees
               </Tab>
             </TabList>
           </Tabs>

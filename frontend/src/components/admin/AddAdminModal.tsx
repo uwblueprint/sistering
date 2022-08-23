@@ -78,13 +78,13 @@ const AddAdminModal = ({
       <ModalOverlay />
       <ModalContent borderRadius={0} p="10px">
         <ModalHeader py="11px">
-          <Text textStyle="body-bold">Add New Admin</Text>
+          <Text textStyle="body-bold">Add New Employee</Text>
         </ModalHeader>
         <ModalBody>
           <Text textStyle="body-regular">
-            Enter the email of the user you would like to invite. The new admin
-            will appear in the User Management table once the account has been
-            activated.
+            Enter the email of the user you would like to invite. The new
+            employee will appear in the User Management table once the account
+            has been activated.
           </Text>
           <Input
             value={email}
