@@ -41,7 +41,7 @@ const AddAdminModal = ({
   const [isLoading, setIsLoading] = useState(false);
 
   const [createAdminInvite] = useMutation(CREATE_ADMIN_INVITE, {
-    refetchQueries: ["GET_USER_INVITE"],
+    refetchQueries: ["UserInvitesModal_getUserInvites"],
   });
 
   const onSubmit = async (userEmail: string) => {

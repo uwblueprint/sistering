@@ -40,7 +40,9 @@ const AddVolunteerModal = ({
 
   const [isLoading, setIsLoading] = useState(false);
 
-  const [createVolunteerInvite] = useMutation(CREATE_VOLUNTEER_INVITE);
+  const [createVolunteerInvite] = useMutation(CREATE_VOLUNTEER_INVITE, {
+    refetchQueries: ["UserInvitesModal_getUserInvites"],
+  });
 
   const onSubmit = async () => {
     await createVolunteerInvite({
