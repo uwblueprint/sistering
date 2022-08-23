@@ -26,9 +26,9 @@ interface IPostingService {
    * @throws Error if posting retrieval fails
    */
   getPostings(
+    context: ExpressContext,
     closingDate?: Date,
     statuses?: PostingStatus[],
-    userId?: string,
   ): Promise<PostingResponseDTO[]>;
 
   /**
