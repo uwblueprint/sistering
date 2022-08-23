@@ -13,6 +13,7 @@ import * as firebaseAdmin from "firebase-admin";
 import { ExpressContext } from "apollo-server-express";
 import { getAccessToken } from "../../middlewares/auth";
 import IPostingService from "../interfaces/postingService";
+import IShiftService from "../interfaces/shiftService";
 import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
@@ -28,10 +29,10 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
-import IShiftService from "../interfaces/shiftService";
 import {
   getInterval,
   getTodayForTZIgnoredUTC,
+  isPast,
 } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
@@ -227,7 +228,7 @@ class PostingService implements IPostingService {
         if (
           user.role === Role.EMPLOYEE &&
           !(
-            posting.status === "DRAFT" ||
+            isPast(posting.endDate) ||
             isPostingScheduledBySignups(
               posting.shifts.flatMap((shift) => shift.signups),
             )
