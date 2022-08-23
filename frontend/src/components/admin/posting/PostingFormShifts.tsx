@@ -350,6 +350,7 @@ const PostingFormShifts: React.FC<PostingFormShiftsProps> = ({
           deleteEvent={deleteEvent}
           startDate={startDate}
           endDate={endDate}
+          isRecurringEvents={recurrenceInterval !== "NONE"}
           /* eslint-disable-next-line react/jsx-props-no-spreading */
           {...initialDateProps}
         />
