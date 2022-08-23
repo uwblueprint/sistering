@@ -10,7 +10,6 @@ import {
 } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
 import PostingDetails from "../../../common/PostingDetails";
-import ErrorModal from "../../../common/ErrorModal";
 import {
   VOLUNTEER_POSTING_AVAILABILITIES,
   VOLUNTEER_POSTINGS_PAGE,
@@ -46,24 +45,25 @@ const POSTING = gql`
 const VolunteerPostingDetails = (): React.ReactElement => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
-  const { loading, error, data: { posting: postingDetails } = {} } = useQuery(
-    POSTING,
-    {
-      variables: { id },
-      fetchPolicy: "cache-and-network",
-    },
-  );
+
+  const {
+    loading,
+    error: postingDetailError,
+    data: { posting: postingDetails } = {},
+  } = useQuery(POSTING, {
+    variables: { id },
+    fetchPolicy: "cache-and-network",
+  });
 
   const navigateToSubmitAvailabilities = () => {
     const route = generatePath(VOLUNTEER_POSTING_AVAILABILITIES, { id });
     history.push(route);
   };
 
-  return !loading && !postingDetails ? (
+  return (!loading && !postingDetails) || postingDetailError ? (
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" py={7} px={10} minH="100vh">
-      {error && <ErrorModal />}
       <VStack>
         <Container pt={0} pb={4} px={0} maxW="container.xl">
           <HStack justifyContent="space-between">

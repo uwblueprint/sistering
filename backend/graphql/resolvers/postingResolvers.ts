@@ -1,3 +1,4 @@
+import { ExpressContext } from "apollo-server-express";
 import PostingService from "../../services/implementations/postingService";
 import IPostingService from "../../services/interfaces/postingService";
 import IShiftService from "../../services/interfaces/shiftService";
@@ -22,8 +23,9 @@ const postingResolvers = {
     posting: async (
       _parent: undefined,
       { id }: { id: string },
+      context: ExpressContext,
     ): Promise<PostingResponseDTO> => {
-      return postingService.getPosting(id);
+      return postingService.getPosting(id, context);
     },
     postings: async (
       _parent: undefined,

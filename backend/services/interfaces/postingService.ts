@@ -1,3 +1,4 @@
+import { ExpressContext } from "apollo-server-express";
 import {
   PostingResponseDTO,
   PostingWithShiftsRequestDTO,
@@ -11,7 +12,10 @@ interface IPostingService {
    * @returns a postingDTO with posting's information
    * @throws Error if posting retrieval fails
    */
-  getPosting(postingId: string): Promise<PostingResponseDTO>;
+  getPosting(
+    postingId: string,
+    context: ExpressContext,
+  ): Promise<PostingResponseDTO>;
 
   /**
    * Get all posting information (possibly paginated in the future) filtered by optional parameters
