@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React from "react";
 import { VStack, HStack, Box, Container, Button } from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
@@ -15,11 +15,10 @@ import {
   VOLUNTEER_POSTINGS_PAGE,
 } from "../../../../constants/Routes";
 import Loading from "../../../common/Loading";
-import AuthContext from "../../../../contexts/AuthContext";
 
 const POSTING = gql`
-  query VolunteerPostingDetails_Posting($id: ID!, $userId: ID!) {
-    posting(id: $id, userId: $userId) {
+  query VolunteerPostingDetails_Posting($id: ID!) {
+    posting(id: $id) {
       title
       description
       branch {
@@ -46,22 +45,22 @@ const POSTING = gql`
 const VolunteerPostingDetails = (): React.ReactElement => {
   const history = useHistory();
   const { id } = useParams<{ id: string }>();
-  const { authenticatedUser } = useContext(AuthContext);
 
-  const { loading, error, data: { posting: postingDetails } = {} } = useQuery(
-    POSTING,
-    {
-      variables: { id, userId: authenticatedUser?.id },
-      fetchPolicy: "cache-and-network",
-    },
-  );
+  const {
+    loading,
+    error: postingDetailError,
+    data: { posting: postingDetails } = {},
+  } = useQuery(POSTING, {
+    variables: { id },
+    fetchPolicy: "cache-and-network",
+  });
 
   const navigateToSubmitAvailabilities = () => {
     const route = generatePath(VOLUNTEER_POSTING_AVAILABILITIES, { id });
     history.push(route);
   };
 
-  return (!loading && !postingDetails) || error ? (
+  return (!loading && !postingDetails) || postingDetailError ? (
     <Redirect to="/not-found" />
   ) : (
     <Box bg="background.light" py={7} px={10} minH="100vh">

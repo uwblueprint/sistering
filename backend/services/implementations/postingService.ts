@@ -9,6 +9,9 @@ import {
   Signup,
   Role,
 } from "@prisma/client";
+import * as firebaseAdmin from "firebase-admin";
+import { ExpressContext } from "apollo-server-express";
+import { getAccessToken } from "../../middlewares/auth";
 import IPostingService from "../interfaces/postingService";
 import IUserService from "../interfaces/userService";
 import {
@@ -197,32 +200,54 @@ class PostingService implements IPostingService {
 
   async getPosting(
     postingId: string,
-    userId?: string,
+    context: ExpressContext,
   ): Promise<PostingResponseDTO> {
     try {
-      const posting = await prisma.posting.findUnique({
-        where: {
-          id: Number(postingId),
-        },
-        include: {
-          branch: true,
-          shifts: {
-            include: {
-              signups: true,
-            },
+      const accessToken = getAccessToken(context.req);
+      const decodedIdToken: firebaseAdmin.auth.DecodedIdToken = await firebaseAdmin
+        .auth()
+        .verifyIdToken(accessToken || "", true);
+
+      const [posting, user] = await prisma.$transaction([
+        prisma.posting.findUnique({
+          where: {
+            id: Number(postingId),
           },
-          skills: true,
-          employees: true,
-        },
-      });
+          include: {
+            branch: true,
+            shifts: {
+              include: {
+                signups: true,
+              },
+            },
+            skills: true,
+            employees: true,
+          },
+        }),
+        prisma.user.findUnique({
+          where: {
+            authId: decodedIdToken.uid,
+          },
+        }),
+      ]);
 
       if (!posting) {
         throw new Error(`postingId ${postingId} not found.`);
       }
+      if (!user) {
+        throw new Error(`userId with authId ${decodedIdToken.uid} not found.`);
+      }
 
-      if (userId !== undefined) {
-        const userBranchIds = await this.getUserBranchesByUserId(userId);
-        if (!userBranchIds.includes(posting.branch.id)) {
+      if (user.role === Role.VOLUNTEER) {
+        const volunteer = await this.userService.getVolunteerUserById(
+          String(user.id),
+        );
+        if (
+          volunteer.branches.filter(
+            (branch: BranchResponseDTO) =>
+              Number(branch.id) === posting.branch.id,
+          ).length === 0
+        ) {
           throw new Error(`User is not part of ${posting.branch.name} branch.`);
         }
       }
