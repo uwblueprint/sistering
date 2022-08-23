@@ -22,6 +22,20 @@ enum Branches {
   Kitchen = "Kitchen",
   Arts = "Arts",
   Git_Branch = "Git Branch",
+  Acupuncture_Bodywork_Meditation_Mindfulness_Message = "Acupuncture, Bodywork, Meditation, Mindfulness, Massage",
+  Admin_Reception = "Admin/Reception",
+  Beading_Jewellery_Making = "Beading/Jewellery Making", 
+  Community_Garden = "Community Garden",
+  Creative_Writing_Drama_and_Spoken_Word_InKind_Donation = "Creative Writing, Drama and Spoken Word In-Kind Donation",
+  Enterprise_and_Entrepreneurship = "Enterprise and Entrepreneurship", 
+  ESL = "ESL / English Conversation", 
+  Fundraising = "Fundraising", 
+  Beauty_and_Empowerment = "Hair Styling and Beauty/Spa Night (Beauty and Empowerment)", 
+  Kitchen_Prep = "Kitchen Prep", 
+  Medical_Reception_Admin = "Medical Reception Admin",
+  Art_and_Music_Therapy = "Art and Music Therapy", 
+  Quilting = "Quilting", 
+  Yoga = "Yoga",
 }
 
 enum Skills {
@@ -219,148 +233,151 @@ const main = async () => {
     ),
   );
 
-  await prisma.$transaction(
-    adminUsers.map((user) => {
-      if (!user.authId) {
-        throw new Error(
-          `Test admin auth id for ${user.firstName} is not in environment variables.`,
-        );
-      }
-
-      return prisma.user.upsert({
-        where: { authId: user.authId },
-        update: {},
-        create: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          authId: user.authId,
-          role: user.role,
-          pronouns: "they/them",
-          employee: {
-            create: {},
+  if (process.env.NODE_ENV !== "production") {
+    await prisma.$transaction(
+      adminUsers.map((user) => {
+        if (!user.authId) {
+          throw new Error(
+            `Test admin auth id for ${user.firstName} is not in environment variables.`,
+          );
+        }
+  
+        return prisma.user.upsert({
+          where: { authId: user.authId },
+          update: {},
+          create: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            authId: user.authId,
+            role: user.role,
+            pronouns: "they/them",
+            employee: {
+              create: {},
+            },
           },
-        },
-      });
-    }),
-  );
-
-  const seedEmployees = await prisma.$transaction(
-    employeeUsers.map((employee) => {
-      if (!employee.authId) {
-        throw new Error(
-          `Test employee auth id for ${employee.firstName} is not in environment variables.`,
-        );
-      }
-
-      return prisma.user.upsert({
-        where: { authId: employee.authId },
-        update: {},
-        create: {
-          firstName: employee.firstName,
-          lastName: employee.lastName,
-          authId: employee.authId,
-          role: employee.role,
-          pronouns: "they/them",
-          languages: {
-            connect: employee.languages,
-          },
-          employee: {
-            create: {
-              branches: {
-                connect: employee.branches,
+        });
+      }),
+    );
+  
+    const seedEmployees = await prisma.$transaction(
+      employeeUsers.map((employee) => {
+        if (!employee.authId) {
+          throw new Error(
+            `Test employee auth id for ${employee.firstName} is not in environment variables.`,
+          );
+        }
+  
+        return prisma.user.upsert({
+          where: { authId: employee.authId },
+          update: {},
+          create: {
+            firstName: employee.firstName,
+            lastName: employee.lastName,
+            authId: employee.authId,
+            role: employee.role,
+            pronouns: "they/them",
+            languages: {
+              connect: employee.languages,
+            },
+            employee: {
+              create: {
+                branches: {
+                  connect: employee.branches,
+                },
               },
             },
           },
-        },
-        include: {
-          employee: {
-            include: {
-              postings: true,
+          include: {
+            employee: {
+              include: {
+                postings: true,
+              },
             },
           },
-        },
-      });
-    }),
-  );
-
-  const seedVolunteers = await prisma.$transaction(
-    volunteerUsers.map((user) => {
-      if (!user.authId) {
-        throw new Error(
-          `Test volunteer auth id for ${user.firstName} is not in environment variables.`,
-        );
-      }
-
-      return prisma.user.upsert({
-        where: { authId: user.authId },
-        update: {},
-        create: {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          authId: user.authId,
-          role: user.role,
-          pronouns: "they/them",
-          languages: {
-            connect: user.languages,
-          },
-          volunteer: {
-            create: {
-              ...user.volunteer,
-              branches: { connect: user.volunteer.branches },
-              skills: { connect: user.volunteer.skills },
+        });
+      }),
+    );
+  
+    const seedVolunteers = await prisma.$transaction(
+      volunteerUsers.map((user) => {
+        if (!user.authId) {
+          throw new Error(
+            `Test volunteer auth id for ${user.firstName} is not in environment variables.`,
+          );
+        }
+  
+        return prisma.user.upsert({
+          where: { authId: user.authId },
+          update: {},
+          create: {
+            firstName: user.firstName,
+            lastName: user.lastName,
+            authId: user.authId,
+            role: user.role,
+            pronouns: "they/them",
+            languages: {
+              connect: user.languages,
+            },
+            volunteer: {
+              create: {
+                ...user.volunteer,
+                branches: { connect: user.volunteer.branches },
+                skills: { connect: user.volunteer.skills },
+              },
             },
           },
-        },
-      });
-    }),
-  );
-
-  const seedPostings = await prisma.$transaction(
-    postings.map((posting, i) => {
-      return prisma.posting.create({
-        data: {
-          ...posting,
-          branch: {
-            connect: posting.branch,
+        });
+      }),
+    );
+  
+    const seedPostings = await prisma.$transaction(
+      postings.map((posting, i) => {
+        return prisma.posting.create({
+          data: {
+            ...posting,
+            branch: {
+              connect: posting.branch,
+            },
+            employees: {
+              connect: [{ id: seedEmployees[i]?.employee?.id }],
+            },
+            skills: {
+              connect: posting.skills,
+            },
           },
-          employees: {
-            connect: [{ id: seedEmployees[i]?.employee?.id }],
+          include: {
+            shifts: true,
           },
-          skills: {
-            connect: posting.skills,
+        });
+      }),
+    );
+  
+    const signupTransactions = seedPostings.map((posting, index) => {
+      const oddShifts = posting.shifts.filter((_, i) => i % 2 === 0);
+  
+      return oddShifts.map((shift) =>
+        prisma.signup.upsert({
+          where: {
+            shiftId_userId: {
+              shiftId: shift.id,
+              userId: seedVolunteers[index].id,
+            },
           },
-        },
-        include: {
-          shifts: true,
-        },
-      });
-    }),
-  );
-
-  const signupTransactions = seedPostings.map((posting, index) => {
-    const oddShifts = posting.shifts.filter((_, i) => i % 2 === 0);
-
-    return oddShifts.map((shift) =>
-      prisma.signup.upsert({
-        where: {
-          shiftId_userId: {
+          update: {},
+          create: {
+            note: "test note",
+            status: SignupStatus.PENDING,
+            numVolunteers: 3,
             shiftId: shift.id,
             userId: seedVolunteers[index].id,
           },
-        },
-        update: {},
-        create: {
-          note: "test note",
-          status: SignupStatus.PENDING,
-          numVolunteers: 3,
-          shiftId: shift.id,
-          userId: seedVolunteers[index].id,
-        },
-      }),
-    );
-  });
-
-  await prisma.$transaction(signupTransactions.flat());
+        }),
+      );
+    });
+  
+    await prisma.$transaction(signupTransactions.flat());
+  }
+ 
 };
 
 main()
