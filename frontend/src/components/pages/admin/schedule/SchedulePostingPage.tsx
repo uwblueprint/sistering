@@ -146,19 +146,6 @@ const ShiftScheduleCalendar = ({
     />
   );
 
-const checkHasConfirmedSignup = (
-  shifts: AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[],
-): boolean => {
-  for (let i = 0; i < shifts.length; i += 1) {
-    for (let j = 0; j < shifts[i].signups.length; j += 1) {
-      if (shifts[i].signups[j].status in ["CONFIRMED", "PUBLISHED"]) {
-        return true;
-      }
-    }
-  }
-  return false;
-};
-
 const SchedulePostingPage = (): React.ReactElement => {
   const toast = useToast();
   const history = useHistory();
@@ -189,7 +176,6 @@ const SchedulePostingPage = (): React.ReactElement => {
     AdminScheduleShiftWithSignupAndVolunteerGraphQLResponseDTO[]
   >([]);
   const [selectedDay, setSelectedDay] = useState<Date>();
-  const [hasConfirmedSignup, setHasConfirmedSignup] = useState<boolean>(false);
 
   useEffect(() => {
     const shiftsOfDay = shifts.filter((shift) =>
@@ -460,10 +446,6 @@ const SchedulePostingPage = (): React.ReactElement => {
     }
   }, [isPostingClosed, postingDetails, toast]);
 
-  useEffect(() => {
-    setHasConfirmedSignup(checkHasConfirmedSignup(shifts));
-  }, [shifts]);
-
   if (postingLoading) {
     return <Loading />;
   }
@@ -545,19 +527,7 @@ const SchedulePostingPage = (): React.ReactElement => {
           <Flex pb={6}>
             <Text textStyle="display-medium">{postingDetails?.title}</Text>
             <Spacer />
-            <Tooltip
-              hasArrow
-              label="Must have at least one signup"
-              shouldWrapChildren
-              isDisabled={hasConfirmedSignup}
-            >
-              <Button
-                onClick={handleOnPublishClick}
-                disabled={!hasConfirmedSignup}
-              >
-                Publish schedule
-              </Button>
-            </Tooltip>
+            <Button onClick={handleOnPublishClick}>Publish schedule</Button>
           </Flex>
           {shifts.length > 0 && (
             <AdminScheduleTable
