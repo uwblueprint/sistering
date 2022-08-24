@@ -176,6 +176,7 @@ const AdminUserManagementPageHeader = ({
               />
             </InputGroup>
             <Select
+              maxWidth="175px"
               placeholder="All branches"
               onChange={(event) => {
                 setBranchFilter(
