@@ -169,6 +169,7 @@ const AdminScheduleTable = ({
                   ))
                 ) : (
                   <AdminScheduleTableRow
+                    key="0"
                     shiftId="0"
                     removeSignup={removeSignup}
                   />

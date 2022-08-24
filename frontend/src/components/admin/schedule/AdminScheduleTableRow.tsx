@@ -1,4 +1,4 @@
-import { Button, Td, Text, Tr } from "@chakra-ui/react";
+import { Button, Td, Text, Tr, useDisclosure } from "@chakra-ui/react";
 import React from "react";
 import { getElapsedHours, getTime } from "../../../utils/DateTimeUtils";
 import RemoveVolunteerModal from "../RemoveVolunteerModal";
@@ -22,7 +22,8 @@ const AdminScheduleTableRow = ({
   shiftId,
   removeSignup,
 }: AdminScheduleTableRowProps): React.ReactElement => {
-  const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const elapsedHours =
     postingStart && postingEnd ? getElapsedHours(postingStart, postingEnd) : 0;
 
@@ -33,13 +34,13 @@ const AdminScheduleTableRow = ({
         {volunteer && numVolunteers && note && (
           <RemoveVolunteerModal
             name={volunteer.name}
-            isOpen={isModalOpen}
+            isOpen={isOpen}
             shiftId={shiftId}
             userId={volunteer.userId}
             numVolunteers={numVolunteers}
             status="CANCELED"
             note={note}
-            onClose={() => setIsModalOpen(false)}
+            onClose={onClose}
             removeSignup={removeSignup}
           />
         )}
@@ -63,7 +64,7 @@ const AdminScheduleTableRow = ({
                 color="text.critical"
                 variant="none"
                 size="sm"
-                onClick={() => setIsModalOpen(true)}
+                onClick={onOpen}
               >
                 Remove
               </Button>
