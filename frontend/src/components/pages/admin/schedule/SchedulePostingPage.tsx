@@ -386,12 +386,11 @@ const SchedulePostingPage = (): React.ReactElement => {
           duration: 9000,
           isClosable: true,
         });
-        history.push(ADMIN_HOMEPAGE);
       }
     }
 
     setShifts(shiftsCopy);
-    setCurrentView(AdminScheduleViews.CalendarView);
+    history.push(ADMIN_HOMEPAGE);
   };
 
   const isReadOnly =
