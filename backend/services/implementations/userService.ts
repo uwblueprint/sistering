@@ -1310,7 +1310,7 @@ class UserService implements IUserService {
     signUpMethod = "PASSWORD",
   ): Promise<EmployeeUserResponseDTO> {
     let firebaseUser: firebaseAdmin.auth.UserRecord;
-
+    let userRole: Role;
     try {
       const userInvite = await prisma.userInvite.findUnique({
         where: {
@@ -1330,6 +1330,7 @@ class UserService implements IUserService {
           "User invite with associated token does not have matching role - cannot create account",
         );
       }
+      userRole = userInvite.role;
     } catch (error: unknown) {
       Logger.error(
         `Failed to check user invite. Reason = ${getErrorMessage(error)}`,
@@ -1351,7 +1352,7 @@ class UserService implements IUserService {
             firstName: employeeUser.firstName,
             lastName: employeeUser.lastName,
             authId: firebaseUser.uid,
-            role: "EMPLOYEE",
+            role: userRole,
             phoneNumber: employeeUser.phoneNumber,
             emergencyContactName: employeeUser.emergencyContactName,
             emergencyContactPhone: employeeUser.emergencyContactPhone,
