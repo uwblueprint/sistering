@@ -8,7 +8,7 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import React, { useState, useEffect, useContext } from "react";
-import { useHistory, useParams } from "react-router-dom";
+import { Redirect, useHistory, useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
 import cloneDeep from "lodash.clonedeep";
 
@@ -464,13 +464,15 @@ const SchedulePostingPage = (): React.ReactElement => {
     setHasConfirmedSignup(checkHasConfirmedSignup(shifts));
   }, [shifts]);
 
-  if (postingLoading || postingDetails === undefined) {
+  if (postingLoading) {
     return <Loading />;
   }
 
-  return (
+  return !postingDetails || postingError ? (
+    <Redirect to="/not-found" />
+  ) : (
     <Flex flexFlow="column" width="100%" minH="100vh">
-      {(tableDataQueryError || postingError) && <ErrorModal />}
+      {tableDataQueryError && <ErrorModal />}
       <Navbar
         defaultIndex={Number(AdminPages.AdminSchedulePosting)}
         tabs={isSuperAdmin ? AdminNavbarTabs : EmployeeNavbarTabs}

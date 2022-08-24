@@ -64,7 +64,6 @@ const postingType = gql`
     postings(
       closingDate: Date
       statuses: [PostingStatus!]
-      userId: ID
     ): [PostingResponseDTO!]!
   }
 

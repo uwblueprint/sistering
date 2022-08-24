@@ -44,3 +44,9 @@ export const getTodayForTZIgnoredUTC = (date: Date = new Date()): Date => {
     .startOf("day")
     .toDate();
 };
+
+export const isPast = (date: Date): boolean => {
+  return moment(getTodayForTZIgnoredUTC(date)).isBefore(
+    moment(getTodayForTZIgnoredUTC()),
+  );
+};

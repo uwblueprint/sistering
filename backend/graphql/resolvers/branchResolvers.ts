@@ -1,8 +1,12 @@
+import { ExpressContext } from "apollo-server-express";
 import BranchService from "../../services/implementations/branchService";
+import UserService from "../../services/implementations/userService";
 import IBranchService from "../../services/interfaces/branchService";
+import IUserService from "../../services/interfaces/userService";
 import { BranchRequestDTO, BranchResponseDTO } from "../../types";
 
-const branchService: IBranchService = new BranchService();
+const userService: IUserService = new UserService();
+const branchService: IBranchService = new BranchService(userService);
 
 const branchResolvers = {
   Query: {
@@ -12,8 +16,12 @@ const branchResolvers = {
     ): Promise<BranchResponseDTO> => {
       return branchService.getBranch(id);
     },
-    branches: async (): Promise<BranchResponseDTO[]> => {
-      return branchService.getBranches();
+    branches: async (
+      _parent: undefined,
+      _args: undefined,
+      context: ExpressContext,
+    ): Promise<BranchResponseDTO[]> => {
+      return branchService.getBranches(context);
     },
   },
   Mutation: {

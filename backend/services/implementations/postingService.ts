@@ -13,6 +13,7 @@ import * as firebaseAdmin from "firebase-admin";
 import { ExpressContext } from "apollo-server-express";
 import { getAccessToken } from "../../middlewares/auth";
 import IPostingService from "../interfaces/postingService";
+import IShiftService from "../interfaces/shiftService";
 import IUserService from "../interfaces/userService";
 import {
   BranchResponseDTO,
@@ -28,10 +29,10 @@ import {
 } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
-import IShiftService from "../interfaces/shiftService";
 import {
   getInterval,
   getTodayForTZIgnoredUTC,
+  isPast,
 } from "../../utilities/dateUtils";
 
 const prisma = new PrismaClient();
@@ -161,33 +162,6 @@ class PostingService implements IPostingService {
     this.shiftService = shiftService;
   }
 
-  async getUserBranchesByUserId(userId: string): Promise<number[]> {
-    try {
-      const user = await this.userService.getUserById(userId);
-      switch (user.role) {
-        case Role.ADMIN: {
-          const branches = await prisma.branch.findMany();
-          return branches.map((branch) => branch.id);
-        }
-        case Role.EMPLOYEE: {
-          const employee = await this.userService.getEmployeeUserById(userId);
-          return employee.branches.map((branch: BranchResponseDTO) =>
-            Number(branch.id),
-          );
-        }
-        default: {
-          const volunteer = await this.userService.getVolunteerUserById(userId);
-          return volunteer.branches.map((branch: BranchResponseDTO) =>
-            Number(branch.id),
-          );
-        }
-      }
-    } catch (error: unknown) {
-      Logger.error(`Failed to get user. Reason = ${getErrorMessage(error)}`);
-      throw error;
-    }
-  }
-
   async convertToEmployeeUserResponseDTO(
     employees: Employee[],
   ): Promise<EmployeeUserResponseDTO[]> {
@@ -238,17 +212,33 @@ class PostingService implements IPostingService {
         throw new Error(`userId with authId ${decodedIdToken.uid} not found.`);
       }
 
-      if (user.role === Role.VOLUNTEER) {
-        const volunteer = await this.userService.getVolunteerUserById(
-          String(user.id),
-        );
+      if (user.role === Role.VOLUNTEER || user.role === Role.EMPLOYEE) {
+        const volunteerOrEmployee =
+          user.role === Role.VOLUNTEER
+            ? await this.userService.getVolunteerUserById(String(user.id))
+            : await this.userService.getEmployeeUserById(String(user.id));
         if (
-          volunteer.branches.filter(
+          volunteerOrEmployee.branches.filter(
             (branch: BranchResponseDTO) =>
               Number(branch.id) === posting.branch.id,
           ).length === 0
         ) {
           throw new Error(`User is not part of ${posting.branch.name} branch.`);
+        }
+        if (
+          user.role === Role.EMPLOYEE &&
+          (posting.status === "DRAFT" ||
+            !isPostingScheduledBySignups(
+              posting.shifts.flatMap((shift) => shift.signups),
+            ))
+        ) {
+          throw new Error(`Posting is still in draft or unscheduled.`);
+        }
+        if (
+          user.role === Role.VOLUNTEER &&
+          (posting.status === "DRAFT" || isPast(posting.endDate))
+        ) {
+          throw new Error(`Posting is still in draft or has passed.`);
         }
       }
 
@@ -282,28 +272,50 @@ class PostingService implements IPostingService {
   }
 
   async getPostings(
+    context: ExpressContext,
     closingDate?: Date,
     statuses?: PostingStatus[],
-    userId?: string,
   ): Promise<PostingResponseDTO[]> {
     return prisma.$transaction(async (prismaClient) => {
-      const filter: PostingWhereInput[] = [];
-      if (closingDate !== undefined) {
-        filter.push({
-          autoClosingDate: {
-            gte: getTodayForTZIgnoredUTC(closingDate),
+      try {
+        const accessToken = getAccessToken(context.req);
+        const decodedIdToken: firebaseAdmin.auth.DecodedIdToken = await firebaseAdmin
+          .auth()
+          .verifyIdToken(accessToken || "", true);
+
+        const filter: PostingWhereInput[] = [];
+        const user = await prismaClient.user.findUnique({
+          where: {
+            authId: decodedIdToken.uid,
           },
         });
-      }
-      if (statuses !== undefined) {
-        filter.push({ status: { in: statuses } });
-      }
-      if (userId !== undefined) {
-        const userBranchIds = await this.getUserBranchesByUserId(userId);
-        filter.push({ branchId: { in: userBranchIds } });
-      }
+        if (!user) {
+          throw new Error(
+            `userId with authId ${decodedIdToken.uid} not found.`,
+          );
+        }
+        if (user.role === Role.VOLUNTEER || user.role === Role.EMPLOYEE) {
+          const volunteerOrEmployee =
+            user.role === Role.VOLUNTEER
+              ? await this.userService.getVolunteerUserById(String(user.id))
+              : await this.userService.getEmployeeUserById(String(user.id));
+          filter.push({
+            branchId: {
+              in: volunteerOrEmployee.branches.map((b) => Number(b.id)),
+            },
+          });
+        }
+        if (closingDate !== undefined) {
+          filter.push({
+            autoClosingDate: {
+              gte: getTodayForTZIgnoredUTC(closingDate),
+            },
+          });
+        }
+        if (statuses !== undefined) {
+          filter.push({ status: { in: statuses } });
+        }
 
-      try {
         const postings = await prismaClient.posting.findMany({
           where: {
             AND: filter,

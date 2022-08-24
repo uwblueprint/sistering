@@ -32,14 +32,13 @@ const postingResolvers = {
       {
         closingDate,
         statuses,
-        userId,
       }: {
         closingDate?: Date;
         statuses?: PostingStatus[];
-        userId?: string;
       } = {},
+      context: ExpressContext,
     ): Promise<PostingResponseDTO[]> => {
-      return postingService.getPostings(closingDate, statuses, userId);
+      return postingService.getPostings(context, closingDate, statuses);
     },
   },
   Mutation: {

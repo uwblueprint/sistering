@@ -1,6 +1,9 @@
+import { PrismaClient, Branch, Role } from "@prisma/client";
 import * as firebaseAdmin from "firebase-admin";
-import { PrismaClient, Branch } from "@prisma/client";
+import { ExpressContext } from "apollo-server-express";
+import { getAccessToken } from "../../middlewares/auth";
 import IBranchService from "../interfaces/branchService";
+import IUserService from "../interfaces/userService";
 import { BranchRequestDTO, BranchResponseDTO } from "../../types";
 import logger from "../../utilities/logger";
 import { getErrorMessage } from "../../utilities/errorUtils";
@@ -12,6 +15,11 @@ const Logger = logger(__filename);
 
 class BranchService implements IBranchService {
   /* eslint-disable class-methods-use-this */
+  userService: IUserService;
+
+  constructor(userService: IUserService) {
+    this.userService = userService;
+  }
 
   async getBranch(branchId: string): Promise<BranchResponseDTO> {
     let branch: Branch | null;
@@ -37,11 +45,32 @@ class BranchService implements IBranchService {
     };
   }
 
-  async getBranches(): Promise<BranchResponseDTO[]> {
+  async getBranches(context: ExpressContext): Promise<BranchResponseDTO[]> {
     try {
-      const branches: Array<Branch> = await prisma.branch.findMany({
-        orderBy: [{ name: "asc" }],
-      });
+      const accessToken = getAccessToken(context.req);
+      const decodedIdToken: firebaseAdmin.auth.DecodedIdToken = await firebaseAdmin
+        .auth()
+        .verifyIdToken(accessToken || "", true);
+      const [branches, user] = await prisma.$transaction([
+        prisma.branch.findMany({
+          orderBy: [{ name: "asc" }],
+        }),
+        prisma.user.findUnique({
+          where: {
+            authId: decodedIdToken.uid,
+          },
+        }),
+      ]);
+      if (!user) {
+        throw new Error(`userId with authId ${decodedIdToken.uid} not found.`);
+      }
+      if (user.role === Role.VOLUNTEER || user.role === Role.EMPLOYEE) {
+        const volunteerOrEmployee =
+          user.role === Role.VOLUNTEER
+            ? await this.userService.getVolunteerUserById(String(user.id))
+            : await this.userService.getEmployeeUserById(String(user.id));
+        return volunteerOrEmployee.branches;
+      }
       return branches.map((branch) => ({
         id: String(branch.id),
         name: branch.name,
