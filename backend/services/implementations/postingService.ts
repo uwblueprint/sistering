@@ -227,12 +227,16 @@ class PostingService implements IPostingService {
         }
         if (
           user.role === Role.EMPLOYEE &&
-          !(
-            isPast(posting.endDate) ||
-            isPostingScheduledBySignups(
+          (posting.status === "DRAFT" ||
+            !isPostingScheduledBySignups(
               posting.shifts.flatMap((shift) => shift.signups),
-            )
-          )
+            ))
+        ) {
+          throw new Error(`Posting is still in draft or unscheduled.`);
+        }
+        if (
+          user.role === Role.VOLUNTEER &&
+          (posting.status === "DRAFT" || isPast(posting.endDate))
         ) {
           throw new Error(`Posting is still in draft or unscheduled.`);
         }

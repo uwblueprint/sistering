@@ -1,12 +1,12 @@
-import React, { useState } from "react";
+import React from "react";
 import { VStack, Box, Container, Button, Flex } from "@chakra-ui/react";
 
 import { gql, useQuery } from "@apollo/client";
-import { useHistory, useParams } from "react-router-dom";
+import { Redirect, useHistory, useParams } from "react-router-dom";
 import { ChevronLeftIcon } from "@chakra-ui/icons";
-import { PostingResponseDTO } from "../../../../types/api/PostingTypes";
 import PostingDetails from "../../../common/PostingDetails";
 import ErrorModal from "../../../common/ErrorModal";
+import Loading from "../../../common/Loading";
 
 const POSTING = gql`
   query AdminPostingDetails_Posting($id: ID!) {
@@ -36,21 +36,20 @@ const POSTING = gql`
 
 const AdminPostingDetails = (): React.ReactElement => {
   const { id } = useParams<{ id: string }>();
-  const [
-    postingDetails,
-    setPostingDetails,
-  ] = useState<PostingResponseDTO | null>(null);
-  const { error } = useQuery(POSTING, {
+  const {
+    loading: postingLoading,
+    error: postingError,
+    data: { posting: postingDetails } = {},
+  } = useQuery(POSTING, {
     variables: { id },
     fetchPolicy: "cache-and-network",
-    onCompleted: (data) => {
-      setPostingDetails(data.posting);
-    },
   });
   const history = useHistory();
-  return (
+  return (!postingLoading && !postingDetails) || postingError ? (
+    <Redirect to="/not-found" />
+  ) : (
     <Box bg="background.light" py={7} px={10} minH="100vh">
-      {error && <ErrorModal />}
+      {postingError && <ErrorModal />}
       <VStack>
         <Container pt={3} pb={6} px={0} maxW="container.xl">
           <Flex justifyContent="flex-start">
@@ -70,7 +69,11 @@ const AdminPostingDetails = (): React.ReactElement => {
           centerContent
           borderRadius={10}
         >
-          {postingDetails && <PostingDetails postingDetails={postingDetails} />}
+          {postingLoading ? (
+            <Loading />
+          ) : (
+            <PostingDetails postingDetails={postingDetails} />
+          )}
         </Container>
       </VStack>
     </Box>
