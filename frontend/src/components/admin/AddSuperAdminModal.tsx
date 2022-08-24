@@ -20,13 +20,13 @@ type AddUserModalProps = {
 
 const CREATE_ADMIN_INVITE = gql`
   mutation testCreateUserInvite($email: String!) {
-    createUserInvite(email: $email, role: EMPLOYEE) {
+    createUserInvite(email: $email, role: ADMIN) {
       uuid
     }
   }
 `;
 
-const AddAdminModal = ({
+const AddSuperAdminModal = ({
   isOpen = false,
   onClose = () => {},
 }: AddUserModalProps): React.ReactElement => {
@@ -80,17 +80,17 @@ const AddAdminModal = ({
       <ModalOverlay />
       <ModalContent borderRadius={0} p="10px">
         <ModalHeader py="11px">
-          <Text textStyle="body-bold">Add New Employee</Text>
+          <Text textStyle="body-bold">Add New Admin</Text>
         </ModalHeader>
         <ModalBody>
           <Text textStyle="body-regular">
-            Enter the email of the user you would like to invite. The new
-            employee will appear in the User Management table once the account
-            has been activated.
+            Enter the email of the user you would like to invite. The new admin
+            will appear in the User Management table once the account has been
+            activated.
           </Text>
           <Input
             value={email}
-            placeholder="Enter employee email"
+            placeholder="Enter admin email"
             onChange={handleChange}
             size="sm"
             marginTop="12px"
@@ -123,4 +123,4 @@ const AddAdminModal = ({
   );
 };
 
-export default AddAdminModal;
+export default AddSuperAdminModal;

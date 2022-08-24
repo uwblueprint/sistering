@@ -20,6 +20,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react";
 import { AddIcon, EmailIcon, SearchIcon } from "@chakra-ui/icons";
+import AddSuperAdminModal from "./AddSuperAdminModal";
 import AddAdminModal from "./AddAdminModal";
 import AddVolunteerModal from "./AddVolunteerModal";
 import UserInvitesModal from "./UserInvitesModal";
@@ -58,6 +59,11 @@ const AdminUserManagementPageHeader = ({
     isOpen: isOpenForEmployee,
     onOpen: onOpenForEmployee,
     onClose: onCloseForEmployee,
+  } = useDisclosure();
+  const {
+    isOpen: isOpenForAdmin,
+    onOpen: onOpenForAdmin,
+    onClose: onCloseForAdmin,
   } = useDisclosure();
 
   return (
@@ -105,6 +111,17 @@ const AdminUserManagementPageHeader = ({
               <AddAdminModal
                 isOpen={isOpenForEmployee}
                 onClose={onCloseForEmployee}
+              />
+              <MenuItem
+                textStyle="caption"
+                fontWeight="medium"
+                onClick={onOpenForAdmin}
+              >
+                Add new admin
+              </MenuItem>
+              <AddSuperAdminModal
+                isOpen={isOpenForAdmin}
+                onClose={onCloseForAdmin}
               />
             </MenuList>
           </Menu>

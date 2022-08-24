@@ -94,6 +94,19 @@ const UserInvitesTable = ({
             py="8px"
             onClick={() => setSelectedTab(Role.Employee)}
           >
+            Employees
+          </Tab>
+          <Tab
+            _hover={{
+              borderColor: "currentColor",
+            }}
+            _selected={{
+              color: "violet",
+              borderColor: "currentColor",
+            }}
+            py="8px"
+            onClick={() => setSelectedTab(Role.Admin)}
+          >
             Admins
           </Tab>
         </TabList>
