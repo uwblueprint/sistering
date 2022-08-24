@@ -81,7 +81,10 @@ const NewAccountPage = (): React.ReactElement => {
     },
     onCompleted: (data) => {
       setUserInvite(data.getUserInvite);
-      if (data.getUserInvite?.role === "EMPLOYEE") {
+      if (
+        data.getUserInvite?.role === "EMPLOYEE" ||
+        data.getUserInvite?.role === "ADMIN"
+      ) {
         setIsAdmin(true);
       }
     },

@@ -1323,7 +1323,9 @@ class UserService implements IUserService {
         throw new Error(
           "Failed to get user invite with token - user is not allowed to create account",
         );
-      } else if (userInvite.role !== "EMPLOYEE") {
+      } else if (
+        !(userInvite.role === "EMPLOYEE" || userInvite.role === "ADMIN")
+      ) {
         throw new Error(
           "User invite with associated token does not have matching role - cannot create account",
         );
