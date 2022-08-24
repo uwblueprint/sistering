@@ -1,12 +1,4 @@
-import {
-  Flex,
-  Box,
-  Text,
-  Button,
-  Spacer,
-  Tooltip,
-  useToast,
-} from "@chakra-ui/react";
+import { Flex, Box, Text, Button, Spacer, useToast } from "@chakra-ui/react";
 import React, { useState, useEffect, useContext } from "react";
 import { Redirect, useHistory, useParams } from "react-router-dom";
 import { gql, useQuery, useMutation } from "@apollo/client";
