@@ -28,6 +28,11 @@ import AUTHENTICATED_USER_KEY from "../../../../constants/AuthConstants";
 import { AuthenticatedUser } from "../../../../types/AuthTypes";
 import { getLocalStorageObj } from "../../../../utils/LocalStorageUtils";
 import { getDateFromUTCDateTime } from "../../../../utils/DateTimeUtils";
+import {
+  VolunteerNavbarTabs,
+  VolunteerPages,
+} from "../../../../constants/Tabs";
+import Navbar from "../../../common/Navbar";
 
 const SHIFTS_WITH_SIGNUPS_BY_POSTING = gql`
   query VolunteerPostingAvailabilities_ShiftsWithSignupsByPosting(
@@ -180,46 +185,52 @@ const VolunteerPostingAvailabilities = (): React.ReactElement => {
   return (!isPageLoading && !shiftsByPosting) || postingError ? (
     <Redirect to="/not-found" />
   ) : (
-    <Box bg="background.light" pt={14} px={100} minH="100vh">
-      {(shiftError || hasSubmitError) && <ErrorModal />}
-      <Button
-        onClick={() => history.push(`/volunteer/posting/${id}`)}
-        variant="link"
-        mb={4}
-        leftIcon={<ChevronLeftIcon />}
-      >
-        Back to posting details
-      </Button>
-      <Flex pb={7}>
-        <Text textStyle="display-large">Select your Availability</Text>
-        <Spacer />
-        <Button disabled={isPageLoading} onClick={handleSubmitClick}>
-          Submit
+    <Box minH="100vh">
+      <Navbar
+        defaultIndex={VolunteerPages.VolunteerPostings}
+        tabs={VolunteerNavbarTabs}
+      />
+      <Box bg="background.light" pt={14} px={100}>
+        {(shiftError || hasSubmitError) && <ErrorModal />}
+        <Button
+          onClick={() => history.push(`/volunteer/posting/${id}`)}
+          variant="link"
+          mb={4}
+          leftIcon={<ChevronLeftIcon />}
+        >
+          Back to posting details
         </Button>
-      </Flex>
-      {isPageLoading ? (
-        <Loading />
-      ) : (
-        <VolunteerAvailabilityTable
-          postingShifts={
-            shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]
-          }
-          postingStartDate={getDateFromUTCDateTime(
-            new Date(
-              Date.parse((postingDetails as PostingResponseDTO).startDate),
-            ),
-          )}
-          postingEndDate={getDateFromUTCDateTime(
-            new Date(
-              Date.parse((postingDetails as PostingResponseDTO).endDate),
-            ),
-          )}
-          selectedShifts={shiftSignups}
-          setSelectedShifts={setShiftSignups}
-          deleteSignups={deleteSignups}
-          setDeleteSignups={setDeleteSignups}
-        />
-      )}
+        <Flex pb={7}>
+          <Text textStyle="display-large">Select your Availability</Text>
+          <Spacer />
+          <Button disabled={isPageLoading} onClick={handleSubmitClick}>
+            Submit
+          </Button>
+        </Flex>
+        {isPageLoading ? (
+          <Loading />
+        ) : (
+          <VolunteerAvailabilityTable
+            postingShifts={
+              shiftsByPosting as ShiftWithSignupAndVolunteerResponseDTO[]
+            }
+            postingStartDate={getDateFromUTCDateTime(
+              new Date(
+                Date.parse((postingDetails as PostingResponseDTO).startDate),
+              ),
+            )}
+            postingEndDate={getDateFromUTCDateTime(
+              new Date(
+                Date.parse((postingDetails as PostingResponseDTO).endDate),
+              ),
+            )}
+            selectedShifts={shiftSignups}
+            setSelectedShifts={setShiftSignups}
+            deleteSignups={deleteSignups}
+            setDeleteSignups={setDeleteSignups}
+          />
+        )}
+      </Box>
     </Box>
   );
 };

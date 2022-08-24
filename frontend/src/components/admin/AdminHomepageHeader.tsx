@@ -154,8 +154,8 @@ const AdminHomepageHeader = ({
                 onChange={(event) => setSearchFilter(event.target.value)}
               />
             </InputGroup>
-            {/* // TODO: This should actually filter  */}
             <Select
+              maxWidth="175px"
               placeholder="All branches"
               onChange={(event) =>
                 setBranchFilter(
