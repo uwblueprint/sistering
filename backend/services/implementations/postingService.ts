@@ -238,7 +238,7 @@ class PostingService implements IPostingService {
           user.role === Role.VOLUNTEER &&
           (posting.status === "DRAFT" || isPast(posting.endDate))
         ) {
-          throw new Error(`Posting is still in draft or unscheduled.`);
+          throw new Error(`Posting is still in draft or has passed.`);
         }
       }
 
