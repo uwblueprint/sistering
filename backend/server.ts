@@ -10,6 +10,9 @@ const CORS_ALLOW_LIST = [
   "http://localhost:3000",
   "https://sistering-dev.firebaseapp.com",
   "https://sistering-dev.web.app",
+  "https://volunteer.sistering.org",
+  "https://sistering-prod.web.app",
+  "https://sistering-prod.firebaseapp.com",
   /^https:\/\/sistering-dev--pr.*\.web\.app$/,
 ];
 
