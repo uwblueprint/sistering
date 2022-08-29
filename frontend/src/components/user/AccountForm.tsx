@@ -462,7 +462,7 @@ const AccountForm = ({
                   values={values.skills}
                   options={skills}
                   addedValues={addedSkills}
-                  placeholder="Type to select skills or add new ones"
+                  placeholder="Add Skills"
                   tooltip={<Text>Search and select skills you have.</Text>}
                   onSelect={(skill) =>
                     selectSkill(skill, values.skills, setFieldValue)
