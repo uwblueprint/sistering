@@ -84,6 +84,17 @@ const SearchSelectorField = ({
     }),
   ];
 
+  // An array to combine pre-existing options and user-added values altogether like above, used when displaying dropdown options
+  const currentAndAddedOptions: Item[] = [
+    ...Array.from(addedValues).map((valueName) => {
+      return {
+        id: "-1",
+        name: valueName,
+      };
+    }),
+    ...options,
+  ];
+
   const handleDeleteValue = (value: Item) => {
     if (value.id === "-1") {
       onDeleteNewOption(value.name);
@@ -153,7 +164,7 @@ const SearchSelectorField = ({
                   : "10px"
               }
             >
-              {options.map(
+              {currentAndAddedOptions.map(
                 (option) =>
                   option.name
                     .toLowerCase()
@@ -167,7 +178,9 @@ const SearchSelectorField = ({
                       cursor="pointer"
                       onMouseDown={() => {
                         setDropdownClicked(true);
-                        onSelect(option.id);
+                        if (option.id !== "-1") { // User-added values have an id of "-1" before submitting
+                          onSelect(option.id);
+                        }
                       }}
                     >
                       {option.name}
