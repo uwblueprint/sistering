@@ -178,7 +178,8 @@ const SearchSelectorField = ({
                       cursor="pointer"
                       onMouseDown={() => {
                         setDropdownClicked(true);
-                        if (option.id !== "-1") { // User-added values have an id of "-1" before submitting
+                        if (option.id !== "-1") {
+                          // User-added values have an id of "-1" before submitting
                           onSelect(option.id);
                         }
                         setTextboxInput("");

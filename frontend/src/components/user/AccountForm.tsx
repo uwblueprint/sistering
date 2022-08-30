@@ -334,7 +334,6 @@ const AccountForm = ({
     return createdSkill;
   };
 
-
   const [createLanguage] = useMutation(CREATE_LANGUAGE, {
     refetchQueries: ["AccountForm_Languages"],
   });
@@ -552,7 +551,9 @@ const AccountForm = ({
                   deselectLanguage(language, values.languages, setFieldValue)
                 }
                 onCreateNewOption={(newLanguage) => addNewLanguage(newLanguage)}
-                onDeleteNewOption={(newLanguage) => deleteNewLanguage(newLanguage)}
+                onDeleteNewOption={(newLanguage) =>
+                  deleteNewLanguage(newLanguage)
+                }
               />
               <TextField
                 id="emergencyName"
