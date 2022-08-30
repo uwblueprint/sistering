@@ -1,5 +1,5 @@
 import { Formik, Form } from "formik";
-import { gql, useQuery } from "@apollo/client";
+import { gql, useQuery, useMutation } from "@apollo/client";
 import {
   Box,
   Button,
@@ -10,6 +10,7 @@ import {
   SimpleGrid,
   Text,
   UnorderedList,
+  useToast,
 } from "@chakra-ui/react";
 import React, { useState } from "react";
 import moment from "moment";
@@ -31,6 +32,7 @@ import {
 } from "../../types/api/LanguageTypes";
 import TextField from "./fields/TextField";
 import SelectorField from "./fields/SelectorField";
+import SearchSelectorField from "./fields/SearchSelectorField";
 
 export enum AccountFormMode {
   CREATE,
@@ -42,6 +44,14 @@ const SKILLS = gql`
     skills {
       id
       name
+    }
+  }
+`;
+
+const CREATE_SKILL = gql`
+  mutation AccountForm_CreateSkill($skill: SkillRequestDTO!) {
+    createSkill(skill: $skill) {
+      id
     }
   }
 `;
@@ -123,6 +133,7 @@ const AccountForm = ({
 
   const queryParams = new URLSearchParams(window.location.search);
   const token = queryParams.get("token");
+  const toast = useToast();
 
   const createInitialValues: CreateAccountFormValues = {
     firstName: "",
@@ -171,66 +182,6 @@ const AccountForm = ({
       setLanguages(data.languages);
     },
   });
-
-  const selectSkill = (
-    skill: string,
-    currentSkills: SkillResponseDTO[],
-    setFieldValue: (field: string, value: SkillResponseDTO[]) => void,
-  ) => {
-    // If the skill is not already selected, add it to the list of skills
-    if (!currentSkills.some((s) => s.id === skill)) {
-      const skillName = skills.find((s) => s.id === skill)?.name || "";
-      setFieldValue("skills", [
-        ...currentSkills,
-        {
-          id: skill,
-          name: skillName,
-        },
-      ]);
-    }
-  };
-
-  const deselectSkill = (
-    skill: string,
-    currentSkills: SkillResponseDTO[],
-    setFieldValue: (field: string, value: SkillResponseDTO[]) => void,
-  ) => {
-    // Remove the skill from the list of skills
-    setFieldValue(
-      "skills",
-      currentSkills.filter((s) => s.id !== skill),
-    );
-  };
-
-  const selectLanguage = (
-    language: string,
-    currentLanguages: LanguageResponseDTO[],
-    setFieldValue: (field: string, value: LanguageResponseDTO[]) => void,
-  ) => {
-    // If the language is not already selected, add it to the list of languages
-    if (!currentLanguages.some((l) => l.id === language)) {
-      const languageName = languages.find((l) => l.id === language)?.name || "";
-      setFieldValue("languages", [
-        ...currentLanguages,
-        {
-          id: language,
-          name: languageName,
-        },
-      ]);
-    }
-  };
-
-  const deselectLanguage = (
-    language: string,
-    currentLanguages: LanguageResponseDTO[],
-    setFieldValue: (field: string, value: LanguageResponseDTO[]) => void,
-  ) => {
-    // Remove the language from the list of languages
-    setFieldValue(
-      "languages",
-      currentLanguages.filter((l) => l.id !== language),
-    );
-  };
 
   const createAccount = (values: CreateAccountFormValues): void => {
     if (onVolunteerCreate && onEmployeeCreate) {
@@ -308,6 +259,130 @@ const AccountForm = ({
     }
   };
 
+  const [createSkill] = useMutation(CREATE_SKILL, {
+    refetchQueries: ["AccountForm_Skills"],
+  });
+
+  // A set to store skills (strings) added by the user
+  const [addedSkills, setAddedSkills] = useState<Set<string>>(
+    new Set<string>(),
+  );
+  const addNewSkill = (newSkill: string) => {
+    setAddedSkills(new Set(addedSkills.add(newSkill)));
+  };
+  const deleteNewSkill = (newSkill: string) => {
+    setAddedSkills(
+      new Set(Array.from(addedSkills).filter((s) => s !== newSkill)),
+    );
+  };
+
+  const selectSkill = (
+    skill: string,
+    currentSkills: SkillResponseDTO[],
+    setFieldValue: (field: string, value: SkillResponseDTO[]) => void,
+  ) => {
+    // If the skill is not already selected, add it to the list of skills
+    if (!currentSkills.some((s) => s.id === skill)) {
+      const skillName = skills.find((s) => s.id === skill)?.name || "";
+      setFieldValue("skills", [
+        ...currentSkills,
+        {
+          id: skill,
+          name: skillName,
+        },
+      ]);
+    }
+  };
+
+  const deselectSkill = (
+    skill: string,
+    currentSkills: SkillResponseDTO[],
+    setFieldValue: (field: string, value: SkillResponseDTO[]) => void,
+  ) => {
+    // Remove the skill from the list of skills
+    setFieldValue(
+      "skills",
+      currentSkills.filter((s) => s.id !== skill),
+    );
+  };
+
+  const handleAddSkillToDB = async (name: string) => {
+    let createdSkill;
+    try {
+      createdSkill = await createSkill({
+        variables: {
+          skill: { name },
+        },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: `Cannot create skill`,
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    return createdSkill;
+  };
+
+  const selectLanguage = (
+    language: string,
+    currentLanguages: LanguageResponseDTO[],
+    setFieldValue: (field: string, value: LanguageResponseDTO[]) => void,
+  ) => {
+    // If the language is not already selected, add it to the list of languages
+    if (!currentLanguages.some((l) => l.id === language)) {
+      const languageName = languages.find((l) => l.id === language)?.name || "";
+      setFieldValue("languages", [
+        ...currentLanguages,
+        {
+          id: language,
+          name: languageName,
+        },
+      ]);
+    }
+  };
+
+  const deselectLanguage = (
+    language: string,
+    currentLanguages: LanguageResponseDTO[],
+    setFieldValue: (field: string, value: LanguageResponseDTO[]) => void,
+  ) => {
+    // Remove the language from the list of languages
+    setFieldValue(
+      "languages",
+      currentLanguages.filter((l) => l.id !== language),
+    );
+  };
+
+  const handleSubmit = async (
+    values: CreateAccountFormValues | EditAccountFormValues,
+  ) => {
+    const newSkillsArr: string[] = Array.from(addedSkills);
+    const newSkillsInDB: SkillResponseDTO[] = [];
+
+    for (let i = 0; i < newSkillsArr.length; i += 1) {
+      /* eslint-disable-next-line no-await-in-loop */
+      const newSkill = await handleAddSkillToDB(newSkillsArr[i]);
+      newSkillsInDB.push({
+        id: newSkill?.data.createSkill.id.toString(),
+        name: newSkillsArr[i],
+      });
+    }
+
+    const valuesToBeSubmitted = {
+      ...values,
+      skills: [...values.skills, ...newSkillsInDB],
+    };
+
+    if (mode === AccountFormMode.CREATE) {
+      createAccount(valuesToBeSubmitted as CreateAccountFormValues);
+    } else {
+      editAccount(valuesToBeSubmitted as EditAccountFormValues);
+    }
+  };
+
   return (
     <Box my={12}>
       <Formik
@@ -316,11 +391,7 @@ const AccountForm = ({
             ? createInitialValues
             : editInitialValues
         }
-        onSubmit={
-          mode === AccountFormMode.CREATE
-            ? (values) => createAccount(values as CreateAccountFormValues)
-            : (values) => editAccount(values as EditAccountFormValues)
-        }
+        onSubmit={(values) => handleSubmit(values)}
       >
         {({ values, setFieldValue }) => (
           <Form>
@@ -385,12 +456,13 @@ const AccountForm = ({
               {/* Volunteer fields */}
               <Box />
               {!isAdmin && (
-                <SelectorField
+                <SearchSelectorField
                   id="skills"
                   label="Skills"
                   values={values.skills}
                   options={skills}
-                  placeholder="Select Skills"
+                  addedValues={addedSkills}
+                  placeholder="Add Skills"
                   tooltip={<Text>Search and select skills you have.</Text>}
                   onSelect={(skill) =>
                     selectSkill(skill, values.skills, setFieldValue)
@@ -398,6 +470,8 @@ const AccountForm = ({
                   onDeselect={(skill) =>
                     deselectSkill(skill, values.skills, setFieldValue)
                   }
+                  onCreateNewOption={(newSkill) => addNewSkill(newSkill)}
+                  onDeleteNewOption={(newSkill) => deleteNewSkill(newSkill)}
                 />
               )}
               <SelectorField
