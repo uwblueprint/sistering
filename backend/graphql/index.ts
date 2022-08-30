@@ -196,7 +196,7 @@ const graphQLMiddlewares = {
     createBranch: authorizedByAdmin(),
     updateBranch: authorizedByAdmin(),
     deleteBranch: authorizedByAdmin(),
-    createLanguage: authorizedByAdmin(),
+    createLanguage: authorizedByAllRoles(),
     updateLanguage: authorizedByAdmin(),
     deleteLanguage: authorizedByAdmin(),
     upsertDeleteShiftSignups: authorizedByAdminAndVolunteer(),

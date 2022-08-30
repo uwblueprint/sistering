@@ -31,7 +31,6 @@ import {
   LanguageQueryResponse,
 } from "../../types/api/LanguageTypes";
 import TextField from "./fields/TextField";
-import SelectorField from "./fields/SelectorField";
 import SearchSelectorField from "./fields/SearchSelectorField";
 
 export enum AccountFormMode {
@@ -61,6 +60,14 @@ const LANGUAGES = gql`
     languages {
       id
       name
+    }
+  }
+`;
+
+const CREATE_LANGUAGE = gql`
+  mutation AccountForm_CreateLanguage($language: LanguageRequestDTO!) {
+    createLanguage(language: $language) {
+      id
     }
   }
 `;
@@ -326,6 +333,23 @@ const AccountForm = ({
     return createdSkill;
   };
 
+  const [createLanguage] = useMutation(CREATE_LANGUAGE, {
+    refetchQueries: ["AccountForm_Languages"],
+  });
+
+  // A set to store languages (strings) added by the user
+  const [addedLanguages, setAddedLanguages] = useState<Set<string>>(
+    new Set<string>(),
+  );
+  const addNewLanguage = (newLanguage: string) => {
+    setAddedLanguages(new Set(addedLanguages.add(newLanguage)));
+  };
+  const deleteNewLanguage = (newLanguage: string) => {
+    setAddedLanguages(
+      new Set(Array.from(addedLanguages).filter((l) => l !== newLanguage)),
+    );
+  };
+
   const selectLanguage = (
     language: string,
     currentLanguages: LanguageResponseDTO[],
@@ -356,12 +380,36 @@ const AccountForm = ({
     );
   };
 
+  const handleAddLanguageToDB = async (name: string) => {
+    let createdLanguage;
+    try {
+      createdLanguage = await createLanguage({
+        variables: {
+          language: { name },
+        },
+      });
+    } catch (error: unknown) {
+      toast({
+        title: `Cannot create language`,
+        description: `${error}`,
+        status: "error",
+        duration: 9000,
+        isClosable: true,
+      });
+    }
+    return createdLanguage;
+  };
+
   const handleSubmit = async (
     values: CreateAccountFormValues | EditAccountFormValues,
   ) => {
     const newSkillsArr: string[] = Array.from(addedSkills);
-    const newSkillsInDB: SkillResponseDTO[] = [];
+    const newLanguagesArr: string[] = Array.from(addedLanguages);
 
+    const newSkillsInDB: SkillResponseDTO[] = [];
+    const newLanguagesInDB: LanguageResponseDTO[] = [];
+
+    // Add all skills to DB
     for (let i = 0; i < newSkillsArr.length; i += 1) {
       /* eslint-disable-next-line no-await-in-loop */
       const newSkill = await handleAddSkillToDB(newSkillsArr[i]);
@@ -371,9 +419,20 @@ const AccountForm = ({
       });
     }
 
+    // Add all languages to DB
+    for (let i = 0; i < newLanguagesArr.length; i += 1) {
+      /* eslint-disable-next-line no-await-in-loop */
+      const newLanguage = await handleAddLanguageToDB(newLanguagesArr[i]);
+      newLanguagesInDB.push({
+        id: newLanguage?.data.createLanguage.id.toString(),
+        name: newLanguagesArr[i],
+      });
+    }
+
     const valuesToBeSubmitted = {
       ...values,
       skills: [...values.skills, ...newSkillsInDB],
+      languages: [...values.languages, ...newLanguagesInDB],
     };
 
     if (mode === AccountFormMode.CREATE) {
@@ -474,12 +533,13 @@ const AccountForm = ({
                   onDeleteNewOption={(newSkill) => deleteNewSkill(newSkill)}
                 />
               )}
-              <SelectorField
+              <SearchSelectorField
                 id="languages"
                 label="Languages"
                 values={values.languages}
                 options={languages}
-                placeholder="Select Languages"
+                addedValues={addedLanguages}
+                placeholder="Add Languages"
                 tooltip={
                   <Text>Search and select languages you understand.</Text>
                 }
@@ -488,6 +548,10 @@ const AccountForm = ({
                 }
                 onDeselect={(language) =>
                   deselectLanguage(language, values.languages, setFieldValue)
+                }
+                onCreateNewOption={(newLanguage) => addNewLanguage(newLanguage)}
+                onDeleteNewOption={(newLanguage) =>
+                  deleteNewLanguage(newLanguage)
                 }
               />
               <TextField
