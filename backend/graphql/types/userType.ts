@@ -130,7 +130,6 @@ const userType = gql`
     dateOfBirth: Date
     pronouns: String!
     skills: [ID!]!
-    branches: [ID!]!
     languages: [ID!]!
   }
 
@@ -160,7 +159,6 @@ const userType = gql`
     emergencyContactEmail: String
     dateOfBirth: Date
     pronouns: String!
-    branches: [ID!]!
     languages: [ID!]!
   }
 
