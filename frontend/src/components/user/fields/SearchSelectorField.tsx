@@ -181,6 +181,7 @@ const SearchSelectorField = ({
                         if (option.id !== "-1") { // User-added values have an id of "-1" before submitting
                           onSelect(option.id);
                         }
+                        setTextboxInput("");
                       }}
                     >
                       {option.name}
