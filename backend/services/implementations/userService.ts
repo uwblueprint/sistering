@@ -964,10 +964,6 @@ class UserService implements IUserService {
           },
           data: {
             hireDate: volunteerUser.hireDate,
-            branches: {
-              set: [], // setting the related branches to be [] before connecting the passed in values
-              connect: convertToNumberIds(volunteerUser.branches),
-            },
             skills: {
               set: [], // setting the related skills to be [] before connecting the passed in values
               connect: convertToNumberIds(volunteerUser.skills),
@@ -1451,10 +1447,6 @@ class UserService implements IUserService {
               pronouns: employeeUser.pronouns,
               dateOfBirth: employeeUser.dateOfBirth,
             },
-          },
-          branches: {
-            set: [],
-            connect: convertToNumberIds(employeeUser.branches),
           },
         },
         include: {

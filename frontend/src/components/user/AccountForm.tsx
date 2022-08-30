@@ -286,7 +286,6 @@ const AccountForm = ({
           pronouns: values.pronouns,
           dateOfBirth: values.dateOfBirth,
           languages: values.languages.map((language) => language.id),
-          branches: [],
         });
       } else {
         onVolunteerEdit({
@@ -302,7 +301,6 @@ const AccountForm = ({
           dateOfBirth: moment(values.dateOfBirth).format("YYYY-MM-DD"),
           skills: values.skills.map((skill) => skill.id),
           languages: values.languages.map((language) => language.id),
-          branches: [],
         });
       }
     }
