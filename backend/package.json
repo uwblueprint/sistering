@@ -18,7 +18,7 @@
   "license": "ISC",
   "dependencies": {
     "@prisma/client": "^3.3.0",
-    "apollo-server": "^2.22.2",
+    "apollo-server": "^2.25.4",
     "apollo-server-express": "^2.22.2",
     "axios": "^0.25.0",
     "bluebird": "^3.7.2",
